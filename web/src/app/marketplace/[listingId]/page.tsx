@@ -75,9 +75,9 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                 <div className="text-xl font-bold text-emerald-600">Rp {listing.estimatedValueIdr.toLocaleString('id-ID')}</div>
               </div>
               
-              <div className="mt-6">
-                <Button className="w-full" size="lg" disabled>Deal Room starts in Phase 3</Button>
-              </div>
+              <Link href={`/deals/new?listingId=${listing.id}`} className="block mt-6">
+                <Button className="w-full" size="lg">Create Protected Deal</Button>
+              </Link>
               <p className="text-xs text-center text-slate-500 mt-2">Requires 5% commitment bond</p>
             </CardContent>
           </Card>

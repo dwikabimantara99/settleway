@@ -75,7 +75,9 @@ export default function BuyerRequestsPage() {
                       <div className="text-xs text-slate-500">Reputation: {buyer?.buyerScore}/100</div>
                     </div>
                   </div>
-                  <Button variant="secondary" disabled title="Deal Room starts in Phase 3">Propose Supply (Phase 3)</Button>
+                  <Link href={`/deals/new?requestId=${req.id}`}>
+                    <Button variant="secondary">Propose Supply</Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
