@@ -1,32 +1,58 @@
-import { Profile, Listing, Deal } from '../types';
+import { Profile, Listing, Deal, BuyerRequest } from '../types';
 
 export const demoProfiles: Record<string, Profile> = {
   'seller-probolinggo-cabai': {
     id: 'seller-probolinggo-cabai',
-    displayName: 'Probolinggo Chili Supplier',
+    displayName: 'Probolinggo Farmer Group',
     roleLabel: 'Aggregator & Farmer Group',
     location: 'Probolinggo, East Java',
     userType: 'seller',
-    sellerScore: 48,
+    sellerScore: 92,
     buyerScore: 0,
-    sellerCompletedCount: 12,
+    sellerCompletedCount: 15,
     buyerCompletedCount: 0,
     verifiedVolumeIdr: 450000000,
     proofVisibility: 'public',
   },
   'buyer-surabaya-restaurant': {
     id: 'buyer-surabaya-restaurant',
-    displayName: 'Surabaya Restaurant Group',
+    displayName: 'Surabaya Spice Co.',
     roleLabel: 'Wholesale Buyer',
     location: 'Surabaya, East Java',
     userType: 'buyer',
     sellerScore: 0,
-    buyerScore: 95,
+    buyerScore: 98,
     sellerCompletedCount: 0,
-    buyerCompletedCount: 24,
+    buyerCompletedCount: 42,
     verifiedVolumeIdr: 1200000000,
     proofVisibility: 'public',
   },
+  'seller-sumatra-coffee': {
+    id: 'seller-sumatra-coffee',
+    displayName: 'Gayo Highland Cooperative',
+    roleLabel: 'Cooperative',
+    location: 'Aceh Tengah, Sumatra',
+    userType: 'seller',
+    sellerScore: 95,
+    buyerScore: 0,
+    sellerCompletedCount: 30,
+    buyerCompletedCount: 0,
+    verifiedVolumeIdr: 1500000000,
+    proofVisibility: 'public',
+  },
+  'buyer-jakarta-factory': {
+    id: 'buyer-jakarta-factory',
+    displayName: 'Java Foods Manufacturing',
+    roleLabel: 'Food Factory',
+    location: 'Jakarta',
+    userType: 'buyer',
+    sellerScore: 0,
+    buyerScore: 88,
+    sellerCompletedCount: 0,
+    buyerCompletedCount: 110,
+    verifiedVolumeIdr: 5800000000,
+    proofVisibility: 'private',
+  }
 };
 
 export const demoListings: Listing[] = [
@@ -42,6 +68,48 @@ export const demoListings: Listing[] = [
     estimatedValueIdr: 19950000,
     description: 'Fresh harvest from Probolinggo group. Sorted and ready for pickup or delivery.',
   },
+  {
+    id: 'listing-coffee-001',
+    sellerId: 'seller-sumatra-coffee',
+    commodity: 'Arabica Green Beans',
+    variety: 'Gayo Semi-Washed',
+    status: 'pre_harvest',
+    location: 'Aceh Tengah',
+    estimatedVolumeKg: 2000,
+    pricePerKgIdr: 95000,
+    estimatedValueIdr: 190000000,
+    harvestDate: '2026-07-15',
+    description: 'Upcoming harvest. Strictly high grown, semi-washed preparation. Moisture <12%.',
+  },
+];
+
+export const demoBuyerRequests: BuyerRequest[] = [
+  {
+    id: 'req-spice-001',
+    buyerId: 'buyer-surabaya-restaurant',
+    commodity: 'Red Chili (Cabai Rawit Merah)',
+    variety: 'Rawit Merah Grade A',
+    status: 'open',
+    deliveryLocation: 'Surabaya',
+    requiredVolumeKg: 500,
+    targetPricePerKgIdr: 28000,
+    estimatedTotalIdr: 14000000,
+    requiredDate: '2026-06-20',
+    description: 'Looking for reliable supplier of grade A red chilies for continuous restaurant supply.',
+  },
+  {
+    id: 'req-rice-001',
+    buyerId: 'buyer-jakarta-factory',
+    commodity: 'White Rice (Beras Medium)',
+    variety: 'IR64 Medium',
+    status: 'open',
+    deliveryLocation: 'Jakarta',
+    requiredVolumeKg: 10000,
+    targetPricePerKgIdr: 12000,
+    estimatedTotalIdr: 120000000,
+    requiredDate: '2026-07-01',
+    description: 'Bulk medium rice needed for factory processing. Must meet standard moisture requirements.',
+  }
 ];
 
 export const demoDeals: Record<string, Deal> = {

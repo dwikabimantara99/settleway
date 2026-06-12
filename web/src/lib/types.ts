@@ -1,6 +1,22 @@
 export type UserRole = 'seller' | 'buyer' | 'both' | 'operator';
 export type ProfileVisibility = 'public' | 'private';
 
+export type BuyerRequestStatus = 'open' | 'fulfilled' | 'cancelled';
+
+export interface BuyerRequest {
+  id: string;
+  buyerId: string;
+  commodity: string;
+  variety: string;
+  status: BuyerRequestStatus;
+  deliveryLocation: string;
+  requiredVolumeKg: number;
+  targetPricePerKgIdr: number;
+  estimatedTotalIdr: number;
+  requiredDate: string;
+  description: string;
+}
+
 export interface Profile {
   id: string;
   displayName: string;

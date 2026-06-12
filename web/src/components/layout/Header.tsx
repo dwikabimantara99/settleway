@@ -16,10 +16,10 @@ export function Header() {
         </div>
         
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="#marketplace-preview" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
+          <Link href="/marketplace" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
             Marketplace
           </Link>
-          <Link href="#buyer-requests" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
+          <Link href="/buyer-requests" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
             Buyer Requests
           </Link>
           <Link href="#demo-flow" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">

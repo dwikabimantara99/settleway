@@ -29,7 +29,7 @@ export default function LandingPage() {
           </p>
           
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="#marketplace-preview">
+            <Link href="/marketplace">
               <Button size="lg" className="gap-2">
                 View Marketplace
                 <ArrowRight className="h-4 w-4" />
