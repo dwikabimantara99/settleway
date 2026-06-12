@@ -1,0 +1,10 @@
+flowchart TD
+  ROOT[/] --> MARKET[/marketplace]
+  MARKET --> LISTING[/marketplace/[listingId]]
+  ROOT --> REQ[/buyer-requests]
+  REQ --> REQID[/buyer-requests/[requestId]]
+  LISTING --> NEWDEAL[/deals/new]
+  NEWDEAL --> DEAL[/deals/[dealId]]
+  ROOT --> DEMO[/demo]
+  MARKET --> PROFILE[/profiles/[userId]]
+  REQ --> PROFILE

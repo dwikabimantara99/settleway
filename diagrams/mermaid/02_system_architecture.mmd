@@ -1,0 +1,10 @@
+flowchart TB
+  UI[Next.js Frontend] --> API[Next.js API Routes]
+  API --> DB[(Supabase Postgres / Mock Store)]
+  API --> Storage[(Supabase Storage / Mock Evidence)]
+  API --> Hash[Proof Hash Service]
+  API --> Escrow[Escrow State Machine]
+  API --> Rep[Reputation Service]
+  API --> Stellar[Stellar Service]
+  Stellar --> Contract[Soroban Escrow Contract]
+  Contract --> Testnet[Stellar Testnet]

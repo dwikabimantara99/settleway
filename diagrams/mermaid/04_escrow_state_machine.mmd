@@ -1,0 +1,15 @@
+stateDiagram-v2
+  [*] --> WAITING_DEPOSITS
+  WAITING_DEPOSITS --> BUYER_FUNDED: buyer_deposit
+  WAITING_DEPOSITS --> SELLER_FUNDED: seller_deposit
+  BUYER_FUNDED --> LOCKED: seller_deposit
+  SELLER_FUNDED --> LOCKED: buyer_deposit
+  WAITING_DEPOSITS --> EXPIRED: expire
+  BUYER_FUNDED --> REFUNDED: expire/refund
+  SELLER_FUNDED --> REFUNDED: expire/refund
+  LOCKED --> PROOF_SUBMITTED: submit_proof
+  PROOF_SUBMITTED --> DELIVERED: mark_delivered
+  DELIVERED --> COMPLETED: accept_delivery
+  COMPLETED --> [*]
+  EXPIRED --> [*]
+  REFUNDED --> [*]

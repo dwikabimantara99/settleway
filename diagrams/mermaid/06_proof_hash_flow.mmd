@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant Seller
+  participant UI as Evidence Panel
+  participant API as Backend API
+  participant HASH as Proof Hash Service
+  participant ST as Stellar Service
+  participant SC as Soroban Contract
+  Seller->>UI: Upload/simulate evidence
+  UI->>API: POST /submit-proof
+  API->>HASH: sha256(file bytes)
+  HASH-->>API: proof hash
+  API->>ST: record ProofSubmitted
+  ST->>SC: submit_proof_hash
+  SC-->>ST: tx hash
+  API-->>UI: proof hash + tx hash

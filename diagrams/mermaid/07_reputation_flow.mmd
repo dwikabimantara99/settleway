@@ -1,0 +1,10 @@
+flowchart LR
+  A[Deal Completed] --> B[Append TransactionCompleted event]
+  B --> C[Reputation Service]
+  C --> D[Update Seller Reputation]
+  C --> E[Update Buyer Reputation]
+  D --> F[Profile Page]
+  E --> F
+  F --> G{Proof Visibility}
+  G -->|Public| H[Show tx hashes]
+  G -->|Private| I[Show aggregate only]

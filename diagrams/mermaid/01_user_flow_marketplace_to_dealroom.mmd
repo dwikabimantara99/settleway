@@ -1,0 +1,16 @@
+flowchart LR
+  A[Landing Page] --> B[Marketplace Listings]
+  A --> C[Buyer Requests]
+  B --> D[Listing Detail]
+  C --> E[Buyer Request Detail]
+  D --> F[Create Deal Room]
+  E --> F
+  F --> G[Buyer Deposit]
+  F --> H[Seller Bond Deposit]
+  G --> I[Escrow Locked]
+  H --> I
+  I --> J[Submit Evidence]
+  J --> K[Proof Hash Recorded]
+  K --> L[Buyer Accepts Delivery]
+  L --> M[Settlement Completed]
+  M --> N[Reputation Updated]

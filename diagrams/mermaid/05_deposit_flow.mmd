@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant Buyer
+  participant UI as Deal Room UI
+  participant API as Backend API
+  participant SM as Escrow State Machine
+  participant ST as Stellar Service
+  participant SC as Soroban Contract
+  Buyer->>UI: Click simulate buyer deposit
+  UI->>API: POST /buyer-deposit
+  API->>SM: validate transition
+  SM-->>API: BUYER_FUNDED or LOCKED
+  API->>ST: record BuyerDeposited event
+  ST->>SC: invoke deposit_buyer
+  SC-->>ST: tx hash
+  API-->>UI: updated deal + tx hash

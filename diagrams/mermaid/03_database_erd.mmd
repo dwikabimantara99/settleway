@@ -1,0 +1,10 @@
+erDiagram
+  profiles ||--o{ listings : creates
+  profiles ||--o{ buyer_requests : creates
+  profiles ||--o{ deals : buyer_or_seller
+  listings ||--o{ deals : source
+  buyer_requests ||--o{ deals : source
+  deals ||--o{ escrow_events : records
+  deals ||--o{ evidence_files : contains
+  deals ||--o{ reputation_events : produces
+  profiles ||--o{ reputation_events : receives
