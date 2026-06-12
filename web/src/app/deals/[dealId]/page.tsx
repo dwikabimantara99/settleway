@@ -4,31 +4,49 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { Stepper, Step } from '@/components/ui/Stepper';
-import { demoDeals, demoProfiles } from '@/lib/demo/demo-data';
+import { demoProfiles } from '@/lib/demo/demo-data';
 import { ShieldCheck, Upload, FileText, CheckCircle2, ChevronLeft, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { getDeal } from '@/lib/db/deals';
+import { DealActions } from '@/components/deal/DealActions';
 
 export default async function DealRoomPage({ params }: { params: Promise<{ dealId: string }> }) {
   const resolvedParams = await params;
-  const deal = demoDeals[resolvedParams.dealId];
+  const deal = await getDeal(resolvedParams.dealId);
   
   if (!deal) return notFound();
 
-  const buyer = demoProfiles[deal.buyerId];
-  const seller = demoProfiles[deal.sellerId];
+  const buyer = demoProfiles[deal.buyer_id];
+  const seller = demoProfiles[deal.seller_id];
 
-  // Static mock status mapping for UI display
+  const status = deal.status;
   const steps: Step[] = [
-    { label: 'Created', status: 'complete' },
-    { label: 'Deposits Locked', status: 'current' },
-    { label: 'In Transit', status: 'upcoming' },
-    { label: 'Proof Submitted', status: 'upcoming' },
-    { label: 'Settled', status: 'upcoming' },
+    { label: 'Waiting Deposits', status: status === 'WAITING_DEPOSITS' ? 'current' : 'complete' },
+    { label: 'Deposits Locked', status: (status === 'BUYER_FUNDED' || status === 'SELLER_FUNDED') ? 'current' : (status === 'WAITING_DEPOSITS' ? 'upcoming' : 'complete') },
+    { label: 'Proof Submitted', status: status === 'LOCKED' ? 'current' : (status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
+    { label: 'Delivered', status: status === 'PROOF_SUBMITTED' ? 'current' : (status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
+    { label: 'Settled', status: (status === 'DELIVERED' || status === 'ACCEPTED') ? 'current' : (status === 'COMPLETED' ? 'complete' : 'upcoming') },
   ];
+  const isPostProof = status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED';
+  
+  let lockedValueText = 'Rp 0';
+  let helperText = 'Escrow will lock automatically when both parties have transferred their required deposits to the virtual accounts.';
+
+  if (status === 'COMPLETED' || status === 'REFUNDED' || status === 'CANCELLED' || status === 'EXPIRED') {
+    lockedValueText = 'Settled (Rp 0)';
+    helperText = status === 'COMPLETED' ? 'Simulated settlement complete. Funds released.' : 'Deal cancelled or expired. Funds refunded.';
+  } else if (status === 'LOCKED' || isPostProof) {
+    const lockedTotal = deal.principal_idr + deal.buyer_bond_idr + deal.seller_bond_idr;
+    lockedValueText = `Rp ${lockedTotal.toLocaleString('id-ID')}`;
+    helperText = 'Funds are securely locked (Simulated Phase 5).';
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
+        <div className="bg-amber-50 text-amber-800 text-sm px-4 py-3 rounded-lg mb-4 border border-amber-200">
+          <strong>Phase 5 Notice:</strong> Escrow state is simulated in-memory and will reset if the dev server reloads.
+        </div>
         <Link href="/marketplace" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600">
           <ChevronLeft className="mr-1 h-4 w-4" />
           Back to Marketplace
@@ -45,11 +63,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             </div>
             <p className="text-slate-600">Deal ID: <span className="font-mono text-xs bg-slate-100 p-1 rounded">{deal.id}</span></p>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="secondary" disabled title="Phase 5 Demo">Simulate Seller Deposit (Phase 5)</Button>
-            <Button variant="primary" disabled title="Phase 5 Demo">Simulate Buyer Deposit (Phase 5)</Button>
-          </div>
+          <DealActions dealId={deal.id} status={deal.status} />
         </div>
 
         <div className="mt-8 md:mt-10 pb-4 md:pb-6">
@@ -68,8 +82,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             <CardContent className="p-6">
               <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-8 text-center mb-6">
                 <Upload className="h-8 w-8 text-slate-400 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-slate-900 mb-1">Upload Delivery Evidence</h3>
-                <p className="text-xs text-slate-500 mb-4">Seller must upload photo of loaded goods and signed receipt.</p>
+                <h3 className="text-sm font-semibold text-slate-900 mb-1">{isPostProof ? 'Delivery Evidence' : 'Upload Delivery Evidence'}</h3>
+                <p className="text-xs text-slate-500 mb-4">{isPostProof ? 'Proof milestone simulated. Real file upload and proof hashing will be added in Phase 8.' : 'Delivery evidence is planned for Phase 8. Submit Proof in Phase 5 simulates the proof milestone only.'}</p>
                 <Button variant="secondary" size="sm" disabled>Select Files (Phase 8)</Button>
               </div>
 
@@ -80,20 +94,20 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                     <FileText className="h-5 w-5 text-emerald-600" />
                     <div>
                       <div className="text-sm font-medium text-slate-900">Waybill / Resi</div>
-                      <div className="text-xs text-slate-500">Awaiting upload</div>
+                      <div className="text-xs text-slate-500">{isPostProof ? 'Proof milestone simulated' : 'Upload pending for Phase 8'}</div>
                     </div>
                   </div>
-                  <Badge variant="secondary">Pending</Badge>
+                  <Badge variant="secondary">{isPostProof ? 'Simulated' : 'Phase 8'}</Badge>
                 </div>
                 <div className="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white">
                   <div className="flex items-center gap-3">
                     <FileText className="h-5 w-5 text-emerald-600" />
                     <div>
                       <div className="text-sm font-medium text-slate-900">Quality Inspection Photo</div>
-                      <div className="text-xs text-slate-500">Awaiting upload</div>
+                      <div className="text-xs text-slate-500">{isPostProof ? 'Proof milestone simulated' : 'Upload pending for Phase 8'}</div>
                     </div>
                   </div>
-                  <Badge variant="secondary">Pending</Badge>
+                  <Badge variant="secondary">{isPostProof ? 'Simulated' : 'Phase 8'}</Badge>
                 </div>
               </div>
             </CardContent>
@@ -131,7 +145,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             <CardHeader className="bg-emerald-50 rounded-t-xl border-b border-emerald-100 pb-4">
               <CardTitle className="text-emerald-900 text-base flex justify-between">
                 <span>Value Locked</span>
-                <span>Rp 0</span>
+                <span>{lockedValueText}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 text-sm">
@@ -139,23 +153,23 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 <div className="font-semibold text-slate-900 mb-2 border-b border-slate-100 pb-1">Buyer Funds</div>
                 <div className="flex justify-between text-slate-600 py-1">
                   <span>Principal</span>
-                  <span>Rp {deal.principalIdr.toLocaleString('id-ID')}</span>
+                  <span>Rp {deal.principal_idr.toLocaleString('id-ID')}</span>
                 </div>
                 <div className="flex justify-between text-slate-600 py-1">
                   <span>Bond (5%)</span>
-                  <span>Rp {deal.buyerBondIdr.toLocaleString('id-ID')}</span>
+                  <span>Rp {deal.buyer_bond_idr.toLocaleString('id-ID')}</span>
                 </div>
               </div>
               <div className="mb-4">
                 <div className="font-semibold text-slate-900 mb-2 border-b border-slate-100 pb-1">Seller Funds</div>
                 <div className="flex justify-between text-slate-600 py-1">
                   <span>Bond (5%)</span>
-                  <span>Rp {deal.sellerBondIdr.toLocaleString('id-ID')}</span>
+                  <span>Rp {deal.seller_bond_idr.toLocaleString('id-ID')}</span>
                 </div>
               </div>
               <div className="bg-slate-50 p-3 rounded text-xs text-slate-500 flex gap-2">
                 <Info className="h-4 w-4 shrink-0 text-slate-400" />
-                <span>Escrow will lock automatically when both parties have transferred their required deposits to the virtual accounts.</span>
+                <span>{helperText}</span>
               </div>
             </CardContent>
           </Card>

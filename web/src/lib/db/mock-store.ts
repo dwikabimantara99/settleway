@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
-import { DbProfile, DbListing, DbBuyerRequest, DbDeal } from './types';
+import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -75,6 +75,7 @@ class MockStore {
   listings: Map<string, DbListing> = new Map();
   buyerRequests: Map<string, DbBuyerRequest> = new Map();
   deals: Map<string, DbDeal> = new Map();
+  events: Map<string, DbEscrowEvent[]> = new Map(); // Keyed by dealId
 
   constructor() {
     this.seed();
@@ -85,12 +86,39 @@ class MockStore {
     this.listings.clear();
     this.buyerRequests.clear();
     this.deals.clear();
+    this.events.clear();
 
     Object.values(demoProfiles).forEach(p => this.profiles.set(p.id, toDbProfile(p)));
     demoListings.forEach(l => this.listings.set(l.id, toDbListing(l)));
     demoBuyerRequests.forEach(r => this.buyerRequests.set(r.id, toDbBuyerRequest(r)));
-    Object.values(demoDeals).forEach(d => this.deals.set(d.id, toDbDeal(d)));
+    Object.values(demoDeals).forEach(d => {
+      this.deals.set(d.id, toDbDeal(d));
+      this.events.set(d.id, []);
+    });
+  }
+
+  updateDeal(dealId: string, partialDeal: Partial<DbDeal>) {
+    const existing = this.deals.get(dealId);
+    if (!existing) throw new Error('Deal not found');
+    this.deals.set(dealId, { ...existing, ...partialDeal, updated_at: new Date().toISOString() });
+  }
+
+  addEvent(event: DbEscrowEvent) {
+    const dealEvents = this.events.get(event.deal_id) || [];
+    dealEvents.push(event);
+    this.events.set(event.deal_id, dealEvents);
+  }
+
+  getDealEvents(dealId: string): DbEscrowEvent[] {
+    return this.events.get(dealId) || [];
   }
 }
 
-export const mockStore = new MockStore();
+declare global {
+  var __mockStore: MockStore | undefined;
+}
+
+export const mockStore = globalThis.__mockStore || new MockStore();
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.__mockStore = mockStore;
+}
