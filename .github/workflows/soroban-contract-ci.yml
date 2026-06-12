@@ -1,0 +1,56 @@
+name: Soroban Contract CI
+
+on:
+  push:
+    branches:
+      - phase-6-soroban-contract
+    paths:
+      - "contracts/settleway_escrow/**"
+      - ".github/workflows/soroban-contract-ci.yml"
+  pull_request:
+    paths:
+      - "contracts/settleway_escrow/**"
+      - ".github/workflows/soroban-contract-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: contracts/settleway_escrow
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Display Rust toolchain versions
+        run: |
+          rustup --version
+          rustc --version
+          cargo --version
+
+      - name: Select stable Rust
+        run: |
+          rustup update stable
+          rustup default stable
+
+      - name: Add Stellar-compatible Wasm target
+        run: rustup target add wasm32v1-none
+
+      - name: Run contract unit tests
+        run: cargo test --verbose
+
+      - name: Build contract Wasm
+        run: cargo build --target wasm32v1-none --release --verbose
+
+      - name: Confirm Wasm output
+        run: |
+          find target/wasm32v1-none/release \
+            -maxdepth 1 \
+            -type f \
+            -name "*.wasm" \
+            -print
