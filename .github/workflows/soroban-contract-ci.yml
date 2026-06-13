@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - phase-6-soroban-contract
+      - phase-7-stellar-integration
     paths:
       - "contracts/settleway_escrow/**"
       - ".github/workflows/soroban-contract-ci.yml"
@@ -54,3 +55,9 @@ jobs:
             -type f \
             -name "*.wasm" \
             -print
+
+      - name: Upload Wasm artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: settleway-escrow-wasm
+          path: contracts/settleway_escrow/target/wasm32v1-none/release/settleway_escrow.wasm
