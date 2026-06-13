@@ -24,18 +24,19 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
     case 'BUYER_FUNDED':
       if (action === 'seller_deposit') nextStatus = 'LOCKED';
       else if (action === 'expire') nextStatus = 'REFUNDED';
+      else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'SELLER_FUNDED':
       if (action === 'buyer_deposit') nextStatus = 'LOCKED';
       else if (action === 'expire') nextStatus = 'REFUNDED';
+      else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'LOCKED':
       if (action === 'submit_proof') nextStatus = 'PROOF_SUBMITTED';
-      else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 

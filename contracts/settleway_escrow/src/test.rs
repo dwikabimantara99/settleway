@@ -1,23 +1,33 @@
 #![cfg(test)]
 
 use super::*;
-use soroban_sdk::{Env, testutils::Address as _, BytesN, Address};
+use soroban_sdk::testutils::{MockAuth, MockAuthInvoke};
+use soroban_sdk::{testutils::Address as _, testutils::Ledger as _, Address, BytesN, Env, IntoVal};
 
-#[test]
-fn test_escrow_flow() {
+fn setup() -> (
+    Env,
+    SettlewayEscrowContractClient<'static>,
+    Address,
+    Address,
+    Address,
+    u64,
+) {
     let env = Env::default();
-    env.mock_all_auths();
-
     let contract_id = env.register_contract(None, SettlewayEscrowContract);
     let client = SettlewayEscrowContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
-    client.initialize(&admin);
-
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
+
+    env.mock_all_auths();
+
+    client.initialize(&admin);
+
     let deal_hash = BytesN::from_array(&env, &[0; 32]);
-    let proof_hash = BytesN::from_array(&env, &[1; 32]);
+    let expires_at = 100_000;
+
+    env.ledger().set_timestamp(10_000);
 
     let escrow_id = client.create_escrow(
         &deal_hash,
@@ -28,64 +38,214 @@ fn test_escrow_flow() {
         &50_000,
         &5_000,
         &5_000,
-        &9_999_999,
+        &expires_at,
     );
 
-    assert_eq!(escrow_id, 1);
-    
-    let mut escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::WaitingDeposits);
-
-    client.deposit_buyer(&escrow_id, &buyer);
-    escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::BuyerFunded);
-
-    client.deposit_seller(&escrow_id, &seller);
-    escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::Locked);
-
-    client.submit_proof_hash(&escrow_id, &seller, &proof_hash);
-    escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::ProofSubmitted);
-
-    client.mark_delivered(&escrow_id, &seller);
-    escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::Delivered);
-
-    client.accept_and_complete(&escrow_id, &buyer);
-    escrow = client.get_escrow(&escrow_id);
-    assert_eq!(escrow.status, EscrowStatus::Completed);
+    (env, client, admin, buyer, seller, escrow_id)
 }
 
 #[test]
-#[should_panic(expected = "Invalid state")]
-fn test_invalid_proof() {
-    let env = Env::default();
-    env.mock_all_auths();
+fn test_buyer_first_seller_second_locks() {
+    let (env, client, _, buyer, seller, escrow_id) = setup();
 
+    client.deposit_buyer(&escrow_id, &buyer);
+    assert_eq!(
+        client.get_escrow(&escrow_id).status,
+        EscrowStatus::BuyerFunded
+    );
+
+    client.deposit_seller(&escrow_id, &seller);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Locked);
+}
+
+#[test]
+fn test_seller_first_buyer_second_locks() {
+    let (env, client, _, buyer, seller, escrow_id) = setup();
+
+    client.deposit_seller(&escrow_id, &seller);
+    assert_eq!(
+        client.get_escrow(&escrow_id).status,
+        EscrowStatus::SellerFunded
+    );
+
+    client.deposit_buyer(&escrow_id, &buyer);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Locked);
+}
+
+#[test]
+fn test_expiry_no_deposit_becomes_expired() {
+    let (env, client, admin, _, _, escrow_id) = setup();
+    env.ledger().set_timestamp(100_001); // Past expires_at
+    client.expire_if_unfunded(&escrow_id);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Expired);
+}
+
+#[test]
+fn test_expiry_buyer_funded_becomes_refunded() {
+    let (env, client, admin, buyer, _, escrow_id) = setup();
+    client.deposit_buyer(&escrow_id, &buyer);
+    env.ledger().set_timestamp(100_001); // Past expires_at
+    client.expire_if_unfunded(&escrow_id);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
+}
+
+#[test]
+fn test_expiry_seller_funded_becomes_refunded() {
+    let (env, client, admin, _, seller, escrow_id) = setup();
+    client.deposit_seller(&escrow_id, &seller);
+    env.ledger().set_timestamp(100_001); // Past expires_at
+    client.expire_if_unfunded(&escrow_id);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
+}
+
+#[test]
+#[should_panic(expected = "Cannot expire after lock")]
+fn test_expiry_after_locked_rejected() {
+    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    client.deposit_buyer(&escrow_id, &buyer);
+    client.deposit_seller(&escrow_id, &seller);
+    env.ledger().set_timestamp(100_001); // Past expires_at
+    client.expire_if_unfunded(&escrow_id);
+}
+
+#[test]
+#[should_panic(expected = "Not expired yet")]
+fn test_expiry_before_time_rejected() {
+    let (env, client, admin, _, _, escrow_id) = setup();
+    env.ledger().set_timestamp(99_999); // Before expires_at
+    client.expire_if_unfunded(&escrow_id);
+}
+
+#[test]
+#[should_panic]
+fn test_expiry_auth_required() {
+    let env = Env::default();
     let contract_id = env.register_contract(None, SettlewayEscrowContract);
     let client = SettlewayEscrowContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
-    client.initialize(&admin);
-
     let buyer = Address::generate(&env);
     let seller = Address::generate(&env);
-    let deal_hash = BytesN::from_array(&env, &[0; 32]);
-    let proof_hash = BytesN::from_array(&env, &[1; 32]);
+    let malicious = Address::generate(&env);
 
+    // Explicitly mock all auths for setup
+    env.mock_all_auths();
+
+    client.initialize(&admin);
+
+    let deal_hash = BytesN::from_array(&env, &[0; 32]);
     let escrow_id = client.create_escrow(
-        &deal_hash,
-        &buyer,
-        &seller,
-        &1_000_000,
-        &50_000,
-        &50_000,
-        &5_000,
-        &5_000,
-        &9_999_999,
+        &deal_hash, &buyer, &seller, &100, &10, &10, &1, &1, &100_000,
     );
 
-    // Try submitting proof before locked
+    env.ledger().set_timestamp(100_001);
+
+    // Attempt to expire with malicious auth. The contract requires admin auth, so this will panic.
+    client
+        .mock_auths(&[MockAuth {
+            address: &malicious,
+            invoke: &MockAuthInvoke {
+                contract: &contract_id,
+                fn_name: "expire_if_unfunded",
+                args: (&escrow_id,).into_val(&env),
+                sub_invokes: &[],
+            },
+        }])
+        .expire_if_unfunded(&escrow_id);
+}
+
+#[test]
+#[should_panic(expected = "No funds to refund")]
+fn test_refund_no_deposit_rejected() {
+    let (env, client, admin, _, _, escrow_id) = setup();
+    client.refund_before_locked(&escrow_id);
+}
+
+#[test]
+fn test_refund_buyer_funded_becomes_refunded() {
+    let (env, client, admin, buyer, _, escrow_id) = setup();
+    client.deposit_buyer(&escrow_id, &buyer);
+    client.refund_before_locked(&escrow_id);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
+}
+
+#[test]
+fn test_refund_seller_funded_becomes_refunded() {
+    let (env, client, admin, _, seller, escrow_id) = setup();
+    client.deposit_seller(&escrow_id, &seller);
+    client.refund_before_locked(&escrow_id);
+    assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
+}
+
+#[test]
+#[should_panic(expected = "Cannot refund after locked")]
+fn test_refund_after_locked_rejected() {
+    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    client.deposit_buyer(&escrow_id, &buyer);
+    client.deposit_seller(&escrow_id, &seller);
+    client.refund_before_locked(&escrow_id);
+}
+
+#[test]
+#[should_panic]
+fn test_refund_auth_required() {
+    let env = Env::default();
+    let contract_id = env.register_contract(None, SettlewayEscrowContract);
+    let client = SettlewayEscrowContractClient::new(&env, &contract_id);
+
+    let admin = Address::generate(&env);
+    let buyer = Address::generate(&env);
+    let seller = Address::generate(&env);
+    let malicious = Address::generate(&env);
+
+    env.mock_all_auths();
+
+    client.initialize(&admin);
+    let deal_hash = BytesN::from_array(&env, &[0; 32]);
+    let escrow_id = client.create_escrow(
+        &deal_hash, &buyer, &seller, &100, &10, &10, &1, &1, &100_000,
+    );
+    client.deposit_buyer(&escrow_id, &buyer);
+
+    client
+        .mock_auths(&[MockAuth {
+            address: &malicious,
+            invoke: &MockAuthInvoke {
+                contract: &contract_id,
+                fn_name: "refund_before_locked",
+                args: (&escrow_id,).into_val(&env),
+                sub_invokes: &[],
+            },
+        }])
+        .refund_before_locked(&escrow_id);
+}
+
+#[test]
+#[should_panic(expected = "Invalid state for acceptance")]
+fn test_completion_from_proof_submitted_rejected() {
+    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let proof_hash = BytesN::from_array(&env, &[1; 32]);
+
+    client.deposit_buyer(&escrow_id, &buyer);
+    client.deposit_seller(&escrow_id, &seller);
     client.submit_proof_hash(&escrow_id, &seller, &proof_hash);
+
+    client.accept_and_complete(&escrow_id, &buyer);
+}
+
+#[test]
+fn test_completion_from_delivered_produces_completed() {
+    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let proof_hash = BytesN::from_array(&env, &[1; 32]);
+
+    client.deposit_buyer(&escrow_id, &buyer);
+    client.deposit_seller(&escrow_id, &seller);
+    client.submit_proof_hash(&escrow_id, &seller, &proof_hash);
+    client.mark_delivered(&escrow_id, &seller);
+
+    client.accept_and_complete(&escrow_id, &buyer);
+    assert_eq!(
+        client.get_escrow(&escrow_id).status,
+        EscrowStatus::Completed
+    );
 }
