@@ -3,6 +3,7 @@ import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../dem
 import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
+import { transition, EscrowAction } from '../escrow/state-machine';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -107,6 +108,83 @@ export class MockStore {
     const existing = this.deals.get(dealId);
     if (!existing) throw new Error('Deal not found');
     this.deals.set(dealId, { ...existing, ...partialDeal, updated_at: new Date().toISOString() });
+  }
+
+  replaceDealIfCurrent(input: {
+    current: DbDeal;
+    next: DbDeal;
+  }): {
+    replaced: boolean;
+    deal: DbDeal | null;
+  } {
+    const stored = this.deals.get(input.current.id);
+    if (!stored) {
+      return { replaced: false, deal: null };
+    }
+
+    const currentKeys = Object.keys(input.current) as (keyof DbDeal)[];
+    const storedKeys = Object.keys(stored) as (keyof DbDeal)[];
+
+    if (currentKeys.length !== storedKeys.length) return { replaced: false, deal: null };
+
+    for (const key of currentKeys) {
+      if (JSON.stringify(input.current[key]) !== JSON.stringify(stored[key])) {
+        return { replaced: false, deal: null };
+      }
+    }
+
+    const nextKeys = Object.keys(input.next) as (keyof DbDeal)[];
+    for (const key of nextKeys) {
+      if (key !== "status" && key !== "stellar_sync_status" && key !== "stellar_contract_id" && key !== "stellar_escrow_id" && key !== "latest_stellar_tx_hash" && key !== "updated_at") {
+        if (JSON.stringify(input.next[key]) !== JSON.stringify(input.current[key])) {
+          return { replaced: false, deal: null };
+        }
+      }
+    }
+
+    let isLegal = false;
+    if (input.current.status === input.next.status) {
+      isLegal = true;
+    } else {
+      const allActions: EscrowAction[] = [
+        'buyer_deposit', 'seller_deposit', 'submit_proof',
+        'mark_delivered', 'accept_delivery', 'expire', 'refund'
+      ];
+      for (const act of allActions) {
+        try {
+          const result = transition(input.current, act);
+          if (result.status === input.next.status) {
+            isLegal = true;
+            break;
+          }
+        } catch {
+          // ignore invalid transitions
+        }
+      }
+    }
+
+    if (!isLegal) {
+      return { replaced: false, deal: null };
+    }
+
+    if (input.current.status === input.next.status) {
+      if (
+        input.current.stellar_sync_status === input.next.stellar_sync_status &&
+        input.current.stellar_contract_id === input.next.stellar_contract_id &&
+        input.current.stellar_escrow_id === input.next.stellar_escrow_id &&
+        input.current.latest_stellar_tx_hash === input.next.latest_stellar_tx_hash &&
+        input.current.updated_at === input.next.updated_at
+      ) {
+        return { replaced: false, deal: null };
+      }
+    }
+
+    const defensiveCopy = JSON.parse(JSON.stringify(input.next));
+    this.deals.set(input.current.id, defensiveCopy);
+    return {
+      replaced: true,
+      deal: JSON.parse(JSON.stringify(defensiveCopy))
+    };
   }
 
   addEvent(event: DbEscrowEvent) {

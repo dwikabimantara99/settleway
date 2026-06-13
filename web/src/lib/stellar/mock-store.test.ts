@@ -408,3 +408,182 @@ describe("MockStore - Stellar Operations", () => {
     });
   });
 });
+  describe("replaceDealIfCurrent (CAS)", () => {
+    let store: import('../db/mock-store').MockStore;
+    beforeEach(() => { store = new (MockStore)(); });
+    function makeDeal(overrides: Partial<import('../db/types').DbDeal> = {}): import('../db/types').DbDeal {
+      return {
+        id: "deal-1",
+        listing_id: "listing-1",
+        buyer_request_id: null,
+        buyer_id: "b1",
+        seller_id: "s1",
+        commodity: "Coffee",
+        volume_kg: 100,
+        principal_idr: 1000,
+        buyer_bond_idr: 100,
+        seller_bond_idr: 100,
+        buyer_fee_idr: 10,
+        seller_fee_idr: 10,
+        buyer_total_idr: 1110,
+        seller_total_idr: 890,
+        status: "WAITING_DEPOSITS",
+        stellar_mode: "mock_only",
+        stellar_contract_id: null,
+        stellar_escrow_id: null,
+        latest_stellar_tx_hash: null,
+        stellar_sync_status: "idle",
+        created_at: "2023-01-01T00:00:00Z",
+        updated_at: "2023-01-01T00:00:00Z",
+        ...overrides
+      };
+    }
+
+    it("synchronization-only update", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ stellar_sync_status: "pending", updated_at: "2023-01-01T01:00:00Z" });
+      const res = store.replaceDealIfCurrent({ current, next });
+      expect(res.replaced).toBe(true);
+      expect(res.deal?.stellar_sync_status).toBe("pending");
+    });
+
+    it("create-deal contract/escrow synchronization", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ stellar_contract_id: "c1", stellar_escrow_id: "e1", updated_at: "2023-01-01T01:00:00Z" });
+      const res = store.replaceDealIfCurrent({ current, next });
+      expect(res.replaced).toBe(true);
+      expect(res.deal?.stellar_contract_id).toBe("c1");
+    });
+
+    it("every legal lifecycle transition used by the 13 canonical plans", () => {
+      const transitions = [
+        ["WAITING_DEPOSITS", "BUYER_FUNDED"],
+        ["WAITING_DEPOSITS", "SELLER_FUNDED"],
+        ["WAITING_DEPOSITS", "EXPIRED"],
+        ["BUYER_FUNDED", "LOCKED"],
+        ["BUYER_FUNDED", "REFUNDED"],
+
+        ["SELLER_FUNDED", "LOCKED"],
+        ["SELLER_FUNDED", "REFUNDED"],
+
+        ["LOCKED", "PROOF_SUBMITTED"],
+        ["PROOF_SUBMITTED", "DELIVERED"],
+        ["DELIVERED", "COMPLETED"]
+      ];
+      for (const [from, to] of transitions) {
+        const current = makeDeal({ id: `d-${from}-${to}`, status: from as import('../db/types').DealStatus });
+        store.deals.set(current.id, current);
+        const next = makeDeal({ id: current.id, status: to as import('../db/types').DealStatus, updated_at: "2023-01-01T01:00:00Z" });
+        const res = store.replaceDealIfCurrent({ current, next });
+        expect(res.replaced).toBe(true);
+      }
+    });
+
+    it("stale snapshot", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, makeDeal({ status: "BUYER_FUNDED" }));
+      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+      const res = store.replaceDealIfCurrent({ current, next });
+      expect(res.replaced).toBe(false);
+    });
+
+    it("missing deal", () => {
+      const current = makeDeal();
+      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+      const res = store.replaceDealIfCurrent({ current, next });
+      expect(res.replaced).toBe(false);
+    });
+
+    it("buyer identity mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ buyer_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("seller identity mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ seller_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("listing/request identity mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ listing_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("monetary-field mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ principal_idr: 9999, updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("Stellar-mode mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ stellar_mode: "testnet", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("created timestamp mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ created_at: "2025-01-01T01:00:00Z", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("unrelated-field mutation", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ commodity: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("illegal transition", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ status: "COMPLETED", updated_at: "2023-01-01T01:00:00Z" });
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("no-op rejection", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal();
+      expect(store.replaceDealIfCurrent({ current, next }).replaced).toBe(false);
+    });
+
+    it("storage immutability on failure", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ status: "COMPLETED", updated_at: "2023-01-01T01:00:00Z" });
+      store.replaceDealIfCurrent({ current, next });
+      expect(store.deals.get(current.id)?.status).toBe("WAITING_DEPOSITS");
+    });
+
+    it("caller immutability", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+      const currentOriginal = JSON.parse(JSON.stringify(current));
+      const nextOriginal = JSON.parse(JSON.stringify(next));
+      store.replaceDealIfCurrent({ current, next });
+      expect(current).toStrictEqual(currentOriginal);
+      expect(next).toStrictEqual(nextOriginal);
+    });
+
+    it("defensive copies", () => {
+      const current = makeDeal();
+      store.deals.set(current.id, current);
+      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+      const res = store.replaceDealIfCurrent({ current, next });
+      if (res.deal) { res.deal.status = "COMPLETED"; }
+      expect(store.deals.get(current.id)?.status).toBe("BUYER_FUNDED");
+    });
+  });
