@@ -64,12 +64,11 @@ initialize(admin: Address)
 create_escrow(deal_hash: BytesN<32>, buyer: Address, seller: Address, principal: i128, buyer_bond: i128, seller_bond: i128, buyer_fee: i128, seller_fee: i128, expires_at: u64) -> u64
 deposit_buyer(escrow_id: u64, actor: Address)
 deposit_seller(escrow_id: u64, actor: Address)
-lock_if_ready(escrow_id: u64)
 submit_proof_hash(escrow_id: u64, actor: Address, proof_hash: BytesN<32>)
 mark_delivered(escrow_id: u64, actor: Address)
 accept_and_complete(escrow_id: u64, actor: Address)
-expire_if_unfunded(escrow_id: u64, now: u64)
-refund_before_locked(escrow_id: u64, actor: Address)
+expire_if_unfunded(env: Env, escrow_id: u64)
+refund_before_locked(env: Env, escrow_id: u64)
 get_escrow(escrow_id: u64) -> Escrow
 ```
 
@@ -94,13 +93,55 @@ TransactionCompleted(escrow_id)
 - `create_escrow` creates `WaitingDeposits`.
 - Buyer deposit from `WaitingDeposits` creates `BuyerFunded` unless seller already funded.
 - Seller deposit from `WaitingDeposits` creates `SellerFunded` unless buyer already funded.
-- When both deposits exist, `lock_if_ready` creates `Locked`.
 - Proof hash only allowed from `Locked` or later before completion.
 - Delivery can be marked after proof.
-- Acceptance completes the transaction.
-- Expiry before locked is allowed.
-- Refund before locked is allowed.
 - Invalid transitions must fail.
+
+### Locking
+
+- There is no public `lock_if_ready` method.
+- The second successful deposit automatically transitions the escrow to `Locked`.
+- Automatic locking emits the `EscrowLocked` milestone event.
+
+### Expiry
+
+Use the public signature:
+```rust
+expire_if_unfunded(env: Env, escrow_id: u64)
+```
+
+- The configured admin is loaded from contract storage.
+- The stored admin must authorize the call.
+- Time comes from `env.ledger().timestamp()`.
+- No caller-supplied timestamp is accepted.
+- `WaitingDeposits -> Expired`
+- `BuyerFunded -> Refunded`
+- `SellerFunded -> Refunded`
+- Expiry is rejected from `Locked` and later states.
+
+### Manual refund
+
+Use the public signature:
+```rust
+refund_before_locked(env: Env, escrow_id: u64)
+```
+
+- The configured admin authorizes it.
+- It is allowed only from `BuyerFunded` and `SellerFunded`.
+- It is rejected from `WaitingDeposits`.
+- It is rejected from `Locked` and later states.
+- It records a milestone only and transfers no real funds.
+
+### Completion
+
+- `accept_and_complete` requires `Delivered`.
+- Direct completion from `ProofSubmitted` is rejected.
+
+### Product honesty
+
+- The contract records lifecycle state and events.
+- No real funds are held.
+- No token custody or payment transfer occurs.
 
 ## Backend integration behavior
 
