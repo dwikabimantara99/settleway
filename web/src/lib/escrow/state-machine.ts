@@ -1,5 +1,17 @@
 import { DbDeal } from '../db/types';
 
+export type DealStatus =
+  | "WAITING_DEPOSITS"
+  | "BUYER_FUNDED"
+  | "SELLER_FUNDED"
+  | "LOCKED"
+  | "PROOF_SUBMITTED"
+  | "DELIVERED"
+  | "COMPLETED"
+  | "EXPIRED"
+  | "REFUNDED"
+  | "CANCELLED";
+
 export type EscrowAction = 
   | 'buyer_deposit'
   | 'seller_deposit'
@@ -10,8 +22,8 @@ export type EscrowAction =
   | 'refund';
 
 export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
-  const currentStatus = deal.status;
-  let nextStatus = currentStatus;
+  const currentStatus = deal.status as DealStatus;
+  let nextStatus: DealStatus = currentStatus;
 
   switch (currentStatus) {
     case 'WAITING_DEPOSITS':
