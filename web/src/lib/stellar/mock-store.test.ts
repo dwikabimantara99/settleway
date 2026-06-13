@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, expectTypeOf } from "vitest";
 import { MockStore } from "../db/mock-store";
 import type { StellarOperation } from "./types";
 
@@ -222,7 +222,17 @@ describe("MockStore - Stellar Operations", () => {
     expect(retrieved?.created_at).toBe("2023-01-01T00:00:00Z");
   });
 
+  it("type checks identity fields", () => {
+    type UpdatePatch = Parameters<typeof store.updateStellarOperation>[1];
 
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('idempotency_key');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('deal_id');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('requested_action');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('expected_local_status');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('target_local_status');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('stellar_method');
+    expectTypeOf<UpdatePatch>().not.toHaveProperty('created_at');
+  });
 
   describe("replaceStellarOperationIfCurrent (CAS)", () => {
     function makeOp(overrides: Partial<StellarOperation> = {}): StellarOperation {
@@ -253,6 +263,15 @@ describe("MockStore - Stellar Operations", () => {
       expect(res.replaced).toBe(true);
       expect(res.operation?.operation_status).toBe("submitted");
       expect(store.getStellarOperation("cas-key")?.operation_status).toBe("submitted");
+    });
+
+    it("successful pending → failed CAS", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "failed", transaction_hash: null, public_error_code: "ERR_VALIDATION", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("failed");
     });
 
     it("successful submitted → confirmed CAS", () => {

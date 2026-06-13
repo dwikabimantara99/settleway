@@ -66,6 +66,19 @@ describe("MockStoreStellarOperationPersistence", () => {
     expect(store.getStellarOperation("persist-key")?.operation_status).toBe("submitted");
   });
 
+  it("pending → failed replacement succeeds", async () => {
+    const pending = makeOp();
+    await persistence.createPending(pending);
+    const failed = makeOp({
+      operation_status: "failed",
+      transaction_hash: null,
+      public_error_code: "ERR_VALIDATION",
+      updated_at: "2024-01-01T01:00:00Z",
+    });
+    const res = await persistence.replaceIfCurrent({ current: pending, next: failed });
+    expect(res).toStrictEqual({ ok: true });
+  });
+
   it("submitted → confirmed replacement succeeds", async () => {
     const submitted = makeOp({
       operation_status: "submitted",
@@ -83,6 +96,85 @@ describe("MockStoreStellarOperationPersistence", () => {
       updated_at: "2024-01-01T02:00:00Z",
     });
     const res = await persistence.replaceIfCurrent({ current: submitted, next: confirmed });
+    expect(res).toStrictEqual({ ok: true });
+  });
+
+  it("submitted → failed replacement succeeds", async () => {
+    const submitted = makeOp({
+      operation_status: "submitted",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      updated_at: "2024-01-01T01:00:00Z",
+    });
+    store.createStellarOperation(submitted);
+    const failed = makeOp({
+      operation_status: "failed",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      public_error_code: "ERR_CONTRACT_REJECTED",
+      updated_at: "2024-01-01T02:00:00Z",
+    });
+    const res = await persistence.replaceIfCurrent({ current: submitted, next: failed });
+    expect(res).toStrictEqual({ ok: true });
+  });
+
+  it("submitted → unknown replacement succeeds", async () => {
+    const submitted = makeOp({
+      operation_status: "submitted",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      updated_at: "2024-01-01T01:00:00Z",
+    });
+    store.createStellarOperation(submitted);
+    const unknown = makeOp({
+      operation_status: "unknown",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      public_error_code: "ERR_UNKNOWN",
+      updated_at: "2024-01-01T02:00:00Z",
+    });
+    const res = await persistence.replaceIfCurrent({ current: submitted, next: unknown });
+    expect(res).toStrictEqual({ ok: true });
+  });
+
+  it("unknown → confirmed replacement succeeds", async () => {
+    const unknown = makeOp({
+      operation_status: "unknown",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      public_error_code: "ERR_UNKNOWN",
+      updated_at: "2024-01-01T02:00:00Z",
+    });
+    store.createStellarOperation(unknown);
+    const confirmed = makeOp({
+      operation_status: "confirmed",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      confirmed_at: "2024-01-01T03:00:00Z",
+      result_escrow_id: "esc1",
+      updated_at: "2024-01-01T03:00:00Z",
+    });
+    const res = await persistence.replaceIfCurrent({ current: unknown, next: confirmed });
+    expect(res).toStrictEqual({ ok: true });
+  });
+
+  it("unknown → failed replacement succeeds", async () => {
+    const unknown = makeOp({
+      operation_status: "unknown",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      public_error_code: "ERR_UNKNOWN",
+      updated_at: "2024-01-01T02:00:00Z",
+    });
+    store.createStellarOperation(unknown);
+    const failed = makeOp({
+      operation_status: "failed",
+      transaction_hash: "tx1",
+      submitted_at: "2024-01-01T01:00:00Z",
+      public_error_code: "ERR_CONTRACT_REJECTED",
+      updated_at: "2024-01-01T03:00:00Z",
+    });
+    const res = await persistence.replaceIfCurrent({ current: unknown, next: failed });
     expect(res).toStrictEqual({ ok: true });
   });
 

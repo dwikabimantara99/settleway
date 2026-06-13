@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
 import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
 
-const toDbProfile = (p: typeof demoProfiles[string]): DbProfile => ({
+const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
   display_name: p.displayName,
   role_label: p.roleLabel,
@@ -18,7 +19,7 @@ const toDbProfile = (p: typeof demoProfiles[string]): DbProfile => ({
   created_at: new Date().toISOString(),
 });
 
-const toDbListing = (l: typeof demoListings[number]): DbListing => ({
+const toDbListing = (l: any): DbListing => ({
   id: l.id,
   seller_id: l.sellerId,
   commodity: l.commodity,
@@ -33,7 +34,7 @@ const toDbListing = (l: typeof demoListings[number]): DbListing => ({
   created_at: new Date().toISOString(),
 });
 
-const toDbBuyerRequest = (r: typeof demoBuyerRequests[number]): DbBuyerRequest => ({
+const toDbBuyerRequest = (r: any): DbBuyerRequest => ({
   id: r.id,
   buyer_id: r.buyerId,
   commodity: r.commodity,
@@ -42,11 +43,11 @@ const toDbBuyerRequest = (r: typeof demoBuyerRequests[number]): DbBuyerRequest =
   delivery_location: r.deliveryLocation || null,
   required_by: r.requiredDate || null,
   description: r.description || null,
-  status: r.status === 'fulfilled' ? 'closed' : r.status as 'open' | 'matched' | 'closed',
+  status: r.status,
   created_at: new Date().toISOString(),
 });
 
-const toDbDeal = (d: typeof demoDeals[string]): DbDeal => ({
+const toDbDeal = (d: any): DbDeal => ({
   id: d.id,
   listing_id: d.listingId || null,
   buyer_request_id: d.buyerRequestId || null,
@@ -61,7 +62,7 @@ const toDbDeal = (d: typeof demoDeals[string]): DbDeal => ({
   seller_fee_idr: d.sellerFeeIdr,
   buyer_total_idr: d.buyerTotalIdr,
   seller_total_idr: d.sellerTotalIdr,
-  status: (d.status === 'ACCEPTED' ? 'COMPLETED' : d.status) as DbDeal["status"],
+  status: d.status,
   stellar_mode: d.stellarMode === "testnet" ? "testnet" : "mock_only",
   stellar_contract_id: null,
   stellar_escrow_id: null,
