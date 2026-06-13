@@ -74,7 +74,7 @@ const toDbDeal = (d: any): DbDeal => ({
   updated_at: new Date().toISOString(),
 });
 
-class MockStore {
+export class MockStore {
   profiles: Map<string, DbProfile> = new Map();
   listings: Map<string, DbListing> = new Map();
   buyerRequests: Map<string, DbBuyerRequest> = new Map();
