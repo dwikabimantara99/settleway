@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
 import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
+import { StellarOperation } from '../stellar/types';
+import { canTransitionStellarOperation } from '../stellar/helpers';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -76,6 +78,7 @@ class MockStore {
   buyerRequests: Map<string, DbBuyerRequest> = new Map();
   deals: Map<string, DbDeal> = new Map();
   events: Map<string, DbEscrowEvent[]> = new Map(); // Keyed by dealId
+  operations: Map<string, StellarOperation> = new Map();
 
   constructor() {
     this.seed();
@@ -87,6 +90,7 @@ class MockStore {
     this.buyerRequests.clear();
     this.deals.clear();
     this.events.clear();
+    this.operations.clear();
 
     Object.values(demoProfiles).forEach(p => this.profiles.set(p.id, toDbProfile(p)));
     demoListings.forEach(l => this.listings.set(l.id, toDbListing(l)));
@@ -111,6 +115,84 @@ class MockStore {
 
   getDealEvents(dealId: string): DbEscrowEvent[] {
     return this.events.get(dealId) || [];
+  }
+
+  getStellarOperation(key: string): StellarOperation | null {
+    const op = this.operations.get(key);
+    return op ? { ...op } : null;
+  }
+
+  createStellarOperation(
+    operation: StellarOperation,
+  ): {
+    created: boolean;
+    operation: StellarOperation;
+  } {
+    if (this.operations.has(operation.idempotency_key)) {
+      return {
+        created: false,
+        operation: { ...this.operations.get(operation.idempotency_key)! }
+      };
+    }
+    this.operations.set(operation.idempotency_key, { ...operation });
+    return {
+      created: true,
+      operation: { ...operation }
+    };
+  }
+
+  updateStellarOperation(
+    key: string,
+    patch: Partial<
+      Pick<
+        StellarOperation,
+        | "operation_status"
+        | "transaction_hash"
+        | "result_escrow_id"
+        | "public_error_code"
+        | "submitted_at"
+        | "confirmed_at"
+        | "updated_at"
+      >
+    >,
+  ): StellarOperation | null {
+    const existing = this.operations.get(key);
+    if (!existing) return null;
+
+    if (patch.operation_status && patch.operation_status !== existing.operation_status) {
+      if (!canTransitionStellarOperation(existing.operation_status, patch.operation_status)) {
+        throw new Error("Invalid Stellar operation status transition");
+      }
+    }
+
+    const updated: StellarOperation = {
+      ...existing,
+      ...patch,
+      idempotency_key: existing.idempotency_key,
+      deal_id: existing.deal_id,
+      requested_action: existing.requested_action,
+      expected_local_status: existing.expected_local_status,
+      target_local_status: existing.target_local_status,
+      stellar_method: existing.stellar_method,
+      created_at: existing.created_at,
+    };
+
+    this.operations.set(key, updated);
+    return { ...updated };
+  }
+
+  findStellarOperationsByDeal(dealId: string): StellarOperation[] {
+    const results: StellarOperation[] = [];
+    for (const op of this.operations.values()) {
+      if (op.deal_id === dealId) {
+        results.push({ ...op });
+      }
+    }
+    return results;
+  }
+
+  resetStellarOperations(): void {
+    this.operations.clear();
   }
 }
 
