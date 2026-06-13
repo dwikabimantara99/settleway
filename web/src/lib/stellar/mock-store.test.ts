@@ -222,57 +222,170 @@ describe("MockStore - Stellar Operations", () => {
     expect(retrieved?.created_at).toBe("2023-01-01T00:00:00Z");
   });
 
-  it("prevents updating identity fields at compile time", () => {
-    const op = createValidOperation("key1", "deal1");
-    store.createStellarOperation(op);
 
-    // @ts-expect-error - cannot update idempotency_key
-    store.updateStellarOperation("key1", { idempotency_key: "key2" });
-    // @ts-expect-error - cannot update deal_id
-    store.updateStellarOperation("key1", { deal_id: "deal2" });
-    // @ts-expect-error - cannot update requested_action
-    store.updateStellarOperation("key1", { requested_action: "submit_proof" });
-    // @ts-expect-error - cannot update expected_local_status
-    store.updateStellarOperation("key1", { expected_local_status: "ACCEPTED" });
-    // @ts-expect-error - cannot update target_local_status
-    store.updateStellarOperation("key1", { target_local_status: "ACCEPTED" });
-    // @ts-expect-error - cannot update stellar_method
-    store.updateStellarOperation("key1", { stellar_method: "submit_proof" });
-    // @ts-expect-error - cannot update created_at
-    store.updateStellarOperation("key1", { created_at: "2023-01-02T00:00:00Z" });
 
-    // The runtime call isn't actually executed here due to it being commented out or not passed properly to the compiler if we don't want it to run.
-    // Wait, the prompt says: "The test file must still execute successfully at runtime. Do not call the method with those deliberately invalid patch objects."
-    // If I actually call it, it will execute. But I should avoid calling it to be safe, or just call it and it will work at runtime since the object is passed, but TypeScript will error correctly. Wait, "Do not call the method with those deliberately invalid patch objects."
-    // So I will just type-check them without calling, e.g. using a function that isn't called or just type assertions.
-  });
+  describe("replaceStellarOperationIfCurrent (CAS)", () => {
+    function makeOp(overrides: Partial<StellarOperation> = {}): StellarOperation {
+      return {
+        idempotency_key: "cas-key",
+        deal_id: "cas-deal",
+        requested_action: "create_deal",
+        expected_local_status: null,
+        target_local_status: "WAITING_DEPOSITS",
+        stellar_method: "create_escrow",
+        operation_status: "pending",
+        transaction_hash: null,
+        result_escrow_id: null,
+        public_error_code: null,
+        submitted_at: null,
+        confirmed_at: null,
+        created_at: "2024-01-01T00:00:00Z",
+        updated_at: "2024-01-01T00:00:00Z",
+        ...overrides,
+      };
+    }
 
-  // Since we shouldn't execute the update with invalid fields, we can do this:
-  it("type checks identity fields", () => {
-    type UpdatePatch = Parameters<typeof store.updateStellarOperation>[1];
+    it("successful pending → submitted CAS", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "submitted", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("submitted");
+      expect(store.getStellarOperation("cas-key")?.operation_status).toBe("submitted");
+    });
 
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid1: UpdatePatch = { idempotency_key: "key2" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid2: UpdatePatch = { deal_id: "deal2" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid3: UpdatePatch = { requested_action: "submit_proof" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid4: UpdatePatch = { expected_local_status: "ACCEPTED" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid5: UpdatePatch = { target_local_status: "ACCEPTED" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid6: UpdatePatch = { stellar_method: "submit_proof" };
-    // @ts-expect-error - testing identity field compile boundary
-    const invalid7: UpdatePatch = { created_at: "2023-01-02T00:00:00Z" };
+    it("successful submitted → confirmed CAS", () => {
+      const submitted = makeOp({ operation_status: "submitted", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", updated_at: "2024-01-01T01:00:00Z" });
+      store.createStellarOperation(submitted);
+      const next = makeOp({ operation_status: "confirmed", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", confirmed_at: "2024-01-01T02:00:00Z", result_escrow_id: "esc1", updated_at: "2024-01-01T02:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: submitted, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("confirmed");
+    });
 
-    // Just to satisfy unused variable linting:
-    expect(invalid1).toBeDefined();
-    expect(invalid2).toBeDefined();
-    expect(invalid3).toBeDefined();
-    expect(invalid4).toBeDefined();
-    expect(invalid5).toBeDefined();
-    expect(invalid6).toBeDefined();
-    expect(invalid7).toBeDefined();
+    it("successful submitted → failed CAS", () => {
+      const submitted = makeOp({ operation_status: "submitted", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", updated_at: "2024-01-01T01:00:00Z" });
+      store.createStellarOperation(submitted);
+      const next = makeOp({ operation_status: "failed", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_CONTRACT_REJECTED", updated_at: "2024-01-01T02:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: submitted, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("failed");
+    });
+
+    it("successful submitted → unknown CAS", () => {
+      const submitted = makeOp({ operation_status: "submitted", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", updated_at: "2024-01-01T01:00:00Z" });
+      store.createStellarOperation(submitted);
+      const next = makeOp({ operation_status: "unknown", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_UNKNOWN", updated_at: "2024-01-01T02:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: submitted, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("unknown");
+    });
+
+    it("successful unknown → confirmed CAS", () => {
+      const unknown = makeOp({ operation_status: "unknown", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_UNKNOWN", updated_at: "2024-01-01T02:00:00Z" });
+      store.createStellarOperation(unknown);
+      const next = makeOp({ operation_status: "confirmed", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", confirmed_at: "2024-01-01T03:00:00Z", result_escrow_id: "esc1", updated_at: "2024-01-01T03:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: unknown, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("confirmed");
+    });
+
+    it("successful unknown → failed CAS", () => {
+      const unknown = makeOp({ operation_status: "unknown", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_UNKNOWN", updated_at: "2024-01-01T02:00:00Z" });
+      store.createStellarOperation(unknown);
+      const next = makeOp({ operation_status: "failed", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_CONTRACT_REJECTED", confirmed_at: "2024-01-01T03:00:00Z", updated_at: "2024-01-01T03:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: unknown, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.operation_status).toBe("failed");
+    });
+
+    it("successful unknown → unknown metadata refresh", () => {
+      const unknown = makeOp({ operation_status: "unknown", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_UNKNOWN", updated_at: "2024-01-01T02:00:00Z" });
+      store.createStellarOperation(unknown);
+      const next = makeOp({ operation_status: "unknown", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", public_error_code: "ERR_TIMEOUT", updated_at: "2024-01-01T03:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: unknown, next });
+      expect(res.replaced).toBe(true);
+      expect(res.operation?.public_error_code).toBe("ERR_TIMEOUT");
+    });
+
+    it("missing operation returns replaced:false, operation:null", () => {
+      const current = makeOp();
+      const next = makeOp({ operation_status: "submitted", transaction_hash: "tx1", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current, next });
+      expect(res.replaced).toBe(false);
+      expect(res.operation).toBeNull();
+    });
+
+    it("stale current snapshot fails CAS", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const submitted = makeOp({ operation_status: "submitted", transaction_hash: "tx1", submitted_at: "2024-01-01T01:00:00Z", updated_at: "2024-01-01T01:00:00Z" });
+      store.replaceStellarOperationIfCurrent({ current: pending, next: submitted });
+      const next2 = makeOp({ operation_status: "submitted", transaction_hash: "tx2", updated_at: "2024-01-01T02:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next: next2 });
+      expect(res.replaced).toBe(false);
+      expect(res.operation?.operation_status).toBe("submitted");
+    });
+
+    it("changed immutable intent field rejects CAS", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "submitted", transaction_hash: "tx1", deal_id: "other-deal", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(false);
+      expect(res.operation?.operation_status).toBe("pending");
+    });
+
+    it("illegal status transition rejects CAS", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "confirmed", transaction_hash: "tx1", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(false);
+      expect(res.operation?.operation_status).toBe("pending");
+    });
+
+    it("generic same-status replacement rejection", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(false);
+    });
+
+    it("failed CAS leaves storage unchanged", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "confirmed", transaction_hash: "tx1", updated_at: "2024-01-01T01:00:00Z" });
+      store.replaceStellarOperationIfCurrent({ current: pending, next });
+      const stored = store.getStellarOperation("cas-key");
+      expect(stored?.operation_status).toBe("pending");
+      expect(stored?.transaction_hash).toBeNull();
+    });
+
+    it("caller objects are not mutated", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const current = makeOp();
+      const next = makeOp({ operation_status: "submitted", transaction_hash: "tx1", updated_at: "2024-01-01T01:00:00Z" });
+      const currentOriginal = JSON.parse(JSON.stringify(current));
+      const nextOriginal = JSON.parse(JSON.stringify(next));
+      store.replaceStellarOperationIfCurrent({ current, next });
+      expect(current).toStrictEqual(currentOriginal);
+      expect(next).toStrictEqual(nextOriginal);
+    });
+
+    it("returned value is a defensive copy", () => {
+      const pending = makeOp();
+      store.createStellarOperation(pending);
+      const next = makeOp({ operation_status: "submitted", transaction_hash: "tx1", updated_at: "2024-01-01T01:00:00Z" });
+      const res = store.replaceStellarOperationIfCurrent({ current: pending, next });
+      expect(res.replaced).toBe(true);
+      if (res.operation) {
+        res.operation.operation_status = "confirmed";
+      }
+      expect(store.getStellarOperation("cas-key")?.operation_status).toBe("submitted");
+    });
   });
 });

@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
 import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
 
-const toDbProfile = (p: any): DbProfile => ({
+const toDbProfile = (p: typeof demoProfiles[string]): DbProfile => ({
   id: p.id,
   display_name: p.displayName,
   role_label: p.roleLabel,
@@ -19,7 +18,7 @@ const toDbProfile = (p: any): DbProfile => ({
   created_at: new Date().toISOString(),
 });
 
-const toDbListing = (l: any): DbListing => ({
+const toDbListing = (l: typeof demoListings[number]): DbListing => ({
   id: l.id,
   seller_id: l.sellerId,
   commodity: l.commodity,
@@ -34,7 +33,7 @@ const toDbListing = (l: any): DbListing => ({
   created_at: new Date().toISOString(),
 });
 
-const toDbBuyerRequest = (r: any): DbBuyerRequest => ({
+const toDbBuyerRequest = (r: typeof demoBuyerRequests[number]): DbBuyerRequest => ({
   id: r.id,
   buyer_id: r.buyerId,
   commodity: r.commodity,
@@ -43,11 +42,11 @@ const toDbBuyerRequest = (r: any): DbBuyerRequest => ({
   delivery_location: r.deliveryLocation || null,
   required_by: r.requiredDate || null,
   description: r.description || null,
-  status: r.status,
+  status: r.status === 'fulfilled' ? 'closed' : r.status as 'open' | 'matched' | 'closed',
   created_at: new Date().toISOString(),
 });
 
-const toDbDeal = (d: any): DbDeal => ({
+const toDbDeal = (d: typeof demoDeals[string]): DbDeal => ({
   id: d.id,
   listing_id: d.listingId || null,
   buyer_request_id: d.buyerRequestId || null,
@@ -62,7 +61,7 @@ const toDbDeal = (d: any): DbDeal => ({
   seller_fee_idr: d.sellerFeeIdr,
   buyer_total_idr: d.buyerTotalIdr,
   seller_total_idr: d.sellerTotalIdr,
-  status: d.status,
+  status: (d.status === 'ACCEPTED' ? 'COMPLETED' : d.status) as DbDeal["status"],
   stellar_mode: d.stellarMode === "testnet" ? "testnet" : "mock_only",
   stellar_contract_id: null,
   stellar_escrow_id: null,
@@ -191,6 +190,70 @@ export class MockStore {
       }
     }
     return results;
+  }
+
+  replaceStellarOperationIfCurrent(input: {
+    current: StellarOperation;
+    next: StellarOperation;
+  }): {
+    replaced: boolean;
+    operation: StellarOperation | null;
+  } {
+    const stored = this.operations.get(input.current.idempotency_key);
+    if (!stored) {
+      return { replaced: false, operation: null };
+    }
+
+    // Deep equality check: every field of stored must match current
+    const currentKeys = Object.keys(input.current) as (keyof StellarOperation)[];
+    for (const key of currentKeys) {
+      if (stored[key] !== input.current[key]) {
+        return { replaced: false, operation: { ...stored } };
+      }
+    }
+    // Also check stored has no extra keys
+    const storedKeys = Object.keys(stored) as (keyof StellarOperation)[];
+    if (storedKeys.length !== currentKeys.length) {
+      return { replaced: false, operation: { ...stored } };
+    }
+
+    // Verify immutable intent fields unchanged between current and next
+    const immutableFields: (keyof StellarOperation)[] = [
+      "idempotency_key",
+      "deal_id",
+      "requested_action",
+      "expected_local_status",
+      "target_local_status",
+      "stellar_method",
+      "created_at",
+    ];
+    for (const field of immutableFields) {
+      if (input.current[field] !== input.next[field]) {
+        return { replaced: false, operation: { ...stored } };
+      }
+    }
+
+    // Status validation
+    if (input.next.operation_status !== input.current.operation_status) {
+      // Allow unknown -> unknown as a special case
+      const isUnknownToUnknown =
+        input.current.operation_status === "unknown" &&
+        input.next.operation_status === "unknown";
+      if (!isUnknownToUnknown) {
+        if (!canTransitionStellarOperation(input.current.operation_status, input.next.operation_status)) {
+          return { replaced: false, operation: { ...stored } };
+        }
+      }
+    } else {
+      // Same-status replacement: only allow unknown -> unknown
+      if (input.current.operation_status !== "unknown") {
+        return { replaced: false, operation: { ...stored } };
+      }
+    }
+
+    // CAS succeeds: store and return defensive copy
+    this.operations.set(input.next.idempotency_key, { ...input.next });
+    return { replaced: true, operation: { ...input.next } };
   }
 
   resetStellarOperations(): void {
