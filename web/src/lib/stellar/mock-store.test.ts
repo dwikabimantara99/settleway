@@ -90,7 +90,7 @@ describe("MockStore - Stellar Operations", () => {
 
     expect(updated?.operation_status).toBe("submitted");
     expect(updated?.transaction_hash).toBe("hash123");
-    
+
     const retrieved = store.getStellarOperation("key1");
     expect(retrieved?.operation_status).toBe("submitted");
     expect(retrieved?.transaction_hash).toBe("hash123");
@@ -135,7 +135,7 @@ describe("MockStore - Stellar Operations", () => {
     expect(() =>
       store.updateStellarOperation("key1", { operation_status: "pending" })
     ).toThrowError("Invalid Stellar operation status transition");
-    
+
     expect(() =>
       store.updateStellarOperation("key1", { operation_status: "failed" })
     ).toThrowError("Invalid Stellar operation status transition");
@@ -149,7 +149,7 @@ describe("MockStore - Stellar Operations", () => {
     expect(() =>
       store.updateStellarOperation("key1", { operation_status: "pending" })
     ).toThrowError("Invalid Stellar operation status transition");
-    
+
     expect(() =>
       store.updateStellarOperation("key1", { operation_status: "confirmed" })
     ).toThrowError("Invalid Stellar operation status transition");
@@ -250,7 +250,7 @@ describe("MockStore - Stellar Operations", () => {
   // Since we shouldn't execute the update with invalid fields, we can do this:
   it("type checks identity fields", () => {
     type UpdatePatch = Parameters<typeof store.updateStellarOperation>[1];
-    
+
     // @ts-expect-error - testing identity field compile boundary
     const invalid1: UpdatePatch = { idempotency_key: "key2" };
     // @ts-expect-error - testing identity field compile boundary
