@@ -23,11 +23,11 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   const steps: Step[] = [
     { label: 'Waiting Deposits', status: status === 'WAITING_DEPOSITS' ? 'current' : 'complete' },
     { label: 'Deposits Locked', status: (status === 'BUYER_FUNDED' || status === 'SELLER_FUNDED') ? 'current' : (status === 'WAITING_DEPOSITS' ? 'upcoming' : 'complete') },
-    { label: 'Proof Submitted', status: status === 'LOCKED' ? 'current' : (status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
-    { label: 'Delivered', status: status === 'PROOF_SUBMITTED' ? 'current' : (status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
-    { label: 'Settled', status: (status === 'DELIVERED' || status === 'ACCEPTED') ? 'current' : (status === 'COMPLETED' ? 'complete' : 'upcoming') },
+    { label: 'Proof Submitted', status: status === 'LOCKED' ? 'current' : (status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
+    { label: 'Delivered', status: status === 'PROOF_SUBMITTED' ? 'current' : (status === 'DELIVERED' || status === 'COMPLETED' ? 'complete' : 'upcoming') },
+    { label: 'Settled', status: status === 'DELIVERED' ? 'current' : (status === 'COMPLETED' ? 'complete' : 'upcoming') },
   ];
-  const isPostProof = status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'ACCEPTED' || status === 'COMPLETED';
+  const isPostProof = status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'COMPLETED';
   
   let lockedValueText = 'Rp 0';
   let helperText = 'Escrow will lock automatically when both parties have transferred their required deposits to the virtual accounts.';

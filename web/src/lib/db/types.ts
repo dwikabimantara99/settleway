@@ -1,3 +1,9 @@
+import type { DealStatus } from "@/lib/escrow/state-machine";
+import type {
+  DealStellarSyncStatus,
+  StellarMode,
+} from "@/lib/stellar/types";
+
 export type ApiResult<T> =
   | { ok: true; data: T; meta?: Record<string, unknown> }
   | { ok: false; error: { code: string; message: string; recoverable: boolean } };
@@ -60,10 +66,12 @@ export interface DbDeal {
   seller_fee_idr: number;
   buyer_total_idr: number;
   seller_total_idr: number;
-  status: string;
-  stellar_mode: string;
-  contract_id: string | null;
-  latest_tx_hash: string | null;
+  status: DealStatus;
+  stellar_mode: StellarMode;
+  stellar_contract_id: string | null;
+  stellar_escrow_id: string | null;
+  latest_stellar_tx_hash: string | null;
+  stellar_sync_status: DealStellarSyncStatus;
   proof_hash: string | null;
   terms: Record<string, unknown>;
   created_at: string;
