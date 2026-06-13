@@ -118,19 +118,33 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <ShieldCheck className="h-8 w-8 text-emerald-400 shrink-0" />
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-2">Stellar Escrow Contract</h3>
+                <div className="w-full">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-bold text-white">Stellar Event Contract</h3>
+                    {deal.stellar_mode === 'event_contract' ? (
+                      <Badge className="bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border-emerald-500/30">Active</Badge>
+                    ) : (
+                      <Badge className="bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border-amber-500/30">Mock Fallback</Badge>
+                    )}
+                  </div>
                   <p className="text-sm text-slate-400 mb-4">
-                    In future phases, the Deal Room deposits and evidence hashes will be securely recorded on the Stellar Testnet via Soroban smart contracts. This guarantees immutable proof of transaction outcomes for reputation building.
+                    The Deal Room state transitions are immutably recorded on the Stellar Testnet via Soroban smart contracts. 
+                    No real funds are held by this contract.
                   </p>
-                  <div className="grid grid-cols-2 gap-4 text-xs font-mono text-slate-500 bg-slate-950 p-3 rounded border border-slate-800">
+                  <div className="grid grid-cols-1 gap-4 text-xs font-mono text-slate-500 bg-slate-950 p-3 rounded border border-slate-800">
                     <div>
                       <span className="block text-slate-600 mb-1">Contract ID</span>
-                      <span className="text-slate-300">-</span>
+                      <span className="text-slate-300 break-all">{process.env.NEXT_PUBLIC_SETTLEWAY_CONTRACT_ID || deal.contract_id || '-'}</span>
                     </div>
                     <div>
                       <span className="block text-slate-600 mb-1">Latest Tx</span>
-                      <span className="text-slate-300">-</span>
+                      {deal.latest_tx_hash ? (
+                        <a href={`https://stellar.expert/explorer/testnet/tx/${deal.latest_tx_hash}`} target="_blank" rel="noreferrer" className="text-blue-400 hover:underline break-all">
+                          {deal.latest_tx_hash}
+                        </a>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )}
                     </div>
                   </div>
                 </div>

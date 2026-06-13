@@ -3,6 +3,7 @@ import { mockStore } from '@/lib/db/mock-store';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
+import { recordEscrowActionOnChain, submitProofHashOnChain } from '@/lib/stellar/helpers';
 
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
@@ -20,6 +21,22 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     // Add event
     const event = createEvent(dealId, actionName, null, 'Executed ' + actionName);
     mockStore.addEvent(event);
+
+    // Stellar Integration
+    if (updatedDeal.contract_id) {
+      let stellarRes = null;
+      if (actionName === 'submit_proof') {
+        stellarRes = await submitProofHashOnChain(updatedDeal.contract_id);
+      } else {
+        stellarRes = await recordEscrowActionOnChain(updatedDeal.contract_id, 'deposit_seller');
+      }
+      
+      if (stellarRes) {
+        updatedDeal.latest_tx_hash = stellarRes.hash;
+        mockStore.updateDeal(dealId, updatedDeal);
+      }
+    }
+
 
     return NextResponse.json(createSuccessResponse(updatedDeal));
   } catch (err: unknown) {

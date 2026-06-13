@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { mockStore } from '@/lib/db/mock-store';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { DbDeal } from '@/lib/db/types';
+import { recordDealCreatedOnChain } from '@/lib/stellar/helpers';
 
 export async function POST(request: Request) {
   try {
@@ -40,6 +41,16 @@ export async function POST(request: Request) {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+
+    // Stellar Integration
+    const stellarRes = await recordDealCreatedOnChain(newDeal);
+    if (stellarRes) {
+      newDeal.contract_id = String(stellarRes.returnValue);
+      newDeal.latest_tx_hash = stellarRes.hash;
+      newDeal.stellar_mode = 'event_contract';
+    } else {
+      newDeal.stellar_mode = 'fallback'; // Mock Fallback
+    }
 
     mockStore.deals.set(dealId, newDeal);
 
