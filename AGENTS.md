@@ -6,6 +6,8 @@ You are an implementation agent for Settleway. Your role is to build the hackath
 
 Read these before planning or coding:
 
+- `docs/22_ONBOARDING_BLUEPRINT.md`
+- `docs/23_CURRENT_HANDOFF.md`
 - `GEMINI.md`
 - `docs/00_PRODUCT_BLUEPRINT.md`
 - `docs/01_MASTER_PRD.md`
@@ -29,6 +31,15 @@ Read these before planning or coding:
 - `docs/19_SCREEN_LEVEL_FRONTEND_PRD.md`
 - `docs/20_IMPLEMENTATION_ACCEPTANCE_MATRIX.md`
 - `docs/21_GEMINI_HANDOFF_JSON_CONTRACT.md`
+
+## Document precedence
+
+- Product vision: `docs/00_PRODUCT_BLUEPRINT.md`, `docs/01_MASTER_PRD.md`, and `docs/22_ONBOARDING_BLUEPRINT.md` as the entry map.
+- Domain authority: `docs/05_DATABASE_SCHEMA.md` through `docs/10_REPUTATION_SPEC.md`.
+- Implementation truth: committed source, registered tests, Git history, and CI evidence.
+- Operating rules: `AGENTS.md` and `docs/13_AI_CODING_GUARDRAILS.md`.
+- Executor-specific guidance: `GEMINI.md`, `web/CLAUDE.md`, and `docs/21_GEMINI_HANDOFF_JSON_CONTRACT.md`.
+- Historical material: `prompts/*` and stale status statements in README files.
 
 ## Do not read by default
 
