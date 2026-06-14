@@ -24,9 +24,9 @@ export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput
 
 export type StellarDealExecutionCoordinatorResult =
   | { ok: true; current_deal: DbDeal; next_deal: DbDeal }
-  | { 
-      ok: false; 
-      reason: "ERR_ASSEMBLY_FAILURE"; 
+  | {
+      ok: false;
+      reason: "ERR_ASSEMBLY_FAILURE";
       error_code?: string;
       builder_error_code?: import('./invocation-builder').StellarInvocationErrorCode;
       builder_field?: import('./invocation-builder').StellarInvocationErrorField;
@@ -54,9 +54,9 @@ export async function coordinateDealExecution(
         ...(assemblyRes.builder_field !== undefined && { builder_field: assemblyRes.builder_field })
       };
     }
-    return { 
-      ok: false, 
-      reason: "ERR_ASSEMBLY_FAILURE", 
+    return {
+      ok: false,
+      reason: "ERR_ASSEMBLY_FAILURE",
       error_code: assemblyRes.error_code
     };
   }
@@ -89,7 +89,7 @@ export async function coordinateDealExecution(
 
   // 4. when execution succeeds, derive canonical deal synchronization behavior
   let next_deal: DbDeal | null = null;
-  
+
 
   if (candidate_operation.operation_status === "confirmed") {
     // 5. plan the exact local deal update

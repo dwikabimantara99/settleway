@@ -82,9 +82,9 @@ describe("Deal Execution Integration (Offline E2E)", () => {
     for (const plan of plans) {
       store.seed(); // reset store each loop
       const initialStatus = plan.expected === null ? "WAITING_DEPOSITS" : plan.expected;
-      const deal = makeDeal({ 
-        status: initialStatus as import('../types').StellarAction, 
-        stellar_contract_id: "contract-1", 
+      const deal = makeDeal({
+        status: initialStatus as import('../types').StellarAction,
+        stellar_contract_id: "contract-1",
         stellar_escrow_id: plan.action === "create_deal" ? null : "123"
       });
       store.deals.set(deal.id, deal);
@@ -117,7 +117,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       if (res.ok) {
         expect(res.next_deal.status).toBe(plan.target);
         expect(res.next_deal.stellar_sync_status).toBe("idle");
-        
+
         // 1. operation persistence occurs
         const idempotencyKey = `v1:${deal.id}:${initialStatus === "WAITING_DEPOSITS" && plan.action === "create_deal" ? "CREATE" : initialStatus}:${plan.action}`;
         const op = store.getStellarOperation(idempotencyKey);
@@ -134,7 +134,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
            expect(op?.result_escrow_id).toBeNull();
            expect(res.next_deal.stellar_escrow_id).toBe("123");
         }
-        
+
         // 13. identity and monetary remain unchanged
         expect(res.next_deal.buyer_id).toBe("b1");
         expect(res.next_deal.principal_idr).toBe(1000);
@@ -152,11 +152,11 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       const deal = makeDeal();
       store.deals.set(deal.id, deal);
       let input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
-      
+
       let res = await coordinateDealExecution(input);
       expect(res.ok).toBe(true);
       expect((res as import('../types').StellarAction).next_deal.stellar_sync_status).toBe("unknown");
-      
+
       const idempotencyKey = `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`;
       const op = store.getStellarOperation(idempotencyKey)!;
       expect(op).not.toBeUndefined();
@@ -167,7 +167,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
         submit: async () => { throw new Error("Should not resubmit"); },
         confirm: async () => ({ outcome: "confirmed", action: "buyer_deposit", transaction_hash: validTx, result_escrow_id: null })
       } as import('./adapter-contracts').StellarExecutionAdapter;
-      
+
       input = { ...input, deal: (res as import('../types').StellarAction).next_deal, existing_operation: op, execution_adapter: adapter };
       res = await coordinateDealExecution(input);
       expect(res.ok).toBe(true);
@@ -180,15 +180,15 @@ describe("Deal Execution Integration (Offline E2E)", () => {
         submit: async () => ({ outcome: "failed", action: "buyer_deposit", stage: "submit", error_code: "ERR_NETWORK_FAILURE", retryable: true, transaction_hash: null }),
         confirm: async () => ({ outcome: "failed", action: "buyer_deposit", error_code: "ERR_UNKNOWN", retryable: true, transaction_hash: null })
       } as import('./adapter-contracts').StellarExecutionAdapter;
-      
+
       const deal = makeDeal();
       const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "pending", transaction_hash: null, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: null, confirmed_at: null, updated_at: "t1" };
-      
+
       const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: op, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
-      
+
       const res = await coordinateDealExecution(input);
       expect(res.ok).toBe(false);
-      expect(res.reason).toBe("ERR_EXECUTION_SERVICE_FAILURE"); 
+      expect(res.reason).toBe("ERR_EXECUTION_SERVICE_FAILURE");
     });
 
     it("Confirmed restart", async () => {
@@ -200,9 +200,9 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       const deal = makeDeal();
       store.deals.set(deal.id, deal);
       const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "confirmed", transaction_hash: validTx, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: "t2", confirmed_at: "t3", updated_at: "t3" };
-      
+
       const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: op, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
-      
+
       const res = await coordinateDealExecution(input);
       expect(res.ok).toBe(true);
       expect((res as import('../types').StellarAction).next_deal.status).toBe("BUYER_FUNDED");
@@ -217,12 +217,12 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       expect(res.ok).toBe(false);
       if (!res.ok) expect(res.reason).toBe("ERR_ASSEMBLY_FAILURE");
     });
-    
+
     it("deal persistence unavailable", async () => {
        const deal = makeDeal();
        store.deals.set(deal.id, deal);
        const badDealPersistence: import('./mock-store-deal-persistence').StellarDealPersistencePort = { replaceIfCurrent: async () => ({ ok: false, reason: "unavailable" }) };
-       
+
        adapter = {
          submit: async () => ({ outcome: "submitted", action: "buyer_deposit", transaction_hash: validTx }),
          confirm: async () => ({ outcome: "confirmed", action: "buyer_deposit", transaction_hash: validTx, result_escrow_id: null })
@@ -241,11 +241,11 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       store.deals.set(deal.id, deal);
       const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
       const res = await coordinateDealExecution(input);
-      
+
       const jsonStr = JSON.stringify(res);
       const forbidden = [
-        "secret", "secret_seed", "private_key", "keypair", "rpc", "rpc_client", 
-        "environment", "sdk_transaction", "database", "repository", "callback", 
+        "secret", "secret_seed", "private_key", "keypair", "rpc", "rpc_client",
+        "environment", "sdk_transaction", "database", "repository", "callback",
         "adapter", "persistence"
       ];
       for (const word of forbidden) {
@@ -254,4 +254,3 @@ describe("Deal Execution Integration (Offline E2E)", () => {
     });
   });
 });
-

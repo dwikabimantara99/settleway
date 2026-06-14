@@ -74,7 +74,7 @@ describe("Deal Execution Coordinator", () => {
     mockOpPersistence.replaceIfCurrent.mockResolvedValueOnce({ ok: true });
     mockDealPersistence.replaceIfCurrent.mockResolvedValueOnce({ ok: true });
 
-    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { 
+    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {
       action: "create_deal",
       operation_id: "key1",
       deal: makeDeal({ stellar_contract_id: null, stellar_escrow_id: null }),
@@ -106,7 +106,7 @@ describe("Deal Execution Coordinator", () => {
     mockOpPersistence.replaceIfCurrent.mockResolvedValueOnce({ ok: true });
     mockDealPersistence.replaceIfCurrent.mockResolvedValueOnce({ ok: true });
 
-    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { 
+    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {
       action: "buyer_deposit",
       operation_id: "key1",
       deal: makeDeal(),
@@ -128,7 +128,7 @@ describe("Deal Execution Coordinator", () => {
   });
 
   it("assembler failure", async () => {
-    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { 
+    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {
       action: "buyer_deposit",
       operation_id: "key1",
       deal: makeDeal({ stellar_escrow_id: "not-a-number" }), // triggers assembly failure
@@ -146,7 +146,7 @@ describe("Deal Execution Coordinator", () => {
   });
 
   it("execution planner failure", async () => {
-    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { 
+    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {
       action: "seller_deposit",
       operation_id: "key1",
       deal: makeDeal({ status: "SELLER_FUNDED" }), // invalid transition
@@ -239,4 +239,3 @@ describe("Deal Execution Coordinator", () => {
     expect(deal).toEqual(dealCopy);
   });
 });
-

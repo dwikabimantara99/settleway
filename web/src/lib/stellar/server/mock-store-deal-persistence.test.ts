@@ -48,7 +48,7 @@ describe("MockStoreDealPersistence", () => {
     const next = JSON.parse(JSON.stringify(current));
     next.stellar_sync_status = "pending";
     next.updated_at = "2023-01-01T01:00:00Z";
-    
+
     const res = await persistence.replaceIfCurrent({ current, next });
     expect(res).toStrictEqual({ ok: true });
     expect(store.deals.get("deal-1")?.stellar_sync_status).toBe("pending");
@@ -60,7 +60,7 @@ describe("MockStoreDealPersistence", () => {
     const next = JSON.parse(JSON.stringify(current));
     next.status = "BUYER_FUNDED";
     next.updated_at = "2023-01-01T01:00:00Z";
-    
+
     const res = await persistence.replaceIfCurrent({ current, next });
     expect(res).toStrictEqual({ ok: true });
     expect(store.deals.get("deal-1")?.status).toBe("BUYER_FUNDED");
@@ -114,7 +114,7 @@ describe("MockStoreDealPersistence", () => {
     const next = JSON.parse(JSON.stringify(current));
     next.status = "BUYER_FUNDED";
     next.updated_at = "2023-01-01T01:00:00Z";
-    
+
     await persistence.replaceIfCurrent({ current, next });
     next.status = "COMPLETED";
     expect(store.deals.get("deal-1")?.status).toBe("BUYER_FUNDED");

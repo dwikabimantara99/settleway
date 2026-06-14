@@ -11,7 +11,7 @@ export interface StellarDealLocalCommitInput {
   committed_at: string;
 }
 
-export type LocalCommitFailureReason = 
+export type LocalCommitFailureReason =
   | "ERR_INVALID_IDENTIFIER"
   | "ERR_DEAL_OPERATION_MISMATCH"
   | "ERR_OPERATION_NOT_CONFIRMED"
@@ -110,7 +110,7 @@ export function planDealLocalCommit(input: StellarDealLocalCommitInput): Stellar
     next_deal.latest_stellar_tx_hash = operation.transaction_hash;
     next_deal.stellar_sync_status = "idle";
     next_deal.updated_at = committed_at;
-    
+
     return { ok: true, current_deal: deal, next_deal };
   }
 
@@ -120,7 +120,7 @@ export function planDealLocalCommit(input: StellarDealLocalCommitInput): Stellar
     if (deal.status !== operation.expected_local_status) {
       return { ok: false, reason: "ERR_ILLEGAL_LOCAL_TRANSITION" };
     }
-    
+
     // next deal status equals canonical target
     if (local_commit.target_status !== policy.target_local_status) {
       return { ok: false, reason: "ERR_ILLEGAL_LOCAL_TRANSITION" };

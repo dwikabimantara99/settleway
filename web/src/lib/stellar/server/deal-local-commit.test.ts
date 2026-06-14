@@ -73,7 +73,7 @@ describe("Deal Local Commit", () => {
 
   it("all 13 canonical valid action/status plans pass", () => {
     for (const plan of plans) {
-      const deal = makeDeal({ 
+      const deal = makeDeal({
         status: plan.expected === null ? "WAITING_DEPOSITS" : plan.expected,
         stellar_contract_id: "contract-1",
         stellar_escrow_id: plan.action === "create_deal" ? null : "escrow-1"
@@ -232,4 +232,3 @@ describe("Deal Local Commit", () => {
     expect(operation).toEqual(opCopy);
   });
 });
-
