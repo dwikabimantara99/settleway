@@ -4,106 +4,89 @@ This document records the current operational state for the next Settleway engin
 
 ## Current Position
 
-### Verified fact
+### Verified Fact
 
 - Branch: `phase-7-rebuild`
-- Starting HEAD: `397e1d12bed394e0954f4941ed603a59623ce3b2`
-- Current phase: `Phase 7N - isolated Stellar Testnet adapter hardening`
-- Working tree was clean at onboarding checkpoint.
-- `web/src/lib/stellar/server/` contains action policy, invocation builder, execution reducer, execution planner, execution service, execution-input assembler, deal sync policy, local commit planner, deal execution coordinator, persistence ports, SDK codec, SDK/RPC port, transaction factory, signer port, and isolated Testnet adapter modules.
+- Checkpoint: `32d112160e1235d6e9667d8e48d8ea0e19bb5d09`
+- Checkpoint commit: `fix: harden Stellar signer verification`
+- Working tree was clean at the controlled Testnet smoke readiness checkpoint.
+- Mega-Phase 7N network adapter foundation: complete.
+- The isolated Stellar Testnet adapter now enforces normal transaction parsing, RPC-prepared intent preservation, fee-cap validation, signer-returned transaction body identity, expected-signer cryptographic verification, and `FeeBumpTransaction` rejection.
+- Registered offline web validation was last observed during the 7N hardening task as 21 test files and 488 passing tests, with lint and build passing.
 - `contracts/settleway_escrow/src/lib.rs` contains the Tier A Soroban event-contract foundation.
-- Git history contains checkpoints for offline Stellar operation foundation, action policy, adapter contracts, invocation builder, reducer, planner, persistence-safe execution service, execution assembler, offline deal synchronization, whitespace cleanup, and isolated Stellar Testnet adapter foundation.
-- A read-only filesystem count found 21 TypeScript test files under `web/src`.
 - CI workflow files exist for web test/lint/build and Soroban contract test/build.
 
-### Reported but not independently verified
+### Reported But Not Independently Verified In This Handoff Update
 
-- Reported baseline: 21 test files and 453 tests.
-- Static source search found 21 TypeScript test files, but this session did not run tests and did not independently verify a 453-test runtime count.
-- Lint and build are reportedly passing, but this session did not run lint, build, or observe live CI results.
-- Live Testnet deployment, live RPC behavior, and live transaction mutation were not independently verified.
-
-## Verified Completed Offline Execution Foundation
-
-### Verified fact
-
-Repository evidence supports that the offline execution foundation includes:
-
-- canonical 13-plan action policy;
-- invocation builder with exact method and argument construction;
-- pure execution reducer;
-- persistence-safe execution planner;
-- operation persistence over the mock store;
-- execution service with persist-before-submit behavior;
-- execution-input assembler;
-- atomic local deal compare-and-swap behavior;
-- deal synchronization policy;
-- local-commit planner;
-- restart-safe deal execution coordinator;
-- offline integration coverage for all 13 canonical action/status plans.
-
-The initial isolated Stellar SDK/RPC adapter commit added SDK argument encoding, Soroban transaction construction, explicit time bounds, RPC abstraction, injected signing boundary, network identity checking, simulation/fee-cap handling, submission, single confirmation lookup, and result decoding.
-
-## Remaining Risks
-
-### Remaining risk
-
-1. Complete transaction-body identity must be enforced for signer-returned transactions.
-2. Expected-signer verification must remain cryptographic, not hint-only.
-3. `FeeBumpTransaction` must be rejected at runtime, not narrowed away by a cast.
-4. Final frozen-source validation evidence remains incomplete.
-
-These risks are specific to Phase 7N adapter hardening. They do not change the product direction or authorize broader product scope.
+- Live Testnet deployment, live RPC behavior, live transaction mutation, and live contract invocation remain unverified.
+- Current GitHub Actions status after the latest push has not been observed in this session.
+- No current trusted deployed contract ID has been verified from repository files.
 
 ## Next Authorized Mission
 
-### Next authorized mission
+### Next Authorized Mission
 
-The next code mission is Phase 7N isolated Stellar Testnet adapter hardening. Its acceptance should prove the remaining adapter security properties without changing product scope.
+The next authorized mission is:
 
-This handoff does not itself authorize code changes. It records that the expected inspection/modification scope for the next separately authorized Phase 7N adapter-hardening coding task is limited to:
+```text
+Controlled Testnet smoke readiness and isolated smoke tooling
+```
 
-- `web/src/lib/stellar/server/stellar-testnet-adapter.ts`
-- `web/src/lib/stellar/server/stellar-testnet-adapter.test.ts`
-- `web/src/lib/stellar/server/stellar-testnet-adapter-integration.test.ts`
+This mission is readiness and documentation first. It does not authorize live network mutation yet.
 
-This handoff does not authorize Phase 8, product UI work, route rewrites, database-schema changes, Soroban-contract changes, workflow changes, dependency changes, deployments, live RPC mutation, or secret handling.
+A separate explicit authorization is required before any of the following:
 
-## Prohibited Scope
+- deploying the Soroban contract;
+- initializing a deployed contract;
+- invoking a live contract;
+- submitting a transaction;
+- confirming or reconciling a live transaction through RPC;
+- accessing local secret material;
+- wiring live Testnet behavior into product routes or UI.
 
-### Prohibited scope
+Phase 8 has not started. Product routes and UI remain outside the current scope.
+
+## Current Testnet Readiness Summary
+
+### Verified From Repository
+
+- The contract source and tests exist under `contracts/settleway_escrow/`.
+- Soroban contract CI is configured to run `cargo test --verbose`, build `wasm32v1-none` release Wasm, and upload `settleway_escrow.wasm`.
+- Web CI is configured to run `npm run test`, `npm run lint`, and `npm run build`.
+- The web code contains an SDK-backed RPC port and a hardened isolated Testnet adapter.
+- The signer boundary is interface-only.
+- The Deal API mutation routes currently use the mock store and off-chain state machine rather than the Testnet adapter.
+
+### Missing Before Live Smoke Authorization
+
+- Fresh deployment of the current contract Wasm.
+- Trusted current contract ID tied to the exact source commit and Wasm hash.
+- Runtime signer implementation for `admin`, `buyer_demo`, and `seller_demo`.
+- Runtime composition root that wires RPC, signer, adapter, persistence, time source, and public metadata.
+- Local-only smoke CLI or harness.
+- Deployment and initialization procedure that records only safe evidence.
+- Human-provided Testnet public addresses, funded accounts, RPC endpoint, fee cap, time-bound policy, deal hash fixture, proof hash fixture, and simulated monetary values.
+
+## Prohibited Scope Until Separately Authorized
 
 - No live RPC.
 - No Testnet mutation.
-- No secrets.
+- No secret access.
 - No deployment.
-- No product-code changes outside the explicitly authorized Phase 7N adapter-hardening scope.
-- No route, UI, database-schema, Soroban-contract, workflow, dependency, or Phase 8 changes.
-- No changes to custody claims, payment claims, KYC/KYB claims, or product non-goals.
-
-## Acceptance Gates
-
-### Acceptance gates
-
-Before the next code commit, the Phase 7N work should have evidence that:
-
-- only the authorized adapter hardening scope changed;
-- complete transaction-body identity is enforced for signer-returned transactions;
-- expected-signer verification is cryptographic;
-- `FeeBumpTransaction` is rejected at runtime;
-- final frozen-source validation evidence is recorded in tests or source review artifacts;
-- all affected registered tests pass;
-- lint/build status is observed or failures are recorded honestly;
-- no secrets, live RPC mutation, deployment, route/UI/database-schema/Soroban-contract/workflow/dependency changes, or Phase 8 files are included.
+- No contract invocation.
+- No transaction submission.
+- No route, UI, database-schema, Soroban-contract, workflow, dependency, product-code, test, or Phase 8 changes.
+- No production wallet, Mainnet identity, real funds, custody claim, payment claim, or KYC/KYB claim.
 
 ## Documentation Staleness To Correct Later
 
-### Verified fact
+### Verified Fact
 
 - Root `README.md` still reports completed checkpoints only through Phase 4 and lists later phases as pending.
 - `contracts/README.md` says the Soroban contract will be implemented in Phase 6, while `contracts/settleway_escrow/` now exists.
+- `contracts/settleway_escrow/README.md` lists `wasm32-unknown-unknown`, while current Soroban contract CI builds `wasm32v1-none`.
 - `web/README.md` is still the default Next.js README.
 - The Deal Room page still contains phase-stale UI copy such as "Phase 5 Notice", "Phase 8", and future Stellar wording.
 - `docs/21_GEMINI_HANDOFF_JSON_CONTRACT.md` lists a narrower source-of-truth set than the updated onboarding/precedence model.
 
-These are documentation or UI-copy staleness issues to correct later. They are not part of this documentation-only handoff task.
+These are documentation or UI-copy staleness issues to correct in a separately authorized task.
