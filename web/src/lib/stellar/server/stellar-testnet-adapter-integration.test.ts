@@ -1,9 +1,19 @@
 import { describe, it, expect, vi } from "vitest";
-import { Networks, Keypair, TransactionBuilder, nativeToScVal, xdr, StrKey } from "@stellar/stellar-sdk";
+import {
+  FeeBumpTransaction,
+  Keypair,
+  nativeToScVal,
+  Networks,
+  StrKey,
+  Transaction,
+  TransactionBuilder,
+  xdr,
+} from "@stellar/stellar-sdk";
 import { StellarTestnetAdapter } from "./stellar-testnet-adapter";
 import type { StellarTestnetAdapterConfig, StellarTestnetRoleMapping } from "./stellar-testnet-adapter";
 import type { StellarRpcPort } from "./stellar-rpc-port";
 import type { StellarSignerPort, StellarTimeSource, StellarSignRequest } from "./stellar-signer-port";
+import type { StellarSignerRole } from "./action-policy";
 import { buildStellarInvocation } from "./invocation-builder";
 import { assembleStellarExecutionInput } from "./execution-input-assembler";
 import type { StellarExecutionAssemblyInput, StellarExecutionPublicMetadata } from "./execution-input-assembler";
@@ -14,7 +24,7 @@ import type { StellarAction } from "@/lib/stellar/types";
 const ADMIN_KP = Keypair.fromSecret("SDG7MGMBQ3CQS74Q2UNIYLBDYZUBFHKAO25YBBXYGPX6YSRQFZS3DOIY");
 const BUYER_KP = Keypair.fromSecret("SAY7SJURIC433KFZAZ4HIJA7UAOHC64IBL7TRZX7V2HLLKZ2NV5RH6YN");
 const SELLER_KP = Keypair.fromSecret("SAKDCKWQTBO6E23ZHQD4LBM2WF6IRNGVV3KTGE5CKEORHEH32D6GQDVQ");
-const KP_MAP: Record<string, Keypair> = { admin: ADMIN_KP, buyer_demo: BUYER_KP, seller_demo: SELLER_KP };
+const KP_MAP: Record<StellarSignerRole, Keypair> = { admin: ADMIN_KP, buyer_demo: BUYER_KP, seller_demo: SELLER_KP };
 
 const CONTRACT_ID = StrKey.encodeContract(Buffer.alloc(32, 1));
 
@@ -38,6 +48,17 @@ const metadata: StellarExecutionPublicMetadata = {
   buyer_demo_address: BUYER_KP.publicKey(),
   seller_demo_address: SELLER_KP.publicKey(),
 };
+
+function parseNormalTestTransaction(
+  transactionXdr: string,
+  networkPassphrase: string,
+): Transaction {
+  const parsed = TransactionBuilder.fromXDR(transactionXdr, networkPassphrase);
+  if (parsed instanceof FeeBumpTransaction) {
+    throw new Error("Expected normal transaction fixture");
+  }
+  return parsed;
+}
 
 function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
   return {
@@ -71,7 +92,7 @@ function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
 
 describe("Stellar Testnet Adapter Integration", () => {
   const plans: Array<{
-    action: string;
+    action: StellarAction;
     status: string | null;
     deal_overrides: Partial<DbDeal>;
     extra: Record<string, string>;
@@ -115,7 +136,7 @@ describe("Stellar Testnet Adapter Integration", () => {
         };
       } else {
         asmInput = {
-          action: plan.action as Exclude<StellarAction, "create_deal" | "submit_proof">,
+          action: plan.action,
           operation_id: "op-1",
           deal,
           metadata,
@@ -133,7 +154,7 @@ describe("Stellar Testnet Adapter Integration", () => {
       const rpcPort: StellarRpcPort = {
         verifyNetworkIdentity: vi.fn().mockResolvedValue(true),
         loadSourceAccount: vi.fn().mockResolvedValue({ ok: true, sequence: "100" }),
-        simulateAndPrepareTransaction: vi.fn().mockImplementation(async (tx: import("@stellar/stellar-sdk").Transaction) => {
+        simulateAndPrepareTransaction: vi.fn().mockImplementation(async (tx: Transaction) => {
           return { ok: true, prepared_transaction: tx };
         }),
         submitTransaction: vi.fn().mockResolvedValue({
@@ -143,12 +164,12 @@ describe("Stellar Testnet Adapter Integration", () => {
         confirmTransaction: vi.fn().mockResolvedValue(
           plan.expect_escrow_id
             ? {
-                outcome: "confirmed" as const,
+                outcome: "confirmed",
                 transaction_hash: "a".repeat(64),
                 result_value: nativeToScVal(BigInt(42), { type: "u64" }),
               }
             : {
-                outcome: "confirmed" as const,
+                outcome: "confirmed",
                 transaction_hash: "a".repeat(64),
                 result_value: xdr.ScVal.scvVoid(),
               },
@@ -158,10 +179,10 @@ describe("Stellar Testnet Adapter Integration", () => {
       const signerPort: StellarSignerPort = {
         signTransaction: vi.fn().mockImplementation(async (req: StellarSignRequest) => {
           const kp = KP_MAP[req.signer_role];
-          const tx = TransactionBuilder.fromXDR(
+          const tx = parseNormalTestTransaction(
             req.prepared_transaction_xdr,
             req.expected_network_passphrase,
-          ) as import("@stellar/stellar-sdk").Transaction;
+          );
           tx.sign(kp);
           return { ok: true, signed_transaction_xdr: tx.toXDR() };
         }),

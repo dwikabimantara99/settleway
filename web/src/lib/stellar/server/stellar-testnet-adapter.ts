@@ -3,9 +3,9 @@ import {
   Networks,
   Keypair,
   Transaction,
+  FeeBumpTransaction,
   xdr,
 } from "@stellar/stellar-sdk";
-import type { StellarAction } from "@/lib/stellar/types";
 import type { StellarSignerRole } from "./action-policy";
 import type {
   StellarExecutionAdapter,
@@ -14,9 +14,9 @@ import type {
   StellarAdapterConfirmRequest,
   StellarAdapterConfirmationResult,
 } from "./adapter-contracts";
-import type { StellarRpcPort } from "./stellar-rpc-port";
+import type { ConfirmResultValue, StellarRpcPort } from "./stellar-rpc-port";
 import type { StellarSignerPort, StellarTimeSource } from "./stellar-signer-port";
-import { encodeContractArguments, decodeEscrowIdResult } from "./stellar-sdk-codec";
+import { encodeContractArguments } from "./stellar-sdk-codec";
 import { constructUnsignedSorobanTransaction } from "./stellar-transaction-factory";
 
 export interface StellarTestnetAdapterConfig {
@@ -102,18 +102,187 @@ function extractTransactionFee(tx: Transaction): number | null {
   return fee;
 }
 
-function verifyTransactionSemantics(
-  original: Transaction,
-  signed: Transaction,
-): string | null {
-  if (original.source !== signed.source) return "ERR_SOURCE_CHANGED";
-  if (original.sequence !== signed.sequence) return "ERR_SEQUENCE_CHANGED";
-  if (signed.operations.length !== 1) return "ERR_OPERATION_COUNT_CHANGED";
+type ParsedNormalTransactionResult =
+  | {
+      readonly ok: true;
+      readonly transaction: Transaction;
+    }
+  | {
+      readonly ok: false;
+      readonly reason: "malformed_xdr" | "fee_bump";
+    };
 
-  const op = signed.operations[0];
-  if (op.type !== "invokeHostFunction") return "ERR_OPERATION_TYPE_CHANGED";
+function requireNormalTransaction(
+  parsed: Transaction | FeeBumpTransaction,
+): ParsedNormalTransactionResult {
+  if (parsed instanceof FeeBumpTransaction) {
+    return { ok: false, reason: "fee_bump" };
+  }
+  return { ok: true, transaction: parsed };
+}
 
-  return null;
+function parseNormalTransactionXdr(
+  transactionXdr: string,
+  networkPassphrase: string,
+): ParsedNormalTransactionResult {
+  try {
+    return requireNormalTransaction(
+      TransactionBuilder.fromXDR(transactionXdr, networkPassphrase),
+    );
+  } catch {
+    return { ok: false, reason: "malformed_xdr" };
+  }
+}
+
+function readTransactionBody(tx: Transaction): xdr.Transaction | null {
+  try {
+    const envelope = tx.toEnvelope();
+    if (envelope.switch().name !== "envelopeTypeTx") {
+      return null;
+    }
+    return envelope.v1().tx();
+  } catch {
+    return null;
+  }
+}
+
+function transactionBodyXdr(tx: Transaction): string | null {
+  const body = readTransactionBody(tx);
+  return body === null ? null : body.toXDR("base64");
+}
+
+interface HostFunctionIntent {
+  readonly operation_source_xdr: string | null;
+  readonly contract_address_xdr: string;
+  readonly function_name: string;
+  readonly argument_xdrs: readonly string[];
+}
+
+interface TransactionIntent {
+  readonly source_account_xdr: string;
+  readonly sequence_xdr: string;
+  readonly conditions_xdr: string;
+  readonly memo_xdr: string;
+  readonly operations: readonly HostFunctionIntent[];
+}
+
+function readHostFunctionIntent(
+  operation: xdr.Operation,
+): HostFunctionIntent | null {
+  const body = operation.body();
+  if (body.switch().name !== "invokeHostFunction") {
+    return null;
+  }
+
+  const hostFunctionOp = body.invokeHostFunctionOp();
+  const hostFunction = hostFunctionOp.hostFunction();
+  if (hostFunction.switch().name !== "hostFunctionTypeInvokeContract") {
+    return null;
+  }
+
+  const invokeContract = hostFunction.invokeContract();
+  const sourceAccount = operation.sourceAccount();
+  const operationSourceXdr = sourceAccount == null ? null : sourceAccount.toXDR("base64");
+  return {
+    operation_source_xdr: operationSourceXdr,
+    contract_address_xdr: invokeContract.contractAddress().toXDR("base64"),
+    function_name: invokeContract.functionName().toString(),
+    argument_xdrs: invokeContract.args().map((arg) => arg.toXDR("base64")),
+  };
+}
+
+function readTransactionIntent(tx: Transaction): TransactionIntent | null {
+  const body = readTransactionBody(tx);
+  if (body === null) {
+    return null;
+  }
+
+  const operations: HostFunctionIntent[] = [];
+  for (const operation of body.operations()) {
+    const operationIntent = readHostFunctionIntent(operation);
+    if (operationIntent === null) {
+      return null;
+    }
+    operations.push(operationIntent);
+  }
+
+  return {
+    source_account_xdr: body.sourceAccount().toXDR("base64"),
+    sequence_xdr: body.seqNum().toXDR("base64"),
+    conditions_xdr: body.cond().toXDR("base64"),
+    memo_xdr: body.memo().toXDR("base64"),
+    operations,
+  };
+}
+
+function sameStringArray(
+  left: readonly string[],
+  right: readonly string[],
+): boolean {
+  if (left.length !== right.length) {
+    return false;
+  }
+  return left.every((value, index) => value === right[index]);
+}
+
+function sameHostFunctionIntent(
+  expected: HostFunctionIntent,
+  actual: HostFunctionIntent,
+): boolean {
+  return (
+    expected.operation_source_xdr === actual.operation_source_xdr &&
+    expected.contract_address_xdr === actual.contract_address_xdr &&
+    expected.function_name === actual.function_name &&
+    sameStringArray(expected.argument_xdrs, actual.argument_xdrs)
+  );
+}
+
+function sameTransactionIntent(
+  expectedTx: Transaction,
+  actualTx: Transaction,
+): boolean {
+  const expected = readTransactionIntent(expectedTx);
+  const actual = readTransactionIntent(actualTx);
+  if (expected === null || actual === null) {
+    return false;
+  }
+
+  if (
+    expected.source_account_xdr !== actual.source_account_xdr ||
+    expected.sequence_xdr !== actual.sequence_xdr ||
+    expected.conditions_xdr !== actual.conditions_xdr ||
+    expected.memo_xdr !== actual.memo_xdr ||
+    expected.operations.length !== actual.operations.length
+  ) {
+    return false;
+  }
+
+  for (let index = 0; index < expected.operations.length; index += 1) {
+    const expectedOperation = expected.operations[index];
+    const actualOperation = actual.operations[index];
+    if (
+      expectedOperation === undefined ||
+      actualOperation === undefined ||
+      !sameHostFunctionIntent(expectedOperation, actualOperation)
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function sameUnsignedTransactionBody(
+  expectedTx: Transaction,
+  actualTx: Transaction,
+): boolean {
+  const expectedBodyXdr = transactionBodyXdr(expectedTx);
+  const actualBodyXdr = transactionBodyXdr(actualTx);
+  return (
+    expectedBodyXdr !== null &&
+    actualBodyXdr !== null &&
+    expectedBodyXdr === actualBodyXdr
+  );
 }
 
 function verifySignature(
@@ -137,6 +306,22 @@ function verifySignature(
     return false;
   }
   return false;
+}
+
+function decodeEscrowIdResultValue(
+  resultValue: ConfirmResultValue,
+): string | null {
+  if (resultValue.switch().name !== "scvU64") {
+    return null;
+  }
+  if (resultValue.u64 === undefined) {
+    return null;
+  }
+  try {
+    return resultValue.u64().toString();
+  } catch {
+    return null;
+  }
 }
 
 export class StellarTestnetAdapter implements StellarExecutionAdapter {
@@ -276,10 +461,21 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     }
 
     // 7. Parse unsigned transaction for simulation
-    const unsignedTx = TransactionBuilder.fromXDR(
+    const unsignedTxResult = parseNormalTransactionXdr(
       txResult.unsigned_transaction_xdr,
       this.config.network_passphrase,
-    ) as Transaction;
+    );
+    if (!unsignedTxResult.ok) {
+      return {
+        outcome: "failed",
+        action: invocation.action,
+        stage: "prepare",
+        transaction_hash: null,
+        error_code: "ERR_INVALID_STATE",
+        retryable: false,
+      };
+    }
+    const unsignedTx = unsignedTxResult.transaction;
 
     // 8. Simulate/prepare transaction
     const simResult = await this.rpcPort.simulateAndPrepareTransaction(unsignedTx);
@@ -305,8 +501,30 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
       };
     }
 
-    // 9. Validate fee
-    const preparedTx = simResult.prepared_transaction as Transaction;
+    // 9. Validate RPC-prepared transaction intent and fee
+    const preparedTxResult = requireNormalTransaction(simResult.prepared_transaction);
+    if (!preparedTxResult.ok) {
+      return {
+        outcome: "failed",
+        action: invocation.action,
+        stage: "simulate",
+        transaction_hash: null,
+        error_code: "ERR_INVALID_STATE",
+        retryable: false,
+      };
+    }
+    const preparedTx = preparedTxResult.transaction;
+    if (!sameTransactionIntent(unsignedTx, preparedTx)) {
+      return {
+        outcome: "failed",
+        action: invocation.action,
+        stage: "simulate",
+        transaction_hash: null,
+        error_code: "ERR_INVALID_STATE",
+        retryable: false,
+      };
+    }
+
     const totalFee = extractTransactionFee(preparedTx);
     if (totalFee === null) {
       return {
@@ -349,13 +567,11 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     }
 
     // 11. Parse signed transaction
-    let signedTx: Transaction;
-    try {
-      signedTx = TransactionBuilder.fromXDR(
-        signResult.signed_transaction_xdr,
-        this.config.network_passphrase,
-      ) as Transaction;
-    } catch {
+    const signedTxResult = parseNormalTransactionXdr(
+      signResult.signed_transaction_xdr,
+      this.config.network_passphrase,
+    );
+    if (!signedTxResult.ok) {
       return {
         outcome: "failed",
         action: invocation.action,
@@ -365,13 +581,10 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
         retryable: false,
       };
     }
+    const signedTx = signedTxResult.transaction;
 
-    // 12. Verify semantics unchanged
-    const semanticErr = verifyTransactionSemantics(
-      preparedTx,
-      signedTx,
-    );
-    if (semanticErr !== null) {
+    // 12. Verify signer only added signatures to the RPC-prepared transaction
+    if (!sameUnsignedTransactionBody(preparedTx, signedTx)) {
       return {
         outcome: "failed",
         action: invocation.action,
@@ -472,31 +685,27 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
             retryable: false,
           };
         }
-        try {
-          const escrowId = decodeEscrowIdResult(
-            result.result_value as xdr.ScVal,
-          );
+        const escrowId = decodeEscrowIdResultValue(result.result_value);
+        if (escrowId !== null) {
           return {
             outcome: "confirmed",
             action: "create_deal",
             transaction_hash,
             result_escrow_id: escrowId,
           };
-        } catch {
-          return {
-            outcome: "failed",
-            action,
-            transaction_hash,
-            error_code: "ERR_CONTRACT_REJECTED",
-            retryable: false,
-          };
         }
+        return {
+          outcome: "failed",
+          action,
+          transaction_hash,
+          error_code: "ERR_CONTRACT_REJECTED",
+          retryable: false,
+        };
       }
 
       // Transition actions — escrow_id must be null
       if (result.result_value !== null) {
-        const switchName = (result.result_value as { switch(): { name: string } }).switch().name;
-        if (switchName !== "scvVoid") {
+        if (result.result_value.switch().name !== "scvVoid") {
           return {
             outcome: "failed",
             action,
@@ -508,7 +717,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
       }
       return {
         outcome: "confirmed",
-        action: action as Exclude<StellarAction, "create_deal">,
+        action,
         transaction_hash,
         result_escrow_id: null,
       };
