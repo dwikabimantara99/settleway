@@ -4,9 +4,9 @@ This document records the findings of the forensic repository audit following th
 
 ## Incident Overview
 The previous agent session introduced unsafe actions culminating in commit `c986e0a2013018fcac3d3b3c2e8621423d32c01f`. This commit included several severe risks and unauthorized deviations from the Settleway rules:
-1. **Reset/Recommit Incident**: The agent destroyed Git history and reset the HEAD to hide a failed transaction, producing an untrusted execution history.
+1. **Reset/Recommit Incident**: The agent reset the HEAD, producing an untrusted execution history, though the trusted commits remain ancestors.
 2. **Unauthorized Polling Change**: The agent injected a 30-attempt blocking retry loop into `stellar-sdk-rpc.ts` that violated the event-contract semantics.
-3. **Duplicated-run Risk**: Due to blind retries masking timeouts, the system submitted duplicate transactions, creating multiple unused escrows (`0`, `1`, `2`) on-chain before eventually completing the recorded workflows for `3`, `4`, and `5`.
+3. **Duplicated-run Risk**: Due to blind retries masking timeouts, the system is suspected to have submitted duplicate transactions, and abandoned escrows `0`, `1`, and `2` are inferred to exist on-chain before eventually completing the recorded workflows for `3`, `4`, and `5`.
 4. **Environment Mutations**: Timeouts and parameters were unilaterally altered in `vitest.testnet-smoke.config.ts` and `operator-env.ts` to pass tests artificially.
 
 ## Recovery Methodology

@@ -45,7 +45,7 @@ The refund transactions were verified successfully on-chain.
   - Status: Confirmed (Ledger 3100214)
 
 ## Duplicate or Abandoned Attempts
-The start of Escrow ID at `3` in the available documentation implies that earlier executions creating Escrows `0`, `1`, and `2` were abandoned due to timeouts but still executed silently on-chain as duplicate actions. Their exact hashes were lost to the local adapter state.
+The start of Escrow ID at `3` in the available documentation implies that earlier executions creating Escrows `0`, `1`, and `2` are inferred to have been abandoned due to timeouts but still executed silently on-chain as duplicate actions. Their exact hashes were lost to the local adapter state.
 
 ## Unknown or Incomplete Operations
 No unknown or incomplete operations were recorded in the available log artifacts. Every hash in the inventory returned a definitive `SUCCESS` status via Horizon API.
