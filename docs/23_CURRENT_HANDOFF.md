@@ -7,32 +7,32 @@ This document records the current operational state for the next Settleway engin
 ### Verified Fact
 
 - Branch: `phase-7-rebuild`
-- Checkpoint: `32d112160e1235d6e9667d8e48d8ea0e19bb5d09`
-- Checkpoint commit: `fix: harden Stellar signer verification`
-- Working tree was clean at the controlled Testnet smoke readiness checkpoint.
-- Mega-Phase 7N network adapter foundation: complete.
-- The isolated Stellar Testnet adapter now enforces normal transaction parsing, RPC-prepared intent preservation, fee-cap validation, signer-returned transaction body identity, expected-signer cryptographic verification, and `FeeBumpTransaction` rejection.
-- Registered offline web validation was last observed during the 7N hardening task as 21 test files and 488 passing tests, with lint and build passing.
+- Checkpoint: `d12836ce27dd09f09039eb676ad930725163ec41`
+- Checkpoint commit: `feat: add local Testnet smoke operator harness`
+- The local Testnet operator harness is complete.
+- The current Soroban contract artifact has been locally verified from the current checkpoint.
+- Canonical Wasm SHA-256: `A73F99E3E1521E581B38488FF8F26F746843F2214282C3286D5334B7BCE04703`
+- Working tree was clean before local MSVC repair and contract artifact verification, except for the expected generated `contracts/settleway_escrow/target/` directory during local Cargo execution.
 - `contracts/settleway_escrow/src/lib.rs` contains the Tier A Soroban event-contract foundation.
 - CI workflow files exist for web test/lint/build and Soroban contract test/build.
+- No live deployment has occurred.
+- No trusted current contract ID exists yet.
+- Phase 8 has not started.
 
 ### Reported But Not Independently Verified In This Handoff Update
 
 - Live Testnet deployment, live RPC behavior, live transaction mutation, and live contract invocation remain unverified.
 - Current GitHub Actions status after the latest push has not been observed in this session.
-- No current trusted deployed contract ID has been verified from repository files.
 
 ## Next Authorized Mission
-
-### Next Authorized Mission
 
 The next authorized mission is:
 
 ```text
-Controlled Testnet smoke readiness and isolated smoke tooling
+synthetic Testnet identity provisioning and fresh contract deployment preparation
 ```
 
-This mission is readiness and documentation first. It does not authorize live network mutation yet.
+This mission still does not authorize live network mutation by default.
 
 A separate explicit authorization is required before any of the following:
 
@@ -44,18 +44,17 @@ A separate explicit authorization is required before any of the following:
 - accessing local secret material;
 - wiring live Testnet behavior into product routes or UI.
 
-Phase 8 has not started. Product routes and UI remain outside the current scope.
-
 ## Current Testnet Readiness Summary
 
-### Verified From Repository
+### Verified From Repository And Local Artifact Validation
 
 - The contract source and tests exist under `contracts/settleway_escrow/`.
 - Soroban contract CI is configured to run `cargo test --verbose`, build `wasm32v1-none` release Wasm, and upload `settleway_escrow.wasm`.
-- Web CI is configured to run `npm run test`, `npm run lint`, and `npm run build`.
-- The web code contains an SDK-backed RPC port and a hardened isolated Testnet adapter.
-- The signer boundary is interface-only.
-- The Deal API mutation routes currently use the mock store and off-chain state machine rather than the Testnet adapter.
+- The canonical local contract verification succeeded at checkpoint `d12836ce27dd09f09039eb676ad930725163ec41`.
+- The canonical local Wasm artifact path is `contracts/settleway_escrow/target/wasm32v1-none/release/settleway_escrow.wasm`.
+- The current canonical Wasm hash is recorded in `docs/25_TESTNET_CONTRACT_ARTIFACT.md`.
+- The contract requires one-time `initialize(admin)` before admin-governed execution can proceed.
+- Historical deployments must not be treated as trusted for the upcoming smoke.
 
 ### Missing Before Live Smoke Authorization
 
@@ -63,8 +62,7 @@ Phase 8 has not started. Product routes and UI remain outside the current scope.
 - Trusted current contract ID tied to the exact source commit and Wasm hash.
 - Runtime signer implementation for `admin`, `buyer_demo`, and `seller_demo`.
 - Runtime composition root that wires RPC, signer, adapter, persistence, time source, and public metadata.
-- Local-only smoke CLI or harness.
-- Deployment and initialization procedure that records only safe evidence.
+- Safe deployment and initialization evidence from a fresh synthetic Testnet deployment.
 - Human-provided Testnet public addresses, funded accounts, RPC endpoint, fee cap, time-bound policy, deal hash fixture, proof hash fixture, and simulated monetary values.
 
 ## Prohibited Scope Until Separately Authorized
@@ -73,6 +71,7 @@ Phase 8 has not started. Product routes and UI remain outside the current scope.
 - No Testnet mutation.
 - No secret access.
 - No deployment.
+- No contract initialization.
 - No contract invocation.
 - No transaction submission.
 - No route, UI, database-schema, Soroban-contract, workflow, dependency, product-code, test, or Phase 8 changes.
