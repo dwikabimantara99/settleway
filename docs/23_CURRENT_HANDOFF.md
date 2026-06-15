@@ -12,9 +12,14 @@ This document records the current operational state for the next Settleway engin
 
 - **Phase 7 implementation**: accepted
 - **Phase 7 provenance completeness**: partially verified
-- **Phase 8**: not started, not yet authorized
 
-See [docs/32_PHASE_7_ACCEPTANCE_DECISION.md](32_PHASE_7_ACCEPTANCE_DECISION.md) for the formal acceptance decision.
+- **Phase 8 definition**: Proof and Reputation
+- **Phase 8 scope gate**: CONDITIONAL GO
+- **Phase 8 implementation**: not started
+- **Phase 8 authorization**: not yet authorized
+
+See [docs/32_PHASE_7_ACCEPTANCE_DECISION.md](32_PHASE_7_ACCEPTANCE_DECISION.md) for the formal Phase 7 acceptance decision.
+See [docs/33_PHASE_8_SCOPE_GATE.md](33_PHASE_8_SCOPE_GATE.md) for the Phase 8 scope definition.
 
 ## Testnet Status
 
@@ -24,11 +29,11 @@ See [docs/32_PHASE_7_ACCEPTANCE_DECISION.md](32_PHASE_7_ACCEPTANCE_DECISION.md) 
 
 ## Next Authorized Mission
 
-The Phase 7 scope is functionally complete, but due to the "partially verified" status (missing deployment hashes), Phase 8 may NOT begin until explicitly authorized. 
+The next required decision is explicit founder authorization after scope review.
 
 The next authorized mission is:
 ```text
-await explicit instructions from the user regarding the commencement of Phase 8 or the generation of new deployment evidence.
+await explicit instructions from the user regarding the formal authorization of Phase 8 based on the reviewed scope document (docs/33_PHASE_8_SCOPE_GATE.md).
 ```
 
 ## Prohibited Scope Until Separately Authorized

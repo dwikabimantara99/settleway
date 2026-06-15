@@ -24,6 +24,12 @@ Use this matrix to decide whether a phase is complete.
 * **Phase 8 dependency:** requires a separate explicit authorization decision
 * Unresolved provenance items remain documented rather than treated as implementation failures.
 
+## Phase 8 Scope Gate
+
+* **Phase 8 definition:** Proof and Reputation
+* **Scope gate:** CONDITIONAL GO
+* **Implementation:** NOT STARTED
+* **Authorization:** NOT YET GRANTED
 
 ## Final MVP acceptance
 
