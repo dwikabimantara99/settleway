@@ -7,16 +7,18 @@ This document records the current operational state for the next Settleway engin
 ### Verified Fact
 
 - Branch: `phase-7-rebuild`
-- Checkpoint: `d12836ce27dd09f09039eb676ad930725163ec41`
-- Checkpoint commit: `feat: add local Testnet smoke operator harness`
-- The local Testnet operator harness is complete.
-- The current Soroban contract artifact has been locally verified from the current checkpoint.
-- Canonical Wasm SHA-256: `A73F99E3E1521E581B38488FF8F26F746843F2214282C3286D5334B7BCE04703`
-- Working tree was clean before local MSVC repair and contract artifact verification, except for the expected generated `contracts/settleway_escrow/target/` directory during local Cargo execution.
-- `contracts/settleway_escrow/src/lib.rs` contains the Tier A Soroban event-contract foundation.
-- CI workflow files exist for web test/lint/build and Soroban contract test/build.
-- No live deployment has occurred.
-- No trusted current contract ID exists yet.
+- Checkpoint: `033ccd584129975fc38465800b05ac258244e878`
+- Checkpoint commit: `docs: freeze current Testnet contract artifact`
+- Stellar CLI `26.1.0` is installed from `crates.io`.
+- Three synthetic Testnet-only secure-store identities have been provisioned.
+- Public role addresses are recorded in `docs/26_TESTNET_SYNTHETIC_IDENTITIES.md`.
+- The identities remain unfunded.
+- The current Soroban contract artifact has been locally verified and documented.
+- No trusted deployed contract ID exists.
+- No Friendbot or funding occurred.
+- No Stellar RPC call occurred for the local Testnet alias or identity provisioning task.
+- No deployment or initialization occurred.
+- No secret was exported.
 - Phase 8 has not started.
 
 ### Reported But Not Independently Verified In This Handoff Update
@@ -29,13 +31,14 @@ This document records the current operational state for the next Settleway engin
 The next authorized mission is:
 
 ```text
-synthetic Testnet identity provisioning and fresh contract deployment preparation
+build and validate a Stellar CLI secure-store signer adapter
 ```
 
 This mission still does not authorize live network mutation by default.
 
 A separate explicit authorization is required before any of the following:
 
+- funding the synthetic Testnet identities;
 - deploying the Soroban contract;
 - initializing a deployed contract;
 - invoking a live contract;
@@ -44,32 +47,36 @@ A separate explicit authorization is required before any of the following:
 - accessing local secret material;
 - wiring live Testnet behavior into product routes or UI.
 
+Live mutation still requires separate authorization.
+
 ## Current Testnet Readiness Summary
 
-### Verified From Repository And Local Artifact Validation
+### Verified From Repository And Local Operator Setup
 
 - The contract source and tests exist under `contracts/settleway_escrow/`.
 - Soroban contract CI is configured to run `cargo test --verbose`, build `wasm32v1-none` release Wasm, and upload `settleway_escrow.wasm`.
-- The canonical local contract verification succeeded at checkpoint `d12836ce27dd09f09039eb676ad930725163ec41`.
-- The canonical local Wasm artifact path is `contracts/settleway_escrow/target/wasm32v1-none/release/settleway_escrow.wasm`.
-- The current canonical Wasm hash is recorded in `docs/25_TESTNET_CONTRACT_ARTIFACT.md`.
-- The contract requires one-time `initialize(admin)` before admin-governed execution can proceed.
-- Historical deployments must not be treated as trusted for the upcoming smoke.
+- The canonical local Wasm SHA-256 remains `A73F99E3E1521E581B38488FF8F26F746843F2214282C3286D5334B7BCE04703`.
+- The dedicated local Stellar CLI config directory exists outside the repository at `%LOCALAPPDATA%\\Settleway\\stellar-testnet-smoke`.
+- The local network alias `settleway-testnet` is configured with the public Testnet RPC URL and Testnet passphrase.
+- The role aliases `settleway-testnet-admin`, `settleway-testnet-buyer-demo`, and `settleway-testnet-seller-demo` exist in Windows secure-store mode.
+- The current operator harness still expects injected raw secret-seed signers and cannot sign directly with the secure-store aliases.
 
 ### Missing Before Live Smoke Authorization
 
+- Funding of the synthetic Testnet identities.
+- A secure-store signer adapter that can call the official Stellar CLI by alias without exporting secrets.
+- Runtime composition that swaps raw-seed signer injection for secure-store alias signing.
 - Fresh deployment of the current contract Wasm.
 - Trusted current contract ID tied to the exact source commit and Wasm hash.
-- Runtime signer implementation for `admin`, `buyer_demo`, and `seller_demo`.
-- Runtime composition root that wires RPC, signer, adapter, persistence, time source, and public metadata.
 - Safe deployment and initialization evidence from a fresh synthetic Testnet deployment.
-- Human-provided Testnet public addresses, funded accounts, RPC endpoint, fee cap, time-bound policy, deal hash fixture, proof hash fixture, and simulated monetary values.
+- Human-provided fee cap, time-bound policy, deal hash fixture, proof hash fixture, and simulated monetary values for the first controlled smoke.
 
 ## Prohibited Scope Until Separately Authorized
 
+- No Friendbot.
+- No funding.
 - No live RPC.
 - No Testnet mutation.
-- No secret access.
 - No deployment.
 - No contract initialization.
 - No contract invocation.
