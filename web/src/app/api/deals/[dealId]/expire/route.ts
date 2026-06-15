@@ -13,14 +13,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
 
   try {
     let existingDeal;
-    let userRole;
     let authUser;
     try {
       const auth = await requireDealParticipant(dealId);
       existingDeal = auth.deal;
-      userRole = auth.role;
       authUser = auth.user;
-    } catch (e) {
+    } catch (e: any) {
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', e.message), { status: 401 });
     }
 
