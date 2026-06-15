@@ -12,6 +12,8 @@ This document records the current operational state for the next Settleway engin
 - Stellar CLI `26.1.0` is installed from `crates.io`.
 - Three synthetic Testnet-only secure-store identities have been provisioned.
 - Public role addresses are recorded in `docs/26_TESTNET_SYNTHETIC_IDENTITIES.md`.
+- The Stellar CLI secure-store signer adapter has been implemented and validated.
+- Secure-store signer readiness is recorded in `docs/27_STELLAR_CLI_SECURE_STORE_SIGNER.md`.
 - The identities remain unfunded.
 - The current Soroban contract artifact has been locally verified and documented.
 - No trusted deployed contract ID exists.
@@ -31,10 +33,10 @@ This document records the current operational state for the next Settleway engin
 The next authorized mission is:
 
 ```text
-build and validate a Stellar CLI secure-store signer adapter
+prepare the next explicitly authorized Testnet-readiness task
 ```
 
-This mission still does not authorize live network mutation by default.
+No next task authorizes live network mutation by default.
 
 A separate explicit authorization is required before any of the following:
 
@@ -59,13 +61,12 @@ Live mutation still requires separate authorization.
 - The dedicated local Stellar CLI config directory exists outside the repository at `%LOCALAPPDATA%\\Settleway\\stellar-testnet-smoke`.
 - The local network alias `settleway-testnet` is configured with the public Testnet RPC URL and Testnet passphrase.
 - The role aliases `settleway-testnet-admin`, `settleway-testnet-buyer-demo`, and `settleway-testnet-seller-demo` exist in Windows secure-store mode.
-- The current operator harness still expects injected raw secret-seed signers and cannot sign directly with the secure-store aliases.
+- The current operator harness rejects raw secret-seed inputs and can run a local `signer_preflight` through the secure-store aliases.
+- The secure-store signer preflight has verified all three aliases, preserved synthetic transaction bodies, verified all three signatures, and performed zero RPC calls, submissions, or confirmations.
 
 ### Missing Before Live Smoke Authorization
 
 - Funding of the synthetic Testnet identities.
-- A secure-store signer adapter that can call the official Stellar CLI by alias without exporting secrets.
-- Runtime composition that swaps raw-seed signer injection for secure-store alias signing.
 - Fresh deployment of the current contract Wasm.
 - Trusted current contract ID tied to the exact source commit and Wasm hash.
 - Safe deployment and initialization evidence from a fresh synthetic Testnet deployment.
