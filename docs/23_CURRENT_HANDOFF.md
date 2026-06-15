@@ -36,11 +36,11 @@ See [docs/35_PHASE_9_ACCEPTANCE_DECISION.md](35_PHASE_9_ACCEPTANCE_DECISION.md) 
 ## Next Authorized Mission
 
 The MVP phases are complete.
-- **Phase 10**: NOT STARTED. NOT AUTHORIZED.
+- **Phase 10**: PROPOSED. NOT YET ACCEPTED. IMPLEMENTATION NOT AUTHORIZED.
 
 The next authorized mission is:
 ```text
-await explicit instructions from the user regarding the future of the product or post-hackathon goals.
+await founder review and approval of docs/36_PHASE_10_SCOPE_PROPOSAL.md.
 ```
 
 ## Prohibited Scope Until Separately Authorized

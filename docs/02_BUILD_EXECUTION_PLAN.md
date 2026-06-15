@@ -208,3 +208,9 @@ Acceptance criteria:
 
 - A presenter can run the 3-5 minute demo without improvising.
 - Failure modes are visible and not embarrassing.
+
+## Phase 10 - Persistence and Identity Foundation (PROPOSED)
+
+*Status: PROPOSED. NOT YET ACCEPTED. IMPLEMENTATION NOT AUTHORIZED.*
+
+See `docs/36_PHASE_10_SCOPE_PROPOSAL.md` for full proposed scope and founder-level decisions.
