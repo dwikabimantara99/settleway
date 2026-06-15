@@ -8,7 +8,9 @@ import { demoProfiles } from '@/lib/demo/demo-data';
 import { ShieldCheck, Upload, FileText, CheckCircle2, ChevronLeft, Info } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getDeal } from '@/lib/db/deals';
+import { mockStore } from '@/lib/db/mock-store';
 import { DealActions } from '@/components/deal/DealActions';
+import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 
 export default async function DealRoomPage({ params }: { params: Promise<{ dealId: string }> }) {
   const resolvedParams = await params;
@@ -18,6 +20,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
 
   const buyer = demoProfiles[deal.buyer_id];
   const seller = demoProfiles[deal.seller_id];
+  
+  const evidenceList = mockStore.getDealEvidence(deal.id);
 
   const status = deal.status;
   const steps: Step[] = [
@@ -63,7 +67,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             </div>
             <p className="text-slate-600">Deal ID: <span className="font-mono text-xs bg-slate-100 p-1 rounded">{deal.id}</span></p>
           </div>
-          <DealActions dealId={deal.id} status={deal.status} sellerId={deal.seller_id} />
+          <DealActions dealId={deal.id} status={deal.status} />
         </div>
 
         <div className="mt-8 md:mt-10 pb-4 md:pb-6">
@@ -80,12 +84,47 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               <CardTitle>Delivery & Proof</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-8 text-center mb-6">
-                <Upload className="h-8 w-8 text-slate-400 mx-auto mb-3" />
-                <h3 className="text-sm font-semibold text-slate-900 mb-1">{isPostProof ? 'Delivery Evidence' : 'Upload Delivery Evidence'}</h3>
-                <p className="text-xs text-slate-500 mb-4">{isPostProof ? 'Proof milestone simulated. Real file upload and proof hashing will be added in Phase 8.' : 'Delivery evidence is planned for Phase 8. Submit Proof in Phase 5 simulates the proof milestone only.'}</p>
-                <Button variant="secondary" size="sm" disabled>Select Files (Phase 8)</Button>
-              </div>
+              {deal.status === 'LOCKED' ? (
+                <EvidenceSubmitter dealId={deal.id} sellerId={deal.seller_id} />
+              ) : isPostProof ? (
+                evidenceList.length > 0 ? (
+                  <div className="space-y-4 mb-6">
+                    {evidenceList.map(ev => (
+                      <div key={ev.id} className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm text-sm">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="font-semibold text-slate-900">{ev.original_filename}</div>
+                          <Badge variant="outline" className="text-xs capitalize">{ev.evidence_kind.replace('_', ' ')}</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mb-3">
+                          <div><span className="font-medium">Size:</span> {(ev.byte_size / 1024).toFixed(1)} KB</div>
+                          <div><span className="font-medium">Time:</span> {new Date(ev.created_at).toLocaleString()}</div>
+                          <div className="col-span-2">
+                            <span className="font-medium">SHA-256:</span> 
+                            <span className="font-mono text-[10px] ml-1 bg-slate-100 px-1 py-0.5 rounded break-all">{ev.sha256_hash}</span>
+                          </div>
+                        </div>
+                        <div className="bg-slate-50 rounded p-2 text-xs border border-slate-100 flex justify-between items-center">
+                          <span className="text-slate-500">Operation Ref: <span className="font-mono">{ev.chain_operation_reference || 'pending'}</span></span>
+                          <span className="text-emerald-700 font-medium">Anchored: {ev.chain_operation_reference ? 'Confirmed' : 'Pending'}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-8 text-center mb-6">
+                    <CheckCircle2 className="h-8 w-8 text-emerald-400 mx-auto mb-3" />
+                    <h3 className="text-sm font-semibold text-slate-900 mb-1">Proof Submitted</h3>
+                    <p className="text-xs text-slate-500">Delivery evidence has been submitted successfully.</p>
+                  </div>
+                )
+              ) : (
+                <div className="bg-slate-50 border border-dashed border-slate-300 rounded-lg p-8 text-center mb-6">
+                  <Upload className="h-8 w-8 text-slate-400 mx-auto mb-3" />
+                  <h3 className="text-sm font-semibold text-slate-900 mb-1">Upload Delivery Evidence</h3>
+                  <p className="text-xs text-slate-500 mb-4">Evidence submission becomes available after funds are locked.</p>
+                  <Button variant="secondary" size="sm" disabled>Select Files</Button>
+                </div>
+              )}
 
               <div className="space-y-4">
                 <h4 className="text-sm font-semibold text-slate-900">Required Documents</h4>

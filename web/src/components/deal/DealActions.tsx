@@ -7,10 +7,9 @@ import { Button } from '@/components/ui/Button';
 interface DealActionsProps {
   dealId: string;
   status: string;
-  sellerId: string;
 }
 
-export function DealActions({ dealId, status, sellerId }: DealActionsProps) {
+export function DealActions({ dealId, status }: DealActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -20,14 +19,7 @@ export function DealActions({ dealId, status, sellerId }: DealActionsProps) {
       const fetchOptions: RequestInit = {
         method: 'POST', };
 
-      if (action === 'submit-proof') {
-        const formData = new FormData();
-        formData.append('actor_id', sellerId);
-        // Provide a simulated 1KB file
-        const blob = new Blob([new Uint8Array(1024)], { type: 'image/jpeg' });
-        formData.append('file', blob, 'simulated-proof.jpg');
-        fetchOptions.body = formData;
-      }
+
 
       const res = await fetch(`/api/deals/${dealId}/${action}`, fetchOptions);
       if (!res.ok) {
@@ -43,7 +35,7 @@ export function DealActions({ dealId, status, sellerId }: DealActionsProps) {
     }
   };
 
-  const isProofAllowed = status === 'LOCKED';
+
 
   return (
     <div className="flex flex-col sm:flex-row gap-3">
@@ -85,16 +77,7 @@ export function DealActions({ dealId, status, sellerId }: DealActionsProps) {
           {loading === 'buyer-deposit' ? 'Processing...' : 'Simulate Buyer Deposit'}
         </Button>
       )}
-      
-      {isProofAllowed && (
-        <Button 
-          variant="primary" 
-          onClick={() => handleAction('submit-proof')}
-          disabled={loading !== null}
-        >
-          {loading === 'submit-proof' ? 'Processing...' : 'Simulate Submit Proof'}
-        </Button>
-      )}
+
 
       {status === 'PROOF_SUBMITTED' && (
         <Button 

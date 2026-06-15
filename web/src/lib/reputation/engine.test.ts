@@ -135,6 +135,8 @@ describe('Reputation Engine', () => {
         buyer_score: 0,
         seller_completed_count: 0,
         buyer_completed_count: 0,
+        refunded_count: 0,
+        expired_count: 0,
         verified_volume_idr: 0
       });
     });

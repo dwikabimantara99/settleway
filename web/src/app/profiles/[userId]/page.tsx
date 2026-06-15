@@ -3,12 +3,24 @@ import { StatCard } from '@/components/ui/StatCard';
 import { demoProfiles } from '@/lib/demo/demo-data';
 import { MapPin, ShieldCheck, UserCircle2, Briefcase } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { mockStore } from '@/lib/db/mock-store';
+import { rebuildReputationAggregate } from '@/lib/reputation/engine';
 
 export default async function ProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const resolvedParams = await params;
   const profile = demoProfiles[resolvedParams.userId];
   
   if (!profile) return notFound();
+
+  const reputationEvents = mockStore.getParticipantReputationEvents(resolvedParams.userId);
+  const agg = rebuildReputationAggregate(reputationEvents);
+
+  const finalVerifiedVolume = profile.verifiedVolumeIdr + agg.verified_volume_idr;
+  const finalSellerScore = profile.sellerScore + agg.seller_score;
+  const finalBuyerScore = profile.buyerScore + agg.buyer_score;
+  const finalSellerCompleted = profile.sellerCompletedCount + agg.seller_completed_count;
+  const finalBuyerCompleted = profile.buyerCompletedCount + agg.buyer_completed_count;
+  const totalCompleted = finalSellerCompleted + finalBuyerCompleted;
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12">
@@ -35,23 +47,38 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatCard 
           title="Verified Volume" 
-          value={`Rp ${(profile.verifiedVolumeIdr / 1000000).toLocaleString('id-ID')}M`} 
+          value={`Rp ${(finalVerifiedVolume / 1000000).toLocaleString('id-ID')}M`} 
           description="Total transaction volume protected by Settleway"
         />
         <StatCard 
           title="Seller Reputation" 
-          value={`${profile.sellerScore}/100`} 
-          description={`${profile.sellerCompletedCount} completed deals`}
-          className={profile.sellerScore > 0 ? 'border-emerald-200 bg-emerald-50' : 'opacity-50'}
+          value={`${finalSellerScore}/100`} 
+          description={`${finalSellerCompleted} completed deals`}
+          className={finalSellerScore > 0 ? 'border-emerald-200 bg-emerald-50' : 'opacity-50'}
         />
         <StatCard 
           title="Buyer Reputation" 
-          value={`${profile.buyerScore}/100`} 
-          description={`${profile.buyerCompletedCount} completed deals`}
-          className={profile.buyerScore > 0 ? 'border-blue-200 bg-blue-50' : 'opacity-50'}
+          value={`${finalBuyerScore}/100`} 
+          description={`${finalBuyerCompleted} completed deals`}
+          className={finalBuyerScore > 0 ? 'border-blue-200 bg-blue-50' : 'opacity-50'}
+        />
+        <StatCard 
+          title="Total Deals Completed" 
+          value={`${totalCompleted}`} 
+          description="Across all roles"
+        />
+        <StatCard 
+          title="Refunded Deals" 
+          value={`${agg.refunded_count}`} 
+          description="Before locking phase"
+        />
+        <StatCard 
+          title="Expired Deals" 
+          value={`${agg.expired_count}`} 
+          description="Failed deposits"
         />
       </div>
 

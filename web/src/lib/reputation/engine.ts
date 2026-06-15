@@ -92,6 +92,8 @@ export function rebuildReputationAggregate(events: DbReputationEvent[]): DbReput
     buyer_score: 0,
     seller_completed_count: 0,
     buyer_completed_count: 0,
+    refunded_count: 0,
+    expired_count: 0,
     verified_volume_idr: 0
   };
 
@@ -106,6 +108,12 @@ export function rebuildReputationAggregate(events: DbReputationEvent[]): DbReput
       if (ev.reputation_outcome === 'transaction_completed') {
         agg.seller_completed_count += 1;
       }
+    }
+    
+    if (ev.reputation_outcome === 'refunded_before_locked') {
+      agg.refunded_count += 1;
+    } else if (ev.reputation_outcome === 'buyer_failed_deposit' || ev.reputation_outcome === 'seller_failed_deposit') {
+      agg.expired_count += 1;
     }
     
     agg.verified_volume_idr += ev.volume_delta_idr;

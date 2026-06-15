@@ -133,5 +133,7 @@ export interface DbReputationAggregate {
   buyer_score: number;
   seller_completed_count: number;
   buyer_completed_count: number;
+  refunded_count: number;
+  expired_count: number;
   verified_volume_idr: number;
 }
