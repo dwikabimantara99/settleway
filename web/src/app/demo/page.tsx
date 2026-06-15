@@ -5,31 +5,15 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { RefreshCcw, Play, CheckCircle2, AlertCircle } from 'lucide-react';
+import { DemoResetController } from '@/lib/demo/reset-controller';
 
 export default function DemoPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const handleReset = async () => {
-    setLoading(true);
-    setStatus('idle');
-    setErrorMessage('');
-    
-    try {
-      const res = await fetch('/api/demo/reset', { method: 'POST' });
-      if (!res.ok) {
-        throw new Error('Failed to reset demo data');
-      }
-      setStatus('success');
-    } catch (err) {
-      setStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [, forceRender] = useState(0);
+  
+  const [controller] = useState(() => new DemoResetController(() => {
+    forceRender(prev => prev + 1);
+  }));
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
@@ -48,29 +32,30 @@ export default function DemoPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button 
-              onClick={handleReset} 
-              disabled={loading}
+              onClick={() => controller.handleReset()} 
+              disabled={controller.loading}
               className="w-full justify-between"
               variant="secondary"
+              aria-label="Reset Demo State"
             >
               Reset Demo State
-              <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCcw className={`w-4 h-4 ${controller.loading ? 'animate-spin' : ''}`} aria-hidden="true" />
             </Button>
 
-            {status === 'success' && (
+            {controller.status === 'success' && (
               <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 p-3 rounded-md border border-emerald-200">
-                <CheckCircle2 className="w-4 h-4" />
+                <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
                 Demo state reset successfully.
               </div>
             )}
 
-            {status === 'error' && (
+            {controller.status === 'error' && (
               <div className="flex flex-col gap-1 text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">
                 <div className="flex items-center gap-2 font-medium">
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-4 h-4" aria-hidden="true" />
                   Reset failed
                 </div>
-                <div className="text-red-500 text-xs">{errorMessage}</div>
+                <div className="text-red-500 text-xs">{controller.errorMessage}</div>
               </div>
             )}
             

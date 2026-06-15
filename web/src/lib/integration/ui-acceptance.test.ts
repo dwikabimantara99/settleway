@@ -101,6 +101,27 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(hasText(page, 'resi2.jpg')).toBe(true);
       expect(hasText(page, 'Confirmed')).toBe(true);
     });
+
+    it('displays Demo mode fallback only when contract ID is absent and mode is mock_only', async () => {
+      const dealId = 'demo-cabai-001';
+      // Mock mode without contract ID
+      mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: null });
+      let page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
+      expect(hasText(page, 'Demo mode')).toBe(true);
+      
+      // Testnet mode without contract ID
+      mockStore.updateDeal(dealId, { stellar_mode: 'testnet', stellar_contract_id: null });
+      page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
+      expect(hasText(page, 'Pending')).toBe(true);
+      expect(hasText(page, 'Demo mode')).toBe(false);
+
+      // With contract ID (Confirmed)
+      mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: 'C-MOCK-123', latest_stellar_tx_hash: 'tx-123' });
+      page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
+      expect(hasText(page, 'C-MOCK-123')).toBe(true);
+      expect(hasText(page, 'tx-123')).toBe(true);
+      expect(hasText(page, 'Demo mode')).toBe(false);
+    });
   });
 
   describe('Reputation UI (Profile)', () => {

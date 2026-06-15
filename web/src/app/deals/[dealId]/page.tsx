@@ -165,14 +165,14 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                   <div className="grid grid-cols-2 gap-4 text-xs font-mono text-slate-500 bg-slate-950 p-3 rounded border border-slate-800">
                     <div>
                       <span className="block text-slate-600 mb-1">Contract ID</span>
-                      <span className="text-slate-300" title="Running in simulated event mode without testnet connection">
-                        {deal.stellar_mode === 'mock_only' ? 'Simulated Fallback' : 'Pending'}
+                      <span className="text-slate-300" title={deal.stellar_contract_id ? "Confirmed on Testnet" : "Running in simulated event mode without testnet connection"}>
+                        {deal.stellar_contract_id ? deal.stellar_contract_id : (deal.stellar_mode === 'mock_only' ? 'Demo mode' : 'Pending')}
                       </span>
                     </div>
                     <div>
                       <span className="block text-slate-600 mb-1">Latest Tx</span>
-                      <span className="text-slate-300" title="Running in simulated event mode without testnet connection">
-                        {deal.stellar_mode === 'mock_only' ? 'Simulated Fallback' : 'Pending'}
+                      <span className="text-slate-300" title={deal.latest_stellar_tx_hash ? "Confirmed on Testnet" : "Running in simulated event mode without testnet connection"}>
+                        {deal.latest_stellar_tx_hash ? deal.latest_stellar_tx_hash : (deal.stellar_mode === 'mock_only' ? 'Demo mode' : 'Pending')}
                       </span>
                     </div>
                   </div>
