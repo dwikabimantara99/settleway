@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { mockStore } from '@/lib/db/mock-store';
-import { createSuccessResponse } from '@/lib/api/validation';
+import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 
 export async function POST() {
-  // Phase 4: Only reset the in-memory mock store
+  if (process.env.NODE_ENV === 'production' && process.env.ENABLE_DEMO_RESET !== 'true') {
+    return NextResponse.json(createErrorResponse('ERR_UNSUPPORTED_MODE', 'Demo reset is not supported in this environment'), { status: 403 });
+  }
+
+  // Phase 4/9: Only reset the in-memory mock store
   mockStore.seed();
   return NextResponse.json(createSuccessResponse({ success: true, message: 'Mock store reset to initial seed data' }));
 }

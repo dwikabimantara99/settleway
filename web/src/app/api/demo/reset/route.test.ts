@@ -22,4 +22,21 @@ describe('Demo Reset API', () => {
     // Verify it was reset
     expect(mockStore.deals.get('demo-cabai-001')?.status).toBe('WAITING_DEPOSITS');
   });
+
+  it('rejects in production environment', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    Object.defineProperty(process, 'env', {
+      value: { ...process.env, NODE_ENV: 'production' }
+    });
+
+    const response = await POST();
+    const data = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(data.error?.code).toBe('ERR_UNSUPPORTED_MODE');
+
+    Object.defineProperty(process, 'env', {
+      value: { ...process.env, NODE_ENV: originalEnv }
+    });
+  });
 });
