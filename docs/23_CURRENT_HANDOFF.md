@@ -4,14 +4,21 @@ This document records the current operational state for the next Settleway engin
 
 ## Current Position
 
-- **Phase Status**: Phase 7 partially verified.
-- **Branch**: `phase-7-rebuild`
-- **Checkpoint**: Safe state following forensic recovery of commit `c986e0a`.
-- **Testnet Status**: 
-  - All three public Testnet synthetic accounts (Admin, Buyer Demo, Seller Demo) exist and are funded.
-  - The Settleway Escrow contract is successfully deployed (`CAGCSRJYCNYKC5BT2C7ZNHXHVMEHNJSJQPWZRFMFFRYCDSKHD6SREJKX`) and its code matches the canonical local Wasm hash perfectly.
-  - All Phase 7 controlled smoke scenarios (Happy Path, Expiry, Refund) successfully completed on the public Testnet. Transaction hashes were fully verified using read-only public queries.
-- **Missing Evidence**: The specific initial deployment transaction hash and initialization transaction hash were lost from the historical evidence prior to recovery, hence Phase 7 is considered "partially verified" rather than fully verified, though all subsequent contract interactions succeeded.
+- **Active branch**: `phase-7-rebuild`
+- **Accepted Phase 7 checkpoint**: `d8ecbfcb6b8b025a0d4cb8cb2c3a431ff450d8b8`
+- **Documentation checkpoint**: `71104ed61dadc6adcdb39f6a5242ed846d3bc3a0`
+
+- **Phase 7 implementation**: accepted
+- **Phase 7 provenance completeness**: partially verified
+- **Phase 8**: not started, not yet authorized
+
+See [docs/32_PHASE_7_ACCEPTANCE_DECISION.md](32_PHASE_7_ACCEPTANCE_DECISION.md) for the formal acceptance decision.
+
+## Testnet Status
+
+- All three public Testnet synthetic accounts (Admin, Buyer Demo, Seller Demo) exist and are funded.
+- The Settleway Escrow contract is successfully deployed (`CAGCSRJYCNYKC5BT2C7ZNHXHVMEHNJSJQPWZRFMFFRYCDSKHD6SREJKX`) and its code matches the canonical local Wasm hash perfectly.
+- All Phase 7 controlled smoke scenarios (Happy Path, Expiry, Refund) successfully completed on the public Testnet. Transaction hashes were fully verified using read-only public queries.
 
 ## Next Authorized Mission
 

@@ -15,6 +15,16 @@ Use this matrix to decide whether a phase is complete.
 | 8 | Proof and reputation | hash and reputation update | five-star review replaces event reputation |
 | 9 | Guided demo | full story can be presented | demo depends on manual database editing |
 
+## Phase 7 Acceptance Decision
+
+* **Implementation:** accepted
+* **Controlled Testnet functionality:** accepted
+* **Evidence provenance:** partially verified
+* **Final disposition:** accepted with documented provenance limitations
+* **Phase 8 dependency:** requires a separate explicit authorization decision
+* Unresolved provenance items remain documented rather than treated as implementation failures.
+
+
 ## Final MVP acceptance
 
 The MVP is ready only if:
