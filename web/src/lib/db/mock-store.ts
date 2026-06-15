@@ -396,7 +396,8 @@ export class MockStore {
       if (
         existing.deal_id === event.deal_id &&
         existing.participant_id === event.participant_id &&
-        existing.terminal_outcome === event.terminal_outcome &&
+        existing.participant_role === event.participant_role &&
+        existing.reputation_outcome === event.reputation_outcome &&
         existing.reputation_rule_version === event.reputation_rule_version &&
         existing.score_delta === event.score_delta &&
         existing.volume_delta_idr === event.volume_delta_idr

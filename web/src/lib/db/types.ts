@@ -104,11 +104,19 @@ export interface DbEvidenceFile {
   created_at: string;
 }
 
+export type ReputationOutcome =
+  | "transaction_completed"
+  | "buyer_failed_deposit"
+  | "seller_failed_deposit"
+  | "refunded_before_locked"
+  | "verified_harvest_failure";
+
 export interface DbReputationEvent {
   id: string;
   deal_id: string;
   participant_id: string;
-  terminal_outcome: 'completed' | 'refunded' | 'expired';
+  participant_role: 'buyer' | 'seller';
+  reputation_outcome: ReputationOutcome;
   reputation_rule_version: string;
   idempotency_key: string;
   score_delta: number;
