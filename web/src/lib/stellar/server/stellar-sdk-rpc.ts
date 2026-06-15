@@ -17,7 +17,6 @@ export class StellarSdkRpc implements StellarRpcPort {
   constructor(
     rpcUrl: string,
     private readonly expectedPassphrase: string,
-    private readonly maxAttempts: number = 30,
   ) {
     this.server = new rpc.Server(rpcUrl, { allowHttp: false });
   }
@@ -95,25 +94,22 @@ export class StellarSdkRpc implements StellarRpcPort {
     transactionHash: string,
   ): Promise<ConfirmTransactionResult> {
     try {
-      for (let attempt = 0; attempt < this.maxAttempts; attempt += 1) {
-        const response = await this.server.getTransaction(transactionHash);
-        const status = response.status;
+      const response = await this.server.getTransaction(transactionHash);
+      const status = response.status;
 
-        if (status === "SUCCESS") {
-          const resultValue = response.returnValue ?? null;
-          return {
-            outcome: "confirmed",
-            transaction_hash: transactionHash,
-            result_value: resultValue as ConfirmTransactionResult extends { outcome: "confirmed" } ? ConfirmTransactionResult["result_value"] : never,
-          };
-        }
-        if (status === "FAILED") {
-          return { outcome: "failed", transaction_hash: transactionHash };
-        }
-        if (status === "NOT_FOUND") {
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          continue;
-        }
+      if (status === "SUCCESS") {
+        const resultValue = response.returnValue ?? null;
+        return {
+          outcome: "confirmed",
+          transaction_hash: transactionHash,
+          result_value: resultValue as ConfirmTransactionResult extends { outcome: "confirmed" } ? ConfirmTransactionResult["result_value"] : never,
+        };
+      }
+      if (status === "FAILED") {
+        return { outcome: "failed", transaction_hash: transactionHash };
+      }
+      if (status === "NOT_FOUND") {
+        return { outcome: "not_found" };
       }
       return { outcome: "not_found" };
     } catch {

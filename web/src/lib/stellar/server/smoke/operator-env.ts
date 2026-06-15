@@ -927,7 +927,7 @@ export async function runTestnetSmokeOperator(
   const baseRpc = dependencies.rpc_port ??
     (input.command === "preflight"
       ? createNoNetworkSmokeRpcSentinel()
-      : new StellarSdkRpc(input.config.rpc_url, input.config.network_passphrase, input.config.confirmation.max_attempts));
+      : new StellarSdkRpc(input.config.rpc_url, input.config.network_passphrase));
   const rpcPort = new CountingRpcPort(baseRpc, rpcCounts);
   const runtimeResult = createSmokeRuntime(input.config, {
     role_signers: input.role_signers,
