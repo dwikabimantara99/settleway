@@ -40,7 +40,7 @@ export async function verifyAndConstructEvidence(
   if (buffer.length === 0) {
     return { ok: false, error: 'Payload is empty' };
   }
-  const MAX_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
+  const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MiB
   if (buffer.length > MAX_SIZE_BYTES) {
     return { ok: false, error: 'Payload exceeds maximum allowed size' };
   }

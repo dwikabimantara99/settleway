@@ -115,15 +115,18 @@ export function rebuildReputationAggregate(events: DbReputationEvent[]): DbReput
 }
 
 export interface ReputationStore {
-  appendReputationEvent(event: DbReputationEvent): { appended: boolean; event: DbReputationEvent };
+  appendReputationEventPair(events: DbReputationEvent[]): { appended: boolean; events: DbReputationEvent[] };
 }
 
 export function processReputationOutcome(store: ReputationStore, decision: AuthoritativeReputationDecision, eventIdGenerator: () => string) {
   const events = buildReputationEvents(decision, eventIdGenerator);
-  const results = [];
-  for (const ev of events) {
-    const res = store.appendReputationEvent(ev);
-    results.push(res);
+  if (events.length === 2) {
+    try {
+      const res = store.appendReputationEventPair(events);
+      return res.events;
+    } catch (err) {
+      throw err;
+    }
   }
-  return results;
+  return [];
 }

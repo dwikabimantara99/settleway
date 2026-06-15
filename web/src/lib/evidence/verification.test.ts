@@ -56,10 +56,35 @@ describe('Evidence Verification Service', () => {
   });
 
   it('rejects empty payload', async () => {
-    const result = await verifyAndConstructEvidence(validMetadata, Buffer.alloc(0), eventIdGenerator);
+    const emptyPayload = Buffer.from('');
+    const res = await verifyAndConstructEvidence(validMetadata, emptyPayload, () => 'evt-5');
     
-    expect(result.ok).toBe(false);
-    expect(result.error).toMatch(/empty/i);
+    expect(res.ok).toBe(false);
+    expect(res.error).toBe('Payload is empty');
+  });
+
+  it('accepts exactly 10 MiB payload', async () => {
+    const payload = Buffer.alloc(10 * 1024 * 1024);
+    const res = await verifyAndConstructEvidence(validMetadata, payload, () => 'evt-6');
+    
+    expect(res.ok).toBe(true);
+    expect(res.evidence!.byte_size).toBe(10 * 1024 * 1024);
+  });
+
+  it('accepts one byte below 10 MiB limit', async () => {
+    const payload = Buffer.alloc(10 * 1024 * 1024 - 1);
+    const res = await verifyAndConstructEvidence(validMetadata, payload, () => 'evt-7');
+    
+    expect(res.ok).toBe(true);
+    expect(res.evidence!.byte_size).toBe(10 * 1024 * 1024 - 1);
+  });
+
+  it('rejects one byte above 10 MiB limit', async () => {
+    const payload = Buffer.alloc(10 * 1024 * 1024 + 1);
+    const res = await verifyAndConstructEvidence(validMetadata, payload, () => 'evt-8');
+    
+    expect(res.ok).toBe(false);
+    expect(res.error).toBe('Payload exceeds maximum allowed size');
   });
 
   it('rejects missing metadata', async () => {

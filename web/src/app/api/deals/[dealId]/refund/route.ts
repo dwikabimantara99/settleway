@@ -15,6 +15,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
     }
 
+    const preLockedStates = ['WAITING_DEPOSITS', 'BUYER_FUNDED', 'SELLER_FUNDED'];
+    const isPreLocked = preLockedStates.includes(existingDeal.status);
+
     const updatedDeal = transition(existingDeal, actionName);
     mockStore.updateDeal(dealId, updatedDeal);
     
@@ -22,16 +25,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const event = createEvent(dealId, actionName, null, 'Executed ' + actionName);
     mockStore.addEvent(event);
 
-    processReputationOutcome(mockStore, {
-      deal_id: updatedDeal.id,
-      buyer_id: updatedDeal.buyer_id,
-      seller_id: updatedDeal.seller_id,
-      reputation_outcome: 'refunded_before_locked',
-      principal_idr: updatedDeal.principal_idr,
-      local_terminal_outcome_persisted: true,
-      operation_status: 'confirmed',
-      sync_status: 'idle'
-    }, () => globalThis.crypto.randomUUID());
+    if (isPreLocked) {
+      const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
+      processReputationOutcome(mockStore, {
+        deal_id: updatedDeal.id,
+        buyer_id: updatedDeal.buyer_id,
+        seller_id: updatedDeal.seller_id,
+        reputation_outcome: 'refunded_before_locked',
+        principal_idr: updatedDeal.principal_idr,
+        local_terminal_outcome_persisted: true,
+        operation_status: operationStatus as 'confirmed' | 'unknown',
+        sync_status: updatedDeal.stellar_sync_status
+      }, () => globalThis.crypto.randomUUID());
+    }
 
     return NextResponse.json(createSuccessResponse(updatedDeal));
   } catch (err: unknown) {

@@ -7,16 +7,29 @@ import { Button } from '@/components/ui/Button';
 interface DealActionsProps {
   dealId: string;
   status: string;
+  sellerId: string;
 }
 
-export function DealActions({ dealId, status }: DealActionsProps) {
+export function DealActions({ dealId, status, sellerId }: DealActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleAction = async (action: string) => {
     setLoading(action);
     try {
-      const res = await fetch(`/api/deals/${dealId}/${action}`, { method: 'POST' });
+      const fetchOptions: RequestInit = {
+        method: 'POST', };
+
+      if (action === 'submit-proof') {
+        const formData = new FormData();
+        formData.append('actor_id', sellerId);
+        // Provide a simulated 1KB file
+        const blob = new Blob([new Uint8Array(1024)], { type: 'image/jpeg' });
+        formData.append('file', blob, 'simulated-proof.jpg');
+        fetchOptions.body = formData;
+      }
+
+      const res = await fetch(`/api/deals/${dealId}/${action}`, fetchOptions);
       if (!res.ok) {
         const error = await res.json();
         alert(`Error: ${error.error?.message || 'Action failed'}`);

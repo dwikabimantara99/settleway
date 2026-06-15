@@ -63,7 +63,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             </div>
             <p className="text-slate-600">Deal ID: <span className="font-mono text-xs bg-slate-100 p-1 rounded">{deal.id}</span></p>
           </div>
-          <DealActions dealId={deal.id} status={deal.status} />
+          <DealActions dealId={deal.id} status={deal.status} sellerId={deal.seller_id} />
         </div>
 
         <div className="mt-8 md:mt-10 pb-4 md:pb-6">

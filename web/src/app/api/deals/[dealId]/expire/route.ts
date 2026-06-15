@@ -31,6 +31,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     mockStore.addEvent(event);
 
     if (outcome) {
+      const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
       processReputationOutcome(mockStore, {
         deal_id: updatedDeal.id,
         buyer_id: updatedDeal.buyer_id,
@@ -38,8 +39,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         reputation_outcome: outcome,
         principal_idr: updatedDeal.principal_idr,
         local_terminal_outcome_persisted: true,
-        operation_status: 'confirmed',
-        sync_status: 'idle'
+        operation_status: operationStatus as 'confirmed' | 'unknown',
+        sync_status: updatedDeal.stellar_sync_status
       }, () => globalThis.crypto.randomUUID());
     }
 

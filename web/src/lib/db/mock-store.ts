@@ -418,6 +418,49 @@ export class MockStore {
     return { appended: true, event: JSON.parse(JSON.stringify(event)) };
   }
 
+  appendReputationEventPair(events: DbReputationEvent[]): { appended: boolean, events: DbReputationEvent[] } {
+    if (!events || events.length !== 2) throw new Error('Must provide exactly two events');
+    const [ev1, ev2] = events;
+    if (!ev1 || !ev1.id || !ev1.idempotency_key) throw new Error('Invalid reputation event input');
+    if (!ev2 || !ev2.id || !ev2.idempotency_key) throw new Error('Invalid reputation event input');
+
+    const existing1 = Array.from(this.reputationEvents.values()).find(e => e.idempotency_key === ev1.idempotency_key);
+    const existing2 = Array.from(this.reputationEvents.values()).find(e => e.idempotency_key === ev2.idempotency_key);
+
+    const checkMatch = (existing: DbReputationEvent | undefined, event: DbReputationEvent) => {
+      if (!existing) return false;
+      return (
+        existing.deal_id === event.deal_id &&
+        existing.participant_id === event.participant_id &&
+        existing.participant_role === event.participant_role &&
+        existing.reputation_outcome === event.reputation_outcome &&
+        existing.reputation_rule_version === event.reputation_rule_version &&
+        existing.score_delta === event.score_delta &&
+        existing.volume_delta_idr === event.volume_delta_idr
+      );
+    };
+
+    if (existing1 || existing2) {
+      if (existing1 && existing2 && checkMatch(existing1, ev1) && checkMatch(existing2, ev2)) {
+        return { appended: false, events: [JSON.parse(JSON.stringify(existing1)), JSON.parse(JSON.stringify(existing2))] };
+      }
+      throw new Error('Idempotency conflict: partial or conflicting pair state');
+    }
+
+    if (this.reputationEvents.has(ev1.id) || this.reputationEvents.has(ev2.id)) {
+      throw new Error('Reputation event ID already exists');
+    }
+
+    const copy1 = JSON.parse(JSON.stringify(ev1));
+    const copy2 = JSON.parse(JSON.stringify(ev2));
+    this.reputationEvents.set(ev1.id, copy1);
+    this.reputationEvents.set(ev2.id, copy2);
+    this.reputationIdempotencyKeys.add(ev1.idempotency_key);
+    this.reputationIdempotencyKeys.add(ev2.idempotency_key);
+
+    return { appended: true, events: [JSON.parse(JSON.stringify(copy1)), JSON.parse(JSON.stringify(copy2))] };
+  }
+
   getReputationEvent(id: string): DbReputationEvent | null {
     const ev = this.reputationEvents.get(id);
     return ev ? JSON.parse(JSON.stringify(ev)) : null;

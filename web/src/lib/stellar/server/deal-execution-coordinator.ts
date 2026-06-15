@@ -8,6 +8,9 @@ import { assembleStellarExecutionInput } from "./execution-input-assembler";
 import type { StellarExecutionAssemblyInput } from "./execution-input-assembler";
 import { projectDealSyncStatus } from "./deal-sync-policy";
 import { planDealLocalCommit } from "./deal-local-commit";
+import { processReputationOutcome } from "../../reputation/engine";
+import type { AuthoritativeReputationDecision } from "../../reputation/engine";
+import { mockStore } from "../../db/mock-store";
 
 export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput & {
   existing_operation: StellarOperation | null;
@@ -114,7 +117,35 @@ export async function coordinateDealExecution(
     });
 
     if (persistRes.ok) {
-      // success
+      // Phase 8 narrow hook: Trigger idempotent reputation processing after safe recovery
+      try {
+        let outcome: AuthoritativeReputationDecision['reputation_outcome'] | null = null;
+        if (next_deal.status === 'COMPLETED') outcome = 'transaction_completed';
+        else if (next_deal.status === 'REFUNDED') {
+          if (['WAITING_DEPOSITS', 'BUYER_FUNDED', 'SELLER_FUNDED'].includes(commitPlan.current_deal.status)) {
+            outcome = 'refunded_before_locked';
+          }
+        } else if (next_deal.status === 'EXPIRED') {
+          if (commitPlan.current_deal.status === 'BUYER_FUNDED') outcome = 'seller_failed_deposit';
+          else if (commitPlan.current_deal.status === 'SELLER_FUNDED') outcome = 'buyer_failed_deposit';
+        }
+        
+        if (outcome) {
+          processReputationOutcome(mockStore, {
+            deal_id: next_deal.id,
+            buyer_id: next_deal.buyer_id,
+            seller_id: next_deal.seller_id,
+            reputation_outcome: outcome,
+            principal_idr: next_deal.principal_idr,
+            local_terminal_outcome_persisted: true,
+            operation_status: candidate_operation.operation_status,
+            sync_status: next_deal.stellar_sync_status
+          }, () => globalThis.crypto.randomUUID());
+        }
+      } catch (err) {
+        console.error("Hook error:", err);
+        // Ignore reputation hook failures to avoid breaking core execution
+      }
     } else {
       return { ok: false, reason: "ERR_OUT_OF_SYNC", operation: candidate_operation, candidate_next_deal: next_deal };
     }

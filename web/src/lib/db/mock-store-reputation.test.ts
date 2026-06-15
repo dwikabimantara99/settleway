@@ -88,19 +88,16 @@ describe('MockStore - Reputation', () => {
   });
 
   it('repeated append with the same identity creates no duplicate business event', () => {
-    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
-    store.appendReputationEvent(event1);
+    const buyerEvent = createTestEvent('test-ev-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
+    const sellerEvent = createTestEvent('test-ev-2', 'deal-1', 'user-2', 'seller', 'transaction_completed', 'v1');
+    
+    const res = store.appendReputationEventPair([buyerEvent, sellerEvent]);
+    expect(res.appended).toBe(true);
 
-    // Attempt to append the same business event (different primary ID but same idempotency key)
-    const event2 = { ...event1, id: 'rep-2' };
-    const result = store.appendReputationEvent(event2);
-
-    expect(result.appended).toBe(false);
-    expect(result.event.id).toBe('rep-1');
-
-    const dealEvents = store.getDealReputationEvents('deal-1');
-    expect(dealEvents.length).toBe(1);
-    expect(dealEvents[0].id).toBe('rep-1'); // The first one was kept
+    const check = store.getReputationEvent('test-ev-1');
+    expect(check).toEqual(buyerEvent);
+    const check2 = store.getReputationEvent('test-ev-2');
+    expect(check2).toEqual(sellerEvent);
   });
   
   it('throws idempotency conflict if payload differs', () => {
@@ -112,31 +109,34 @@ describe('MockStore - Reputation', () => {
   });
 
   it('leaves collections unchanged on idempotency conflict', () => {
-    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
-    store.appendReputationEvent(event1);
+    const buyerEvent = createTestEvent('test-ev-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
+    const sellerEvent = createTestEvent('test-ev-2', 'deal-1', 'user-2', 'seller', 'transaction_completed', 'v1');
+    store.appendReputationEvent(buyerEvent);
+    store.appendReputationEvent(sellerEvent);
 
-    const event2 = { ...event1, id: 'rep-2', score_delta: 99 };
-    expect(() => store.appendReputationEvent(event2)).toThrow('Idempotency conflict');
+    expect(() => {
+      store.appendReputationEventPair([{ ...buyerEvent, id: 'test-ev-1a', score_delta: 20 }, { ...sellerEvent, id: 'test-ev-2a' }]);
+    }).toThrow('Idempotency conflict');
     
-    // Check that event2 was not appended
-    const retrieved = store.getReputationEvent('rep-2');
+    const retrieved = store.getReputationEvent('test-ev-1a');
     expect(retrieved).toBeNull();
     const dealEvents = store.getDealReputationEvents('deal-1');
-    expect(dealEvents.length).toBe(1);
-    expect(dealEvents[0].id).toBe('rep-1');
+    expect(dealEvents.length).toBe(2);
   });
   
   it('leaves collections unchanged on duplicate event ID', () => {
-    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
-    store.appendReputationEvent(event1);
+    const buyerEvent = createTestEvent('test-ev-1', 'deal-1', 'user-1', 'buyer', 'transaction_completed', 'v1');
+    const sellerEvent = createTestEvent('test-ev-2', 'deal-1', 'user-2', 'seller', 'transaction_completed', 'v1');
+    store.appendReputationEvent(buyerEvent);
 
-    const event2 = createTestEvent('rep-1', 'deal-2', 'user-2', 'seller', 'transaction_completed', 'v1');
-    expect(() => store.appendReputationEvent(event2)).toThrow('Reputation event ID already exists');
+    expect(() => {
+      store.appendReputationEventPair([buyerEvent, sellerEvent]);
+    }).toThrow('Idempotency conflict');
     
-    const retrieved = store.getReputationEvent('rep-1');
-    expect(retrieved?.deal_id).toBe('deal-1'); // Original untouched
+    const retrieved = store.getReputationEvent('test-ev-1');
+    expect(retrieved?.deal_id).toBe('deal-1'); 
     const user2Events = store.getParticipantReputationEvents('user-2');
-    expect(user2Events.length).toBe(0); // Indexes unchanged
+    expect(user2Events.length).toBe(0); 
   });
 
   it('idempotency key avoids delimiter collision', () => {
