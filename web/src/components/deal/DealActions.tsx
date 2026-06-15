@@ -12,9 +12,11 @@ interface DealActionsProps {
 export function DealActions({ dealId, status }: DealActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleAction = async (action: string) => {
     setLoading(action);
+    setError(null);
     try {
       const fetchOptions: RequestInit = {
         method: 'POST', };
@@ -23,13 +25,13 @@ export function DealActions({ dealId, status }: DealActionsProps) {
 
       const res = await fetch(`/api/deals/${dealId}/${action}`, fetchOptions);
       if (!res.ok) {
-        const error = await res.json();
-        alert(`Error: ${error.error?.message || 'Action failed'}`);
+        const errorData = await res.json();
+        setError(`Error: ${errorData.error?.message || 'Action failed'}`);
       } else {
         router.refresh();
       }
     } catch (err) {
-      alert(`Network error: ${err}`);
+      setError(`Network error: ${err}`);
     } finally {
       setLoading(null);
     }
@@ -38,8 +40,14 @@ export function DealActions({ dealId, status }: DealActionsProps) {
 
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3">
-      {status === 'WAITING_DEPOSITS' && (
+    <div className="flex flex-col gap-3">
+      {error && (
+        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg border border-red-200">
+          {error}
+        </div>
+      )}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {status === 'WAITING_DEPOSITS' && (
         <>
           <Button 
             variant="secondary" 
@@ -99,11 +107,12 @@ export function DealActions({ dealId, status }: DealActionsProps) {
         </Button>
       )}
 
-      {status === 'COMPLETED' && (
-        <div className="text-emerald-600 font-semibold px-4 py-2 bg-emerald-50 rounded border border-emerald-200">
-          Deal Completed Successfully
-        </div>
-      )}
+        {status === 'COMPLETED' && (
+          <div className="text-emerald-600 font-semibold px-4 py-2 bg-emerald-50 rounded border border-emerald-200">
+            Deal Completed Successfully
+          </div>
+        )}
+      </div>
     </div>
   );
 }
