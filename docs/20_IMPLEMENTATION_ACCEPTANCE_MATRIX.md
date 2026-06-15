@@ -28,8 +28,15 @@ Use this matrix to decide whether a phase is complete.
 
 * **Phase 8 definition:** Proof and Reputation
 * **Scope gate:** CONDITIONAL GO
-* **Implementation:** NOT STARTED
-* **Authorization:** NOT YET GRANTED
+* **Implementation:** accepted
+* **Authorization:** explicitly authorized
+
+## Phase 8 Acceptance Decision
+
+* **Implementation:** accepted with documented MVP limitations
+* **Core Vertical:** accepted
+* **Product UI:** accepted
+* **Phase 9 dependency:** requires a separate explicit authorization decision
 
 ## Final MVP acceptance
 
