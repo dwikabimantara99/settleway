@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
-import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent } from './types';
+import { transition, EscrowAction } from '../escrow/state-machine';
+import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
-import { transition, EscrowAction } from '../escrow/state-machine';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -82,6 +82,9 @@ export class MockStore {
   deals: Map<string, DbDeal> = new Map();
   events: Map<string, DbEscrowEvent[]> = new Map(); // Keyed by dealId
   operations: Map<string, StellarOperation> = new Map();
+  evidenceFiles: Map<string, DbEvidenceFile> = new Map();
+  reputationEvents: Map<string, DbReputationEvent> = new Map();
+  reputationIdempotencyKeys: Set<string> = new Set();
 
   constructor() {
     this.seed();
@@ -94,6 +97,9 @@ export class MockStore {
     this.deals.clear();
     this.events.clear();
     this.operations.clear();
+    this.evidenceFiles.clear();
+    this.reputationEvents.clear();
+    this.reputationIdempotencyKeys.clear();
 
     Object.values(demoProfiles).forEach(p => this.profiles.set(p.id, toDbProfile(p)));
     demoListings.forEach(l => this.listings.set(l.id, toDbListing(l)));
@@ -337,6 +343,56 @@ export class MockStore {
 
   resetStellarOperations(): void {
     this.operations.clear();
+  }
+
+  // Evidence
+  addEvidence(evidence: DbEvidenceFile) {
+    if (this.evidenceFiles.has(evidence.id)) {
+      throw new Error('Evidence record already exists');
+    }
+    const defensiveCopy = JSON.parse(JSON.stringify(evidence));
+    this.evidenceFiles.set(evidence.id, defensiveCopy);
+  }
+
+  getEvidence(id: string): DbEvidenceFile | null {
+    const ev = this.evidenceFiles.get(id);
+    return ev ? JSON.parse(JSON.stringify(ev)) : null;
+  }
+
+  getDealEvidence(dealId: string): DbEvidenceFile[] {
+    return Array.from(this.evidenceFiles.values())
+      .filter(e => e.deal_id === dealId)
+      .map(e => JSON.parse(JSON.stringify(e)));
+  }
+
+  // Reputation Events
+  appendReputationEvent(event: DbReputationEvent) {
+    if (this.reputationIdempotencyKeys.has(event.idempotency_key)) {
+      return; // Idempotent, ignore duplicate business event
+    }
+    if (this.reputationEvents.has(event.id)) {
+      throw new Error('Reputation event ID already exists');
+    }
+    const defensiveCopy = JSON.parse(JSON.stringify(event));
+    this.reputationEvents.set(event.id, defensiveCopy);
+    this.reputationIdempotencyKeys.add(event.idempotency_key);
+  }
+
+  getReputationEvent(id: string): DbReputationEvent | null {
+    const ev = this.reputationEvents.get(id);
+    return ev ? JSON.parse(JSON.stringify(ev)) : null;
+  }
+
+  getParticipantReputationEvents(participantId: string): DbReputationEvent[] {
+    return Array.from(this.reputationEvents.values())
+      .filter(e => e.participant_id === participantId)
+      .map(e => JSON.parse(JSON.stringify(e)));
+  }
+
+  getDealReputationEvents(dealId: string): DbReputationEvent[] {
+    return Array.from(this.reputationEvents.values())
+      .filter(e => e.deal_id === dealId)
+      .map(e => JSON.parse(JSON.stringify(e)));
   }
 }
 

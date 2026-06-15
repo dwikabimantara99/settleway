@@ -89,3 +89,41 @@ export interface DbEscrowEvent {
   metadata: Record<string, unknown>;
   created_at: string;
 }
+
+export interface DbEvidenceFile {
+  id: string;
+  deal_id: string;
+  submitted_by: string;
+  evidence_kind: string;
+  original_filename: string;
+  mime_type: string;
+  byte_size: number;
+  sha256_hash: string;
+  display_visibility: 'public' | 'private' | 'deal_only';
+  chain_operation_reference: string | null;
+  created_at: string;
+}
+
+export interface DbReputationEvent {
+  id: string;
+  deal_id: string;
+  participant_id: string;
+  terminal_outcome: 'completed' | 'refunded' | 'expired';
+  reputation_rule_version: string;
+  idempotency_key: string;
+  score_delta: number;
+  volume_delta_idr: number;
+  created_at: string;
+}
+
+/**
+ * derived projection
+ * This represents the aggregated output from reputation events.
+ */
+export interface DbReputationAggregate {
+  seller_score: number;
+  buyer_score: number;
+  seller_completed_count: number;
+  buyer_completed_count: number;
+  verified_volume_idr: number;
+}
