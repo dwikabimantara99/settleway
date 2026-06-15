@@ -33,8 +33,8 @@ describe('Evidence Verification Service', () => {
     expect(ev.sha256_hash).toBe(payloadHash);
     
     // Ensures raw bytes are not included in the output evidence
-    expect((ev as any).bytes).toBeUndefined();
-    expect((ev as any).buffer).toBeUndefined();
+    expect((ev as Record<string, unknown>).bytes).toBeUndefined();
+    expect((ev as Record<string, unknown>).buffer).toBeUndefined();
   });
 
   it('accepts valid client preview hash', async () => {

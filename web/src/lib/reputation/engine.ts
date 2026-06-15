@@ -114,7 +114,11 @@ export function rebuildReputationAggregate(events: DbReputationEvent[]): DbReput
   return agg;
 }
 
-export function processReputationOutcome(store: any, decision: AuthoritativeReputationDecision, eventIdGenerator: () => string) {
+export interface ReputationStore {
+  appendReputationEvent(event: DbReputationEvent): { appended: boolean; event: DbReputationEvent };
+}
+
+export function processReputationOutcome(store: ReputationStore, decision: AuthoritativeReputationDecision, eventIdGenerator: () => string) {
   const events = buildReputationEvents(decision, eventIdGenerator);
   const results = [];
   for (const ev of events) {
