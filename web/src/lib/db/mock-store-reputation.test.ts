@@ -91,13 +91,62 @@ describe('MockStore - Reputation', () => {
 
     // Attempt to append the same business event (different primary ID but same idempotency key)
     const event2 = { ...event1, id: 'rep-2' };
-    store.appendReputationEvent(event2);
+    const result = store.appendReputationEvent(event2);
+
+    expect(result.appended).toBe(false);
+    expect(result.event.id).toBe('rep-1');
 
     const dealEvents = store.getDealReputationEvents('deal-1');
     expect(dealEvents.length).toBe(1);
     expect(dealEvents[0].id).toBe('rep-1'); // The first one was kept
   });
   
+  it('throws idempotency conflict if payload differs', () => {
+    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'completed', 'v1');
+    store.appendReputationEvent(event1);
+
+    const event2 = { ...event1, id: 'rep-2', score_delta: 99 };
+    expect(() => store.appendReputationEvent(event2)).toThrow('Idempotency conflict: conflicting business payload');
+  });
+
+  it('leaves collections unchanged on idempotency conflict', () => {
+    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'completed', 'v1');
+    store.appendReputationEvent(event1);
+
+    const event2 = { ...event1, id: 'rep-2', score_delta: 99 };
+    expect(() => store.appendReputationEvent(event2)).toThrow('Idempotency conflict');
+    
+    // Check that event2 was not appended
+    const retrieved = store.getReputationEvent('rep-2');
+    expect(retrieved).toBeNull();
+    const dealEvents = store.getDealReputationEvents('deal-1');
+    expect(dealEvents.length).toBe(1);
+    expect(dealEvents[0].id).toBe('rep-1');
+  });
+  
+  it('leaves collections unchanged on duplicate event ID', () => {
+    const event1 = createTestEvent('rep-1', 'deal-1', 'user-1', 'completed', 'v1');
+    store.appendReputationEvent(event1);
+
+    const event2 = createTestEvent('rep-1', 'deal-2', 'user-2', 'completed', 'v1');
+    expect(() => store.appendReputationEvent(event2)).toThrow('Reputation event ID already exists');
+    
+    const retrieved = store.getReputationEvent('rep-1');
+    expect(retrieved?.deal_id).toBe('deal-1'); // Original untouched
+    const user2Events = store.getParticipantReputationEvents('user-2');
+    expect(user2Events.length).toBe(0); // Indexes unchanged
+  });
+
+  it('idempotency key avoids delimiter collision', () => {
+    // A deal ID containing :: or JSON characters
+    const dealId = 'fake::deal::id';
+    const key = createIdempotencyKey(dealId, 'completed', 'user-1', 'v1');
+    
+    // Parse it back to ensure it's structurally safe
+    const parsed = JSON.parse(key);
+    expect(parsed[1]).toBe(dealId);
+  });
+
   it('prevents direct mutation of retrieved aggregate events', () => {
     const event = createTestEvent('rep-1', 'deal-1', 'user-1', 'completed', 'v1');
     store.appendReputationEvent(event);

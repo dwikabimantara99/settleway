@@ -347,11 +347,30 @@ export class MockStore {
 
   // Evidence
   addEvidence(evidence: DbEvidenceFile) {
+    if (!evidence || !evidence.id) {
+      throw new Error('Invalid evidence input');
+    }
     if (this.evidenceFiles.has(evidence.id)) {
       throw new Error('Evidence record already exists');
     }
-    const defensiveCopy = JSON.parse(JSON.stringify(evidence));
-    this.evidenceFiles.set(evidence.id, defensiveCopy);
+    
+    // Explicit allowlist to discard unknown properties
+    const normalized: DbEvidenceFile = {
+      id: evidence.id,
+      deal_id: evidence.deal_id,
+      submitted_by: evidence.submitted_by,
+      evidence_kind: evidence.evidence_kind,
+      original_filename: evidence.original_filename,
+      mime_type: evidence.mime_type,
+      byte_size: evidence.byte_size,
+      sha256_hash: evidence.sha256_hash,
+      display_visibility: evidence.display_visibility,
+      chain_operation_reference: evidence.chain_operation_reference,
+      created_at: evidence.created_at
+    };
+
+    const defensiveCopy = JSON.parse(JSON.stringify(normalized));
+    this.evidenceFiles.set(normalized.id, defensiveCopy);
   }
 
   getEvidence(id: string): DbEvidenceFile | null {
@@ -366,16 +385,36 @@ export class MockStore {
   }
 
   // Reputation Events
-  appendReputationEvent(event: DbReputationEvent) {
-    if (this.reputationIdempotencyKeys.has(event.idempotency_key)) {
-      return; // Idempotent, ignore duplicate business event
+  appendReputationEvent(event: DbReputationEvent): { appended: boolean, event: DbReputationEvent } {
+    if (!event || !event.id || !event.idempotency_key) {
+      throw new Error('Invalid reputation event input');
     }
+
+    const existing = Array.from(this.reputationEvents.values()).find(e => e.idempotency_key === event.idempotency_key);
+    
+    if (existing) {
+      if (
+        existing.deal_id === event.deal_id &&
+        existing.participant_id === event.participant_id &&
+        existing.terminal_outcome === event.terminal_outcome &&
+        existing.reputation_rule_version === event.reputation_rule_version &&
+        existing.score_delta === event.score_delta &&
+        existing.volume_delta_idr === event.volume_delta_idr
+      ) {
+        return { appended: false, event: JSON.parse(JSON.stringify(existing)) };
+      }
+      throw new Error('Idempotency conflict: conflicting business payload');
+    }
+
     if (this.reputationEvents.has(event.id)) {
       throw new Error('Reputation event ID already exists');
     }
+
     const defensiveCopy = JSON.parse(JSON.stringify(event));
     this.reputationEvents.set(event.id, defensiveCopy);
     this.reputationIdempotencyKeys.add(event.idempotency_key);
+    
+    return { appended: true, event: JSON.parse(JSON.stringify(event)) };
   }
 
   getReputationEvent(id: string): DbReputationEvent | null {

@@ -36,6 +36,25 @@ describe('MockStore - Evidence', () => {
     expect('file' in retrieved!).toBe(false);
   });
 
+  it('strips unknown properties from evidence', () => {
+    const ev = createTestEvidence('ev-2', 'deal-1');
+    const maliciousEv = {
+      ...ev,
+      bytes: 'base64...',
+      buffer: new ArrayBuffer(8),
+      secret: 'password'
+    };
+    
+    // Use type assertion to bypass TypeScript checking for the test
+    store.addEvidence(maliciousEv as unknown as DbEvidenceFile);
+
+    const retrieved = store.getEvidence('ev-2');
+    expect(retrieved).toEqual(ev); // Should exactly match canonical type
+    expect('bytes' in retrieved!).toBe(false);
+    expect('buffer' in retrieved!).toBe(false);
+    expect('secret' in retrieved!).toBe(false);
+  });
+
   it('lists evidence only for the correct deal', () => {
     store.addEvidence(createTestEvidence('ev-1', 'deal-1'));
     store.addEvidence(createTestEvidence('ev-2', 'deal-2'));
