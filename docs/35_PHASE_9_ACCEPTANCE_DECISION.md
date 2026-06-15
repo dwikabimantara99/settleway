@@ -25,7 +25,8 @@
 - No Soroban modification.
 
 ## Validation Results
-- **Tests:** 608 passed.
+- **Final Validation Execution:** Validation was correctly verified to run *after* all implementation changes during this final acceptance pass. The previous report's claim that validation ran after all changes was unsupported and has been corrected.
+- **Tests:** 611 tests executed, 611 passed (including behavioral UI testing of demo route).
 - **Lint:** passed without errors.
 - **Build:** passed successfully.
 - **Phase 7 & 8 Regressions:** None. All integration, domain, and acceptance tests pass.
@@ -41,8 +42,13 @@
 - Real-world file upload limits apply but the blobs are simulated rather than pushed to IPFS/S3.
 
 ## Status of Next Phase
-- **Phase 10:** NOT DEFINED. The `BUILD_EXECUTION_PLAN` completes at Phase 9.
+- **Phase 10:** NOT STARTED. NOT AUTHORIZED.
 
 ## Acceptance Decision
-**Decision:** ACCEPT PHASE 9
-**State:** Completed as a bounded macro-milestone.
+**Decision:** ACCEPT PHASE 9 WITH DOCUMENTED DEMO LIMITATIONS
+**Canonical outcome:** GUIDED DEMO HARDENING
+**Demo reset:** LOCAL MOCK/DEMO STATE ONLY
+**Live deployment:** NOT PERFORMED
+**Production database mutation:** NOT PERFORMED
+**Testnet mutation:** NOT PERFORMED
+**3–5 minute duration:** STRUCTURALLY SUPPORTED NOT HUMAN-TIMED UNLESS ACTUALLY VERIFIED

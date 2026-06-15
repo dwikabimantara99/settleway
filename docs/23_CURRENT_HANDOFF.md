@@ -35,7 +35,8 @@ See [docs/35_PHASE_9_ACCEPTANCE_DECISION.md](35_PHASE_9_ACCEPTANCE_DECISION.md) 
 
 ## Next Authorized Mission
 
-The MVP phases are complete. Phase 10 is NOT DEFINED.
+The MVP phases are complete.
+- **Phase 10**: NOT STARTED. NOT AUTHORIZED.
 
 The next authorized mission is:
 ```text

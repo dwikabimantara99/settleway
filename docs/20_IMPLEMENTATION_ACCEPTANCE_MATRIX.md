@@ -40,8 +40,14 @@ Use this matrix to decide whether a phase is complete.
 
 ## Phase 9 Acceptance Decision
 
-* **Implementation:** accepted
-* **Phase 10 dependency:** Phase 10 is NOT DEFINED. Requires explicit founder definition and authorization.
+* **Phase 9:** ACCEPTED WITH DOCUMENTED DEMO LIMITATIONS
+* **Canonical outcome:** GUIDED DEMO HARDENING
+* **Demo reset:** LOCAL MOCK/DEMO STATE ONLY
+* **Live deployment:** NOT PERFORMED
+* **Production database mutation:** NOT PERFORMED
+* **Testnet mutation:** NOT PERFORMED
+* **3–5 minute duration:** STRUCTURALLY SUPPORTED NOT HUMAN-TIMED UNLESS ACTUALLY VERIFIED
+* **Phase 10:** NOT STARTED NOT AUTHORIZED
 
 ## Final MVP acceptance
 
