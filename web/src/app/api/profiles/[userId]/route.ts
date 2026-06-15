@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { hasSupabaseConfig, supabase } from '@/lib/db/supabase-client';
 
@@ -11,7 +11,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
       if (error) throw error;
       return NextResponse.json(createSuccessResponse(data));
     }
-    const profile = mockStore.profiles.get(userId);
+
+    const profile = await repository.getProfile(userId);
     if (!profile) {
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Profile not found'), { status: 404 });
     }

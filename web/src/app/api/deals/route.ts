@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { DbDeal } from '@/lib/db/types';
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString(),
     };
 
-    mockStore.deals.set(dealId, newDeal);
+    await repository.createDeal(newDeal);
 
     return NextResponse.json(createSuccessResponse(newDeal, { source: 'mock' }));
   } catch (err: unknown) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { hasSupabaseConfig, supabase } from '@/lib/db/supabase-client';
 
@@ -9,9 +9,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ deal
     if (hasSupabaseConfig && supabase) {
       const { data, error } = await supabase.from('deals').select('*').eq('id', dealId).single();
       if (error) throw error;
-      return NextResponse.json(createSuccessResponse(data));
+      const events = await repository.getDealEvents(dealId);
+      const stellarOps = await repository.findStellarOperationsByDeal(dealId);
+      const evidence = await repository.getDealEvidence(dealId);
+      return NextResponse.json(createSuccessResponse({ ...data, events, stellarOps, evidence }));
     }
-    const deal = mockStore.deals.get(dealId);
+    const deal = await repository.getDeal(dealId);
     if (!deal) {
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
     }

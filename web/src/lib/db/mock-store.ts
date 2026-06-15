@@ -141,7 +141,7 @@ export class MockStore {
 
     const nextKeys = Object.keys(input.next) as (keyof DbDeal)[];
     for (const key of nextKeys) {
-      if (key !== "status" && key !== "stellar_sync_status" && key !== "stellar_contract_id" && key !== "stellar_escrow_id" && key !== "latest_stellar_tx_hash" && key !== "updated_at") {
+      if (key !== "status" && key !== "stellar_sync_status" && key !== "stellar_contract_id" && key !== "stellar_escrow_id" && key !== "latest_stellar_tx_hash" && key !== "updated_at" && key !== "proof_hash") {
         if (JSON.stringify(input.next[key]) !== JSON.stringify(input.current[key])) {
           return { replaced: false, deal: null };
         }

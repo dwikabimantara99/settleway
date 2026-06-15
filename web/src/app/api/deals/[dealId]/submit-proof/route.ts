@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
@@ -10,7 +10,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const actionName = 'submit_proof' as EscrowAction;
 
   try {
-    const existingDeal = mockStore.deals.get(dealId);
+    const existingDeal = await repository.getDeal(dealId);
     if (!existingDeal) {
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
     }
@@ -49,7 +49,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         return NextResponse.json(createErrorResponse('BAD_REQUEST', verifyRes.error || 'Verification failed'), { status: 400 });
       }
 
-      mockStore.addEvidence(verifyRes.evidence!);
+      await repository.addEvidence(verifyRes.evidence!);
       proofHash = verifyRes.evidence!.sha256_hash;
     } else {
       // Fallback for json logic (from previous phase) if needed
@@ -62,11 +62,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     if (proofHash) {
       updatedDeal.proof_hash = proofHash;
     }
-    mockStore.updateDeal(dealId, updatedDeal);
+    const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+    if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
     // Add event
     const event = createEvent(dealId, actionName, actorId, 'Executed ' + actionName);
-    mockStore.addEvent(event);
+    await repository.addEvent(event);
 
     return NextResponse.json(createSuccessResponse(updatedDeal));
   } catch (err: unknown) {

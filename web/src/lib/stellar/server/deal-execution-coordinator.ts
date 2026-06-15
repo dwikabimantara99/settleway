@@ -10,7 +10,7 @@ import { projectDealSyncStatus } from "./deal-sync-policy";
 import { planDealLocalCommit } from "./deal-local-commit";
 import { processReputationOutcome } from "../../reputation/engine";
 import type { AuthoritativeReputationDecision } from "../../reputation/engine";
-import { mockStore } from "../../db/mock-store";
+import { repository } from "../../repositories";
 
 export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput & {
   existing_operation: StellarOperation | null;
@@ -131,7 +131,7 @@ export async function coordinateDealExecution(
         }
         
         if (outcome) {
-          processReputationOutcome(mockStore, {
+          await processReputationOutcome(repository, {
             deal_id: next_deal.id,
             buyer_id: next_deal.buyer_id,
             seller_id: next_deal.seller_id,

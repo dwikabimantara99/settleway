@@ -123,14 +123,14 @@ export function rebuildReputationAggregate(events: DbReputationEvent[]): DbReput
 }
 
 export interface ReputationStore {
-  appendReputationEventPair(events: DbReputationEvent[]): { appended: boolean; events: DbReputationEvent[] };
+  appendReputationEventPair(events: DbReputationEvent[]): Promise<{ appended: boolean; events: DbReputationEvent[] }>;
 }
 
-export function processReputationOutcome(store: ReputationStore, decision: AuthoritativeReputationDecision, eventIdGenerator: () => string) {
+export async function processReputationOutcome(store: ReputationStore, decision: AuthoritativeReputationDecision, eventIdGenerator: () => string) {
   const events = buildReputationEvents(decision, eventIdGenerator);
   if (events.length === 2) {
     try {
-      const res = store.appendReputationEventPair(events);
+      const res = await store.appendReputationEventPair(events);
       return res.events;
     } catch (err) {
       throw err;

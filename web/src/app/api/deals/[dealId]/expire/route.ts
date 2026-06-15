@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
@@ -11,7 +11,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const actionName = 'expire' as EscrowAction;
 
   try {
-    const existingDeal = mockStore.deals.get(dealId);
+    const existingDeal = await repository.getDeal(dealId);
     if (!existingDeal) {
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
     }
@@ -24,15 +24,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     }
 
     const updatedDeal = transition(existingDeal, actionName);
-    mockStore.updateDeal(dealId, updatedDeal);
+    const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+    if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
     // Add event
     const event = createEvent(dealId, actionName, null, 'Executed ' + actionName);
-    mockStore.addEvent(event);
+    await repository.addEvent(event);
 
     if (outcome) {
       const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
-      processReputationOutcome(mockStore, {
+      await processReputationOutcome(repository, {
         deal_id: updatedDeal.id,
         buyer_id: updatedDeal.buyer_id,
         seller_id: updatedDeal.seller_id,
