@@ -5,8 +5,10 @@ This document records the current operational state for the next Settleway engin
 ## Current Position
 
 - **Active branch**: `phase-7-rebuild`
-- **Accepted Phase 7 checkpoint**: `d8ecbfcb6b8b025a0d4cb8cb2c3a431ff450d8b8`
-- **Documentation checkpoint**: `71104ed61dadc6adcdb39f6a5242ed846d3bc3a0`
+- **Accepted Phase 7 implementation checkpoint**: `d8ecbfcb6b8b025a0d4cb8cb2c3a431ff450d8b8`
+- **Phase 7 acceptance decision commit**: `27a4d3330cf9a3006689b6ddd561e7c7bfe95fd9`
+
+> The current repository HEAD must be obtained from Git. This handoff does not attempt to embed the hash of the commit that currently contains the handoff itself.
 
 - **Phase 7 implementation**: accepted
 - **Phase 7 provenance completeness**: partially verified
