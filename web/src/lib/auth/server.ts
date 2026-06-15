@@ -3,17 +3,17 @@ import { supabase } from '../db/supabase-client';
 import { repository } from '../repositories';
 import type { DbDeal } from '../db/types';
 
+import { runtimeMode } from '../repositories';
+
 export interface UserSession {
   id: string;
   email?: string;
 }
 
 export async function getCurrentUser(): Promise<UserSession | null> {
-  const store = process.env.DATA_STORE;
-  
-  if (store !== 'supabase') {
+  if (runtimeMode !== 'persistent') {
     // Mock / Demo mode: trust the client cookie 'mock_actor'
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const mockActor = cookieStore.get('mock_actor')?.value;
     if (mockActor) {
       return { id: mockActor };
@@ -24,7 +24,7 @@ export async function getCurrentUser(): Promise<UserSession | null> {
   // Persistent mode
   if (!supabase) return null;
   
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('sb-access-token')?.value;
   
   if (!token) return null;
