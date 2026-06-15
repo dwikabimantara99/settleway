@@ -10,5 +10,6 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/lib/stellar/server/smoke/testnet-smoke.manual.ts"],
+    testTimeout: 300000,
   },
 });
