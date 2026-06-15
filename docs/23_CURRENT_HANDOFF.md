@@ -36,11 +36,11 @@ See [docs/35_PHASE_9_ACCEPTANCE_DECISION.md](35_PHASE_9_ACCEPTANCE_DECISION.md) 
 ## Next Authorized Mission
 
 The MVP phases are complete.
-- **Phase 10**: PROPOSED. NOT YET ACCEPTED. IMPLEMENTATION NOT AUTHORIZED.
+- **Phase 10**: PROPOSED FOR CONDITIONAL IMPLEMENTATION.
 
 The next authorized mission is:
 ```text
-await founder review and approval of docs/36_PHASE_10_SCOPE_PROPOSAL.md.
+execute conditional implementation of Phase 10 if all gates pass.
 ```
 
 ## Prohibited Scope Until Separately Authorized
