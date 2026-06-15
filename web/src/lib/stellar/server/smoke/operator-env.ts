@@ -1,11 +1,8 @@
-import {
-  FeeBumpTransaction,
-  Keypair,
-  Transaction,
-  TransactionBuilder,
-} from "@stellar/stellar-sdk";
+import path from "node:path";
+import { StrKey, Transaction } from "@stellar/stellar-sdk";
 import type { StellarAction } from "@/lib/stellar/types";
 import { StellarSdkRpc } from "../stellar-sdk-rpc";
+import { StellarTestnetAdapter } from "../stellar-testnet-adapter";
 import type {
   ConfirmTransactionResult,
   RpcSourceAccountResult,
@@ -13,7 +10,12 @@ import type {
   StellarRpcPort,
   SubmitTransactionResult,
 } from "../stellar-rpc-port";
-import type { StellarTimeSource } from "../stellar-signer-port";
+import type {
+  StellarSignerPort,
+  StellarSignRequest,
+  StellarSignResult,
+  StellarTimeSource,
+} from "../stellar-signer-port";
 import { validateSmokeRuntimeConfig } from "./config";
 import type { SmokeRuntimeConfig } from "./config";
 import { collectForbiddenEvidenceKeys } from "./evidence";
@@ -29,6 +31,17 @@ import {
 import {
   createSmokeRuntime,
 } from "./runtime";
+import {
+  runStellarCliSecureStoreSignerPreflight,
+  StellarCliSecureStoreSigner,
+  verifyStellarCliSecureStoreAliases,
+} from "./stellar-cli-secure-store-signer";
+import type {
+  StellarCliSecureStoreSignerConfig,
+} from "./stellar-cli-secure-store-signer";
+import type {
+  StellarCliProcessRunner,
+} from "./stellar-cli-process-port";
 import type {
   SmokeReconciliationResult,
   SmokeScenarioResult,
@@ -55,6 +68,12 @@ export const TESTNET_SMOKE_ENV = {
   admin_secret_seed: "SETTLEWAY_SMOKE_ADMIN_SECRET_SEED",
   buyer_demo_secret_seed: "SETTLEWAY_SMOKE_BUYER_DEMO_SECRET_SEED",
   seller_demo_secret_seed: "SETTLEWAY_SMOKE_SELLER_DEMO_SECRET_SEED",
+  stellar_cli_path: "SETTLEWAY_SMOKE_STELLAR_CLI_PATH",
+  stellar_config_dir: "SETTLEWAY_SMOKE_STELLAR_CONFIG_DIR",
+  stellar_network_alias: "SETTLEWAY_SMOKE_STELLAR_NETWORK_ALIAS",
+  admin_key_alias: "SETTLEWAY_SMOKE_ADMIN_KEY_ALIAS",
+  buyer_demo_key_alias: "SETTLEWAY_SMOKE_BUYER_DEMO_KEY_ALIAS",
+  seller_demo_key_alias: "SETTLEWAY_SMOKE_SELLER_DEMO_KEY_ALIAS",
   base_fee_stroops: "SETTLEWAY_SMOKE_BASE_FEE_STROOPS",
   max_fee_stroops: "SETTLEWAY_SMOKE_MAX_FEE_STROOPS",
   timeout_seconds: "SETTLEWAY_SMOKE_TIMEOUT_SECONDS",
@@ -83,6 +102,7 @@ export type OperatorEnvironmentReader = (name: string) => string | undefined;
 
 export type TestnetSmokeCommand =
   | "preflight"
+  | "signer_preflight"
   | "happy_path"
   | "expiry"
   | "refund"
@@ -90,6 +110,7 @@ export type TestnetSmokeCommand =
 
 export const TESTNET_SMOKE_COMMANDS: readonly TestnetSmokeCommand[] = [
   "preflight",
+  "signer_preflight",
   "happy_path",
   "expiry",
   "refund",
@@ -114,14 +135,16 @@ export type OperatorInputErrorCode =
   | "ERR_INVALID_ACKNOWLEDGEMENT"
   | "ERR_INVALID_COMMAND"
   | "ERR_INVALID_NUMBER"
+  | "ERR_INVALID_SIGNER_ALIAS"
+  | "ERR_INVALID_SIGNER_CONFIG"
   | "ERR_INVALID_RECONCILIATION_ACTION"
   | "ERR_INVALID_RECONCILIATION_HASH"
   | "ERR_INVALID_RUNTIME_CONFIG"
-  | "ERR_INVALID_SIGNER_SEED"
   | "ERR_MISSING_ACKNOWLEDGEMENT"
   | "ERR_MISSING_FIELD"
   | "ERR_ROLE_IDENTITY_MISMATCH"
-  | "ERR_DUPLICATE_ROLE_IDENTITY";
+  | "ERR_DUPLICATE_ROLE_IDENTITY"
+  | "RAW_SECRET_INPUT_FORBIDDEN";
 
 export interface OperatorInputError {
   readonly code: OperatorInputErrorCode;
@@ -137,6 +160,7 @@ export interface TestnetSmokeOperatorInput {
   readonly command: TestnetSmokeCommand;
   readonly config: SmokeRuntimeConfig;
   readonly role_signers: SmokeRoleSignerInput;
+  readonly cli_signer_config: StellarCliSecureStoreSignerConfig;
   readonly signer_call_counts: OperatorSignerCallCounts;
   readonly time_source: StellarTimeSource;
   readonly reconciliation: SmokeTransactionHashReconciliationInput | null;
@@ -199,6 +223,22 @@ export interface OperatorSafeSummary {
   readonly signer_call_counts: OperatorSignerCallCounts;
   readonly scenario:
     | { readonly kind: "preflight"; readonly runtime_constructed: boolean }
+    | {
+        readonly kind: "signer_preflight";
+        readonly network_alias: string;
+        readonly roles: readonly {
+          readonly role: "admin" | "buyer_demo" | "seller_demo";
+          readonly identity_alias: string;
+          readonly public_address: string;
+          readonly body_identity_verified: true;
+          readonly signature_verified: true;
+        }[];
+        readonly transport_call_counts: {
+          readonly rpc_calls: 0;
+          readonly submissions: 0;
+          readonly confirmations: 0;
+        };
+      }
     | { readonly kind: "happy_path"; readonly result: SafeScenarioResult }
     | { readonly kind: "expiry"; readonly result: SafeScenarioResult }
     | { readonly kind: "refund"; readonly result: SafeScenarioResult }
@@ -335,7 +375,7 @@ function parseAcknowledgement(input: {
   readonly command: TestnetSmokeCommand;
   readonly errors: OperatorInputError[];
 }): void {
-  if (input.command === "preflight") {
+  if (input.command === "preflight" || input.command === "signer_preflight") {
     return;
   }
   const value = readOptionalTrimmed(
@@ -396,76 +436,156 @@ function parseReconciliation(input: {
   };
 }
 
-function parseSigner(input: {
-  readonly reader: OperatorEnvironmentReader;
-  readonly envName: string;
-  readonly field: "role_signers.admin" | "role_signers.buyer_demo" | "role_signers.seller_demo";
-  readonly expectedAddress: string | null;
-  readonly stats: MutableSignerCallCounts;
-  readonly errors: OperatorInputError[];
-}): SmokeRoleTransactionSigner | null {
-  const seed = readOptionalTrimmed(input.reader, input.envName);
-  if (seed === null) {
-    pushError(input.errors, "ERR_MISSING_FIELD", input.field);
-    return null;
-  }
-
-  let keypair: Keypair;
-  try {
-    keypair = Keypair.fromSecret(seed);
-  } catch {
-    pushError(input.errors, "ERR_INVALID_SIGNER_SEED", input.field);
-    return null;
-  }
-
-  const publicKey = keypair.publicKey();
-  if (input.expectedAddress !== null && publicKey !== input.expectedAddress) {
-    pushError(input.errors, "ERR_ROLE_IDENTITY_MISMATCH", input.field);
-    return null;
-  }
-
-  return new OperatorRoleSigner(publicKey, keypair, input.field, input.stats);
+function repositoryRoot(): string {
+  const cwd = process.cwd();
+  return path.basename(cwd).toLowerCase() === "web" ? path.dirname(cwd) : cwd;
 }
 
-class OperatorRoleSigner implements SmokeRoleTransactionSigner {
-  readonly public_key: string;
-  readonly #keypair: Keypair;
-  readonly #field: "role_signers.admin" | "role_signers.buyer_demo" | "role_signers.seller_demo";
-  readonly #stats: MutableSignerCallCounts;
+function isPathInsideOrEqual(inputPath: string, possibleParent: string): boolean {
+  const relative = path.relative(possibleParent, inputPath);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+}
 
-  constructor(
-    publicKey: string,
-    keypair: Keypair,
-    field: "role_signers.admin" | "role_signers.buyer_demo" | "role_signers.seller_demo",
-    stats: MutableSignerCallCounts,
-  ) {
-    this.public_key = publicKey;
-    this.#keypair = keypair;
-    this.#field = field;
-    this.#stats = stats;
+function readLegacySecretSeedInputs(
+  reader: OperatorEnvironmentReader,
+  errors: OperatorInputError[],
+): void {
+  const legacyFields: ReadonlyArray<{
+    readonly envName: string;
+    readonly field: string;
+  }> = [
+    { envName: TESTNET_SMOKE_ENV.admin_secret_seed, field: "role_signers.admin" },
+    { envName: TESTNET_SMOKE_ENV.buyer_demo_secret_seed, field: "role_signers.buyer_demo" },
+    { envName: TESTNET_SMOKE_ENV.seller_demo_secret_seed, field: "role_signers.seller_demo" },
+  ];
+
+  for (const legacy of legacyFields) {
+    if (readOptionalTrimmed(reader, legacy.envName) !== null) {
+      pushError(errors, "RAW_SECRET_INPUT_FORBIDDEN", legacy.field);
+    }
+  }
+}
+
+function validateAlias(
+  alias: string,
+  field: string,
+  errors: OperatorInputError[],
+): void {
+  if (alias.trim() === "" || StrKey.isValidEd25519SecretSeed(alias)) {
+    pushError(errors, "ERR_INVALID_SIGNER_ALIAS", field);
+  }
+}
+
+function parseCliSignerConfig(input: {
+  readonly reader: OperatorEnvironmentReader;
+  readonly errors: OperatorInputError[];
+  readonly publicAddresses: {
+    readonly admin: string | null;
+    readonly buyer_demo: string | null;
+    readonly seller_demo: string | null;
+  };
+}): StellarCliSecureStoreSignerConfig | null {
+  readLegacySecretSeedInputs(input.reader, input.errors);
+
+  const stellarCliPath = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.stellar_cli_path,
+  );
+  const stellarConfigDir = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.stellar_config_dir,
+  );
+  const networkAlias = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.stellar_network_alias,
+  );
+  const adminAlias = readOptionalTrimmed(input.reader, TESTNET_SMOKE_ENV.admin_key_alias);
+  const buyerAlias = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.buyer_demo_key_alias,
+  );
+  const sellerAlias = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.seller_demo_key_alias,
+  );
+
+  const requiredValues: ReadonlyArray<{
+    readonly value: string | null;
+    readonly field: string;
+  }> = [
+    { value: stellarCliPath, field: "stellar_cli_path" },
+    { value: stellarConfigDir, field: "stellar_config_dir" },
+    { value: networkAlias, field: "stellar_network_alias" },
+    { value: adminAlias, field: "role_aliases.admin" },
+    { value: buyerAlias, field: "role_aliases.buyer_demo" },
+    { value: sellerAlias, field: "role_aliases.seller_demo" },
+  ];
+
+  for (const required of requiredValues) {
+    if (required.value === null) {
+      pushError(input.errors, "ERR_MISSING_FIELD", required.field);
+    }
   }
 
-  signTransaction(transaction: Transaction, networkPassphrase: string): string {
-    this.#stats.total += 1;
-    if (this.#field === "role_signers.admin") {
-      this.#stats.admin += 1;
-    }
-    if (this.#field === "role_signers.buyer_demo") {
-      this.#stats.buyer_demo += 1;
-    }
-    if (this.#field === "role_signers.seller_demo") {
-      this.#stats.seller_demo += 1;
-    }
+  if (
+    stellarCliPath === null ||
+    stellarConfigDir === null ||
+    networkAlias === null ||
+    adminAlias === null ||
+    buyerAlias === null ||
+    sellerAlias === null ||
+    input.publicAddresses.admin === null ||
+    input.publicAddresses.buyer_demo === null ||
+    input.publicAddresses.seller_demo === null
+  ) {
+    return null;
+  }
 
-    const parsed = TransactionBuilder.fromXDR(
-      transaction.toXDR(),
-      networkPassphrase,
-    );
-    if (parsed instanceof FeeBumpTransaction) {
-      throw new Error("Unsupported fee-bump transaction");
-    }
-    parsed.sign(this.#keypair);
-    return parsed.toXDR();
+  if (!path.isAbsolute(stellarCliPath)) {
+    pushError(input.errors, "ERR_INVALID_SIGNER_CONFIG", "stellar_cli_path");
+  }
+  if (!path.isAbsolute(stellarConfigDir)) {
+    pushError(input.errors, "ERR_INVALID_SIGNER_CONFIG", "stellar_config_dir");
+  }
+  const resolvedConfigDir = path.resolve(stellarConfigDir);
+  if (isPathInsideOrEqual(resolvedConfigDir, repositoryRoot())) {
+    pushError(input.errors, "ERR_INVALID_SIGNER_CONFIG", "stellar_config_dir");
+  }
+  if (networkAlias.trim() === "") {
+    pushError(input.errors, "ERR_INVALID_SIGNER_CONFIG", "stellar_network_alias");
+  }
+
+  validateAlias(adminAlias, "role_aliases.admin", input.errors);
+  validateAlias(buyerAlias, "role_aliases.buyer_demo", input.errors);
+  validateAlias(sellerAlias, "role_aliases.seller_demo", input.errors);
+
+  const aliases = [adminAlias, buyerAlias, sellerAlias];
+  if (new Set(aliases).size !== aliases.length) {
+    pushError(input.errors, "ERR_DUPLICATE_ROLE_IDENTITY", "role_aliases");
+  }
+
+  return {
+    stellar_cli_path: stellarCliPath,
+    config_dir: stellarConfigDir,
+    network_alias: networkAlias,
+    role_aliases: {
+      admin: adminAlias,
+      buyer_demo: buyerAlias,
+      seller_demo: sellerAlias,
+    },
+    public_addresses: {
+      admin: input.publicAddresses.admin,
+      buyer_demo: input.publicAddresses.buyer_demo,
+      seller_demo: input.publicAddresses.seller_demo,
+    },
+  };
+}
+
+class StaticOperatorRoleSigner implements SmokeRoleTransactionSigner {
+  constructor(readonly public_key: string) {}
+
+  signTransaction(): string {
+    throw new Error("CLI signer must be used for signing");
   }
 }
 
@@ -568,48 +688,30 @@ export function loadTestnetSmokeOperatorInput(
     seller_demo: 0,
     total: 0,
   };
-  const adminSigner = parseSigner({
-    reader,
-    envName: TESTNET_SMOKE_ENV.admin_secret_seed,
-    field: "role_signers.admin",
-    expectedAddress: adminAddress,
-    stats: signerCounts,
-    errors,
-  });
-  const buyerSigner = parseSigner({
-    reader,
-    envName: TESTNET_SMOKE_ENV.buyer_demo_secret_seed,
-    field: "role_signers.buyer_demo",
-    expectedAddress: buyerAddress,
-    stats: signerCounts,
-    errors,
-  });
-  const sellerSigner = parseSigner({
-    reader,
-    envName: TESTNET_SMOKE_ENV.seller_demo_secret_seed,
-    field: "role_signers.seller_demo",
-    expectedAddress: sellerAddress,
-    stats: signerCounts,
-    errors,
-  });
 
-  const derivedKeys = [
-    adminSigner?.public_key ?? null,
-    buyerSigner?.public_key ?? null,
-    sellerSigner?.public_key ?? null,
-  ].filter((value): value is string => value !== null);
-  if (new Set(derivedKeys).size !== derivedKeys.length) {
-    pushError(errors, "ERR_DUPLICATE_ROLE_IDENTITY", "role_signers");
-  }
+  const cliSignerConfig = parseCliSignerConfig({
+    reader,
+    errors,
+    publicAddresses: {
+      admin: adminAddress,
+      buyer_demo: buyerAddress,
+      seller_demo: sellerAddress,
+    },
+  });
 
   if (errors.length > 0) {
     return { ok: false, errors };
   }
 
-  if (adminSigner === null || buyerSigner === null || sellerSigner === null) {
+  if (
+    adminAddress === null ||
+    buyerAddress === null ||
+    sellerAddress === null ||
+    cliSignerConfig === null
+  ) {
     return {
       ok: false,
-      errors: [{ code: "ERR_MISSING_FIELD", field: "role_signers" }],
+      errors: [{ code: "ERR_MISSING_FIELD", field: "role_aliases" }],
     };
   }
 
@@ -675,10 +777,11 @@ export function loadTestnetSmokeOperatorInput(
       command,
       config,
       role_signers: {
-        admin: adminSigner,
-        buyer_demo: buyerSigner,
-        seller_demo: sellerSigner,
+        admin: new StaticOperatorRoleSigner(adminAddress),
+        buyer_demo: new StaticOperatorRoleSigner(buyerAddress),
+        seller_demo: new StaticOperatorRoleSigner(sellerAddress),
       },
+      cli_signer_config: cliSignerConfig,
       signer_call_counts: signerCounts,
       time_source: timeSource,
       reconciliation,
@@ -742,6 +845,27 @@ class CountingRpcPort implements StellarRpcPort {
   }
 }
 
+class CountingSignerPort implements StellarSignerPort {
+  constructor(
+    private readonly inner: StellarSignerPort,
+    private readonly counts: MutableSignerCallCounts,
+  ) {}
+
+  async signTransaction(request: StellarSignRequest): Promise<StellarSignResult> {
+    this.counts.total += 1;
+    if (request.signer_role === "admin") {
+      this.counts.admin += 1;
+    }
+    if (request.signer_role === "buyer_demo") {
+      this.counts.buyer_demo += 1;
+    }
+    if (request.signer_role === "seller_demo") {
+      this.counts.seller_demo += 1;
+    }
+    return this.inner.signTransaction(request);
+  }
+}
+
 export function createNoNetworkSmokeRpcSentinel(): StellarRpcPort {
   return new NoNetworkRpcPort();
 }
@@ -750,6 +874,8 @@ export async function runTestnetSmokeOperator(
   input: TestnetSmokeOperatorInput,
   dependencies: {
     readonly rpc_port?: StellarRpcPort;
+    readonly cli_process_runner?: StellarCliProcessRunner;
+    readonly signer_config_dir_exists?: (configDir: string) => boolean;
   } = {},
 ): Promise<OperatorRunResult> {
   const rpcCounts: MutableRpcCallCounts = {
@@ -759,6 +885,45 @@ export async function runTestnetSmokeOperator(
     submissions: 0,
     confirmations: 0,
   };
+  const cliSignerConfig: StellarCliSecureStoreSignerConfig = {
+    ...input.cli_signer_config,
+    ...(dependencies.cli_process_runner === undefined
+      ? {}
+      : { process_runner: dependencies.cli_process_runner }),
+    ...(dependencies.signer_config_dir_exists === undefined
+      ? {}
+      : { config_dir_exists: dependencies.signer_config_dir_exists }),
+  };
+
+  if (input.command === "signer_preflight") {
+    const result = await runStellarCliSecureStoreSignerPreflight({
+      config: cliSignerConfig,
+      network_passphrase: input.config.network_passphrase,
+    });
+    if (!result.ok) {
+      return {
+        ok: false,
+        command: "signer_preflight",
+        errors: [{
+          code: "ERR_INVALID_SIGNER_CONFIG",
+          field: "role_aliases",
+          public_detail: result.error_code,
+        }],
+        summary: null,
+      };
+    }
+    return {
+      ok: true,
+      command: "signer_preflight",
+      summary: buildBaseSummary(input, rpcCounts, {
+        kind: "signer_preflight",
+        network_alias: result.summary.network_alias,
+        roles: result.summary.roles,
+        transport_call_counts: result.summary.transport_call_counts,
+      }),
+    };
+  }
+
   const baseRpc = dependencies.rpc_port ??
     (input.command === "preflight"
       ? createNoNetworkSmokeRpcSentinel()
@@ -795,8 +960,46 @@ export async function runTestnetSmokeOperator(
     };
   }
 
+  const cliSigner = new StellarCliSecureStoreSigner(cliSignerConfig);
+  const identityResults = await verifyStellarCliSecureStoreAliases(cliSigner);
+  if (identityResults.some((result) => !result.ok)) {
+    return {
+      ok: false,
+      command: input.command,
+      errors: [{
+        code: "ERR_INVALID_SIGNER_CONFIG",
+        field: "role_aliases",
+        public_detail: "ERR_SIGNER_UNAVAILABLE",
+      }],
+      summary: null,
+    };
+  }
+  const signerPort = new CountingSignerPort(cliSigner, input.signer_call_counts);
+  const executionAdapter = new StellarTestnetAdapter(
+    {
+      network_passphrase: input.config.network_passphrase,
+      contract_id: input.config.contract_id,
+      base_fee_stroops: input.config.fees.base_fee_stroops,
+      max_fee_stroops: input.config.fees.max_fee_stroops,
+      timeout_seconds: input.config.timebounds.timeout_seconds,
+    },
+    {
+      admin_address: input.config.role_addresses.admin,
+      buyer_demo_address: input.config.role_addresses.buyer_demo,
+      seller_demo_address: input.config.role_addresses.seller_demo,
+    },
+    rpcPort,
+    signerPort,
+    input.time_source,
+  );
+  const runtime = {
+    ...runtimeResult.runtime,
+    signer_port: signerPort,
+    execution_adapter: executionAdapter,
+  };
+
   if (input.command === "happy_path") {
-    const result = await runHappyPathSmokeScenario(runtimeResult.runtime);
+    const result = await runHappyPathSmokeScenario(runtime);
     const summary = buildBaseSummary(input, rpcCounts, {
       kind: "happy_path",
       result: safeScenarioResult(result),
@@ -817,7 +1020,7 @@ export async function runTestnetSmokeOperator(
   }
 
   if (input.command === "expiry") {
-    const result = await runExpirySmokeScenario(runtimeResult.runtime);
+    const result = await runExpirySmokeScenario(runtime);
     const summary = buildBaseSummary(input, rpcCounts, {
       kind: "expiry",
       result: safeScenarioResult(result),
@@ -838,7 +1041,7 @@ export async function runTestnetSmokeOperator(
   }
 
   if (input.command === "refund") {
-    const result = await runRefundSmokeScenario(runtimeResult.runtime);
+    const result = await runRefundSmokeScenario(runtime);
     const summary = buildBaseSummary(input, rpcCounts, {
       kind: "refund",
       result: safeScenarioResult(result),
@@ -868,7 +1071,7 @@ export async function runTestnetSmokeOperator(
   }
 
   const result = await reconcileSmokeTransactionHash({
-    runtime: runtimeResult.runtime,
+    runtime,
     action: input.reconciliation.action,
     transaction_hash: input.reconciliation.transaction_hash,
   });

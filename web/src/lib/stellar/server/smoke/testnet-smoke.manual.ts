@@ -13,6 +13,12 @@ function readManualEnvironment(name: string): string | undefined {
   ) {
     return "preflight";
   }
+  if (
+    process.env.npm_lifecycle_event === "smoke:testnet:signer-preflight" &&
+    name === TESTNET_SMOKE_ENV.command
+  ) {
+    return "signer_preflight";
+  }
   return process.env[name];
 }
 

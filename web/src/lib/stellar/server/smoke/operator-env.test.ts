@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { StrKey } from "@stellar/stellar-sdk";
+import {
+  FeeBumpTransaction,
+  Keypair,
+  StrKey,
+  TransactionBuilder,
+} from "@stellar/stellar-sdk";
 import {
   buildOperatorJsonOutput,
   createNoNetworkSmokeRpcSentinel,
@@ -11,6 +16,11 @@ import {
   TESTNET_SMOKE_MUTATION_ACKNOWLEDGEMENT,
 } from "./operator-env";
 import type { OperatorEnvironmentReader } from "./operator-env";
+import type {
+  StellarCliProcessRequest,
+  StellarCliProcessResult,
+  StellarCliProcessRunner,
+} from "./stellar-cli-process-port";
 
 const ADMIN_TEST_SEED = "SDG7MGMBQ3CQS74Q2UNIYLBDYZUBFHKAO25YBBXYGPX6YSRQFZS3DOIY";
 const BUYER_TEST_SEED = "SAY7SJURIC433KFZAZ4HIJA7UAOHC64IBL7TRZX7V2HLLKZ2NV5RH6YN";
@@ -19,6 +29,72 @@ const ADMIN_ADDRESS = "GBXZG2PGM62LHQ7CSKZ6HDMK5HOTNCBTS6XTCUWUP3AO3V6D7RHSXEYU"
 const BUYER_ADDRESS = "GBVNGU2QIQDENWOVV24AH4HXHFGIZWBY4ICXAPCQ6Y7A55E3V6PTN7PM";
 const SELLER_ADDRESS = "GDI2FHOWZCGLR5QRBJC2G3P3M52SSBLQWSDTF4Q4KBHAIZULHDMTM2CJ";
 const CONTRACT_ID = StrKey.encodeContract(Buffer.alloc(32, 12));
+const STELLAR_CLI_PATH = "C:\\Users\\ACER\\.cargo\\bin\\stellar.exe";
+const STELLAR_CONFIG_DIR = "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke";
+const STELLAR_NETWORK_ALIAS = "settleway-testnet";
+const ADMIN_ALIAS = "settleway-testnet-admin";
+const BUYER_ALIAS = "settleway-testnet-buyer-demo";
+const SELLER_ALIAS = "settleway-testnet-seller-demo";
+
+const ROLE_SEEDS = {
+  [ADMIN_ALIAS]: ADMIN_TEST_SEED,
+  [BUYER_ALIAS]: BUYER_TEST_SEED,
+  [SELLER_ALIAS]: SELLER_TEST_SEED,
+} as const;
+
+const ROLE_PUBLIC_KEYS = {
+  [ADMIN_ALIAS]: ADMIN_ADDRESS,
+  [BUYER_ALIAS]: BUYER_ADDRESS,
+  [SELLER_ALIAS]: SELLER_ADDRESS,
+} as const;
+
+class OfflineStellarCliRunner implements StellarCliProcessRunner {
+  readonly requests: StellarCliProcessRequest[] = [];
+
+  async run(request: StellarCliProcessRequest): Promise<StellarCliProcessResult> {
+    this.requests.push(request);
+    if (request.args[0] === "keys") {
+      const alias = request.args[4] ?? "";
+      return this.result(`${this.publicKeyForAlias(alias)}\n`);
+    }
+    const alias = request.args[7] ?? "";
+    const seed = this.seedForAlias(alias);
+    const parsed = TransactionBuilder.fromXDR(
+      request.stdin_text,
+      "Test SDF Network ; September 2015",
+    );
+    if (parsed instanceof FeeBumpTransaction) {
+      return this.result("");
+    }
+    parsed.sign(Keypair.fromSecret(seed));
+    return this.result(`${parsed.toXDR()}\n`);
+  }
+
+  private publicKeyForAlias(alias: string): string {
+    if (alias === ADMIN_ALIAS || alias === BUYER_ALIAS || alias === SELLER_ALIAS) {
+      return ROLE_PUBLIC_KEYS[alias];
+    }
+    return "";
+  }
+
+  private seedForAlias(alias: string): string {
+    if (alias === ADMIN_ALIAS || alias === BUYER_ALIAS || alias === SELLER_ALIAS) {
+      return ROLE_SEEDS[alias];
+    }
+    return ADMIN_TEST_SEED;
+  }
+
+  private result(stdout: string): StellarCliProcessResult {
+    return {
+      exit_code: 0,
+      stdout,
+      stderr: "",
+      timed_out: false,
+      stdout_truncated: false,
+      stderr_truncated: false,
+    };
+  }
+}
 
 function validEnvironment(
   overrides: Readonly<Record<string, string | undefined>> = {},
@@ -31,9 +107,12 @@ function validEnvironment(
     [TESTNET_SMOKE_ENV.admin_address]: ADMIN_ADDRESS,
     [TESTNET_SMOKE_ENV.buyer_demo_address]: BUYER_ADDRESS,
     [TESTNET_SMOKE_ENV.seller_demo_address]: SELLER_ADDRESS,
-    [TESTNET_SMOKE_ENV.admin_secret_seed]: ADMIN_TEST_SEED,
-    [TESTNET_SMOKE_ENV.buyer_demo_secret_seed]: BUYER_TEST_SEED,
-    [TESTNET_SMOKE_ENV.seller_demo_secret_seed]: SELLER_TEST_SEED,
+    [TESTNET_SMOKE_ENV.stellar_cli_path]: STELLAR_CLI_PATH,
+    [TESTNET_SMOKE_ENV.stellar_config_dir]: STELLAR_CONFIG_DIR,
+    [TESTNET_SMOKE_ENV.stellar_network_alias]: STELLAR_NETWORK_ALIAS,
+    [TESTNET_SMOKE_ENV.admin_key_alias]: ADMIN_ALIAS,
+    [TESTNET_SMOKE_ENV.buyer_demo_key_alias]: BUYER_ALIAS,
+    [TESTNET_SMOKE_ENV.seller_demo_key_alias]: SELLER_ALIAS,
     [TESTNET_SMOKE_ENV.base_fee_stroops]: "100",
     [TESTNET_SMOKE_ENV.max_fee_stroops]: "1000000",
     [TESTNET_SMOKE_ENV.timeout_seconds]: "30",
@@ -89,55 +168,55 @@ describe("local Testnet operator environment parsing", () => {
     }
   });
 
-  it("rejects missing signer input without returning its value", () => {
-    const result = loadValid({ [TESTNET_SMOKE_ENV.admin_secret_seed]: undefined });
+  it("rejects missing signer alias input without returning private material", () => {
+    const result = loadValid({ [TESTNET_SMOKE_ENV.admin_key_alias]: undefined });
     expect(result.ok).toBe(false);
     const serialized = JSON.stringify(result);
     expect(serialized).not.toContain(ADMIN_TEST_SEED);
     if (!result.ok) {
       expect(result.errors).toContainEqual({
         code: "ERR_MISSING_FIELD",
-        field: "role_signers.admin",
+        field: "role_aliases.admin",
       });
     }
   });
 
-  it("rejects invalid signer input safely", () => {
-    const result = loadValid({ [TESTNET_SMOKE_ENV.admin_secret_seed]: "invalid" });
+  it("rejects raw-secret-looking alias input safely", () => {
+    const result = loadValid({ [TESTNET_SMOKE_ENV.admin_key_alias]: ADMIN_TEST_SEED });
     expect(result.ok).toBe(false);
     const serialized = JSON.stringify(result);
-    expect(serialized).not.toContain("invalid");
+    expect(serialized).not.toContain(ADMIN_TEST_SEED);
     if (!result.ok) {
       expect(result.errors).toContainEqual({
-        code: "ERR_INVALID_SIGNER_SEED",
-        field: "role_signers.admin",
+        code: "ERR_INVALID_SIGNER_ALIAS",
+        field: "role_aliases.admin",
       });
     }
   });
 
-  it("rejects derived public-address mismatch", () => {
+  it("rejects legacy raw secret seed environment variables without returning values", () => {
     const result = loadValid({
-      [TESTNET_SMOKE_ENV.admin_address]: BUYER_ADDRESS,
+      [TESTNET_SMOKE_ENV.admin_secret_seed]: ADMIN_TEST_SEED,
     });
     expect(result.ok).toBe(false);
+    expect(JSON.stringify(result)).not.toContain(ADMIN_TEST_SEED);
     if (!result.ok) {
       expect(result.errors).toContainEqual({
-        code: "ERR_ROLE_IDENTITY_MISMATCH",
+        code: "RAW_SECRET_INPUT_FORBIDDEN",
         field: "role_signers.admin",
       });
     }
   });
 
-  it("rejects duplicate role identities", () => {
+  it("rejects duplicate role aliases", () => {
     const result = loadValid({
-      [TESTNET_SMOKE_ENV.buyer_demo_secret_seed]: ADMIN_TEST_SEED,
-      [TESTNET_SMOKE_ENV.buyer_demo_address]: ADMIN_ADDRESS,
+      [TESTNET_SMOKE_ENV.buyer_demo_key_alias]: ADMIN_ALIAS,
     });
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.errors).toContainEqual({
         code: "ERR_DUPLICATE_ROLE_IDENTITY",
-        field: "role_signers",
+        field: "role_aliases",
       });
     }
   });
@@ -188,7 +267,9 @@ describe("local Testnet operator acknowledgement", () => {
     expect(result.ok).toBe(true);
   });
 
-  for (const command of TESTNET_SMOKE_COMMANDS.filter((value) => value !== "preflight")) {
+  for (const command of TESTNET_SMOKE_COMMANDS.filter((
+    value,
+  ) => value !== "preflight" && value !== "signer_preflight")) {
     it(`${command} requires exact acknowledgement`, () => {
       const result = loadValid({
         [TESTNET_SMOKE_ENV.command]: command,
@@ -229,6 +310,14 @@ describe("local Testnet operator acknowledgement", () => {
     });
     expect(result.ok).toBe(true);
   });
+
+  it("signer preflight does not require acknowledgement", () => {
+    const result = loadValid({
+      [TESTNET_SMOKE_ENV.command]: "signer_preflight",
+      [TESTNET_SMOKE_ENV.acknowledgement]: undefined,
+    });
+    expect(result.ok).toBe(true);
+  });
 });
 
 describe("local Testnet operator preflight", () => {
@@ -241,6 +330,7 @@ describe("local Testnet operator preflight", () => {
 
     const result = await runTestnetSmokeOperator(loaded.input, {
       rpc_port: createNoNetworkSmokeRpcSentinel(),
+      signer_config_dir_exists: () => true,
     });
 
     expect(result.ok).toBe(true);
@@ -272,6 +362,36 @@ describe("local Testnet operator preflight", () => {
     expect(output.json).not.toContain(SELLER_TEST_SEED);
     expect(output.json).not.toContain("signed_transaction_xdr");
     expect(output.json).not.toContain("signature");
+  });
+});
+
+describe("local Testnet operator signer preflight", () => {
+  it("verifies configured CLI aliases without RPC or submissions", async () => {
+    const loaded = loadValid({
+      [TESTNET_SMOKE_ENV.command]: "signer_preflight",
+    });
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) {
+      throw new Error("Expected valid signer preflight input");
+    }
+
+    const result = await runTestnetSmokeOperator(loaded.input, {
+      cli_process_runner: new OfflineStellarCliRunner(),
+      signer_config_dir_exists: () => true,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.summary?.scenario).toMatchObject({
+      kind: "signer_preflight",
+      network_alias: STELLAR_NETWORK_ALIAS,
+      transport_call_counts: {
+        rpc_calls: 0,
+        submissions: 0,
+        confirmations: 0,
+      },
+    });
+    expect(result.summary?.transport_call_counts.submissions).toBe(0);
+    expect(result.summary?.transport_call_counts.confirmations).toBe(0);
   });
 });
 
@@ -332,6 +452,8 @@ describe("local Testnet operator reconciliation guards", () => {
 
     const result = await runTestnetSmokeOperator(loaded.input, {
       rpc_port: createNoNetworkSmokeRpcSentinel(),
+      cli_process_runner: new OfflineStellarCliRunner(),
+      signer_config_dir_exists: () => true,
     });
 
     expect(result.summary?.transport_call_counts.submissions).toBe(0);

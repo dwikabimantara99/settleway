@@ -5,3 +5,5 @@ export * from "./operator-env";
 export * from "./persistence";
 export * from "./runtime";
 export * from "./signer";
+export * from "./stellar-cli-process-port";
+export * from "./stellar-cli-secure-store-signer";
