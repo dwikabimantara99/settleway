@@ -35,9 +35,9 @@ export default function LandingPage() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-            <Link href="#demo-flow">
+            <Link href="/demo">
               <Button size="lg" variant="secondary" className="gap-2">
-                Open Demo Flow
+                Open Demo Dashboard
               </Button>
             </Link>
           </div>
