@@ -1,4 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as nextHeaders from 'next/headers';
+
+vi.mock('next/headers', () => ({
+  cookies: vi.fn(),
+}));
+
 import { mockStore } from '../db/mock-store';
 import { coordinateDealExecution } from '../stellar/server/deal-execution-coordinator';
 import type { StellarDealExecutionCoordinatorInput } from '../stellar/server/deal-execution-coordinator';
@@ -53,6 +59,7 @@ describe('Application Integration', () => {
     const dealId = 'd-004';
     setupDeal(dealId, 'DELIVERED');
     const request = new Request(`http://localhost/api/deals/${dealId}/accept-delivery`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await acceptDeliveryRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -72,6 +79,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002';
     setupDeal(dealId, 'BUYER_FUNDED');
     const request = new Request(`http://localhost/api/deals/${dealId}/expire`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await expireRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -85,6 +93,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002b';
     setupDeal(dealId, 'SELLER_FUNDED');
     const request = new Request(`http://localhost/api/deals/${dealId}/expire`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await expireRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -98,6 +107,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002c';
     setupDeal(dealId, 'WAITING_DEPOSITS');
     const request = new Request(`http://localhost/api/deals/${dealId}/expire`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await expireRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -110,6 +120,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002d';
     setupDeal(dealId, 'LOCKED');
     const request = new Request(`http://localhost/api/deals/${dealId}/expire`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await expireRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(400); // Invalid transition, but still testing reputation
@@ -122,6 +133,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002-refund';
     setupDeal(dealId, 'BUYER_FUNDED');
     const request = new Request(`http://localhost/api/deals/${dealId}/refund`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await refundRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -135,6 +147,7 @@ describe('Application Integration', () => {
     const dealId = 'd-002-refund-locked';
     setupDeal(dealId, 'LOCKED');
     const request = new Request(`http://localhost/api/deals/${dealId}/refund`, { method: 'POST' });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
     
     const response = await refundRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(400);
@@ -157,6 +170,7 @@ describe('Application Integration', () => {
       method: 'POST',
       body: formData
     });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: existingDeal.seller_id }) } as any);
     
     const response = await submitProofRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(200);
@@ -266,6 +280,7 @@ describe('Application Integration', () => {
       method: 'POST',
       body: formData
     });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: deal.buyer_id }) } as any);
     
     const response = await submitProofRoute(request, { params: Promise.resolve({ dealId }) });
     expect(response.status).toBe(403);

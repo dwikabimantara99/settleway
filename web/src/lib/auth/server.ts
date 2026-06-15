@@ -46,14 +46,14 @@ export async function requireAuth(): Promise<UserSession> {
   return user;
 }
 
-export async function requireDealParticipant(dealId: string): Promise<{ deal: DbDeal; role: 'buyer' | 'seller' }> {
+export async function requireDealParticipant(dealId: string): Promise<{ deal: DbDeal; role: 'buyer' | 'seller'; user: UserSession }> {
   const user = await requireAuth();
 
   const deal = await repository.getDeal(dealId);
   if (!deal) throw new Error("Deal not found");
 
-  if (deal.buyer_id === user.id) return { deal, role: 'buyer' };
-  if (deal.seller_id === user.id) return { deal, role: 'seller' };
+  if (deal.buyer_id === user.id) return { deal, role: 'buyer', user };
+  if (deal.seller_id === user.id) return { deal, role: 'seller', user };
 
   throw new Error("Forbidden: Not a participant in this deal");
 }

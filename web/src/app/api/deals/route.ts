@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
+import { requireAuth } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { DbDeal } from '@/lib/db/types';
 
@@ -8,7 +9,17 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { listingId, buyerRequestId, buyerId, sellerId, commodity, volumeKg, principalIdr } = body;
     
-    // In Phase 4, we only use mockStore for initialization to respect MVP boundaries.
+    let authUser;
+    try {
+      authUser = await requireAuth();
+    } catch (e) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e as Error).message), { status: 401 });
+    }
+
+    if (buyerId !== authUser.id && sellerId !== authUser.id) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'You must be the buyer or seller to create this deal'), { status: 403 });
+    }
+
     
     const dealId = `deal-${Date.now()}`;
     const buyerBondIdr = principalIdr * 0.05;

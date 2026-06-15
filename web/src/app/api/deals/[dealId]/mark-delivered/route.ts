@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
+import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
@@ -9,9 +10,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const actionName = 'mark_delivered' as EscrowAction;
 
   try {
-    const existingDeal = await repository.getDeal(dealId);
-    if (!existingDeal) {
-      return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
+    let existingDeal;
+    let userRole;
+    let authUser;
+    try {
+      const auth = await requireDealParticipant(dealId);
+      existingDeal = auth.deal;
+      userRole = auth.role;
+      authUser = auth.user;
+    } catch (e) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', e.message), { status: 401 });
     }
 
     const updatedDeal = transition(existingDeal, actionName);
@@ -19,7 +27,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
     // Add event
-    const event = createEvent(dealId, actionName, null, 'Executed ' + actionName);
+    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
     await repository.addEvent(event);
 
     return NextResponse.json(createSuccessResponse(updatedDeal));

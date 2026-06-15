@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
+import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
@@ -10,10 +11,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const actionName = 'submit_proof' as EscrowAction;
 
   try {
-    const existingDeal = await repository.getDeal(dealId);
-    if (!existingDeal) {
-      return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
+    let existingDeal;
+    let userRole;
+    let authUser;
+    try {
+      const auth = await requireDealParticipant(dealId);
+      existingDeal = auth.deal;
+      userRole = auth.role;
+      authUser = auth.user;
+    } catch (e) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', e.message), { status: 401 });
     }
+    if (userRole !== 'seller') return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only seller can perform this action'), { status: 403 });
 
     const contentType = request.headers.get('content-type') || '';
     let actorId: string | null = null;
@@ -21,7 +30,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
-      actorId = formData.get('actor_id') as string;
+      actorId = authUser.id;
       const file = formData.get('file') as File;
       const clientHash = formData.get('client_preview_hash') as string | null;
 
@@ -29,9 +38,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         return NextResponse.json(createErrorResponse('BAD_REQUEST', 'Missing file'), { status: 400 });
       }
 
-      if (existingDeal.seller_id !== actorId) {
-        return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only seller can submit proof'), { status: 403 });
-      }
+      
 
       const buffer = Buffer.from(await file.arrayBuffer());
 
@@ -54,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     } else {
       // Fallback for json logic (from previous phase) if needed
       const body = await request.json().catch(() => ({}));
-      if (body.actor_id) actorId = body.actor_id;
+      actorId = authUser.id;
       if (body.proof_hash) proofHash = body.proof_hash;
     }
 
