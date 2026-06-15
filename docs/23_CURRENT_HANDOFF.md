@@ -18,9 +18,14 @@ This document records the current operational state for the next Settleway engin
 - **Phase 8 implementation**: accepted with documented MVP limitations
 - **Phase 8 authorization**: explicitly authorized
 
+- **Phase 9 definition**: Demo hardening
+- **Phase 9 implementation**: accepted
+- **Phase 9 authorization**: explicitly authorized
+
 See [docs/32_PHASE_7_ACCEPTANCE_DECISION.md](32_PHASE_7_ACCEPTANCE_DECISION.md) for the formal Phase 7 acceptance decision.
 See [docs/33_PHASE_8_SCOPE_GATE.md](33_PHASE_8_SCOPE_GATE.md) for the Phase 8 scope definition.
 See [docs/34_PHASE_8_ACCEPTANCE_DECISION.md](34_PHASE_8_ACCEPTANCE_DECISION.md) for the formal Phase 8 acceptance decision.
+See [docs/35_PHASE_9_ACCEPTANCE_DECISION.md](35_PHASE_9_ACCEPTANCE_DECISION.md) for the formal Phase 9 acceptance decision.
 
 ## Testnet Status
 
@@ -30,14 +35,14 @@ See [docs/34_PHASE_8_ACCEPTANCE_DECISION.md](34_PHASE_8_ACCEPTANCE_DECISION.md) 
 
 ## Next Authorized Mission
 
-The next required decision is explicit founder authorization for Phase 9 scope review.
+The MVP phases are complete. Phase 10 is NOT DEFINED.
 
 The next authorized mission is:
 ```text
-await explicit instructions from the user regarding the scope definition and formal authorization of Phase 9.
+await explicit instructions from the user regarding the future of the product or post-hackathon goals.
 ```
 
 ## Prohibited Scope Until Separately Authorized
-- No Phase 9 work.
-- No live network mutation or contract initialization beyond authorized Phase 7 paths.
+- No Phase 10 or post-MVP work.
+- No live network mutation or contract initialization beyond authorized paths.
 - No local code changes or workflow updates without explicit authorization.
