@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "smoke:testnet": "vitest run --config vitest.testnet-smoke.config.ts",
+    "smoke:testnet:preflight": "vitest run --config vitest.testnet-smoke.config.ts"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "15.1.0",
