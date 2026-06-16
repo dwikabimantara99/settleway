@@ -9,36 +9,30 @@ Persistence, Identity, and Authorization
 
 ## Status Matrix
 
+Phase 9:
+STABLE DEMO BASELINE
+
+Phase 10:
+POST-HACKATHON PRODUCTION FOUNDATION
+
 Mock adapter:
-ACCEPTED FOR TEST AND DEMO
+VERIFIED FOR TEST AND DEMO
 
 Supabase adapter:
 LOCALLY IMPLEMENTED AND CONTRACT-TESTED
 
 Schema and RLS:
-AUTHORED
+AUTHORED AND STATICALLY REVIEWED
 NOT DEPLOYED
-
-Server identity:
-LOCALLY IMPLEMENTED
-
-Authorization:
-LOCALLY TESTED
-
-Hosted Supabase:
-NOT PROVISIONED
-
-Remote migrations:
-NOT EXECUTED
 
 Live authentication:
 NOT VERIFIED
 
+Hosted persistence:
+NOT VERIFIED
+
 Production deployment:
 NOT PERFORMED
-
-Phase 9 demo:
-PRESERVED
 
 Phase 11:
 NOT DEFINED

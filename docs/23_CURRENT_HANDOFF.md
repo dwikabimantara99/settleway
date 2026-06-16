@@ -10,10 +10,35 @@ This document records the current operational state for the next Settleway engin
 
 - **Phase 7 implementation**: accepted
 - **Phase 8 implementation**: accepted with documented MVP limitations
-- **Phase 9 implementation**: accepted (stable demo baseline)
 
-- **Phase 10 definition**: Post-hackathon production foundation (Persistence, Identity, and Authorization)
-- **Phase 10 implementation**: ACCEPTED WITH EXTERNAL PROVISIONING LIMITATIONS
+Phase 9:
+STABLE DEMO BASELINE
+
+Phase 10:
+POST-HACKATHON PRODUCTION FOUNDATION
+
+Mock adapter:
+VERIFIED FOR TEST AND DEMO
+
+Supabase adapter:
+LOCALLY IMPLEMENTED AND CONTRACT-TESTED
+
+Schema and RLS:
+AUTHORED AND STATICALLY REVIEWED
+NOT DEPLOYED
+
+Live authentication:
+NOT VERIFIED
+
+Hosted persistence:
+NOT VERIFIED
+
+Production deployment:
+NOT PERFORMED
+
+Phase 11:
+NOT DEFINED
+NOT AUTHORIZED
 
 ## Testnet Status
 
@@ -24,7 +49,7 @@ This document records the current operational state for the next Settleway engin
 ## Next Authorized Mission
 
 The MVP phases (1-9) are complete.
-Phase 10 production foundation is complete.
+Phase 10 production foundation is complete and accepted locally.
 
 The next authorized mission is:
 ```text
