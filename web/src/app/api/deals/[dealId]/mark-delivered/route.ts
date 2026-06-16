@@ -16,8 +16,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       const auth = await requireDealParticipant(dealId);
       existingDeal = auth.deal;
       authUser = auth.user;
-    } catch (e: any) {
-      return NextResponse.json(createErrorResponse('UNAUTHORIZED', e.message), { status: 401 });
+    } catch (e: unknown) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
 
     const updatedDeal = transition(existingDeal, actionName);

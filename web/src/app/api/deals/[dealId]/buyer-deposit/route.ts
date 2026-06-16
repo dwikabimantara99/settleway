@@ -18,8 +18,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       existingDeal = auth.deal;
       userRole = auth.role;
       authUser = auth.user;
-    } catch (e: any) {
-      return NextResponse.json(createErrorResponse('UNAUTHORIZED', e.message), { status: 401 });
+    } catch (e: unknown) {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
     if (userRole !== 'buyer') return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only buyer can perform this action'), { status: 403 });
 
