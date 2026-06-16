@@ -15,6 +15,8 @@ vi.mock('../db/supabase-client', () => ({
   }
 }));
 
+import { supabase } from '../db/supabase-client';
+
 describe('Identity Spoofing Boundaries', () => {
   const originalEnv = process.env;
 
