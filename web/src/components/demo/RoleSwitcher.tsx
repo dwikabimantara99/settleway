@@ -17,7 +17,6 @@ export function RoleSwitcher() {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole(match[1]);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole('buyer-surabaya-restaurant');
     }
   }, []);
