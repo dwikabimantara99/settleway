@@ -14,10 +14,10 @@ export function RoleSwitcher() {
     // Check current mock_actor cookie
     const match = document.cookie.match(/(?:(?:^|.*;\s*)mock_actor\s*\=\s*([^;]*).*$)|^.*$/);
     if (match && match[1]) {
-      // eslint-disable-next-line
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole(match[1]);
     } else {
-      // eslint-disable-next-line
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole('buyer-surabaya-restaurant');
     }
   }, []);
@@ -30,8 +30,7 @@ export function RoleSwitcher() {
 
   const handleRoleChange = async (newRole: string) => {
     setRole(newRole);
-    // Set cookie valid for session
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/immutability -- Safe to modify document.cookie directly for demo simulation
     document.cookie = `mock_actor=${newRole}; path=/; max-age=86400`;
     router.refresh();
   };

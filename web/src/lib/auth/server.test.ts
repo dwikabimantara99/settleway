@@ -1,29 +1,37 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { requireDealParticipant, getCurrentUser } from './server';
-import { repository } from '../repositories';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as nextHeaders from 'next/headers';
 
 vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }));
 
-describe('Auth & Authorization', () => {
+// We must mock the supabase client so it doesn't try to connect
+vi.mock('../db/supabase-client', () => ({
+  supabase: {
+    auth: {
+      getUser: vi.fn()
+    }
+  }
+}));
+
+describe('Identity Spoofing Boundaries', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.DATA_STORE = 'mock'; // explicitly use mock store
+    vi.resetModules();
+    process.env = { ...originalEnv };
   });
 
-  it('getCurrentUser returns null when no cookie', async () => {
-    vi.mocked(nextHeaders.cookies).mockReturnValue({
-      get: () => undefined,
-    } as any);
-
-    const user = await getCurrentUser();
-    expect(user).toBeNull();
+  afterEach(() => {
+    process.env = originalEnv;
   });
 
-  it('getCurrentUser returns mock actor id', async () => {
+  it('mock_actor in demo: accepted as simulation', async () => {
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'demo';
+    const { getCurrentUser } = await import('./server');
+    
     vi.mocked(nextHeaders.cookies).mockReturnValue({
       get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
     } as any);
@@ -32,9 +40,66 @@ describe('Auth & Authorization', () => {
     expect(user?.id).toBe('buyer-surabaya-restaurant');
   });
 
-  it('requireDealParticipant succeeds for buyer', async () => {
+  it('mock_actor in test: accepted only where test behavior requires it', async () => {
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'test';
+    const { getCurrentUser } = await import('./server');
+    
     vi.mocked(nextHeaders.cookies).mockReturnValue({
-      get: () => ({ value: 'buyer-surabaya-restaurant' }),
+      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+    } as any);
+
+    const user = await getCurrentUser();
+    expect(user?.id).toBe('buyer-surabaya-restaurant');
+  });
+
+  it('mock_actor in persistent: ignored', async () => {
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
+    
+    const { getCurrentUser } = await import('./server');
+    
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+    } as any);
+
+    // Because there's no sb-access-token, it should return null, ignoring the mock_actor cookie
+    const user = await getCurrentUser();
+    expect(user).toBeNull();
+  });
+
+  it('persistent uses sb-access-token', async () => {
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost';
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
+    
+    const { getCurrentUser } = await import('./server');
+    
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: (name: string) => name === 'sb-access-token' ? { value: 'real-token' } : undefined,
+    } as any);
+
+    vi.mocked(supabase!.auth.getUser).mockResolvedValue({
+      data: { user: { id: 'real-user', email: 'real@user.com' } },
+      error: null
+    } as any);
+
+    const user = await getCurrentUser();
+    expect(user?.id).toBe('real-user');
+  });
+});
+
+describe('Authorization Boundaries', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'test';
+  });
+
+  it('requireDealParticipant succeeds for buyer', async () => {
+    const { requireDealParticipant } = await import('./server');
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
     } as any);
 
     const { deal, role } = await requireDealParticipant('demo-cabai-001');
@@ -43,8 +108,9 @@ describe('Auth & Authorization', () => {
   });
 
   it('requireDealParticipant succeeds for seller', async () => {
+    const { requireDealParticipant } = await import('./server');
     vi.mocked(nextHeaders.cookies).mockReturnValue({
-      get: () => ({ value: 'seller-probolinggo-cabai' }),
+      get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined,
     } as any);
 
     const { deal, role } = await requireDealParticipant('demo-cabai-001');
@@ -52,15 +118,17 @@ describe('Auth & Authorization', () => {
     expect(role).toBe('seller');
   });
 
-  it('requireDealParticipant throws for unrelated participant', async () => {
+  it('unrelated authenticated participant: 403', async () => {
+    const { requireDealParticipant } = await import('./server');
     vi.mocked(nextHeaders.cookies).mockReturnValue({
-      get: () => ({ value: 'some-other-dude' }),
+      get: (name: string) => name === 'mock_actor' ? { value: 'some-other-dude' } : undefined,
     } as any);
 
     await expect(requireDealParticipant('demo-cabai-001')).rejects.toThrow('Forbidden');
   });
 
-  it('requireDealParticipant throws when anonymous', async () => {
+  it('anonymous sensitive mutation: 401', async () => {
+    const { requireDealParticipant } = await import('./server');
     vi.mocked(nextHeaders.cookies).mockReturnValue({
       get: () => undefined,
     } as any);

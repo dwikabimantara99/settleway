@@ -4,10 +4,25 @@ import { SupabaseRepositoryAdapter } from './supabase-adapter';
 
 export type RuntimeMode = 'test' | 'demo' | 'persistent';
 
-const modeString = process.env.NEXT_PUBLIC_RUNTIME_MODE || process.env.RUNTIME_MODE || 'test';
-export const runtimeMode: RuntimeMode = ['test', 'demo', 'persistent'].includes(modeString) 
-  ? (modeString as RuntimeMode) 
-  : 'test';
+function resolveMode(): RuntimeMode {
+  const explicitMode = process.env.NEXT_PUBLIC_RUNTIME_MODE || process.env.RUNTIME_MODE;
+  
+  if (explicitMode) {
+    if (['test', 'demo', 'persistent'].includes(explicitMode)) {
+      return explicitMode as RuntimeMode;
+    }
+    throw new Error(`Invalid explicit runtime mode: ${explicitMode}. Must be test, demo, or persistent.`);
+  }
+
+  const nodeEnv = process.env.NODE_ENV;
+  if (nodeEnv === 'test') return 'test';
+  if (nodeEnv === 'development') return 'demo';
+  if (nodeEnv === 'production') return 'persistent';
+  
+  return 'test';
+}
+
+export const runtimeMode: RuntimeMode = resolveMode();
 
 function createRepository(): IRepository {
   if (runtimeMode === 'persistent') {
