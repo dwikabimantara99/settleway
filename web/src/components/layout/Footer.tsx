@@ -14,9 +14,7 @@ export function Footer() {
           </p>
         </div>
         <div className="mt-8 border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-          <p>
-            <strong>Hackathon Honesty Note:</strong> This is a MVP. Bank deposits are simulated. Escrow events and hashes use the Stellar Testnet. Real payment rails and production custody are not implemented.
-          </p>
+          <p>Structured negotiation. Protected settlement. Verifiable outcomes.</p>
           <p>&copy; {new Date().getFullYear()} Settleway.</p>
         </div>
       </div>

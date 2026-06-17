@@ -1,3 +1,5 @@
+import type { DealStatus } from './escrow/state-machine';
+
 export type UserRole = 'seller' | 'buyer' | 'both' | 'operator';
 export type ProfileVisibility = 'public' | 'private';
 
@@ -47,18 +49,7 @@ export interface Listing {
   description: string;
 }
 
-export type EscrowStatus =
-  | 'WAITING_DEPOSITS'
-  | 'BUYER_FUNDED'
-  | 'SELLER_FUNDED'
-  | 'LOCKED'
-  | 'PROOF_SUBMITTED'
-  | 'DELIVERED'
-  | 'ACCEPTED'
-  | 'COMPLETED'
-  | 'EXPIRED'
-  | 'REFUNDED'
-  | 'CANCELLED';
+export type EscrowStatus = DealStatus;
 
 export interface Deal {
   id: string;

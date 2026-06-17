@@ -1,34 +1,331 @@
 import Link from 'next/link';
+import {
+  ArrowRight,
+  BadgeCheck,
+  CheckCircle2,
+  FileText,
+  Handshake,
+  Landmark,
+  Lock,
+  ShieldCheck,
+  Store,
+  Users,
+  Wallet,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { ShieldCheck, ArrowRight, Store, Lock, FileText, CheckCircle2 } from 'lucide-react';
+
+const proofPoints = [
+  {
+    icon: Store,
+    title: 'Real trade discovery',
+    description:
+      'Marketplace listings and buyer requests help serious commodity counterparties find each other before money moves.',
+  },
+  {
+    icon: FileText,
+    title: 'Recorded negotiation',
+    description:
+      'Offers and chat are preserved so the trade story exists before the escrow room ever opens.',
+  },
+  {
+    icon: Lock,
+    title: 'Mutual commitment gate',
+    description:
+      'The protected room opens only after both parties click Open Deal Room and accept the same seriousness.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Verifiable outcome trail',
+    description:
+      'Lock, proof, refund, and settlement references support long-term reputation without making blockchain the main interface.',
+  },
+];
+
+const painPoints = [
+  {
+    title: 'Buyers fear sending money first',
+    description:
+      'A good listing is not enough when quality, delivery timing, and counterparty discipline are still uncertain.',
+  },
+  {
+    title: 'Sellers fear bad-faith cancellation',
+    description:
+      'Suppliers can reserve inventory, prepare logistics, and still get exposed to weak commitment from the buyer side.',
+  },
+  {
+    title: 'Reputation is usually too shallow',
+    description:
+      'Most trade conversations disappear into chat apps, so future counterparties cannot inspect how previous deals actually ended.',
+  },
+];
+
+const workflowSteps = [
+  {
+    title: '1. Discover',
+    description:
+      'A buyer or seller starts from marketplace supply or buyer demand, not from an instant escrow popup.',
+  },
+  {
+    title: '2. Review trust',
+    description:
+      'Profiles, verified volume, and proof visibility help both sides decide whether the trade looks credible.',
+  },
+  {
+    title: '3. Submit offer',
+    description:
+      'Negotiation begins in a recorded thread so the product keeps context before money logic starts.',
+  },
+  {
+    title: '4. Open Deal Room together',
+    description:
+      'Both sides must click Open Deal Room before deposits unlock the protected execution path.',
+  },
+  {
+    title: '5. Fund and lock',
+    description:
+      'Buyer and seller fund their required obligations, then the escrow lock becomes part of the Stellar-backed trust trail.',
+  },
+  {
+    title: '6. Prove, settle, and update reputation',
+    description:
+      'Evidence, delivery acceptance, refunds, or settlement outcomes feed a reputation system backed by verifiable transaction history.',
+  },
+];
+
+const stellarNotes = [
+  {
+    icon: Wallet,
+    title: 'Two user-facing rails',
+    description:
+      'Users can experience a local-bank-style flow or a crypto-wallet path while the protected trade logic still converges on one trust layer.',
+  },
+  {
+    icon: BadgeCheck,
+    title: 'Visible only when it matters',
+    description:
+      'Settleway surfaces Stellar as a proof layer through trust cues like Secured by Stellar Blockchain and View Transaction.',
+  },
+  {
+    icon: Landmark,
+    title: 'Reputation with evidence',
+    description:
+      'Transaction references, proof hashes, and room outcomes become a durable record that supports future credibility.',
+  },
+];
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      {/* Hero Section */}
-      <section className="relative px-6 py-24 sm:py-32 lg:px-8 bg-slate-50 flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-100 via-slate-50 to-white opacity-40" />
-        
-        <div className="relative mx-auto max-w-4xl text-center">
-          <div className="mb-8 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-100/50 px-3 py-1 text-sm font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-600/20">
-              <ShieldCheck className="h-4 w-4" />
-              Hackathon MVP Demo
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-white">
+      <section className="border-b border-slate-200 bg-slate-50">
+        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:px-8 lg:py-20">
+          <div className="max-w-3xl">
+            <p className="mb-5 text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              Agricultural trade infrastructure
+            </p>
+
+            <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Settleway turns commodity trade from blind trust into disciplined execution.
+            </h1>
+
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+              Settleway is a marketplace and protected settlement corridor for high-value agricultural
+              transactions. Buyers and sellers discover each other, negotiate in a recorded thread,
+              commit together, fund escrow, prove delivery, and build reputation from real outcomes.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-slate-700">
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <Users className="h-4 w-4 text-emerald-600" />
+                Two-sided reputation
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <FileText className="h-4 w-4 text-emerald-600" />
+                Recorded negotiation and evidence
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1">
+                <BadgeCheck className="h-4 w-4 text-emerald-600" />
+                Stellar-backed trust trail
+              </span>
+            </div>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/marketplace">
+                <Button size="lg" className="gap-2">
+                  View Marketplace
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/demo">
+                <Button size="lg" variant="secondary" className="gap-2">
+                  Explore Guided Flow
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <Handshake className="h-4 w-4 text-emerald-600" />
+              Protected trade flow
+            </div>
+            <ol className="space-y-4 text-sm text-slate-600">
+              <li>
+                <span className="block font-medium text-slate-900">Discovery and offer</span>
+                Buyers and sellers begin with real trade intent before money moves.
+              </li>
+              <li>
+                <span className="block font-medium text-slate-900">Recorded negotiation</span>
+                Terms, expectations, and intent are captured before either side funds.
+              </li>
+              <li>
+                <span className="block font-medium text-slate-900">Mutual deal activation</span>
+                The protected room opens only after both counterparties commit.
+              </li>
+              <li>
+                <span className="block font-medium text-slate-900">Settlement and reputation</span>
+                Escrow milestones, delivery proof, and outcomes form one verifiable record.
+              </li>
+            </ol>
+
+            <div className="mt-6 border-t border-slate-200 pt-4">
+              <p className="text-sm font-medium leading-6 text-slate-900">
+                Settleway transactions are protected by escrow logic and recorded on Stellar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-white py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              The problem
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              High-value agricultural trade breaks when trust is still informal.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Commodity transactions need more than discovery. They need a structure for commitment,
+              evidence, settlement, and reputational memory that both sides can inspect later.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {painPoints.map((item) => (
+              <div key={item.title} className="border border-slate-200 bg-slate-50 p-6">
+                <h3 className="text-base font-semibold text-slate-900">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-slate-50 py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              What Settleway makes possible
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              One disciplined workspace for serious commodity transactions.
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {proofPoints.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-white py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              The corridor
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              From discovery to verified settlement in six clear moves.
+            </h2>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {workflowSteps.map((step) => (
+              <div key={step.title} className="border border-slate-200 bg-slate-50 p-6">
+                <h3 className="text-base font-semibold text-slate-900">{step.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{step.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-200 bg-slate-50 py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">
+              Why Stellar stays mostly invisible
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+              Blockchain is the proof layer, not the user journey.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-600">
+              Settleway uses Stellar so the product can honestly say a protected transaction has a
+              verifiable trust trail. Users should feel the safety without being forced through a
+              crypto-heavy interface.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+            {stellarNotes.map(({ icon: Icon, title, description }) => (
+              <div key={title} className="border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-emerald-700">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-semibold text-slate-900">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-4 text-sm text-slate-600">
+            <span className="inline-flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              Escrow lock, proof, refund, and settlement references belong to one trust trail.
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              Simulated local-bank steps remain clearly labeled as simulated in MVP mode.
             </span>
           </div>
-          
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl mb-6">
-            The Safer Way to Settle <br className="hidden sm:block" />
-            <span className="text-emerald-600">Real-World Trade</span>
-          </h1>
-          
-          <p className="mt-6 text-lg leading-8 text-slate-600 max-w-2xl mx-auto">
-            Settleway connects farmers, suppliers, and buyers in a formal Deal Room. 
-            Go beyond simple discovery with simulated escrow, mutual commitment bonds, 
-            and verifiable proof on the Stellar Testnet.
-          </p>
-          
-          <div className="mt-10 flex items-center justify-center gap-x-6">
+        </div>
+      </section>
+
+      <section className="bg-slate-900 py-16 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 lg:flex-row lg:items-end lg:justify-between lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">
+              One transaction workspace
+            </p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">
+              Settleway brings negotiation, escrow protection, delivery proof, and reputation into one transaction workspace.
+            </h2>
+            <p className="mt-4 text-base leading-7 text-slate-300">
+              Buyers and sellers move from first contact to aligned execution through recorded commitments,
+              protected settlement milestones, and outcomes that remain verifiable.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
             <Link href="/marketplace">
               <Button size="lg" className="gap-2">
                 View Marketplace
@@ -37,113 +334,9 @@ export default function LandingPage() {
             </Link>
             <Link href="/demo">
               <Button size="lg" variant="secondary" className="gap-2">
-                Open Demo Dashboard
+                Explore Guided Flow
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Problem & Solution */}
-      <section id="marketplace-preview" className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:text-center mb-16">
-            <h2 className="text-base font-semibold leading-7 text-emerald-600">Why Settleway?</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Marketplace discovery is not enough
-            </p>
-            <p className="mt-6 text-lg leading-8 text-slate-600">
-              High-value agricultural transactions fail due to fragile trust. Buyers fear non-delivery or poor quality. Sellers fear unpaid invoices and unfair cancellations.
-            </p>
-          </div>
-
-          <div className="mx-auto max-w-2xl lg:max-w-none">
-            <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-              <div className="flex flex-col">
-                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900">
-                  <Store className="h-5 w-5 flex-none text-emerald-600" />
-                  Marketplace Access
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                  <p className="flex-auto">Find real sellers and post buyer requests. Break out of closed local networks to find the best national supply.</p>
-                </dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900">
-                  <Lock className="h-5 w-5 flex-none text-emerald-600" />
-                  Protected Deal Room
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                  <p className="flex-auto">Both parties deposit mutual commitment bonds. Escrow locks only when both sides are funded, reducing cancellation risk.</p>
-                </dd>
-              </div>
-              <div className="flex flex-col">
-                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900">
-                  <FileText className="h-5 w-5 flex-none text-emerald-600" />
-                  Verifiable Proof
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                  <p className="flex-auto">Evidence hashes are recorded on the Stellar Testnet. Settleway builds real, two-sided reputation based on transaction outcomes.</p>
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works */}
-      <section id="demo-flow" className="py-24 bg-slate-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl lg:text-center mb-16">
-            <h2 className="text-base font-semibold leading-7 text-emerald-600">The Workflow</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              5 Steps to Settled Trade
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {[
-              { title: "1. Match", desc: "Buyer and seller agree on terms via listing or request." },
-              { title: "2. Deposit", desc: "Buyer sends principal + bond. Seller sends performance bond." },
-              { title: "3. Lock", desc: "Deal Room locks the escrow. Delivery begins." },
-              { title: "4. Proof", desc: "Seller submits evidence. Hash recorded on Stellar." },
-              { title: "5. Settle", desc: "Buyer accepts. Funds release. Reputation updates." },
-            ].map((step, i) => (
-              <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-                  <span className="text-emerald-700 font-bold">{i + 1}</span>
-                </div>
-                <h3 className="font-semibold text-slate-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-slate-600">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Layer Section */}
-      <section className="py-24 bg-slate-900 text-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
-            Powered by Stellar
-          </h2>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-10">
-            Blockchain shouldn&apos;t be confusing. We use Stellar Testnet as an invisible trust layer. 
-            Escrow events and proof hashes are recorded immutably to guarantee the integrity of your trade history.
-          </p>
-          <div className="flex justify-center gap-4 text-sm text-slate-400">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              Event-Contract Mode
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              Off-chain Simulated Fiat
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              Soroban Smart Contracts
-            </div>
           </div>
         </div>
       </section>

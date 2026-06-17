@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { demoListings, demoProfiles } from '@/lib/demo/demo-data';
-import { Search, MapPin, Scale, Tag } from 'lucide-react';
+import { Search, MapPin, Scale, Tag, ShieldCheck, FileText } from 'lucide-react';
 
 export default function MarketplacePage() {
   return (
@@ -11,7 +11,10 @@ export default function MarketplacePage() {
       <div className="mb-8 md:flex md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Marketplace</h1>
-          <p className="mt-2 text-sm text-slate-600">Discover verified agricultural supply from reputable sellers.</p>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Discover agricultural supply from counterparties who already show reputation,
+            protected volume, and proof expectations before any protected room is opened.
+          </p>
         </div>
         <div className="mt-4 md:mt-0 flex gap-4">
           {/* Mock filters */}
@@ -57,6 +60,47 @@ export default function MarketplacePage() {
                   <div className="flex items-center text-sm text-slate-600">
                     <Tag className="mr-2 h-4 w-4 text-slate-400" />
                     Est. Value: Rp {listing.estimatedValueIdr.toLocaleString('id-ID')}
+                  </div>
+                </div>
+
+                <div className="mb-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Trust Signal
+                  </div>
+                  <div className="grid gap-3 text-sm text-slate-600">
+                    <div className="flex items-start gap-2">
+                      <ShieldCheck className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Reputation {seller?.sellerScore}/100
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {seller?.sellerCompletedCount} verified seller completions
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Tag className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Verified volume Rp {(seller?.verifiedVolumeIdr ?? 0).toLocaleString('id-ID')}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Protected transaction history visible before negotiation starts
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <FileText className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Proof mode {seller?.proofVisibility === 'public' ? 'Public' : 'Private'}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Submit Offer starts recorded negotiation before any protected room opens
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

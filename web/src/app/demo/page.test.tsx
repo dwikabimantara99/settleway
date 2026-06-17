@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import DemoPage from './page';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
+import DemoPage from './page';
 
-// Mock useRouter
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
@@ -14,7 +13,6 @@ vi.mock('next/navigation', () => ({
   })),
 }));
 
-// Mock useState so it works outside actual React lifecycle in renderToString
 vi.mock('react', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react')>();
   return {
@@ -28,22 +26,32 @@ describe('Demo Page', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the dashboard components and text', () => {
+  it('renders the founder-facing dashboard structure', () => {
     const html = renderToString(DemoPage());
-    expect(html).toContain('Guided Demo Dashboard');
-    expect(html).toContain('Reset Demo State');
-    expect(html).toContain('Start Demo Flow');
+
+    expect(html).toContain('Guided founder demo corridor');
+    expect(html).toContain('Demo Controls');
+    expect(html).toContain('Quick Demo Jumps');
+    expect(html).toContain('Presentation Route');
+    expect(html).toContain('Talk Track Anchors');
+    expect(html).toContain('Trust Checkpoints');
+    expect(html).toContain('Honesty Boundaries');
+    expect(html).toContain('Closing Line');
   });
 
-  it('has correct links and canonical order', () => {
+  it('keeps the canonical demo corridor and trust narrative visible', () => {
     const html = renderToString(DemoPage());
-    expect(html).toContain('Landing Page:');
-    expect(html).toContain('Marketplace:');
-    expect(html).toContain('Deal Room:');
-    expect(html).toContain('Deposit:');
-    expect(html).toContain('Escrow:');
-    expect(html).toContain('Proof:');
-    expect(html).toContain('Settlement:');
-    expect(html).toContain('Review:');
+
+    expect(html).toContain('Show negotiation before money');
+    expect(html).toContain('Open Deal Room is mutual commitment');
+    expect(html).toContain('Local-bank funding remains simulated in this MVP.');
+    expect(html).toContain('Stellar-backed trust references');
+    expect(html).toContain('Open Notifications Inbox');
+    expect(html).toContain('Open Negotiation Thread');
+    expect(html).toContain('Open Active Deal Room');
+    expect(html).toContain('Start From Landing Page');
+    expect(html).toContain(
+      'Settleway helps real commodity buyers and sellers move from discovery to settlement',
+    );
   });
 });

@@ -1,9 +1,9 @@
 import { HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
-import { EscrowStatus } from '@/lib/types';
+import type { DealStatus } from '@/lib/escrow/state-machine';
 
 export interface StatusPillProps extends HTMLAttributes<HTMLDivElement> {
-  status: EscrowStatus | string;
+  status: DealStatus | string;
 }
 
 export function StatusPill({ status, className, ...props }: StatusPillProps) {
@@ -14,8 +14,7 @@ export function StatusPill({ status, className, ...props }: StatusPillProps) {
     LOCKED: { label: 'Locked (Protected)', classes: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
     PROOF_SUBMITTED: { label: 'Proof Submitted', classes: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
     DELIVERED: { label: 'Delivered', classes: 'bg-purple-100 text-purple-800 border-purple-200' },
-    ACCEPTED: { label: 'Accepted', classes: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-    COMPLETED: { label: 'Completed', classes: 'bg-slate-100 text-slate-800 border-slate-200' },
+    COMPLETED: { label: 'Settled', classes: 'bg-slate-100 text-slate-800 border-slate-200' },
     EXPIRED: { label: 'Expired', classes: 'bg-red-100 text-red-800 border-red-200' },
     REFUNDED: { label: 'Refunded', classes: 'bg-slate-100 text-slate-800 border-slate-200' },
     CANCELLED: { label: 'Cancelled', classes: 'bg-red-100 text-red-800 border-red-200' },

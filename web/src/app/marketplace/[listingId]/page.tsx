@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { demoListings, demoProfiles } from '@/lib/demo/demo-data';
-import { MapPin, Info, ShieldCheck, ChevronLeft } from 'lucide-react';
+import { MapPin, Info, ShieldCheck, ChevronLeft, FileText, Tag } from 'lucide-react';
 import { notFound } from 'next/navigation';
 
 export default async function ListingDetailPage({ params }: { params: Promise<{ listingId: string }> }) {
@@ -35,12 +35,79 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-3xl font-bold text-slate-900">{listing.commodity}</h1>
           <p className="text-lg text-slate-600">{listing.variety}</p>
 
+          <div className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5 md:grid-cols-3">
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Available Volume
+              </div>
+              <div className="text-sm font-medium text-slate-900">
+                {listing.estimatedVolumeKg.toLocaleString('id-ID')} kg
+              </div>
+            </div>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Delivery Origin
+              </div>
+              <div className="text-sm font-medium text-slate-900">{listing.location}</div>
+            </div>
+            <div>
+              <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Estimated Value
+              </div>
+              <div className="text-sm font-medium text-slate-900">
+                Rp {listing.estimatedValueIdr.toLocaleString('id-ID')}
+              </div>
+            </div>
+          </div>
+
           <div className="prose prose-slate max-w-none border-y border-slate-200 py-6">
             <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-2">
               <Info className="h-5 w-5 text-slate-400" /> Description
             </h3>
             <p>{listing.description}</p>
           </div>
+
+          <Card className="bg-slate-50">
+            <CardHeader>
+              <CardTitle className="text-base">Why this seller looks credible</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-3">
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-900">
+                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                  Reputation
+                </div>
+                <div className="text-lg font-semibold text-emerald-700">{seller?.sellerScore}/100</div>
+                <div className="mt-1 text-xs text-slate-500">
+                  {seller?.sellerCompletedCount} verified completions in seller role
+                </div>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-900">
+                  <Tag className="h-4 w-4 text-emerald-600" />
+                  Protected volume
+                </div>
+                <div className="text-lg font-semibold text-slate-900">
+                  Rp {(seller?.verifiedVolumeIdr ?? 0).toLocaleString('id-ID')}
+                </div>
+                <div className="mt-1 text-xs text-slate-500">
+                  Verified trade volume before negotiation begins
+                </div>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-white p-4">
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-900">
+                  <FileText className="h-4 w-4 text-emerald-600" />
+                  Proof visibility
+                </div>
+                <div className="text-lg font-semibold text-slate-900">
+                  {seller?.proofVisibility === 'public' ? 'Public mode' : 'Private mode'}
+                </div>
+                <div className="mt-1 text-xs text-slate-500">
+                  Proof expectations stay visible even before a protected room is activated
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <div>
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Proof Requirements</h3>
@@ -49,7 +116,11 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                 <ShieldCheck className="h-6 w-6 text-emerald-600 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-slate-900">Standard Escrow Evidence</p>
-                  <p className="text-sm text-slate-600 mt-1">This deal requires photo evidence of loaded goods and a signed delivery receipt. Hashes will be recorded to the Stellar Testnet.</p>
+                  <p className="text-sm text-slate-600 mt-1">
+                    This trade expects photo evidence of loaded goods and a signed delivery receipt.
+                    Submit Offer starts recorded negotiation first, then the protected room carries
+                    the proof and escrow chronology forward.
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -75,10 +146,13 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                 <div className="text-xl font-bold text-emerald-600">Rp {listing.estimatedValueIdr.toLocaleString('id-ID')}</div>
               </div>
               
-              <Link href={`/deals/new?listingId=${listing.id}`} className="block mt-6">
-                <Button className="w-full" size="lg">Create Protected Deal</Button>
+              <Link href={`/offers/new?listingId=${listing.id}`} className="block mt-6">
+                <Button className="w-full" size="lg">Submit Offer</Button>
               </Link>
-              <p className="text-xs text-center text-slate-500 mt-2">Requires 5% commitment bond</p>
+              <p className="text-xs text-center text-slate-500 mt-2">
+                Recorded negotiation starts first. The protected room and funding window open only
+                after both sides commit.
+              </p>
             </CardContent>
           </Card>
 
@@ -104,6 +178,18 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                 <div className="bg-slate-50 p-3 rounded-lg">
                   <div className="text-xs text-slate-500 mb-1">Completed</div>
                   <div className="font-semibold text-slate-900">{seller?.sellerCompletedCount} deals</div>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <div className="text-xs text-slate-500 mb-1">Verified Volume</div>
+                  <div className="font-semibold text-slate-900">
+                    Rp {(seller?.verifiedVolumeIdr ?? 0).toLocaleString('id-ID')}
+                  </div>
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg">
+                  <div className="text-xs text-slate-500 mb-1">Proof Mode</div>
+                  <div className="font-semibold text-slate-900">
+                    {seller?.proofVisibility === 'public' ? 'Public' : 'Private'}
+                  </div>
                 </div>
               </div>
             </CardContent>

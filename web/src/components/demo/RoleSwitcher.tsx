@@ -18,12 +18,13 @@ export function RoleSwitcher() {
       setRole(match[1]);
     } else {
       setRole('buyer-surabaya-restaurant');
+      document.cookie = 'mock_actor=buyer-surabaya-restaurant; path=/; max-age=86400';
     }
   }, []);
 
   const roles = [
     { id: 'buyer-surabaya-restaurant', label: 'Buyer' },
-    { id: 'seller-probolinggo-chili', label: 'Seller' },
+    { id: 'seller-probolinggo-cabai', label: 'Seller' },
     { id: 'operator', label: 'Operator' },
   ];
 

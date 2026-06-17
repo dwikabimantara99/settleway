@@ -22,8 +22,8 @@ export function Header() {
           <Link href="/buyer-requests" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
             Buyer Requests
           </Link>
-          <Link href="#demo-flow" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
-            Demo Flow
+          <Link href="/notifications" className="text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors">
+            Notifications
           </Link>
         </nav>
 

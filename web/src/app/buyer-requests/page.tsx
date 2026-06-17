@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { demoBuyerRequests, demoProfiles } from '@/lib/demo/demo-data';
-import { Search, MapPin, Scale, Coins } from 'lucide-react';
+import { Search, MapPin, Scale, Coins, ShieldCheck, FileText, Tag } from 'lucide-react';
 
 export default function BuyerRequestsPage() {
   return (
@@ -11,7 +11,10 @@ export default function BuyerRequestsPage() {
       <div className="mb-8 md:flex md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Buyer Requests</h1>
-          <p className="mt-2 text-sm text-slate-600">Find buyers looking for specific commodities and supply them securely.</p>
+          <p className="mt-2 max-w-3xl text-sm text-slate-600">
+            Find serious buyer demand with visible trust signals before negotiation starts. Supply
+            discussions remain recorded before any protected room is opened.
+          </p>
         </div>
         <div className="mt-4 md:mt-0 flex gap-4">
           <div className="relative">
@@ -63,6 +66,47 @@ export default function BuyerRequestsPage() {
                   </div>
                 </div>
 
+                <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+                  <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Procurement Trust Signal
+                  </div>
+                  <div className="grid gap-3 text-sm text-slate-600 md:grid-cols-3">
+                    <div className="flex items-start gap-2">
+                      <ShieldCheck className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Buyer reputation {buyer?.buyerScore}/100
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {buyer?.buyerCompletedCount} verified buyer completions
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Tag className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Verified volume Rp {(buyer?.verifiedVolumeIdr ?? 0).toLocaleString('id-ID')}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Protected purchase history visible before supply discussion
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <FileText className="mt-0.5 h-4 w-4 text-emerald-600" />
+                      <div>
+                        <div className="font-medium text-slate-900">
+                          Proof mode {buyer?.proofVisibility === 'public' ? 'Public' : 'Private'}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          Submit Offer opens recorded negotiation before any protected room begins
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
@@ -75,10 +119,14 @@ export default function BuyerRequestsPage() {
                       <div className="text-xs text-slate-500">Reputation: {buyer?.buyerScore}/100</div>
                     </div>
                   </div>
-                  <Link href={`/deals/new?requestId=${req.id}`}>
-                    <Button variant="secondary">Propose Supply</Button>
+                  <Link href={`/offers/new?buyerRequestId=${req.id}`}>
+                    <Button variant="secondary">Submit Offer</Button>
                   </Link>
                 </div>
+                <p className="mt-3 text-xs text-slate-500">
+                  Supply qualification starts in a recorded negotiation thread. Protected escrow
+                  begins only after both sides commit to open the Deal Room.
+                </p>
               </CardContent>
             </Card>
           );

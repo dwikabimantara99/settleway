@@ -59,8 +59,8 @@ export const demoListings: Listing[] = [
   {
     id: 'listing-cabai-001',
     sellerId: 'seller-probolinggo-cabai',
-    commodity: 'Red Chili (Cabai Rawit Merah)',
-    variety: 'Rawit Merah Grade A',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    variety: "Bird's Eye Chili Grade A",
     status: 'ready_stock',
     location: 'Probolinggo',
     estimatedVolumeKg: 700,
@@ -81,14 +81,26 @@ export const demoListings: Listing[] = [
     harvestDate: '2026-07-15',
     description: 'Upcoming harvest. Strictly high grown, semi-washed preparation. Moisture <12%.',
   },
+  {
+    id: 'listing-rice-001',
+    sellerId: 'seller-probolinggo-cabai',
+    commodity: 'White Rice (Premium Milling)',
+    variety: 'IR64 Premium',
+    status: 'ready_stock',
+    location: 'Pasuruan',
+    estimatedVolumeKg: 5000,
+    pricePerKgIdr: 13800,
+    estimatedValueIdr: 69000000,
+    description: 'Warehouse-ready premium white rice prepared for distributor or factory pickup.',
+  },
 ];
 
 export const demoBuyerRequests: BuyerRequest[] = [
   {
     id: 'req-spice-001',
     buyerId: 'buyer-surabaya-restaurant',
-    commodity: 'Red Chili (Cabai Rawit Merah)',
-    variety: 'Rawit Merah Grade A',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    variety: "Bird's Eye Chili Grade A",
     status: 'open',
     deliveryLocation: 'Surabaya',
     requiredVolumeKg: 500,
@@ -100,7 +112,7 @@ export const demoBuyerRequests: BuyerRequest[] = [
   {
     id: 'req-rice-001',
     buyerId: 'buyer-jakarta-factory',
-    commodity: 'White Rice (Beras Medium)',
+    commodity: 'White Rice (Medium Grade)',
     variety: 'IR64 Medium',
     status: 'open',
     deliveryLocation: 'Jakarta',
@@ -118,7 +130,7 @@ export const demoDeals: Record<string, Deal> = {
     listingId: 'listing-cabai-001',
     buyerId: 'buyer-surabaya-restaurant',
     sellerId: 'seller-probolinggo-cabai',
-    commodity: 'Red Chili (Cabai Rawit Merah)',
+    commodity: "Red Chili (Bird's Eye Chili)",
     volumeKg: 700,
     principalIdr: 19950000,
     buyerBondIdr: 997500,

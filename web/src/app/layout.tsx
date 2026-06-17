@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Settleway - The Safer Way to Settle Real-World Trade",
-  description: "A web marketplace for high-value agricultural commodity transactions with Deal Room escrow.",
+  description: "A high-value agricultural trade marketplace with recorded negotiation, mutual Deal Room commitment, escrow protection, and Stellar-backed trust signals.",
 };
 
 export default function RootLayout({
