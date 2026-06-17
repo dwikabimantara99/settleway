@@ -27,9 +27,29 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const updatedDeal = transition(existingDeal, actionName);
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+    const settlementReference =
+      updatedDeal.latest_stellar_tx_hash ??
+      (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
+    const settledAt = new Date().toISOString();
     
-    // Add event
-    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
+    const event = createEvent(
+      dealId,
+      actionName,
+      authUser.id,
+      'Buyer confirmed receipt. Settlement is complete and final balances are routed to the destination wallets.',
+      {
+        next_status: updatedDeal.status,
+        principal_to_seller_idr: updatedDeal.principal_idr,
+        buyer_bond_return_idr: updatedDeal.buyer_bond_idr,
+        seller_bond_return_idr: updatedDeal.seller_bond_idr,
+        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+        buyer_wallet_credit_idr: updatedDeal.buyer_bond_idr,
+        seller_wallet_credit_idr: updatedDeal.principal_idr + updatedDeal.seller_bond_idr,
+        platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+        settlement_reference: settlementReference,
+        settled_at: settledAt,
+      },
+    );
     await repository.addEvent(event);
 
     const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
@@ -40,6 +60,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       seller_id: updatedDeal.seller_id,
       reputation_outcome: 'transaction_completed',
       principal_idr: updatedDeal.principal_idr,
+      transaction_hash: updatedDeal.latest_stellar_tx_hash,
+      proof_hash: updatedDeal.proof_hash,
+      settlement_reference: settlementReference,
+      settled_at: settledAt,
       local_terminal_outcome_persisted: true,
       operation_status: operationStatus as 'confirmed' | 'unknown',
       sync_status: updatedDeal.stellar_sync_status

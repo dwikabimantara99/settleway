@@ -27,9 +27,37 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
-    // Add event
-    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
+    const event = createEvent(
+      dealId,
+      actionName,
+      authUser.id,
+      'Buyer deposit recorded for escrow preparation.',
+      {
+        participant_role: 'buyer',
+        deposit_total_idr: updatedDeal.buyer_total_idr,
+        next_status: updatedDeal.status,
+      },
+    );
     await repository.addEvent(event);
+
+    if (updatedDeal.status === 'LOCKED') {
+      const protectedValueIdr =
+        updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+      const lockEvent = createEvent(
+        dealId,
+        'escrow_locked',
+        authUser.id,
+        'Escrow locked after both required deposits were confirmed.',
+        {
+          protected_value_idr: protectedValueIdr,
+          buyer_total_idr: updatedDeal.buyer_total_idr,
+          seller_total_idr: updatedDeal.seller_total_idr,
+          platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+          next_status: updatedDeal.status,
+        },
+      );
+      await repository.addEvent(lockEvent);
+    }
 
     return NextResponse.json(createSuccessResponse(updatedDeal));
   } catch (err: unknown) {

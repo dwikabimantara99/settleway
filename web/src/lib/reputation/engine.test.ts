@@ -56,7 +56,14 @@ describe('Reputation Engine', () => {
     });
 
     it('generates two events for transaction_completed', () => {
-      const decision = createDecision({ reputation_outcome: 'transaction_completed', principal_idr: 500000 });
+      const decision = createDecision({
+        reputation_outcome: 'transaction_completed',
+        principal_idr: 500000,
+        transaction_hash: 'tx-123',
+        proof_hash: 'proof-123',
+        settlement_reference: 'settlement-123',
+        settled_at: '2026-06-17T10:00:00.000Z',
+      });
       const events = buildReputationEvents(decision, eventIdGenerator);
       
       expect(events.length).toBe(2);
@@ -68,6 +75,11 @@ describe('Reputation Engine', () => {
 
       expect(sellerEv.score_delta).toBe(10);
       expect(sellerEv.volume_delta_idr).toBe(500000);
+      expect(buyerEv.transaction_hash).toBe('tx-123');
+      expect(buyerEv.proof_hash).toBe('proof-123');
+      expect(buyerEv.settlement_reference).toBe('settlement-123');
+      expect(buyerEv.settled_at).toBe('2026-06-17T10:00:00.000Z');
+      expect(sellerEv.transaction_hash).toBe('tx-123');
     });
 
     it('generates correct deltas for buyer_failed_deposit', () => {

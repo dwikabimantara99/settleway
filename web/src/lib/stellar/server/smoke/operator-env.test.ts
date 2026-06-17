@@ -121,7 +121,7 @@ function validEnvironment(
     [TESTNET_SMOKE_ENV.deal_id]: "operator-smoke-deal",
     [TESTNET_SMOKE_ENV.buyer_id]: "buyer-demo",
     [TESTNET_SMOKE_ENV.seller_id]: "seller-demo",
-    [TESTNET_SMOKE_ENV.commodity]: "cabai",
+    [TESTNET_SMOKE_ENV.commodity]: "chili",
     [TESTNET_SMOKE_ENV.volume_kg]: "100",
     [TESTNET_SMOKE_ENV.deal_hash]: "d".repeat(64),
     [TESTNET_SMOKE_ENV.proof_hash]: "e".repeat(64),

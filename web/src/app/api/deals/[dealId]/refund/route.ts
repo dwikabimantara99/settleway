@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
-import { transition, EscrowAction } from '@/lib/escrow/state-machine';
+import { isPreLockDealStatus, transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
 import { processReputationOutcome } from '@/lib/reputation/engine';
 
@@ -21,15 +21,32 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
 
-    const preLockedStates = ['WAITING_DEPOSITS', 'BUYER_FUNDED', 'SELLER_FUNDED'];
-    const isPreLocked = preLockedStates.includes(existingDeal.status);
+    const isPreLocked = isPreLockDealStatus(existingDeal.status);
+    const refundToParty =
+      existingDeal.status === 'BUYER_FUNDED'
+        ? 'buyer'
+        : existingDeal.status === 'SELLER_FUNDED'
+          ? 'seller'
+          : null;
 
     const updatedDeal = transition(existingDeal, actionName);
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
-    // Add event
-    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
+    const event = createEvent(
+      dealId,
+      actionName,
+      authUser.id,
+      'Pre-lock refund recorded. Any funded side should receive a full refund and no party is penalized.',
+      {
+        previous_status: existingDeal.status,
+        next_status: updatedDeal.status,
+        refund_to_party: refundToParty,
+        penalized_party: null,
+        no_slashing_before_lock: true,
+        neutral_outcome: true,
+      },
+    );
     await repository.addEvent(event);
 
     if (isPreLocked) {

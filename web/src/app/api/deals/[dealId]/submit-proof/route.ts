@@ -27,6 +27,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const contentType = request.headers.get('content-type') || '';
     let actorId: string | null = null;
     let proofHash: string | null = null;
+    let evidenceMetadata:
+      | {
+          evidence_id: string;
+          original_filename: string;
+          byte_size: number;
+          evidence_kind: string;
+        }
+      | null = null;
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
@@ -58,6 +66,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
 
       await repository.addEvidence(verifyRes.evidence!);
       proofHash = verifyRes.evidence!.sha256_hash;
+      evidenceMetadata = {
+        evidence_id: verifyRes.evidence!.id,
+        original_filename: verifyRes.evidence!.original_filename,
+        byte_size: verifyRes.evidence!.byte_size,
+        evidence_kind: verifyRes.evidence!.evidence_kind,
+      };
     } else {
       // Fallback for json logic (from previous phase) if needed
       const body = await request.json().catch(() => ({}));
@@ -72,8 +86,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
-    // Add event
-    const event = createEvent(dealId, actionName, actorId, 'Executed ' + actionName);
+    const event = createEvent(
+      dealId,
+      actionName,
+      actorId,
+      'Seller submitted delivery proof for verification and timeline recording.',
+      {
+        next_status: updatedDeal.status,
+        ...evidenceMetadata,
+      },
+    );
+    event.proof_hash = proofHash;
     await repository.addEvent(event);
 
     return NextResponse.json(createSuccessResponse(updatedDeal));

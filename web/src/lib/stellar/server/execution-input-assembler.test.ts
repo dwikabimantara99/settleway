@@ -26,7 +26,7 @@ function baseDeal(overrides: Partial<DbDeal> = {}): DbDeal {
     buyer_request_id: null,
     buyer_id: "buyer-1",
     seller_id: "seller-1",
-    commodity: "cabai",
+    commodity: "chili",
     volume_kg: 100,
     principal_idr: 1000000,
     buyer_bond_idr: 100000,

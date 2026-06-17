@@ -21,6 +21,62 @@ export type EscrowAction =
   | 'expire'
   | 'refund';
 
+export const FUNDING_WINDOW_DEAL_STATUSES = [
+  'WAITING_DEPOSITS',
+  'BUYER_FUNDED',
+  'SELLER_FUNDED',
+] as const satisfies readonly DealStatus[];
+
+export const POST_LOCK_DEAL_STATUSES = [
+  'LOCKED',
+  'PROOF_SUBMITTED',
+  'DELIVERED',
+  'COMPLETED',
+] as const satisfies readonly DealStatus[];
+
+export const POST_PROOF_DEAL_STATUSES = [
+  'PROOF_SUBMITTED',
+  'DELIVERED',
+  'COMPLETED',
+] as const satisfies readonly DealStatus[];
+
+export const CLOSED_DEAL_STATUSES = [
+  'REFUNDED',
+  'EXPIRED',
+  'CANCELLED',
+] as const satisfies readonly DealStatus[];
+
+export const TERMINAL_DEAL_STATUSES = [
+  'COMPLETED',
+  'EXPIRED',
+  'REFUNDED',
+  'CANCELLED',
+] as const satisfies readonly DealStatus[];
+
+export function isFundingWindowDealStatus(status: DealStatus): boolean {
+  return FUNDING_WINDOW_DEAL_STATUSES.includes(status);
+}
+
+export function isPreLockDealStatus(status: DealStatus): boolean {
+  return isFundingWindowDealStatus(status);
+}
+
+export function isPostLockDealStatus(status: DealStatus): boolean {
+  return POST_LOCK_DEAL_STATUSES.includes(status);
+}
+
+export function isPostProofDealStatus(status: DealStatus): boolean {
+  return POST_PROOF_DEAL_STATUSES.includes(status);
+}
+
+export function isClosedDealStatus(status: DealStatus): boolean {
+  return CLOSED_DEAL_STATUSES.includes(status);
+}
+
+export function isTerminalDealStatus(status: DealStatus): boolean {
+  return TERMINAL_DEAL_STATUSES.includes(status);
+}
+
 export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
   const currentStatus = deal.status as DealStatus;
   let nextStatus: DealStatus = currentStatus;

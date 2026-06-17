@@ -7,10 +7,12 @@ vi.mock('next/headers', () => ({
 }));
 
 import { mockStore } from '../db/mock-store';
+import type { DealStatus } from '../escrow/state-machine';
 import { coordinateDealExecution } from '../stellar/server/deal-execution-coordinator';
 import type { StellarDealExecutionCoordinatorInput } from '../stellar/server/deal-execution-coordinator';
 import { POST as acceptDeliveryRoute } from '../../app/api/deals/[dealId]/accept-delivery/route';
 import { POST as expireRoute } from '../../app/api/deals/[dealId]/expire/route';
+import { POST as markDeliveredRoute } from '../../app/api/deals/[dealId]/mark-delivered/route';
 import { POST as refundRoute } from '../../app/api/deals/[dealId]/refund/route';
 import { POST as submitProofRoute } from '../../app/api/deals/[dealId]/submit-proof/route';
 
@@ -27,7 +29,7 @@ describe('Application Integration', () => {
     }
   });
 
-  const setupDeal = (dealId: string, status: string) => {
+  const setupDeal = (dealId: string, status: DealStatus) => {
     mockStore.deals.set(dealId, {
       id: dealId,
       buyer_id: 'buyer-1',
@@ -69,6 +71,17 @@ describe('Application Integration', () => {
     expect(dealEvents.length).toBe(2);
     expect(dealEvents[0].reputation_outcome).toBe('transaction_completed');
     expect(dealEvents[1].reputation_outcome).toBe('transaction_completed');
+    expect(dealEvents[0].settlement_reference).toBe(`room-settlement:${dealId}`);
+    expect(dealEvents[1].settlement_reference).toBe(`room-settlement:${dealId}`);
+
+    const roomEvents = mockStore.getDealEvents(dealId);
+    expect(roomEvents.at(-1)?.event_type).toBe('accept_delivery');
+    expect(roomEvents.at(-1)?.metadata.principal_to_seller_idr).toBe(1000);
+    expect(roomEvents.at(-1)?.metadata.buyer_wallet_credit_idr).toBe(100);
+    expect(roomEvents.at(-1)?.metadata.seller_wallet_credit_idr).toBe(1100);
+    expect(roomEvents.at(-1)?.metadata.platform_wallet_credit_idr).toBe(20);
+    expect(roomEvents.at(-1)?.metadata.platform_fee_total_idr).toBe(20);
+    expect(roomEvents.at(-1)?.metadata.settlement_reference).toBe(`room-settlement:${dealId}`);
 
     // Repeated call should not duplicate reputation events
     await acceptDeliveryRoute(request, { params: Promise.resolve({ dealId }) }).catch(() => {});
@@ -88,6 +101,11 @@ describe('Application Integration', () => {
     const dealEvents = mockStore.getDealReputationEvents(dealId);
     expect(dealEvents.length).toBe(2);
     expect(dealEvents[0].reputation_outcome).toBe('seller_failed_deposit');
+
+    const roomEvents = mockStore.getDealEvents(dealId);
+    expect(roomEvents.at(-1)?.event_type).toBe('expire');
+    expect(roomEvents.at(-1)?.metadata.refund_to_party).toBe('buyer');
+    expect(roomEvents.at(-1)?.metadata.penalized_party).toBe('seller');
   });
 
   it('expire route triggers buyer_failed_deposit from SELLER_FUNDED', async () => {
@@ -142,6 +160,11 @@ describe('Application Integration', () => {
     const dealEvents = mockStore.getDealReputationEvents(dealId);
     expect(dealEvents.length).toBe(2);
     expect(dealEvents[0].reputation_outcome).toBe('refunded_before_locked');
+
+    const roomEvents = mockStore.getDealEvents(dealId);
+    expect(roomEvents.at(-1)?.event_type).toBe('refund');
+    expect(roomEvents.at(-1)?.metadata.refund_to_party).toBe('buyer');
+    expect(roomEvents.at(-1)?.metadata.neutral_outcome).toBe(true);
   });
 
   it('refund route triggers no outcome after locked', async () => {
@@ -182,6 +205,61 @@ describe('Application Integration', () => {
 
     const updatedDeal = mockStore.deals.get(dealId)!;
     expect(updatedDeal.proof_hash).toBe(dealEvidence[0].sha256_hash);
+
+    const roomEvents = mockStore.getDealEvents(dealId);
+    expect(roomEvents.at(-1)?.event_type).toBe('submit_proof');
+    expect(roomEvents.at(-1)?.proof_hash).toBe(dealEvidence[0].sha256_hash);
+    expect(roomEvents.at(-1)?.metadata.original_filename).toBe('test.jpg');
+    expect(roomEvents.at(-1)?.metadata.byte_size).toBe(1024);
+  });
+
+  it('submit-proof route accepts simulated proof hash fallback without a file upload', async () => {
+    const dealId = 'd-003-simulated';
+    setupDeal(dealId, 'LOCKED');
+    const existingDeal = mockStore.deals.get(dealId)!;
+    const simulatedProofHash =
+      '7f5f3a96bcb7c4bbf76c2c3d4e7b7e85752f50eb0d98111f6f9b2e1a2c3d4e5f';
+
+    const request = new Request(`http://localhost/api/deals/${dealId}/submit-proof`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        actor_id: existingDeal.seller_id,
+        proof_hash: simulatedProofHash,
+      }),
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: existingDeal.seller_id }) } as any);
+
+    const response = await submitProofRoute(request, { params: Promise.resolve({ dealId }) });
+    expect(response.status).toBe(200);
+
+    const dealEvidence = mockStore.getDealEvidence(dealId);
+    expect(dealEvidence.length).toBe(0);
+
+    const updatedDeal = mockStore.deals.get(dealId)!;
+    expect(updatedDeal.proof_hash).toBe(simulatedProofHash);
+
+    const roomEvents = mockStore.getDealEvents(dealId);
+    expect(roomEvents.at(-1)?.event_type).toBe('submit_proof');
+    expect(roomEvents.at(-1)?.proof_hash).toBe(simulatedProofHash);
+  });
+
+  it('mark-delivered route rejects buyer and allows only seller', async () => {
+    const dealId = 'd-003-mark-delivered-auth';
+    setupDeal(dealId, 'PROOF_SUBMITTED');
+    const request = new Request(`http://localhost/api/deals/${dealId}/mark-delivered`, {
+      method: 'POST',
+    });
+
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
+    const buyerResponse = await markDeliveredRoute(request, { params: Promise.resolve({ dealId }) });
+    expect(buyerResponse.status).toBe(403);
+
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-1' }) } as any);
+    const sellerResponse = await markDeliveredRoute(request, { params: Promise.resolve({ dealId }) });
+    expect(sellerResponse.status).toBe(200);
   });
 
   it('out of sync recovery integration produces events once', async () => {
@@ -193,6 +271,30 @@ describe('Application Integration', () => {
     deal.stellar_escrow_id = '123';
     deal.stellar_contract_id = 'contract-123';
     mockStore.updateDeal(dealId, deal);
+
+    const operationPersistence: StellarDealExecutionCoordinatorInput['operation_persistence'] = {
+      replaceIfCurrent: async () => ({ ok: true }),
+      createPending: async () => ({ ok: true }),
+    };
+    const dealPersistence: StellarDealExecutionCoordinatorInput['deal_persistence'] = {
+      replaceIfCurrent: async ({ next }) => {
+        mockStore.updateDeal(dealId, next);
+        return { ok: true, deal: next };
+      },
+    };
+    const executionAdapter: StellarDealExecutionCoordinatorInput['execution_adapter'] = {
+      submit: async () => ({
+        outcome: 'submitted',
+        action: 'accept_delivery',
+        transaction_hash: 'tx-1',
+      }),
+      confirm: async () => ({
+        outcome: 'confirmed',
+        action: 'accept_delivery',
+        transaction_hash: 'tx-1',
+        result_escrow_id: null,
+      }),
+    };
 
     const input: StellarDealExecutionCoordinatorInput = {
       deal: mockStore.deals.get(dealId)!,
@@ -223,23 +325,9 @@ describe('Application Integration', () => {
       },
       operation_timestamps: { created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
       local_commit_timestamp: new Date().toISOString(),
-      // @ts-expect-error Mocking partial interface for testing
-      operation_persistence: {
-        replaceIfCurrent: async () => ({ ok: true }),
-        createPending: async () => ({ ok: true }),
-      },
-      // @ts-expect-error Mocking partial interface for testing
-      deal_persistence: {
-        replaceIfCurrent: async ({ next }) => {
-          mockStore.updateDeal(dealId, next);
-          return { ok: true, deal: next };
-        }
-      },
-      // @ts-expect-error Mocking partial interface for testing
-      execution_adapter: {
-        submit: async () => ({ outcome: 'submitted', action: 'accept_delivery', transaction_hash: 'tx-1' }),
-        confirm: async () => ({ outcome: 'confirmed', action: 'accept_delivery', transaction_hash: 'tx-1', result_escrow_id: null })
-      }
+      operation_persistence: operationPersistence,
+      deal_persistence: dealPersistence,
+      execution_adapter: executionAdapter,
     };
 
     // First recovery run
@@ -255,10 +343,19 @@ describe('Application Integration', () => {
 
     // Second recovery run (simulated duplicate operation/reconciliation)
     const input2 = { ...input, deal: mockStore.deals.get(dealId)! };
-    // @ts-expect-error Mocking partial interface for testing
     input2.execution_adapter = {
-        submit: async () => ({ outcome: 'submitted', action: 'accept_delivery', transaction_hash: 'tx-1' }),
-        confirm: async () => ({ outcome: 'failed', action: 'accept_delivery', transaction_hash: 'tx-1', error_code: 'ERR_INVALID_STATE', retryable: false })
+      submit: async () => ({
+        outcome: 'submitted',
+        action: 'accept_delivery',
+        transaction_hash: 'tx-1',
+      }),
+      confirm: async () => ({
+        outcome: 'failed',
+        action: 'accept_delivery',
+        transaction_hash: 'tx-1',
+        error_code: 'ERR_INVALID_STATE',
+        retryable: false,
+      }),
     };
     // For duplicate we would just pretend coordinateDealExecution does the same thing again
     // But coordinateDealExecution checks expected status! So it would fail assembly.

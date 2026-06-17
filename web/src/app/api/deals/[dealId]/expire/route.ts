@@ -23,18 +23,35 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     }
 
     let outcome: ReputationOutcome | null = null;
+    let refundToParty: 'buyer' | 'seller' | null = null;
+    let penalizedParty: 'buyer' | 'seller' | null = null;
+    let eventMessage = 'Funding window expired before either side funded.';
+
     if (existingDeal.status === 'BUYER_FUNDED') {
       outcome = 'seller_failed_deposit';
+      refundToParty = 'buyer';
+      penalizedParty = 'seller';
+      eventMessage =
+        'Funding window expired. Buyer should be refunded in full before lock and seller takes the reputation penalty.';
     } else if (existingDeal.status === 'SELLER_FUNDED') {
       outcome = 'buyer_failed_deposit';
+      refundToParty = 'seller';
+      penalizedParty = 'buyer';
+      eventMessage =
+        'Funding window expired. Seller should be refunded in full before lock and buyer takes the reputation penalty.';
     }
 
     const updatedDeal = transition(existingDeal, actionName);
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
-    // Add event
-    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
+    const event = createEvent(dealId, actionName, authUser.id, eventMessage, {
+      previous_status: existingDeal.status,
+      next_status: updatedDeal.status,
+      refund_to_party: refundToParty,
+      penalized_party: penalizedParty,
+      no_slashing_before_lock: true,
+    });
     await repository.addEvent(event);
 
     if (outcome) {

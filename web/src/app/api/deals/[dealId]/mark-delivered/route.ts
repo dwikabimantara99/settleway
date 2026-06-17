@@ -11,21 +11,34 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
 
   try {
     let existingDeal;
+    let userRole;
     let authUser;
     try {
       const auth = await requireDealParticipant(dealId);
       existingDeal = auth.deal;
+      userRole = auth.role;
       authUser = auth.user;
     } catch (e: unknown) {
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
+    }
+    if (userRole !== 'seller') {
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only seller can perform this action'), { status: 403 });
     }
 
     const updatedDeal = transition(existingDeal, actionName);
     const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
     if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
     
-    // Add event
-    const event = createEvent(dealId, actionName, authUser.id, 'Executed ' + actionName);
+    const event = createEvent(
+      dealId,
+      actionName,
+      authUser.id,
+      'Seller marked the shipment milestone as delivered.',
+      {
+        next_status: updatedDeal.status,
+        proof_hash: updatedDeal.proof_hash,
+      },
+    );
     await repository.addEvent(event);
 
     return NextResponse.json(createSuccessResponse(updatedDeal));

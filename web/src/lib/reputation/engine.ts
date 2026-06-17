@@ -7,6 +7,10 @@ export interface AuthoritativeReputationDecision {
   seller_id: string;
   reputation_outcome: ReputationOutcome;
   principal_idr: number;
+  transaction_hash?: string | null;
+  proof_hash?: string | null;
+  settlement_reference?: string | null;
+  settled_at?: string | null;
   local_terminal_outcome_persisted: boolean;
   operation_status: string;
   sync_status: string;
@@ -67,6 +71,10 @@ export function buildReputationEvents(decision: AuthoritativeReputationDecision,
     idempotency_key: createIdempotencyKey(decision.deal_id, decision.reputation_outcome, decision.buyer_id, ruleVersion),
     score_delta: buyerScoreDelta,
     volume_delta_idr: buyerVolumeDelta,
+    transaction_hash: decision.transaction_hash ?? null,
+    proof_hash: decision.proof_hash ?? null,
+    settlement_reference: decision.settlement_reference ?? null,
+    settled_at: decision.settled_at ?? null,
     created_at: now
   };
 
@@ -80,6 +88,10 @@ export function buildReputationEvents(decision: AuthoritativeReputationDecision,
     idempotency_key: createIdempotencyKey(decision.deal_id, decision.reputation_outcome, decision.seller_id, ruleVersion),
     score_delta: sellerScoreDelta,
     volume_delta_idr: sellerVolumeDelta,
+    transaction_hash: decision.transaction_hash ?? null,
+    proof_hash: decision.proof_hash ?? null,
+    settlement_reference: decision.settlement_reference ?? null,
+    settled_at: decision.settled_at ?? null,
     created_at: now
   };
 

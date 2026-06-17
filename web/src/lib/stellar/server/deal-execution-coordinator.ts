@@ -11,6 +11,7 @@ import { planDealLocalCommit } from "./deal-local-commit";
 import { processReputationOutcome } from "../../reputation/engine";
 import type { AuthoritativeReputationDecision } from "../../reputation/engine";
 import { repository } from "../../repositories";
+import { isPreLockDealStatus } from "../../escrow/state-machine";
 
 export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput & {
   existing_operation: StellarOperation | null;
@@ -122,7 +123,7 @@ export async function coordinateDealExecution(
         let outcome: AuthoritativeReputationDecision['reputation_outcome'] | null = null;
         if (next_deal.status === 'COMPLETED') outcome = 'transaction_completed';
         else if (next_deal.status === 'REFUNDED') {
-          if (['WAITING_DEPOSITS', 'BUYER_FUNDED', 'SELLER_FUNDED'].includes(commitPlan.current_deal.status)) {
+          if (isPreLockDealStatus(commitPlan.current_deal.status)) {
             outcome = 'refunded_before_locked';
           }
         } else if (next_deal.status === 'EXPIRED') {
@@ -131,12 +132,19 @@ export async function coordinateDealExecution(
         }
         
         if (outcome) {
+          const settlementReference =
+            next_deal.latest_stellar_tx_hash ??
+            (next_deal.proof_hash ? `proof:${next_deal.proof_hash}` : `room-settlement:${next_deal.id}`);
           await processReputationOutcome(repository, {
             deal_id: next_deal.id,
             buyer_id: next_deal.buyer_id,
             seller_id: next_deal.seller_id,
             reputation_outcome: outcome,
             principal_idr: next_deal.principal_idr,
+            transaction_hash: next_deal.latest_stellar_tx_hash,
+            proof_hash: next_deal.proof_hash,
+            settlement_reference: settlementReference,
+            settled_at: next_deal.updated_at,
             local_terminal_outcome_persisted: true,
             operation_status: candidate_operation.operation_status,
             sync_status: next_deal.stellar_sync_status

@@ -48,24 +48,14 @@ describe('Route Evidence Additions', () => {
     });
   };
 
-  it('POST /api/deals rejects forged buyerId/sellerId', async () => {
+  it('POST /api/deals rejects direct deal creation without mutual Open Deal Room', async () => {
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'malicious-user' }) } as any);
     const request = new Request('http://localhost/api/deals', {
       method: 'POST',
       body: JSON.stringify({ buyerId: 'buyer-1', sellerId: 'seller-1', commodity: 'Gold', principalIdr: 100 })
     });
     const res = await dealsRoute(request);
-    expect(res.status).toBe(403);
-  });
-
-  it('POST /api/deals accepts valid participant', async () => {
-    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-1' }) } as any);
-    const request = new Request('http://localhost/api/deals', {
-      method: 'POST',
-      body: JSON.stringify({ buyerId: 'buyer-1', sellerId: 'seller-1', commodity: 'Gold', principalIdr: 100 })
-    });
-    const res = await dealsRoute(request);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(409);
   });
 
   it('GET /api/deals/[dealId] succeeds for participant', async () => {
@@ -92,6 +82,17 @@ describe('Route Evidence Additions', () => {
     expect(res.status).toBe(200);
   });
 
+  it('second deposit records an escrow_locked event', async () => {
+    setupDeal('deal-lock', 'BUYER_FUNDED');
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-1' }) } as any);
+    const request = new Request('http://localhost/api/deals/deal-lock/seller-deposit', { method: 'POST' });
+    const res = await sellerDepositRoute(request, { params: Promise.resolve({ dealId: 'deal-lock' }) });
+    expect(res.status).toBe(200);
+
+    const events = mockStore.getDealEvents('deal-lock');
+    expect(events.map((event) => event.event_type)).toContain('escrow_locked');
+  });
+
   it('POST mark-delivered succeeds', async () => {
     setupDeal('deal-md', 'PROOF_SUBMITTED');
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-1' }) } as any);
@@ -102,8 +103,7 @@ describe('Route Evidence Additions', () => {
 
   it('POST /api/demo/reset succeeds', async () => {
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'demo-admin' }) } as any);
-    const request = new Request('http://localhost/api/demo/reset', { method: 'POST' });
-    const res = await demoResetRoute(request);
+    const res = await demoResetRoute();
     expect(res.status).toBe(200);
   });
 });

@@ -162,7 +162,7 @@ function makeConfig(input: {
       deal_id: "smoke-deal-1",
       buyer_id: "buyer-demo",
       seller_id: "seller-demo",
-      commodity: "cabai",
+      commodity: "chili",
       volume_kg: input.volume_kg ?? 100,
       deal_hash: input.deal_hash ?? HASH_D,
       proof_hash: input.proof_hash ?? HASH_E,

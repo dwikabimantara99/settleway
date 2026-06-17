@@ -15,30 +15,52 @@ export function EvidenceSubmitter({ dealId, sellerId }: EvidenceSubmitterProps) 
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const buildSimulatedProofHash = async () => {
+    const payload = `simulated-proof:${dealId}:${sellerId}:${new Date().toISOString()}`;
+    const encoded = new TextEncoder().encode(payload);
+    const digest = await crypto.subtle.digest('SHA-256', encoded);
+    return Array.from(new Uint8Array(digest))
+      .map((value) => value.toString(16).padStart(2, '0'))
+      .join('');
+  };
+
   const handleSubmit = async () => {
     const file = fileInputRef.current?.files?.[0];
-    if (!file) {
-      setError("Please select a file to upload.");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError("File exceeds the 10 MiB limit.");
-      return;
-    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append('actor_id', sellerId);
-      formData.append('file', file);
+      let res: Response;
 
-      const res = await fetch(`/api/deals/${dealId}/submit-proof`, {
-        method: 'POST',
-        body: formData
-      });
+      if (file) {
+        if (file.size > 10 * 1024 * 1024) {
+          setError('File exceeds the 10 MiB limit.');
+          setLoading(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('actor_id', sellerId);
+        formData.append('file', file);
+
+        res = await fetch(`/api/deals/${dealId}/submit-proof`, {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        const proofHash = await buildSimulatedProofHash();
+        res = await fetch(`/api/deals/${dealId}/submit-proof`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            actor_id: sellerId,
+            proof_hash: proofHash,
+          }),
+        });
+      }
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -57,8 +79,17 @@ export function EvidenceSubmitter({ dealId, sellerId }: EvidenceSubmitterProps) 
     <div className="mt-4 p-5 border border-slate-200 rounded-lg bg-white shadow-sm">
       <h4 className="text-sm font-semibold text-slate-900 mb-2">Submit Delivery Evidence</h4>
       <p className="text-xs text-slate-500 mb-4">
-        Settleway records an integrity fingerprint and metadata. The original file is not stored by this MVP.
+        Settleway records a SHA-256 integrity fingerprint and room metadata. The original file is not stored by this MVP.
       </p>
+
+      <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+        <div className="mb-1 font-medium text-slate-900">Before you record proof</div>
+        <ul className="list-disc space-y-1 pl-4">
+          <li>Upload one delivery artifact or record a simulated proof hash for demo mode.</li>
+          <li>The room records the file hash for integrity checking and keeps the raw file off-chain.</li>
+          <li>Strong in-app capture is roadmap, so this MVP must stay honest about simulated evidence paths.</li>
+        </ul>
+      </div>
       
       {error && (
         <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded border border-red-100">
@@ -80,9 +111,12 @@ export function EvidenceSubmitter({ dealId, sellerId }: EvidenceSubmitterProps) 
           disabled={loading}
           className="w-full sm:w-auto"
         >
-          {loading ? 'Submitting...' : 'Submit Proof'}
+          {loading ? 'Submitting...' : 'Record Proof Hash'}
         </Button>
       </div>
+      <p className="mt-3 text-xs text-slate-500">
+        No file selected? Demo mode records a simulated proof hash so the room can continue honestly.
+      </p>
     </div>
   );
 }
