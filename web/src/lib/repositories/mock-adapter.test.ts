@@ -29,7 +29,7 @@ describe('MockRepositoryAdapter Contract Tests', () => {
       buyer_request_id: null,
       buyer_id: 'buyer-surabaya-restaurant',
       seller_id: 'seller-probolinggo-cabai',
-      commodity: 'Cabai Merah',
+      commodity: 'Red Chili',
       volume_kg: 100,
       principal_idr: 1000,
       buyer_bond_idr: 50,

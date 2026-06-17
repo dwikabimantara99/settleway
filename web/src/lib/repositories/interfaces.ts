@@ -1,4 +1,4 @@
-import type { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export interface IRepository {
@@ -12,6 +12,17 @@ export interface IRepository {
   // Buyer Requests
   getBuyerRequests(): Promise<DbBuyerRequest[]>;
   getBuyerRequest(id: string): Promise<DbBuyerRequest | null>;
+
+  // Pre-deal offers
+  getOffer(id: string): Promise<DbOffer | null>;
+  listOffersForParticipant(participantId: string): Promise<DbOffer[]>;
+  createOffer(offer: DbOffer): Promise<void>;
+  updateOffer(id: string, partial: Partial<DbOffer>): Promise<void>;
+  getOfferMessages(offerId: string): Promise<DbNegotiationMessage[]>;
+  addOfferMessage(message: DbNegotiationMessage): Promise<void>;
+  getNotifications(recipientId: string): Promise<DbNotification[]>;
+  addNotification(notification: DbNotification): Promise<void>;
+  markNotificationRead(id: string): Promise<void>;
 
   // Deals
   getDeal(id: string): Promise<DbDeal | null>;

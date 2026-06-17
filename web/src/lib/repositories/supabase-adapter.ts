@@ -1,6 +1,6 @@
 import { IRepository } from './interfaces';
 import { supabase } from '../db/supabase-client';
-import type { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class SupabaseRepositoryAdapter implements IRepository {
@@ -37,6 +37,70 @@ export class SupabaseRepositoryAdapter implements IRepository {
     const { data, error } = await this.client.from('buyer_requests').select('*').eq('id', id).single();
     if (error && error.code !== 'PGRST116') throw error;
     return data || null;
+  }
+
+  async getOffer(id: string): Promise<DbOffer | null> {
+    const { data, error } = await this.client.from('offers').select('*').eq('id', id).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async listOffersForParticipant(participantId: string): Promise<DbOffer[]> {
+    const { data, error } = await this.client
+      .from('offers')
+      .select('*')
+      .or(`buyer_id.eq.${participantId},seller_id.eq.${participantId}`)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createOffer(offer: DbOffer): Promise<void> {
+    const { error } = await this.client.from('offers').insert(offer);
+    if (error) throw error;
+  }
+
+  async updateOffer(id: string, partial: Partial<DbOffer>): Promise<void> {
+    const { error } = await this.client.from('offers').update({ ...partial, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
+  }
+
+  async getOfferMessages(offerId: string): Promise<DbNegotiationMessage[]> {
+    const { data, error } = await this.client
+      .from('offer_messages')
+      .select('*')
+      .eq('offer_id', offerId)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async addOfferMessage(message: DbNegotiationMessage): Promise<void> {
+    const { error } = await this.client.from('offer_messages').insert(message);
+    if (error) throw error;
+  }
+
+  async getNotifications(recipientId: string): Promise<DbNotification[]> {
+    const { data, error } = await this.client
+      .from('notifications')
+      .select('*')
+      .eq('recipient_id', recipientId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async addNotification(notification: DbNotification): Promise<void> {
+    const { error } = await this.client.from('notifications').insert(notification);
+    if (error) throw error;
+  }
+
+  async markNotificationRead(id: string): Promise<void> {
+    const { error } = await this.client
+      .from('notifications')
+      .update({ read_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
   }
 
   async getDeal(id: string): Promise<DbDeal | null> {

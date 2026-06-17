@@ -1,6 +1,6 @@
 import { IRepository } from './interfaces';
 import { mockStore } from '../db/mock-store';
-import type { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class MockRepositoryAdapter implements IRepository {
@@ -25,6 +25,50 @@ export class MockRepositoryAdapter implements IRepository {
   async getBuyerRequest(id: string): Promise<DbBuyerRequest | null> {
     const r = mockStore.buyerRequests.get(id);
     return r ? { ...r } : null;
+  }
+
+  async getOffer(id: string): Promise<DbOffer | null> {
+    const offer = mockStore.offers.get(id);
+    return offer ? { ...offer } : null;
+  }
+
+  async listOffersForParticipant(participantId: string): Promise<DbOffer[]> {
+    return Array.from(mockStore.offers.values())
+      .filter((offer) => offer.buyer_id === participantId || offer.seller_id === participantId)
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .map((offer) => ({ ...offer }));
+  }
+
+  async createOffer(offer: DbOffer): Promise<void> {
+    if (mockStore.offers.has(offer.id)) {
+      throw new Error(`Offer ${offer.id} already exists`);
+    }
+    mockStore.offers.set(offer.id, { ...offer });
+    mockStore.offerMessages.set(offer.id, []);
+  }
+
+  async updateOffer(id: string, partial: Partial<DbOffer>): Promise<void> {
+    mockStore.updateOffer(id, partial);
+  }
+
+  async getOfferMessages(offerId: string): Promise<DbNegotiationMessage[]> {
+    return mockStore.getOfferMessages(offerId);
+  }
+
+  async addOfferMessage(message: DbNegotiationMessage): Promise<void> {
+    mockStore.addOfferMessage(message);
+  }
+
+  async getNotifications(recipientId: string): Promise<DbNotification[]> {
+    return mockStore.getNotifications(recipientId);
+  }
+
+  async addNotification(notification: DbNotification): Promise<void> {
+    mockStore.addNotification(notification);
+  }
+
+  async markNotificationRead(id: string): Promise<void> {
+    mockStore.markNotificationRead(id);
   }
 
   async getDeal(id: string): Promise<DbDeal | null> {

@@ -1,62 +1,64 @@
 import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
-import { requireAuth } from '@/lib/auth/server';
+import { requireAuth, requireOfferParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
-import { DbDeal } from '@/lib/db/types';
+import { buildDealFromOffer } from '@/lib/offers/helpers';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { listingId, buyerRequestId, buyerId, sellerId, commodity, volumeKg, principalIdr } = body;
-    
-    let authUser;
+    const { offerId } = body as { offerId?: string };
+
     try {
-      authUser = await requireAuth();
+      await requireAuth();
     } catch (e) {
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e as Error).message), { status: 401 });
     }
 
-    if (buyerId !== authUser.id && sellerId !== authUser.id) {
-      return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'You must be the buyer or seller to create this deal'), { status: 403 });
+    if (!offerId) {
+      return NextResponse.json(
+        createErrorResponse(
+          'DIRECT_DEAL_DISABLED',
+          'Direct deal creation is disabled. Use Submit Offer and mutual Open Deal Room first.',
+          false,
+        ),
+        { status: 409 },
+      );
     }
 
-    
-    const dealId = `deal-${Date.now()}`;
-    const buyerBondIdr = principalIdr * 0.05;
-    const sellerBondIdr = principalIdr * 0.05;
-    const buyerFeeIdr = principalIdr * 0.005;
-    const sellerFeeIdr = principalIdr * 0.005;
+    const { offer } = await requireOfferParticipant(offerId);
 
-    const newDeal: DbDeal = {
+    if (!offer.buyer_open_room_at || !offer.seller_open_room_at) {
+      return NextResponse.json(
+        createErrorResponse(
+          'OPEN_DEAL_ROOM_INCOMPLETE',
+          'Both parties must click Open Deal Room before an active escrow deal can be created.',
+          false,
+        ),
+        { status: 409 },
+      );
+    }
+
+    const dealId = offer.active_deal_id || `deal-${offer.id}`;
+    const existingDeal = await repository.getDeal(dealId);
+    if (existingDeal) {
+      return NextResponse.json(createSuccessResponse(existingDeal, { source: 'repository', reused: true }));
+    }
+
+    const newDeal = buildDealFromOffer({
       id: dealId,
-      listing_id: listingId || null,
-      buyer_request_id: buyerRequestId || null,
-      buyer_id: buyerId,
-      seller_id: sellerId,
-      commodity,
-      volume_kg: volumeKg || null,
-      principal_idr: principalIdr,
-      buyer_bond_idr: buyerBondIdr,
-      seller_bond_idr: sellerBondIdr,
-      buyer_fee_idr: buyerFeeIdr,
-      seller_fee_idr: sellerFeeIdr,
-      buyer_total_idr: principalIdr + buyerBondIdr + buyerFeeIdr,
-      seller_total_idr: sellerBondIdr + sellerFeeIdr,
-      status: 'WAITING_DEPOSITS',
-      stellar_mode: 'mock_only',
-      stellar_contract_id: null,
-      stellar_escrow_id: null,
-      latest_stellar_tx_hash: null,
-      stellar_sync_status: 'idle',
-      proof_hash: null,
-      terms: body.terms || {},
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+      offer,
+      now: new Date().toISOString(),
+    });
 
     await repository.createDeal(newDeal);
+    await repository.updateOffer(offer.id, {
+      status: 'active_escrow',
+      active_deal_id: dealId,
+      updated_at: new Date().toISOString(),
+    });
 
-    return NextResponse.json(createSuccessResponse(newDeal, { source: 'mock' }));
+    return NextResponse.json(createSuccessResponse(newDeal, { source: 'repository' }));
   } catch (err: unknown) {
     return NextResponse.json(createErrorResponse('INTERNAL_ERROR', err instanceof Error ? err.message : String(err)), { status: 500 });
   }

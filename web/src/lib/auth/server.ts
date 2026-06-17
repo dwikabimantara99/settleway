@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { supabase } from '../db/supabase-client';
 import { repository } from '../repositories';
-import type { DbDeal } from '../db/types';
+import type { DbDeal, DbOffer } from '../db/types';
 
 import { runtimeMode } from '../repositories';
 
@@ -56,4 +56,16 @@ export async function requireDealParticipant(dealId: string): Promise<{ deal: Db
   if (deal.seller_id === user.id) return { deal, role: 'seller', user };
 
   throw new Error("Forbidden: Not a participant in this deal");
+}
+
+export async function requireOfferParticipant(offerId: string): Promise<{ offer: DbOffer; role: 'buyer' | 'seller'; user: UserSession }> {
+  const user = await requireAuth();
+
+  const offer = await repository.getOffer(offerId);
+  if (!offer) throw new Error("Offer not found");
+
+  if (offer.buyer_id === user.id) return { offer, role: 'buyer', user };
+  if (offer.seller_id === user.id) return { offer, role: 'seller', user };
+
+  throw new Error("Forbidden: Not a participant in this offer");
 }

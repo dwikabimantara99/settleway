@@ -51,6 +51,73 @@ export interface DbBuyerRequest {
   created_at: string;
 }
 
+export type DbOfferStatus =
+  | 'negotiating'
+  | 'awaiting_counterparty_acceptance'
+  | 'terms_accepted'
+  | 'awaiting_counterparty_open'
+  | 'active_escrow';
+
+export interface DbOffer {
+  id: string;
+  listing_id: string | null;
+  buyer_request_id: string | null;
+  buyer_id: string;
+  seller_id: string;
+  initiated_by_id: string;
+  commodity: string;
+  volume_kg: number | null;
+  price_per_kg_idr: number | null;
+  principal_idr: number;
+  terms_note: string | null;
+  status: DbOfferStatus;
+  latest_message_preview: string | null;
+  terms_submitted_at: string | null;
+  terms_accepted_at: string | null;
+  terms_accepted_by_id: string | null;
+  buyer_open_room_at: string | null;
+  seller_open_room_at: string | null;
+  active_deal_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbNegotiationMessage {
+  id: string;
+  offer_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+}
+
+export type DbNotificationType =
+  | 'offer_received'
+  | 'offer_accepted'
+  | 'message_received'
+  | 'counterparty_opened_room'
+  | 'deal_room_activated';
+
+export interface DbNotification {
+  id: string;
+  recipient_id: string;
+  offer_id: string;
+  type: DbNotificationType;
+  message: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+export type DealActivationSource = 'mutual_open_deal_room';
+
+export interface DbDealTerms {
+  activation_source?: DealActivationSource;
+  offer_id?: string;
+  deposit_window_hours?: number;
+  deposit_deadline_at?: string;
+  activated_at?: string;
+  [key: string]: unknown;
+}
+
 export interface DbDeal {
   id: string;
   listing_id: string | null;
@@ -73,7 +140,7 @@ export interface DbDeal {
   latest_stellar_tx_hash: string | null;
   stellar_sync_status: DealStellarSyncStatus;
   proof_hash: string | null;
-  terms: Record<string, unknown>;
+  terms: DbDealTerms;
   created_at: string;
   updated_at: string;
 }
@@ -121,6 +188,10 @@ export interface DbReputationEvent {
   idempotency_key: string;
   score_delta: number;
   volume_delta_idr: number;
+  transaction_hash?: string | null;
+  proof_hash?: string | null;
+  settlement_reference?: string | null;
+  settled_at?: string | null;
   created_at: string;
 }
 

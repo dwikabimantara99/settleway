@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
 import { transition, EscrowAction } from '../escrow/state-machine';
-import { DbProfile, DbListing, DbBuyerRequest, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from './types';
+import { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
+import { buildActiveRoomDealTerms } from '../deals/terms';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -75,10 +76,74 @@ const toDbDeal = (d: any): DbDeal => ({
   updated_at: new Date().toISOString(),
 });
 
+const DEMO_LINKED_OFFER_ID = 'offer-demo-cabai-001';
+const DEMO_LINKED_DEAL_ID = 'demo-cabai-001';
+const DEMO_NEGOTIATION_CREATED_AT = '2026-06-17T08:45:00.000Z';
+const DEMO_TERMS_ACCEPTED_AT = '2026-06-17T09:06:00.000Z';
+const DEMO_BUYER_OPEN_ROOM_AT = '2026-06-17T09:10:00.000Z';
+const DEMO_SELLER_OPEN_ROOM_AT = '2026-06-17T09:18:00.000Z';
+const DEMO_DEPOSIT_DEADLINE_AT = '2026-06-18T09:18:00.000Z';
+
+function buildSeededActiveOffer(): DbOffer {
+  return {
+    id: DEMO_LINKED_OFFER_ID,
+    listing_id: 'listing-cabai-001',
+    buyer_request_id: null,
+    buyer_id: 'buyer-surabaya-restaurant',
+    seller_id: 'seller-probolinggo-cabai',
+    initiated_by_id: 'buyer-surabaya-restaurant',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    volume_kg: 700,
+    price_per_kg_idr: 28500,
+    principal_idr: 19950000,
+    terms_note: 'Same-week shipment, proof visible inside the protected room, and buyer pickup coordination after escrow lock.',
+    status: 'active_escrow',
+    latest_message_preview:
+      'We can prepare the lot as soon as both deposits clear in the active room.',
+    terms_submitted_at: DEMO_NEGOTIATION_CREATED_AT,
+    terms_accepted_at: DEMO_TERMS_ACCEPTED_AT,
+    terms_accepted_by_id: 'seller-probolinggo-cabai',
+    buyer_open_room_at: DEMO_BUYER_OPEN_ROOM_AT,
+    seller_open_room_at: DEMO_SELLER_OPEN_ROOM_AT,
+    active_deal_id: DEMO_LINKED_DEAL_ID,
+    created_at: DEMO_NEGOTIATION_CREATED_AT,
+    updated_at: DEMO_SELLER_OPEN_ROOM_AT,
+  };
+}
+
+function buildSeededOfferMessages(): DbNegotiationMessage[] {
+  return [
+    {
+      id: 'offer-demo-cabai-001-msg-1',
+      offer_id: DEMO_LINKED_OFFER_ID,
+      author_id: 'buyer-surabaya-restaurant',
+      body: 'We need 700 kg this week and want proof visibility inside the room.',
+      created_at: DEMO_NEGOTIATION_CREATED_AT,
+    },
+    {
+      id: 'offer-demo-cabai-001-msg-2',
+      offer_id: DEMO_LINKED_OFFER_ID,
+      author_id: 'seller-probolinggo-cabai',
+      body: 'We can prepare the lot and upload shipment evidence after both deposits clear.',
+      created_at: '2026-06-17T08:53:00.000Z',
+    },
+    {
+      id: 'offer-demo-cabai-001-msg-3',
+      offer_id: DEMO_LINKED_OFFER_ID,
+      author_id: 'buyer-surabaya-restaurant',
+      body: 'Understood. I am ready to open the Deal Room once you confirm the same terms.',
+      created_at: '2026-06-17T09:02:00.000Z',
+    },
+  ];
+}
+
 export class MockStore {
   profiles: Map<string, DbProfile> = new Map();
   listings: Map<string, DbListing> = new Map();
   buyerRequests: Map<string, DbBuyerRequest> = new Map();
+  offers: Map<string, DbOffer> = new Map();
+  offerMessages: Map<string, DbNegotiationMessage[]> = new Map();
+  notifications: Map<string, DbNotification> = new Map();
   deals: Map<string, DbDeal> = new Map();
   events: Map<string, DbEscrowEvent[]> = new Map(); // Keyed by dealId
   operations: Map<string, StellarOperation> = new Map();
@@ -94,6 +159,9 @@ export class MockStore {
     this.profiles.clear();
     this.listings.clear();
     this.buyerRequests.clear();
+    this.offers.clear();
+    this.offerMessages.clear();
+    this.notifications.clear();
     this.deals.clear();
     this.events.clear();
     this.operations.clear();
@@ -108,12 +176,68 @@ export class MockStore {
       this.deals.set(d.id, toDbDeal(d));
       this.events.set(d.id, []);
     });
+
+    const seededOffer = buildSeededActiveOffer();
+    this.offers.set(seededOffer.id, seededOffer);
+    this.offerMessages.set(seededOffer.id, buildSeededOfferMessages());
+
+    const seededDeal = this.deals.get(DEMO_LINKED_DEAL_ID);
+    if (seededDeal) {
+      this.deals.set(DEMO_LINKED_DEAL_ID, {
+        ...seededDeal,
+        terms: {
+          ...buildActiveRoomDealTerms({
+            offerId: seededOffer.id,
+            activatedAt: DEMO_SELLER_OPEN_ROOM_AT,
+            depositWindowHours: 24,
+          }),
+          deposit_deadline_at: DEMO_DEPOSIT_DEADLINE_AT,
+        },
+      });
+    }
   }
 
   updateDeal(dealId: string, partialDeal: Partial<DbDeal>) {
     const existing = this.deals.get(dealId);
     if (!existing) throw new Error('Deal not found');
     this.deals.set(dealId, { ...existing, ...partialDeal, updated_at: new Date().toISOString() });
+  }
+
+  updateOffer(offerId: string, partialOffer: Partial<DbOffer>) {
+    const existing = this.offers.get(offerId);
+    if (!existing) throw new Error('Offer not found');
+    this.offers.set(offerId, { ...existing, ...partialOffer, updated_at: new Date().toISOString() });
+  }
+
+  addOfferMessage(message: DbNegotiationMessage) {
+    const current = this.offerMessages.get(message.offer_id) || [];
+    current.push(JSON.parse(JSON.stringify(message)));
+    this.offerMessages.set(message.offer_id, current);
+  }
+
+  getOfferMessages(offerId: string): DbNegotiationMessage[] {
+    const messages = this.offerMessages.get(offerId) || [];
+    return messages.map((message) => JSON.parse(JSON.stringify(message)));
+  }
+
+  addNotification(notification: DbNotification) {
+    this.notifications.set(notification.id, JSON.parse(JSON.stringify(notification)));
+  }
+
+  getNotifications(recipientId: string): DbNotification[] {
+    return Array.from(this.notifications.values())
+      .filter((notification) => notification.recipient_id === recipientId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .map((notification) => JSON.parse(JSON.stringify(notification)));
+  }
+
+  markNotificationRead(notificationId: string) {
+    const existing = this.notifications.get(notificationId);
+    if (!existing) return;
+    this.notifications.set(notificationId, {
+      ...existing,
+      read_at: new Date().toISOString(),
+    });
   }
 
   replaceDealIfCurrent(input: {
@@ -400,7 +524,11 @@ export class MockStore {
         existing.reputation_outcome === event.reputation_outcome &&
         existing.reputation_rule_version === event.reputation_rule_version &&
         existing.score_delta === event.score_delta &&
-        existing.volume_delta_idr === event.volume_delta_idr
+        existing.volume_delta_idr === event.volume_delta_idr &&
+        (existing.transaction_hash ?? null) === (event.transaction_hash ?? null) &&
+        (existing.proof_hash ?? null) === (event.proof_hash ?? null) &&
+        (existing.settlement_reference ?? null) === (event.settlement_reference ?? null) &&
+        (existing.settled_at ?? null) === (event.settled_at ?? null)
       ) {
         return { appended: false, event: JSON.parse(JSON.stringify(existing)) };
       }
@@ -436,7 +564,11 @@ export class MockStore {
         existing.reputation_outcome === event.reputation_outcome &&
         existing.reputation_rule_version === event.reputation_rule_version &&
         existing.score_delta === event.score_delta &&
-        existing.volume_delta_idr === event.volume_delta_idr
+        existing.volume_delta_idr === event.volume_delta_idr &&
+        (existing.transaction_hash ?? null) === (event.transaction_hash ?? null) &&
+        (existing.proof_hash ?? null) === (event.proof_hash ?? null) &&
+        (existing.settlement_reference ?? null) === (event.settlement_reference ?? null) &&
+        (existing.settled_at ?? null) === (event.settled_at ?? null)
       );
     };
 
