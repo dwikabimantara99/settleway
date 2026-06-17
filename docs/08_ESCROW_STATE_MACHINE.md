@@ -1,5 +1,18 @@
 # 08 - Escrow State Machine
 
+## Scope boundary
+
+This machine begins only after the product has already completed:
+
+```text
+Submit Offer
+-> recorded negotiation
+-> mutual Open Deal Room
+-> active room activation
+```
+
+Offer, negotiation, notification, and mutual activation are not encoded as `DealStatus` values in this machine. They belong to the offer-thread layer that precedes escrow activation.
+
 ## Status list
 
 ```text
@@ -9,12 +22,27 @@ SELLER_FUNDED
 LOCKED
 PROOF_SUBMITTED
 DELIVERED
-ACCEPTED
 COMPLETED
 EXPIRED
 REFUNDED
 CANCELLED
 ```
+
+## Semantic groupings
+
+- Funding window / pre-lock:
+  - `WAITING_DEPOSITS`
+  - `BUYER_FUNDED`
+  - `SELLER_FUNDED`
+- Post-lock:
+  - `LOCKED`
+  - `PROOF_SUBMITTED`
+  - `DELIVERED`
+  - `COMPLETED`
+- Closed without further progress:
+  - `REFUNDED`
+  - `EXPIRED`
+  - `CANCELLED`
 
 ## State transition table
 

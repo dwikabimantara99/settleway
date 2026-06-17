@@ -1,112 +1,153 @@
-﻿# Settleway
+# Settleway
 
 **The Safer Way to Settle Real-World Trade**
 
-Settleway is a hackathon MVP for high-value agricultural commodity trade. It combines marketplace discovery, buyer requests, a formal Deal Room, simulated deposits, buyer/seller commitment bonds, proof/evidence workflows, two-sided reputation, and a roadmap toward Stellar/Soroban-based settlement event verification.
+Settleway is a hackathon MVP for high-value agricultural commodity trade. It turns marketplace discovery into a more disciplined trust workflow: counterparties discover each other, negotiate in a recorded thread, commit together, fund escrow, prove delivery, and build reputation from verifiable transaction outcomes.
 
-The goal is not to hide blockchain complexity behind hype. The goal is to make real-world trade feel safer, more structured, and more accountable for both buyers and sellers.
+This repository is not a generic crypto demo and not just a listing board. It is a product story about how real buyers and real sellers can move from first contact to protected settlement without forcing blockchain complexity into the center of the user experience.
 
----
+## Why Settleway Exists
 
-## Problem
+Agricultural commodity trade often becomes fragile after buyer and seller first meet.
 
-Agricultural commodity transactions often depend on trust between parties who may not know each other well.
+Common failure points:
 
-Common risks include:
+- buyers do not know whether stock, quality, or delivery claims are credible
+- sellers do not know whether the buyer is serious or will cancel unfairly
+- negotiation often disappears into fragmented chat with weak evidence continuity
+- there is no structured commitment gate before payment, delivery, and dispute risk begin
+- reputation is usually shallow, manual, or easy to manipulate
 
-- Sellers struggle to access serious buyers beyond local middlemen.
-- Buyers risk non-delivery, inconsistent quality, or unclear fulfillment.
-- Sellers risk late payment, arbitrary rejection, or unserious buyers.
-- Both sides lack a clean transaction record, evidence trail, and reputation history.
+Settleway is designed to make these transactions feel less like informal promises and more like protected execution.
 
-For high-value commodity deals, simple chat-based negotiation is not enough.
+## What This MVP Proves
 
----
+The current MVP direction focuses on four connected ideas:
 
-## Solution
+1. **Discovery is only the start.** Marketplace listings and buyer requests help supply and demand meet, but trust work begins after discovery.
+2. **Negotiation should be recorded before money moves.** `Submit Offer` opens a recorded negotiation path before the protected room becomes active.
+3. **Commitment should be mutual.** `Open Deal Room` is a two-sided gate, not a one-click shortcut into escrow.
+4. **Outcomes should become reputation.** Proof, lock, refund, settlement, and dispute-related outcomes should support a durable trust history.
 
-Settleway introduces a structured trade flow:
+## Canonical Product Corridor
 
-1. **Marketplace Discovery**  
-   Sellers publish commodity listings such as chili, rice, coffee, or other agricultural products.
+The founder-authorized Settleway story is:
 
-2. **Buyer Requests**  
-   Buyers can post sourcing needs with target price, quantity, location, and delivery expectations.
+```text
+Marketplace or buyer request
+-> Submit Offer
+-> negotiation chat
+-> mutual Open Deal Room
+-> deposit window
+-> escrow locked on Stellar
+-> active Deal Room with chat and evidence
+-> success or dispute outcome
+-> reputation accumulation from verifiable transaction history
+```
 
-3. **Deal Room**  
-   Once both parties agree, the transaction moves into a formal Deal Room containing price, quantity, settlement terms, participants, and status.
+### Mutual Commitment Gate
 
-4. **Simulated Deposits and Commitment Bonds**  
-   The MVP models buyer principal deposits and buyer/seller commitment bonds to represent serious intent.
+`Open Deal Room` is not a navigation shortcut.
 
-5. **Proof and Evidence Flow**  
-   The product is designed to support delivery evidence, document submission, and proof hashes in later phases.
+- one side can signal intent first
+- the counterpart receives a notification
+- the room becomes active only after both sides click `Open Deal Room`
+- deposit starts only after that mutual commitment is complete
 
-6. **Two-Sided Reputation**  
-   Both buyers and sellers build trust through transaction history and behavior, not just one-sided ratings.
+## Trust And Money Model
 
-7. **Stellar/Soroban Roadmap**  
-   Later phases plan to record key escrow and proof events on Stellar Testnet through Soroban smart contracts.
+For the demo money model:
 
----
+- buyer principal: `100%`
+- buyer commitment bond: `5%`
+- seller performance bond: `5%`
+- buyer service fee: `0.5%`
+- seller service fee: `0.5%`
 
-## Current MVP Status
+Before lock:
 
-The repository currently includes:
+- if only one side funds, that side receives a full refund
+- the non-funding side receives a reputation penalty
+- no compensatory slashing happens before lock
 
-- Next.js frontend foundation.
-- Marketplace listing pages.
-- Buyer request pages.
-- Profile and reputation pages.
-- Deal Room frontend experience.
-- Backend API foundation using Next.js Route Handlers.
-- Supabase-ready data layer.
-- In-memory mock fallback so the app can run locally without database credentials.
-- Phase-gated escrow action endpoints that intentionally return `501 Not Implemented` until later phases.
+After lock:
 
-Completed checkpoints:
+- both bonds remain protected during execution
+- success returns both bonds, routes principal to the seller, and routes fees to Settleway
+- cancellation or dispute can lead to refund, compensation, or penalty logic
+- settlement and outcome framing are tied back to Stellar-backed trust records
 
-- ✅ Phase 0: Project foundation.
-- ✅ Phase 1: Frontend visual foundation.
-- ✅ Phase 2: Marketplace discovery surface.
-- ✅ Phase 3: Deal Room frontend experience.
-- ✅ Phase 4: Backend API foundation with mock fallback.
+Settleway is also designed around a dual-rail experience:
 
----
+- `local bank` rail for a Web2-simple user experience
+- `crypto wallet` rail for direct on-chain participants
 
-## Honest Limitations
+Both rails converge on the same trust layer and protected product logic.
 
-Settleway is currently a hackathon MVP, not a production financial system.
+## Why Stellar Stays Behind The Scenes
 
-Not implemented yet:
+Blockchain is not the headline. Trust is.
 
-- No real bank transfer integration.
-- No real QRIS integration.
-- No real payout rails.
-- No real KYC/KYB.
-- No production custody.
-- No real dispute court or legal enforcement.
-- No live Stellar/Soroban escrow integration yet.
-- No real token custody yet.
-- Current deposit and escrow actions are simulated or phase-gated.
+Settleway uses Stellar so the product can honestly say:
 
-The project is intentionally built in phases so the demo can prove the end-to-end trust story before adding production-grade infrastructure.
+`This transaction is secured by the Stellar blockchain.`
 
----
+Stellar exists in the product to support:
 
-## Tech Stack
+- escrow lock proof
+- refund or cancellation proof
+- settlement proof
+- evidence hash references
+- reputation-supporting transaction history
 
-- **Framework:** Next.js App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Backend:** Next.js Route Handlers
-- **Data Layer:** Supabase-ready architecture with mock fallback
-- **Blockchain Roadmap:** Stellar Testnet and Soroban smart contracts
-- **Package Manager:** npm
+The intended user experience stays operational and simple. Blockchain should remain mostly invisible until a buyer, seller, judge, or operator needs to inspect proof.
 
----
+## AI Role
 
-## Project Structure
+AI is a support layer, not an automated judge.
+
+In the Settleway concept, AI may help summarize:
+
+- negotiation chat
+- Deal Room chronology
+- evidence context for operator review
+
+It does not silently determine guilt, invent facts, or replace accountable product rules.
+
+## Honest MVP Boundaries
+
+Settleway is a demo-stage product. This repository should stay explicit about what is modeled versus what is already production-ready.
+
+Not claimed as fully implemented production infrastructure:
+
+- real bank transfer rails
+- real QRIS
+- real payout orchestration
+- real KYC or KYB
+- full dispute court
+- autonomous AI judgment
+- production-grade custody
+- completed production persistence rollout
+
+The product vision includes both `local bank` and `crypto wallet` rails converging on the same Stellar-backed trust layer, but the MVP must remain honest about what is simulated, what is represented, and what is already operational.
+
+## Current MVP Surface
+
+The current product direction includes:
+
+- marketplace listings
+- buyer request discovery
+- offer and negotiation flow
+- mutual `Open Deal Room` activation
+- deal funding and escrow-state progression
+- post-lock evidence and delivery milestones
+- refund and expiry outcome narration
+- profile-level reputation visibility
+- Stellar trust framing inside the Deal Room
+
+The strongest screen in the product is the Deal Room, because that is where commitment, funding, evidence, settlement, and reputation become legible to the user and to the demo audience.
+
+## Repository Guide
 
 ```text
 settleway/
@@ -114,27 +155,23 @@ settleway/
   AGENTS.md
   GEMINI.md
   docs/
-  prompts/
   diagrams/
-  web/
+  prompts/
   contracts/
+  web/
 ```
 
 Main directories:
 
-* `web/` — Next.js application, frontend pages, API routes, and data layer.
-* `contracts/` — planned location for Stellar/Soroban smart contract work.
-* `docs/` — product, technical, API, database, and architecture specifications.
-* `diagrams/` — architecture and flow diagrams.
-* `prompts/` — phase-based AI coding instructions.
-* `AGENTS.md` — instructions for AI coding agents.
-* `GEMINI.md` — operational context for Gemini/Antigravity-assisted development.
-
----
+- `web/` - Next.js application, routes, UI, and repository layer
+- `contracts/` - Soroban contract work and related blockchain artifacts
+- `docs/` - product, execution, engineering, and acceptance source of truth
+- `diagrams/` - supporting visual references
+- `prompts/` - historical phase prompts and operator instructions
 
 ## Local Development
 
-Run the web application locally:
+Run the web app locally:
 
 ```bash
 cd web
@@ -142,62 +179,47 @@ npm install
 npm run dev
 ```
 
-Then open:
+Open:
 
 ```text
 http://localhost:3000
 ```
 
-Run quality checks:
+Useful commands:
 
 ```bash
-npm run lint
+npm test
+npx eslint .
+npx tsc --noEmit
 npm run build
 ```
 
-The app can run without Supabase environment variables. If Supabase credentials are missing, the backend uses the mock fallback data layer.
+Notes:
 
----
+- local demo development is the primary supported mode for the current MVP
+- repository-wide TypeScript and production-build hardening are still being resolved outside the active product slice
 
-## API Smoke Tests
+## Source Of Truth
 
-With the development server running, these endpoints can be tested locally:
+If you are working on this repository, start with:
 
-```text
-GET http://localhost:3000/api/listings
-GET http://localhost:3000/api/buyer-requests
-GET http://localhost:3000/api/deals/demo-cabai-001
-```
+1. `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+2. `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+3. `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
 
-Escrow mutation endpoints are intentionally phase-gated at the current stage. For example:
+Useful supporting product context:
 
-```bash
-curl -i -X POST http://localhost:3000/api/deals/demo-cabai-001/buyer-deposit
-```
+- `docs/22_ONBOARDING_BLUEPRINT.md`
+- `docs/00_PRODUCT_BLUEPRINT.md`
+- `docs/01_MASTER_PRD.md`
+- `docs/08_ESCROW_STATE_MACHINE.md`
+- `docs/09_PROOF_AND_EVIDENCE_SPEC.md`
+- `docs/10_REPUTATION_SPEC.md`
 
-Expected behavior for gated mutation endpoints:
+## Positioning
 
-```text
-HTTP/1.1 501 Not Implemented
-```
+Settleway is not trying to be a marketplace that stops at discovery, and not trying to be a blockchain interface that forgets the user.
 
----
+It is trying to prove something more useful:
 
-## Roadmap
-
-* ✅ Phase 0: Foundation Setup
-* ✅ Phase 1: Frontend Visual Foundation
-* ✅ Phase 2: Marketplace Surface
-* ✅ Phase 3: Deal Room Frontend
-* ✅ Phase 4: Backend & Database Foundation
-* ⏳ Phase 5: Off-Chain Escrow State Machine
-* ⏳ Phase 6: Stellar Escrow Contract on Soroban
-* ⏳ Phase 7: Backend to Stellar Integration
-* ⏳ Phase 8: Proof Hash and Delivery Evidence
-* ⏳ Phase 9: Reputation Integration and Demo Hardening
-
----
-
-## AI-Assisted Development
-
-This repository includes `AGENTS.md` and `GEMINI.md` to guide AI coding agents during development. These files are support documents for the build process; the product itself is Settleway.
+that agricultural buyers and sellers can move from first contact to protected settlement in a workflow that feels operationally serious, visibly fair, and verifiable when trust is tested.

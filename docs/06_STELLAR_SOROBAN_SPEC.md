@@ -57,6 +57,21 @@ Refunded
 Cancelled
 ```
 
+Notes:
+
+- The current contract source still declares `Created` and `Accepted` as historical placeholder enum entries.
+- The active Tier A lifecycle used by the current implementation does **not** transition through those placeholders.
+- The live success path used by the contract and runtime is:
+
+```text
+WaitingDeposits
+-> BuyerFunded / SellerFunded
+-> Locked
+-> ProofSubmitted
+-> Delivered
+-> Completed
+```
+
 ## Mandatory contract functions - Tier A
 
 ```rust
@@ -81,12 +96,15 @@ SellerDeposited(escrow_id, seller)
 EscrowLocked(escrow_id)
 ProofSubmitted(escrow_id, proof_hash)
 DeliveryMarked(escrow_id)
-DeliveryAccepted(escrow_id)
-PaymentReleased(escrow_id)
-RefundIssued(escrow_id)
+EscrowCompleted(escrow_id)
+EscrowRefunded(escrow_id)
 EscrowExpired(escrow_id)
-TransactionCompleted(escrow_id)
 ```
+
+Notes:
+
+- The current contract implementation emits the events listed above.
+- Higher-level product narration may still describe buyer acceptance and transaction completion in the app layer, but the current Tier A contract does not emit separate `DeliveryAccepted`, `PaymentReleased`, `RefundIssued`, or `TransactionCompleted` events.
 
 ## Transition rules
 
@@ -135,7 +153,9 @@ refund_before_locked(env: Env, escrow_id: u64)
 ### Completion
 
 - `accept_and_complete` requires `Delivered`.
+- The current implementation transitions directly from `Delivered` to `Completed`.
 - Direct completion from `ProofSubmitted` is rejected.
+- There is no separate active `Accepted` runtime state in the current Tier A path.
 
 ### Product honesty
 

@@ -60,4 +60,4 @@ Do not search for or rely on the human operator guide. It is not part of the imp
 
 ## MVP identity
 
-Settleway is not a generic crypto demo. It is a marketplace for high-value agricultural commodity trades, starting with a chili/cabai transaction demo. The blockchain layer must support the marketplace story, not replace it.
+Settleway is not a generic crypto demo. It is a marketplace for high-value agricultural commodity trades, starting with a chili transaction demo. The blockchain layer must support the marketplace story, not replace it.

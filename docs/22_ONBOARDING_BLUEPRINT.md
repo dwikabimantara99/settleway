@@ -4,11 +4,11 @@ This document is the entry map for future Settleway engineers and coding agents.
 
 ## Settleway Mission
 
-Settleway is a trust infrastructure and marketplace for high-value agricultural commodity transactions. It helps real buyers and real sellers move from discovery into a formal Deal Room where commitments, evidence, delivery outcomes, reputation, and Stellar/Soroban-verifiable events make trade safer without turning the product into a crypto app.
+Settleway is a trust infrastructure and marketplace for high-value agricultural commodity transactions. It helps real buyers and real sellers move from discovery into recorded negotiation, mutual commitment, a protected Deal Room, evidence-backed execution, and reputation supported by Stellar/Soroban-verifiable events without turning the product into a crypto app.
 
 ## Problem And Users
 
-Settleway starts with agricultural commodity trades, especially the chili/cabai demo. The core problem is not only marketplace discovery; it is the fragile trust after buyer and seller meet.
+Settleway starts with agricultural commodity trades, especially the chili demo. The core problem is not only marketplace discovery; it is the fragile trust after buyer and seller meet.
 
 Primary users are:
 
@@ -25,7 +25,9 @@ The intended journey is:
 
 ```text
 Marketplace or buyer request
--> Deal Room
+-> Submit Offer
+-> negotiation chat
+-> mutual Open Deal Room
 -> simulated principal, bond, and fee commitments
 -> evidence and delivery milestones
 -> completion, expiry, or refund
@@ -33,7 +35,7 @@ Marketplace or buyer request
 -> Stellar/Soroban verifiable trust and event layer
 ```
 
-Marketplace listings prove Settleway is a supply-side discovery surface. Buyer requests prove demand can initiate a trade. The Deal Room is the formal transaction center where terms, participants, money commitments, evidence requirements, escrow status, timeline, and Stellar proof metadata converge.
+Marketplace listings prove Settleway is a supply-side discovery surface. Buyer requests prove demand can initiate a trade. Recorded negotiation and mutual Open Deal Room commitment sit between discovery and active escrow. The Deal Room remains the formal transaction center where terms, participants, money commitments, evidence requirements, escrow status, timeline, and Stellar proof metadata converge.
 
 ## Money, Evidence, And Outcomes
 
@@ -74,6 +76,14 @@ Settleway has three related but distinct states:
 In Testnet mode, local deal status must advance only when a confirmed operation produces a valid local commit. Unknown network state must never cause blind resubmission. A submitted transaction may already have consumed sequence or changed contract state; the safe response is reconciliation by transaction hash, not another automatic submit.
 
 ## Canonical Actions And Signer Roles
+
+Important interpretation note:
+
+The action table below describes the active escrow execution foundation inherited from the earlier implementation baseline. It does **not** describe the full founder-authorized product corridor by itself. The missing pre-escrow layers now sit before these actions:
+
+```text
+Submit Offer -> negotiation chat -> mutual Open Deal Room -> escrow actions below
+```
 
 The product execution model has 13 canonical action/status plans. They are the valid combinations of product action and expected local status that may map to a Soroban method:
 

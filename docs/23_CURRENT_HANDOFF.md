@@ -2,6 +2,14 @@
 
 This document records the current operational state for the next Settleway engineering session.
 
+## Supersession Note
+
+As of 2026-06-16, this handoff is historical for the completed Phase 10 direction. The founder has now authorized a new Settleway rebuild direction grounded in updated product flow and execution governance. The constitution freeze and salvage audit are complete. For current work, read:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+
 ## Current Position
 
 - **Active branch**: `phase-10-persistence-identity`
@@ -51,15 +59,19 @@ NOT AUTHORIZED
 ## Next Authorized Mission
 
 The MVP phases (1-9) are complete.
-Phase 10 production foundation is complete and accepted locally.
+Phase 10 production foundation is complete and accepted locally as the historical baseline.
 
-The next authorized mission is:
+This historical handoff no longer defines the live mission directly.
+
+The founder-authorized next mission must always be read from the active execution contract:
 ```text
-await founder authorization for Phase 11.
+follow docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md and docs/41_SETTLEWAY_EXECUTION_HANDOFF.md.
 ```
 
+At the time of this update, this document is historical only. The active mission must always be read from `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`, which now supersedes the old phase progression recorded here.
+
 ## Prohibited Scope Until Separately Authorized
-- No Phase 11 or post-Phase-10 work.
+- No blind continuation of the old Phase 10 flow as if it were the final product truth.
 - No live network mutation or contract initialization beyond authorized paths.
 - No remote Supabase provisioning.
-- No local code changes or workflow updates without explicit authorization.
+- No application implementation changes outside the currently active phase contract.

@@ -1,62 +1,31 @@
 # 20 - Implementation Acceptance Matrix
 
-Use this matrix to decide whether a phase is complete.
+Use this matrix to decide whether a product slice is complete under the founder-authorized Settleway corridor.
 
-| Phase | What must be visible | What must work | What must not happen |
+| Slice | What must be visible | What must work | What must not happen |
 |---|---|---|---|
-| 0 | Next.js app shell | `pnpm dev` starts | App created in root instead of `web/` |
-| 1 | Landing, nav, components | page loads with Settleway story | crypto-first narrative |
-| 2 | Marketplace, buyer requests, profiles | routes render from mock data | Deal Room built before marketplace surface |
-| 3 | Full Deal Room UI | money/status/proof panels render | vague escrow UI |
-| 4 | API routes and schema | frontend can fetch data | backend blocks without Supabase env |
-| 5 | Live state transitions | buyer+seller deposits lock escrow | invalid state transitions allowed |
-| 6 | Soroban contract | contract builds/tests | token custody attempted before Tier A |
-| 7 | Stellar proof panel | tx/contract metadata stored | fake silent tx success |
-| 8 | Proof and reputation | hash and reputation update | five-star review replaces event reputation |
-| 9 | Guided demo | full story can be presented | demo depends on manual database editing |
+| Foundation | Landing, nav, product framing | app starts and story loads | crypto-first narrative |
+| Discovery | Marketplace, buyer requests, profiles | discovery routes render from seeded truth | active escrow implied before offer |
+| Offer and negotiation | `Submit Offer`, recorded thread, notifications | both sides can move toward commitment | direct jump from listing into active Deal Room |
+| Mutual commitment | `Open Deal Room` status for both parties | room opens only after both commit | one-sided room activation treated as enough |
+| Active Deal Room | money, status, evidence, Stellar trust panels | room reflects the active protected state | vague or contradictory escrow UI |
+| Protected execution | deposits, lock, refund/expiry behavior | state transitions stay valid | invalid transitions allowed |
+| Stellar trust layer | tx/contract/proof references or honest fallback | trust references are stored and surfaced | fake silent on-chain success |
+| Evidence and reputation | proof reference and outcome-backed trust signals | hash/proof and reputation update work honestly | five-star review replaces event reputation |
+| Guided demo | `/demo` corridor and reset flow | full story can be presented coherently | demo depends on hidden operator improvisation |
 
-## Phase 7 Acceptance Decision
+## Historical acceptance notes
 
-* **Implementation:** accepted
-* **Controlled Testnet functionality:** accepted
-* **Evidence provenance:** partially verified
-* **Final disposition:** accepted with documented provenance limitations
-* **Phase 8 dependency:** requires a separate explicit authorization decision
-* Unresolved provenance items remain documented rather than treated as implementation failures.
+The repository contains historical acceptance notes for earlier phase-based implementation work. They remain useful as evidence checkpoints, but they are no longer the primary product-flow authority when they conflict with the founder-authorized corridor in `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`.
 
-## Phase 8 Scope Gate
-
-* **Phase 8 definition:** Proof and Reputation
-* **Scope gate:** CONDITIONAL GO
-* **Implementation:** accepted
-* **Authorization:** explicitly authorized
-
-## Phase 8 Acceptance Decision
-
-* **Implementation:** accepted with documented MVP limitations
-* **Core Vertical:** accepted
-* **Product UI:** accepted
-* **Phase 9 dependency:** requires a separate explicit authorization decision
-
-## Phase 9 Acceptance Decision
-
-* **Phase 9:** ACCEPTED WITH DOCUMENTED DEMO LIMITATIONS
-* **Canonical outcome:** GUIDED DEMO HARDENING
-* **Demo reset:** LOCAL MOCK/DEMO STATE ONLY
-* **Live deployment:** NOT PERFORMED
-* **Production database mutation:** NOT PERFORMED
-* **Testnet mutation:** NOT PERFORMED
-* **3–5 minute duration:** STRUCTURALLY SUPPORTED NOT HUMAN-TIMED UNLESS ACTUALLY VERIFIED
-* **Phase 10:** ACCEPTED WITH LOCAL VERIFICATION
-
-## Final MVP acceptance
+## Current MVP acceptance
 
 The MVP is ready only if:
 
 1. Marketplace discovery works.
-2. Deal Room is clear and central.
-3. Full escrow flow can complete.
-4. Stellar evidence is visible or honest fallback is shown.
-5. Proof hash appears.
-6. Reputation updates.
-7. Demo script can be followed in 3-5 minutes.
+2. Negotiation exists before active escrow.
+3. Mutual commitment exists before deposits begin.
+4. Deal Room activation and escrow progression are state-accurate.
+5. Stellar evidence or honest fallback is visible.
+6. Proof and reputation support the trust story.
+7. The guided demo can be presented without contradicting the product corridor.
