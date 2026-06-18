@@ -481,6 +481,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     buyerOutcomeEvent?.settled_at ??
     sellerOutcomeEvent?.settled_at ??
     (typeof completionMetadata.settled_at === 'string' ? completionMetadata.settled_at : null);
+  const completionTxHash = status === 'COMPLETED' ? deal.latest_stellar_tx_hash : null;
+  const completionTxHref = buildTestnetTxHref(completionTxHash, deal.stellar_mode);
   const buyerPayoutDestination =
     isPayoutDestinationSnapshot(completionMetadata.buyer_payout_destination)
       ? completionMetadata.buyer_payout_destination
@@ -1233,13 +1235,13 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               {status === 'COMPLETED' ? (
                 <div className="rounded-lg border border-slate-200 bg-white p-4">
                   <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Settlement Record
+                    Completion Proof
                   </div>
                   <div className="mt-3 space-y-2 text-xs text-slate-600">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-slate-500">Settlement reference</span>
+                      <span className="text-slate-500">Settlement transaction</span>
                       <span className="font-mono text-slate-700">
-                        {settlementReference ?? 'Pending room reference'}
+                        {completionTxHash ?? settlementReference ?? 'Pending room reference'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-3">
@@ -1249,9 +1251,49 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-3">
+                      <span className="text-slate-500">Escrow reference</span>
+                      <span className="font-mono text-slate-700">
+                        {deal.stellar_escrow_id ?? 'Pending escrow reference'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-slate-500">Contract ID</span>
+                      <span className="font-mono text-slate-700">
+                        {deal.stellar_contract_id ?? 'Pending contract reference'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-slate-500">Proof hash</span>
+                      <span className="font-mono text-slate-700">
+                        {deal.proof_hash ?? 'Pending proof hash'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
                       <span className="text-slate-500">Reputation ledger</span>
                       <span className="font-medium text-emerald-700">Updated for both parties</span>
                     </div>
+                  </div>
+                  <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-3">
+                    {completionTxHref ? (
+                      <a
+                        href={completionTxHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 hover:text-emerald-800"
+                      >
+                        View Settlement Transaction
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-500">
+                        View Settlement Transaction
+                      </span>
+                    )}
+                    {settlementReference && settlementReference !== completionTxHash ? (
+                      <span className="text-[11px] text-slate-500">
+                        Settlement reference: <span className="font-mono text-slate-600">{settlementReference}</span>
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               ) : null}

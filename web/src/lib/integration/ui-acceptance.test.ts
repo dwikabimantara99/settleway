@@ -263,7 +263,12 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       expect(hasText(page, 'Success Settlement Summary')).toBe(true);
       expect(hasText(page, 'Settled')).toBe(true);
-      expect(hasText(page, 'Settlement Record')).toBe(true);
+      expect(hasText(page, 'Completion Proof')).toBe(true);
+      expect(hasText(page, 'Settlement transaction')).toBe(true);
+      expect(hasText(page, 'Escrow reference')).toBe(true);
+      expect(hasText(page, 'Contract ID')).toBe(true);
+      expect(hasText(page, 'Proof hash')).toBe(true);
+      expect(hasText(page, 'View Settlement Transaction')).toBe(true);
       expect(hasText(page, 'Payout Destinations')).toBe(true);
       expect(hasText(page, 'Reputation ledger')).toBe(true);
       expect(hasText(page, 'Buyer bond return')).toBe(true);
