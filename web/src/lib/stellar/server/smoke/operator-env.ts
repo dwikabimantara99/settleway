@@ -1,6 +1,13 @@
 import path from "node:path";
 import { StrKey, Transaction } from "@stellar/stellar-sdk";
 import type { StellarAction } from "@/lib/stellar/types";
+import type {
+  StellarAdapterConfirmRequest,
+  StellarAdapterConfirmationResult,
+  StellarAdapterSubmitRequest,
+  StellarAdapterSubmitResult,
+  StellarExecutionAdapter,
+} from "../adapter-contracts";
 import { StellarSdkRpc } from "../stellar-sdk-rpc";
 import { StellarTestnetAdapter } from "../stellar-testnet-adapter";
 import type {
@@ -195,6 +202,8 @@ interface MutableRpcCallCounts {
   submissions: number;
   confirmations: number;
 }
+
+const CONFIRMATION_POLL_DELAY_MS = 500;
 
 export type OperatorRunResult =
   | {
@@ -495,6 +504,10 @@ function parseCliSignerConfig(input: {
     input.reader,
     TESTNET_SMOKE_ENV.stellar_config_dir,
   );
+  const rpcUrl = readOptionalTrimmed(
+    input.reader,
+    TESTNET_SMOKE_ENV.rpc_url,
+  );
   const networkAlias = readOptionalTrimmed(
     input.reader,
     TESTNET_SMOKE_ENV.stellar_network_alias,
@@ -515,6 +528,7 @@ function parseCliSignerConfig(input: {
   }> = [
     { value: stellarCliPath, field: "stellar_cli_path" },
     { value: stellarConfigDir, field: "stellar_config_dir" },
+    { value: rpcUrl, field: "rpc_url" },
     { value: networkAlias, field: "stellar_network_alias" },
     { value: adminAlias, field: "role_aliases.admin" },
     { value: buyerAlias, field: "role_aliases.buyer_demo" },
@@ -530,6 +544,7 @@ function parseCliSignerConfig(input: {
   if (
     stellarCliPath === null ||
     stellarConfigDir === null ||
+    rpcUrl === null ||
     networkAlias === null ||
     adminAlias === null ||
     buyerAlias === null ||
@@ -567,6 +582,7 @@ function parseCliSignerConfig(input: {
   return {
     stellar_cli_path: stellarCliPath,
     config_dir: stellarConfigDir,
+    rpc_url: rpcUrl,
     network_alias: networkAlias,
     role_aliases: {
       admin: adminAlias,
@@ -866,6 +882,37 @@ class CountingSignerPort implements StellarSignerPort {
   }
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+class RetryingSmokeExecutionAdapter implements StellarExecutionAdapter {
+  constructor(
+    private readonly inner: StellarExecutionAdapter,
+    private readonly maxAttempts: number,
+  ) {}
+
+  async submit(
+    request: StellarAdapterSubmitRequest,
+  ): Promise<StellarAdapterSubmitResult> {
+    return this.inner.submit(request);
+  }
+
+  async confirm(
+    request: StellarAdapterConfirmRequest,
+  ): Promise<StellarAdapterConfirmationResult> {
+    let lastResult = await this.inner.confirm(request);
+    for (let attempt = 1; attempt < this.maxAttempts; attempt += 1) {
+      if (lastResult.outcome !== "unknown") {
+        return lastResult;
+      }
+      await sleep(CONFIRMATION_POLL_DELAY_MS);
+      lastResult = await this.inner.confirm(request);
+    }
+    return lastResult;
+  }
+}
+
 export function createNoNetworkSmokeRpcSentinel(): StellarRpcPort {
   return new NoNetworkRpcPort();
 }
@@ -995,7 +1042,10 @@ export async function runTestnetSmokeOperator(
   const runtime = {
     ...runtimeResult.runtime,
     signer_port: signerPort,
-    execution_adapter: executionAdapter,
+    execution_adapter: new RetryingSmokeExecutionAdapter(
+      executionAdapter,
+      input.config.confirmation.max_attempts,
+    ),
   };
 
   if (input.command === "happy_path") {

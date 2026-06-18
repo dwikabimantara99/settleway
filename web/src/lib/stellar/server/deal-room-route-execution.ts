@@ -7,9 +7,11 @@ import {
   RepositoryStellarOperationPersistence,
 } from "./repository-execution-persistence";
 import type { DealRoomTestnetRuntime } from "./deal-room-testnet-runtime";
-import type { StellarAction, StellarOperation } from "../types";
+import type { StellarOperation } from "../types";
 
 export type DealRoomRouteExecutionAction =
+  | "expire"
+  | "refund"
   | "submit_proof"
   | "mark_delivered"
   | "accept_delivery";

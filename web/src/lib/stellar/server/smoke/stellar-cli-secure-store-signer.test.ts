@@ -131,6 +131,7 @@ function makeConfig(
   return {
     stellar_cli_path: "C:\\Users\\ACER\\.cargo\\bin\\stellar.exe",
     config_dir: "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
+    rpc_url: "https://soroban-testnet.stellar.org",
     network_alias: "settleway-testnet",
     role_aliases: {
       admin: ROLE_ALIASES.admin,
@@ -168,7 +169,8 @@ class FakeStellarCliRunner implements StellarCliProcessRunner {
       return this.result(role === null ? "" : `${PUBLIC_ADDRESSES[role]}\n`);
     }
 
-    const alias = request.args[9] ?? "";
+    const aliasIndex = request.args.indexOf("--sign-with-key");
+    const alias = aliasIndex >= 0 ? request.args[aliasIndex + 1] ?? "" : "";
     const role = roleForAlias(alias);
     if (role === null) {
       return this.result("");
@@ -311,6 +313,8 @@ describe("Stellar CLI secure-store signer", () => {
       "sign",
       "--config-dir",
       "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
+      "--rpc-url",
+      "https://soroban-testnet.stellar.org",
       "--network",
       "settleway-testnet",
       "--network-passphrase",

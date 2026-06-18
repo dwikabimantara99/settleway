@@ -123,7 +123,11 @@ export async function coordinateDealExecution(
         let outcome: AuthoritativeReputationDecision['reputation_outcome'] | null = null;
         if (next_deal.status === 'COMPLETED') outcome = 'transaction_completed';
         else if (next_deal.status === 'REFUNDED') {
-          if (isPreLockDealStatus(commitPlan.current_deal.status)) {
+          if (input.action === 'expire') {
+            if (commitPlan.current_deal.status === 'BUYER_FUNDED') outcome = 'seller_failed_deposit';
+            else if (commitPlan.current_deal.status === 'SELLER_FUNDED') outcome = 'buyer_failed_deposit';
+            else if (isPreLockDealStatus(commitPlan.current_deal.status)) outcome = 'refunded_before_locked';
+          } else if (input.action === 'refund' && isPreLockDealStatus(commitPlan.current_deal.status)) {
             outcome = 'refunded_before_locked';
           }
         } else if (next_deal.status === 'EXPIRED') {

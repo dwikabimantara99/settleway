@@ -264,6 +264,7 @@ export function loadDealRoomTestnetRuntime(
   const signerConfig: StellarCliSecureStoreSignerConfig = {
     stellar_cli_path: stellarCliPath!,
     config_dir: configDir!,
+    rpc_url: rpcUrl!,
     network_alias: networkAlias!,
     role_aliases: {
       admin: adminAlias!,

@@ -57,7 +57,8 @@ class OfflineStellarCliRunner implements StellarCliProcessRunner {
       const alias = request.args[4] ?? "";
       return this.result(`${this.publicKeyForAlias(alias)}\n`);
     }
-    const alias = request.args[7] ?? "";
+    const aliasIndex = request.args.indexOf("--sign-with-key");
+    const alias = aliasIndex >= 0 ? request.args[aliasIndex + 1] ?? "" : "";
     const seed = this.seedForAlias(alias);
     const parsed = TransactionBuilder.fromXDR(
       request.stdin_text,
@@ -392,6 +393,7 @@ describe("local Testnet operator signer preflight", () => {
     });
     expect(result.summary?.transport_call_counts.submissions).toBe(0);
     expect(result.summary?.transport_call_counts.confirmations).toBe(0);
+    expect(loaded.input.cli_signer_config.rpc_url).toBe("https://example.test/stellar-rpc");
   });
 });
 
@@ -457,7 +459,9 @@ describe("local Testnet operator reconciliation guards", () => {
     });
 
     expect(result.summary?.transport_call_counts.submissions).toBe(0);
-    expect(result.summary?.transport_call_counts.confirmations).toBe(1);
+    expect(result.summary?.transport_call_counts.confirmations).toBe(
+      loaded.input.config.confirmation.max_attempts,
+    );
   });
 });
 

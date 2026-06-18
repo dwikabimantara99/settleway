@@ -47,6 +47,7 @@ export interface StellarCliSecureStorePublicAddresses {
 export interface StellarCliSecureStoreSignerConfig {
   readonly stellar_cli_path: string;
   readonly config_dir: string;
+  readonly rpc_url: string;
   readonly network_alias: string;
   readonly role_aliases: StellarCliSecureStoreRoleAliases;
   readonly public_addresses: StellarCliSecureStorePublicAddresses;
@@ -133,6 +134,15 @@ function isValidPublicAddress(value: string): boolean {
 
 function isForbiddenAliasValue(value: string): boolean {
   return value.trim() === "" || StrKey.isValidEd25519SecretSeed(value);
+}
+
+function isValidHttpsUrl(value: string): boolean {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:" && parsed.hostname.trim() !== "";
+  } catch {
+    return false;
+  }
 }
 
 function parseNormalTransaction(
@@ -264,6 +274,9 @@ export class StellarCliSecureStoreSigner implements StellarSignerPort {
     if (!configDirExists(this.#config.config_dir)) {
       return false;
     }
+    if (!isValidHttpsUrl(this.#config.rpc_url)) {
+      return false;
+    }
     if (this.#config.network_alias.trim() === "") {
       return false;
     }
@@ -365,6 +378,8 @@ export class StellarCliSecureStoreSigner implements StellarSignerPort {
         "sign",
         "--config-dir",
         this.#config.config_dir,
+        "--rpc-url",
+        this.#config.rpc_url,
         "--network",
         this.#config.network_alias,
         "--network-passphrase",
