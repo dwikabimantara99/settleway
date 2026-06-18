@@ -4,9 +4,10 @@ This is the live handoff for the founder-authorized Settleway rebuild direction.
 
 ## Current Repository State
 
-- Active branch at latest inspection: `phase-10-persistence-identity`
-- HEAD at latest inspection: `f4d20b72cede589f616942bda7638d2d22a0be9a`
-- Working tree at latest inspection: dirty with active Phase X route, helper, and handoff synchronization work in progress
+- Active branch at latest settled implementation freeze: `phase-10-persistence-identity`
+- Latest settled implementation freeze commit: `809e0c25927b81a736157c140dfe0233d6e8ce9c`
+- Latest settled implementation freeze subject: `feat: freeze phase x testnet settlement corridor`
+- Working tree immediately after the Phase X freeze commit: clean
 
 Future sessions must verify Git state directly rather than trusting this snapshot blindly.
 
@@ -61,7 +62,7 @@ Marketplace or buyer request
 
 Current active phase:
 
-`Phase X - Testnet Settlement Routing And Reputation Anchoring`
+`Phase Y - Controlled Payout Destination Wiring`
 
 Status:
 
@@ -88,9 +89,10 @@ Status:
 - Phase U contract source cleanup decision: implemented locally and docs-validated
 - Phase V demo corridor narrative consistency pass: implemented locally and targeted-validated
 - Phase W Testnet-backed wallet and deposit foundation: frozen and pushed at `f4d20b7`
-- Phase X Testnet settlement routing and reputation anchoring: implemented locally and live-validated, pending freeze/commit
-- Active phase contract: promoted to Phase X
-- Live handoff: updated for Phase X authorization
+- Phase X Testnet settlement routing and reputation anchoring: frozen at `809e0c2`
+- Phase Y controlled payout destination wiring: active and contract-frozen only
+- Active phase contract: promoted to Phase Y
+- Live handoff: updated for Phase Y authorization
 - Salvage audit: complete in `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 
 ## Phase X Opening Snapshot
@@ -210,6 +212,74 @@ Phase X required execution inputs:
 - `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 - `docs/43_PHASE_W_IMPLEMENTATION_PLAN.md`
 - `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
+- `docs/06_STELLAR_SOROBAN_SPEC.md`
+- `docs/08_ESCROW_STATE_MACHINE.md`
+- `docs/10_REPUTATION_SPEC.md`
+- `docs/11_DEMO_SCRIPT.md`
+- `docs/12_ACCEPTANCE_CRITERIA.md`
+- `docs/24_CONTROLLED_TESTNET_SMOKE_RUNBOOK.md`
+- `docs/26_TESTNET_SYNTHETIC_IDENTITIES.md`
+- `docs/27_STELLAR_CLI_SECURE_STORE_SIGNER.md`
+- `docs/28_TESTNET_ACCOUNT_READINESS.md`
+
+## Phase Y Opening Snapshot
+
+Phase Y is the next founder-authorized slice after the now-frozen Phase X success-path settlement proof.
+
+Why this phase is next:
+
+- Phase X already proved the protected room can move from `LOCKED` to `COMPLETED` through the real Next route path
+- the room now has truthful settlement completion and reputation anchoring
+- but the product still does not truthfully answer the next user-facing question:
+  - where do buyer and seller proceeds intend to land after settlement closes
+- the current app still lacks:
+  - payout-destination fields on `DbProfile`
+  - seeded wallet destination truth in demo profiles
+  - a narrow settings or profile-adjacent destination surface
+  - a completed-room summary that names user-selected destination targets instead of only generic buyer and seller wallet language
+
+Important architectural truth discovered before Phase Y implementation:
+
+- the current Stellar execution assembly and invocation path only understands:
+  - `admin_address`
+  - `buyer_demo_address`
+  - `seller_demo_address`
+- there is no current arbitrary payout-destination argument in the Testnet execution input shape
+- therefore Phase Y is intentionally frozen as a destination-wiring and payout-intent phase, not a contract-level arbitrary-address settlement phase
+
+Phase Y objective:
+
+- add truthful payout-destination data for buyer and seller
+- expose that truth in a narrow profile-adjacent surface
+- carry that truth into the completed Deal Room payout summary
+- preserve the Phase X settlement corridor without pretending bank payout or wallet-connect already exists
+
+Authorized scope for Phase Y:
+
+- payout-destination profile data
+- payout-destination repository and demo seed wiring
+- narrow profile or settings destination surface
+- completed-room payout destination summary
+- tightly related tests and execution-doc synchronization
+
+Not in scope for Phase Y:
+
+- live bank payout
+- QRIS or anchor execution
+- wallet-connect
+- signer-seed exposure
+- arbitrary-address Soroban method expansion
+- broad profile redesign
+- dispute or marketplace redesign
+
+Phase Y required execution inputs:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+- `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
+- `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
+- `docs/45_PHASE_Y_IMPLEMENTATION_PLAN.md`
 - `docs/06_STELLAR_SOROBAN_SPEC.md`
 - `docs/08_ESCROW_STATE_MACHINE.md`
 - `docs/10_REPUTATION_SPEC.md`
@@ -1293,23 +1363,22 @@ The next session should:
 1. read `docs/39`, `docs/40`, and `docs/41`
 2. audit actual repo state from Git
 3. read `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
-4. read `docs/43_PHASE_W_IMPLEMENTATION_PLAN.md`
-5. read `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
-6. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the happy-path post-lock corridor from Phase D, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
+4. read `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
+5. read `docs/45_PHASE_Y_IMPLEMENTATION_PLAN.md`
+6. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the post-lock settlement corridor from Phase X, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
 7. preserve the implemented Phase W and Phase X runtime path without rewriting it opportunistically
 8. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
-9. freeze and commit the current Phase X slice if validation still matches this handoff
-10. begin `Phase Y - Controlled Payout Destination Wiring` only after the founder explicitly authorizes the next phase
-11. stop if the work tries to spill into transaction-logic redesign beyond the approved active phase
+9. begin Phase Y with the payout-destination data contract, not with broad UI or contract rewrites
+10. stop if the work tries to spill into wallet-connect, bank payout claims, or arbitrary-address settlement redesign beyond the approved active phase
 
 ## No-Touch Boundary For Next Session
 
-During Phase W, do not:
+During Phase Y, do not:
 
 - redesign the completed pre-deal offer and notification layer
-- reopen the completed happy-path or failure-path room flow beyond what is required for wallet-backed deposits
+- reopen the completed happy-path or failure-path room flow beyond what is required for payout-destination truth
 - rewrite settlement and dispute logic broadly
-- rewrite Soroban contract behavior for advanced slashing or final payout
+- rewrite Soroban contract behavior for arbitrary payout destinations
 - expand into bank-local payout implementation, QRIS, or anchor integration
 - add end-user wallet connect
 - turn the product into a generic wallet dashboard
@@ -1328,19 +1397,19 @@ the agent must:
 3. state the active phase, scope, and no-touch area
 4. continue only within that scope
 
-## Phase W Working Focus
+## Phase Y Working Focus
 
-Phase W should make the active Deal Room funding gate feel real by proving that buyer and seller deposits are backed by controlled Stellar Testnet identities and visible proof, without yet broadening into full settlement routing.
+Phase Y should make the completed Deal Room tell a more truthful payout story by proving that buyer and seller have controlled payout-destination preferences that the room can display and preserve without pretending bank payout or wallet-connect already exists.
 
 Primary targets:
 
-- wallet identity surface for the active room
-- buyer deposit Testnet-backed execution
-- seller deposit Testnet-backed execution
-- public funding and lock proof visibility
-- narrow active-room UX hardening around these actions
+- payout-destination data contract
+- seeded buyer and seller destination defaults
+- narrow profile or settings destination surface
+- completed-room payout route summary
+- honest bank-placeholder language
 
-This phase should strengthen funding truth inside the room, not broaden the rest of the product.
+This phase should strengthen payout-destination truth inside the product, not broaden the rest of the product.
 
 ## Blockers
 
@@ -1351,7 +1420,7 @@ There is no blocker for using the existing synthetic Testnet identities and secu
 The next meaningful blockers are:
 
 - any contradiction between the frozen product vocabulary and a wallet-first implementation that starts to feel like a generic crypto app
-- any attempt to broaden Phase W into final settlement routing before funding truth is stable
-- the local Next route still relies on repeat requests to reconcile `unknown` or `unconfirmed` Soroban confirmations instead of collapsing that recovery into one smoother route-level experience
+- any attempt to broaden Phase Y into live bank payout, wallet-connect, or arbitrary-address contract redesign before destination truth is stable
+- the current Stellar execution shape still lacks arbitrary external-destination arguments, so deeper payout execution beyond managed demo identities would require explicit re-authorization
 - the repo-wide TypeScript debt outside the active runtime slice
 - the repo-wide production build/runtime blocker caused by persistent-mode repository failsafe without Supabase configuration
