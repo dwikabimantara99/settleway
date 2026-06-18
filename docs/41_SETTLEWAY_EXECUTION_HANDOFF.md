@@ -5,8 +5,8 @@ This is the live handoff for the founder-authorized Settleway rebuild direction.
 ## Current Repository State
 
 - Active branch at latest inspection: `phase-10-persistence-identity`
-- HEAD at latest inspection: `9c9ee989cc6937fa82178caa9823d0b3742fc13e`
-- Working tree at latest inspection: dirty with active Phase W runtime, signer, route-test, and handoff synchronization work in progress
+- HEAD at latest inspection: `f4d20b72cede589f616942bda7638d2d22a0be9a`
+- Working tree at latest inspection: dirty with active Phase X route, helper, and handoff synchronization work in progress
 
 Future sessions must verify Git state directly rather than trusting this snapshot blindly.
 
@@ -61,7 +61,7 @@ Marketplace or buyer request
 
 Current active phase:
 
-`Phase W - Testnet-Backed Wallet And Deposit Foundation`
+`Phase X - Testnet Settlement Routing And Reputation Anchoring`
 
 Status:
 
@@ -87,10 +87,138 @@ Status:
 - Phase T boundary technical spec lifecycle alignment: implemented locally and docs-validated
 - Phase U contract source cleanup decision: implemented locally and docs-validated
 - Phase V demo corridor narrative consistency pass: implemented locally and targeted-validated
-- Phase W Testnet-backed wallet and deposit foundation: implemented locally and targeted-validated, with live default-room Testnet activation still gated by local runtime configuration
-- Active phase contract: promoted to Phase W
-- Live handoff: updated for Phase W authorization
+- Phase W Testnet-backed wallet and deposit foundation: frozen and pushed at `f4d20b7`
+- Phase X Testnet settlement routing and reputation anchoring: implemented locally and live-validated, pending freeze/commit
+- Active phase contract: promoted to Phase X
+- Live handoff: updated for Phase X authorization
 - Salvage audit: complete in `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
+
+## Phase X Opening Snapshot
+
+Phase X is the next founder-authorized slice.
+
+Why this phase is next:
+
+- Phase W already proved the funding gate through real Next routes and live Testnet-backed lock truth
+- the room already narrates proof, delivery, settlement, wallet routing, and reputation closure
+- but the current post-lock route path still splits the truth because:
+  - `web/src/app/api/deals/[dealId]/submit-proof/route.ts`
+  - `web/src/app/api/deals/[dealId]/mark-delivered/route.ts`
+  - `web/src/app/api/deals/[dealId]/accept-delivery/route.ts`
+  still rely on local `transition(...)` and local event writes instead of the Phase W Testnet-backed execution coordinator
+
+Phase X objective:
+
+- preserve the proven Phase W funding and lock foundation
+- upgrade the happy-path post-lock actions to the same Testnet-backed execution boundary
+- keep the final room summary and reputation anchoring honest
+
+Delivered outcomes so far:
+
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md` is now promoted to `Phase X - Testnet Settlement Routing And Reputation Anchoring`
+- `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md` now freezes the narrow implementation order for this phase
+- `web/src/lib/stellar/server/deal-room-route-execution.ts` now provides a shared route-level Testnet execution and bounded reconciliation helper for post-lock actions
+- `web/src/app/api/deals/[dealId]/submit-proof/route.ts` now routes `testnet` proof submission through the execution coordinator instead of relying only on local `transition(...)`
+- `web/src/app/api/deals/[dealId]/mark-delivered/route.ts` now routes `testnet` delivery confirmation through the execution coordinator instead of relying only on local `transition(...)`
+- `web/src/app/api/deals/[dealId]/accept-delivery/route.ts` now routes `testnet` buyer acceptance through the execution coordinator instead of relying only on local `transition(...)`
+- buyer acceptance on `testnet` rooms now relies on the coordinator-owned completion hook for `transaction_completed` reputation anchoring instead of duplicating a second manual route-level reputation write
+- `web/src/app/api/deals/[dealId]/buyer-deposit/route.ts` and `web/src/app/api/deals/[dealId]/seller-deposit/route.ts` now use a wider bounded reconciliation window so normal live Testnet confirmation lag does not falsely fail the room before post-lock actions can begin
+- new targeted route tests now exist for:
+  - `buyer-deposit`
+  - `seller-deposit`
+  - `submit-proof`
+  - `mark-delivered`
+  - `accept-delivery`
+
+Authorized scope for Phase X:
+
+- proof submission route truth
+- delivery milestone route truth
+- buyer acceptance route truth
+- completion-facing room proof and routing summary
+- reputation anchoring that depends on successful completion
+- tightly related tests and execution-doc synchronization
+
+Not in scope for Phase X:
+
+- bank payout execution
+- wallet connect
+- dispute automation redesign
+- slashing redesign
+- production token custody claims
+- broad UI redesign outside the post-lock success slice
+
+Phase X targeted validation most recently rerun:
+
+- `npm.cmd test -- src/app/api/deals/[dealId]/buyer-deposit/route.test.ts src/app/api/deals/[dealId]/seller-deposit/route.test.ts src/app/api/deals/[dealId]/submit-proof/route.test.ts src/app/api/deals/[dealId]/mark-delivered/route.test.ts src/app/api/deals/[dealId]/accept-delivery/route.test.ts src/lib/integration/integration.test.ts`
+  - passing
+  - `6` test files
+  - `23` tests
+- `npm.cmd test -- src/lib/integration/ui-acceptance.test.ts src/lib/integration/route-evidence.test.ts`
+  - passing
+  - `2` test files
+  - `28` tests
+- `git diff --check -- docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md docs/41_SETTLEWAY_EXECUTION_HANDOFF.md docs/44_PHASE_X_IMPLEMENTATION_PLAN.md web/src/lib/stellar/server/deal-room-route-execution.ts web/src/app/api/deals/[dealId]/submit-proof/route.ts web/src/app/api/deals/[dealId]/mark-delivered/route.ts web/src/app/api/deals/[dealId]/accept-delivery/route.ts web/src/app/api/deals/[dealId]/submit-proof/route.test.ts web/src/app/api/deals/[dealId]/mark-delivered/route.test.ts web/src/app/api/deals/[dealId]/accept-delivery/route.test.ts`
+  - no content errors
+  - only existing LF/CRLF working-copy warnings were emitted
+
+Current truth boundary:
+
+- the post-lock success-path routes are now upgraded for `testnet` rooms and remain backward-compatible with the legacy `mock_only` room path
+- targeted route and integration validation passed locally
+- a fresh local runtime probe proved the earlier funding regression was confirmation timing, not a broken adapter:
+  - the stored `create_deal` operation initially landed in `unknown`
+  - a delayed reconciliation then confirmed it safely and persisted a real escrow id
+- the bounded reconciliation window was widened for funding and post-lock route confirmation:
+  - previous posture: `3` attempts with `1200ms` delay
+  - current posture: `5` attempts with `1500ms` delay
+- a fresh live local `http://localhost:3020` proof now confirms the full happy path end to end:
+  - `POST /api/demo/reset` -> `200`
+  - `POST /api/deals/demo-cabai-001/buyer-deposit` -> `200`
+    - status `BUYER_FUNDED`
+    - escrow id `20`
+    - tx hash `cc1dd8ba88208581574a8c7d0bf59996eae3148d8b6da3b72bdc57d59fff7a20`
+  - `POST /api/deals/demo-cabai-001/seller-deposit` -> `200`
+    - status `LOCKED`
+    - tx hash `1d0afbab0ed6ee44d4550a7d79967e2e77b049551e77959f9aa2328c25964fd5`
+  - `POST /api/deals/demo-cabai-001/submit-proof` -> `200`
+    - status `PROOF_SUBMITTED`
+    - proof hash `7f5f3a96bcb7c4bbf76c2c3d4e7b7e85752f50eb0d98111f6f9b2e1a2c3d4e5f`
+    - tx hash `60bc9416e53a1a946157f5c89c569c33d01f18add86808a161976d29a9b67fad`
+  - `POST /api/deals/demo-cabai-001/mark-delivered` -> `200`
+    - status `DELIVERED`
+    - tx hash `ea4aa32b1111f75e6efadf22aabc5ffcc8d847522d367ccd606774c1d879de72`
+  - `POST /api/deals/demo-cabai-001/accept-delivery` -> `200`
+    - status `COMPLETED`
+    - tx hash `b3aea38333279b81c6c4807391006c7da3d224124d200de8423e2f9054f54c1f`
+  - final `GET /api/deals/demo-cabai-001` confirmed:
+    - status `COMPLETED`
+    - escrow id `20`
+    - `stellar_sync_status: "idle"`
+    - the persisted proof hash
+- the rendered profile pages for both buyer and seller now also consume the result as user-facing reputation truth:
+  - `/profiles/buyer-surabaya-restaurant` rendered `Settlement Completed`, `demo-cabai-001`, `Transaction reference:`, and `Proof hash:`
+  - `/profiles/seller-probolinggo-cabai` rendered the same completion-backed proof signals
+  - both profile pages rendered `1 recent ledger item(s) currently have public transaction or proof references available on this profile.`
+- therefore the new Phase X corridor is now locally implemented, route-tested, and live-proved through the real Next route path
+
+Phase X required execution inputs:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+- `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
+- `docs/43_PHASE_W_IMPLEMENTATION_PLAN.md`
+- `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
+- `docs/06_STELLAR_SOROBAN_SPEC.md`
+- `docs/08_ESCROW_STATE_MACHINE.md`
+- `docs/10_REPUTATION_SPEC.md`
+- `docs/11_DEMO_SCRIPT.md`
+- `docs/12_ACCEPTANCE_CRITERIA.md`
+- `docs/24_CONTROLLED_TESTNET_SMOKE_RUNBOOK.md`
+- `docs/26_TESTNET_SYNTHETIC_IDENTITIES.md`
+- `docs/27_STELLAR_CLI_SECURE_STORE_SIGNER.md`
+- `docs/28_TESTNET_ACCOUNT_READINESS.md`
 
 ## Phase W Implementation Snapshot
 
@@ -1166,12 +1294,13 @@ The next session should:
 2. audit actual repo state from Git
 3. read `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 4. read `docs/43_PHASE_W_IMPLEMENTATION_PLAN.md`
-5. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the happy-path post-lock corridor from Phase D, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
-6. preserve the implemented Phase W wallet and funding runtime without rewriting it opportunistically
-7. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
-8. if Phase W must be finished operationally, isolate the remaining live buyer/seller funding failure outside the UI wrapper and prove buyer funded -> seller funded -> locked with truthful Testnet evidence
-9. otherwise stop Phase W at this truthful handoff boundary and do not broaden into settlement routing, bank rails, dispute redesign, or wallet-connect
-10. stop if the work tries to spill into transaction-logic redesign beyond the approved funding foundation
+5. read `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
+6. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the happy-path post-lock corridor from Phase D, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
+7. preserve the implemented Phase W and Phase X runtime path without rewriting it opportunistically
+8. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
+9. freeze and commit the current Phase X slice if validation still matches this handoff
+10. begin `Phase Y - Controlled Payout Destination Wiring` only after the founder explicitly authorizes the next phase
+11. stop if the work tries to spill into transaction-logic redesign beyond the approved active phase
 
 ## No-Touch Boundary For Next Session
 

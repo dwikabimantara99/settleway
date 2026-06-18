@@ -2,9 +2,49 @@ import { NextResponse } from 'next/server';
 import { repository } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
+import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
 import { verifyAndConstructEvidence } from '@/lib/evidence/verification';
+import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
+
+async function runLegacyLocalProofSubmission(
+  dealId: string,
+  existingDeal: DbDeal,
+  actorId: string,
+  proofHash: string | null,
+  evidenceMetadata:
+    | {
+        evidence_id: string;
+        original_filename: string;
+        byte_size: number;
+        evidence_kind: string;
+      }
+    | null,
+) {
+  const updatedDeal = transition(existingDeal, 'submit_proof');
+  if (proofHash) {
+    updatedDeal.proof_hash = proofHash;
+  }
+  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+  if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+
+  const event = createEvent(
+    dealId,
+    'submit_proof',
+    actorId,
+    'Seller submitted delivery proof for verification and timeline recording.',
+    {
+      next_status: updatedDeal.status,
+      ...evidenceMetadata,
+    },
+  );
+  event.proof_hash = proofHash;
+  await repository.addEvent(event);
+
+  return NextResponse.json(createSuccessResponse(updatedDeal));
+}
 
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
@@ -79,24 +119,70 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       if (body.proof_hash) proofHash = body.proof_hash;
     }
 
-    const updatedDeal = transition(existingDeal, actionName);
-    if (proofHash) {
-      updatedDeal.proof_hash = proofHash;
+    if (!proofHash) {
+      return NextResponse.json(createErrorResponse('BAD_REQUEST', 'Proof hash is required before submitting proof'), { status: 400 });
     }
-    const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
-    if (!replaced) return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
-    
+
+    if (existingDeal.stellar_mode !== 'testnet') {
+      return runLegacyLocalProofSubmission(dealId, existingDeal, actorId, proofHash, evidenceMetadata);
+    }
+
+    const runtimeLoaded = loadDealRoomTestnetRuntime();
+    if (!runtimeLoaded.ok) {
+      return NextResponse.json(
+        createErrorResponse(
+          'STELLAR_RUNTIME_UNAVAILABLE',
+          'Proof submission is configured for Stellar Testnet, but the local runtime is not ready.',
+        ),
+        { status: 503 },
+      );
+    }
+
+    const executionResult = await executeConfirmedDealRoomRouteAction({
+      action: 'submit_proof',
+      action_label: 'proof submission',
+      deal: existingDeal,
+      runtime: runtimeLoaded.runtime,
+      proof_hash: proofHash,
+    });
+    if (!executionResult.ok) {
+      return NextResponse.json(
+        createErrorResponse(executionResult.failure.code, executionResult.failure.message),
+        { status: executionResult.failure.status },
+      );
+    }
+
+    let updatedDeal = executionResult.deal;
+    if (updatedDeal.proof_hash !== proofHash) {
+      const nextDeal = {
+        ...updatedDeal,
+        proof_hash: proofHash,
+        updated_at: new Date().toISOString(),
+      };
+      const { replaced } = await repository.replaceDealIfCurrent({
+        current: updatedDeal,
+        next: nextDeal,
+      });
+      if (!replaced) {
+        return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+      }
+      updatedDeal = nextDeal;
+    }
+
     const event = createEvent(
       dealId,
       actionName,
       actorId,
-      'Seller submitted delivery proof for verification and timeline recording.',
+      'Seller submitted delivery proof through the protected Testnet-backed room path.',
       {
         next_status: updatedDeal.status,
+        contract_id: runtimeLoaded.runtime.contract_id,
+        actor_address: runtimeLoaded.runtime.metadata.seller_demo_address,
         ...evidenceMetadata,
       },
     );
     event.proof_hash = proofHash;
+    event.tx_hash = executionResult.operation.transaction_hash;
     await repository.addEvent(event);
 
     return NextResponse.json(createSuccessResponse(updatedDeal));

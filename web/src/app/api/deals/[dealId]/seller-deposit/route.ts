@@ -18,8 +18,10 @@ function currentTimestamp(): string {
   return new Date().toISOString();
 }
 
-const ROUTE_RECONCILIATION_ATTEMPTS = 3;
-const ROUTE_RECONCILIATION_DELAY_MS = 1200;
+// Live Testnet confirmation can arrive a few seconds after the initial submit.
+// Keep the route bounded, but long enough to absorb the normal confirmation lag.
+const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_DELAY_MS = 1500;
 
 function isReconciliationPending(operation: StellarOperation | null): boolean {
   return (
