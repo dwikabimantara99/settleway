@@ -30,7 +30,10 @@ import {
   type DealStatus,
 } from '@/lib/escrow/state-machine';
 import { rebuildReputationAggregate } from '@/lib/reputation/engine';
-import { buildDealRoomWalletCards } from '@/lib/stellar/demo-wallets';
+import {
+  buildDealRoomWalletCards,
+  type DealRoomWalletStateTone,
+} from '@/lib/stellar/demo-wallets';
 import type { DbEscrowEvent, DbReputationEvent } from '@/lib/db/types';
 import { repository } from '@/lib/repositories';
 
@@ -220,6 +223,30 @@ function buildEventDetail(event: DbEscrowEvent): string | null {
   return null;
 }
 
+function buildTestnetTxHref(txHash: string | null, stellarMode: string): string | null {
+  if (!txHash || stellarMode !== 'testnet') {
+    return null;
+  }
+
+  return `https://stellar.expert/explorer/testnet/tx/${txHash}`;
+}
+
+function walletStateBadgeClassName(tone: DealRoomWalletStateTone): string {
+  if (tone === 'funded') {
+    return 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200';
+  }
+
+  if (tone === 'closed') {
+    return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200';
+  }
+
+  if (tone === 'settled') {
+    return 'bg-blue-100 text-blue-800 ring-1 ring-blue-200';
+  }
+
+  return 'bg-amber-100 text-amber-800 ring-1 ring-amber-200';
+}
+
 function formatOutcomeLabel(outcome: DbReputationEvent['reputation_outcome']): string {
   switch (outcome) {
     case 'transaction_completed':
@@ -337,6 +364,16 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     buyer_funding_tx_hash: latestBuyerFundingEvent?.tx_hash ?? null,
     seller_funding_tx_hash: latestSellerFundingEvent?.tx_hash ?? null,
     platform_reference_hash: status === 'COMPLETED' ? deal.latest_stellar_tx_hash : null,
+    buyer_funded: buyerFundedHistorically,
+    seller_funded: sellerFundedHistorically,
+    room_state:
+      status === 'COMPLETED'
+        ? 'completed'
+        : isClosed
+          ? 'closed_pre_lock'
+          : isPostLock
+            ? 'post_lock'
+            : 'funding_window',
   });
 
   const steps: Step[] = [
@@ -410,11 +447,17 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     fundingWindowLabel = 'Deposits complete';
   }
 
-  const canViewTransaction =
-    Boolean(deal.latest_stellar_tx_hash) && deal.stellar_mode === 'testnet';
-  const txHref = canViewTransaction
-    ? `https://stellar.expert/explorer/testnet/tx/${deal.latest_stellar_tx_hash}`
-    : null;
+  const lockTxHash =
+    latestLockEvent?.tx_hash ??
+    (status === 'LOCKED' ? deal.latest_stellar_tx_hash : null);
+  const txHref = buildTestnetTxHref(deal.latest_stellar_tx_hash, deal.stellar_mode);
+  const lockTxHref = buildTestnetTxHref(lockTxHash, deal.stellar_mode);
+  const hasLockTruth =
+    isPostLock &&
+    deal.stellar_mode === 'testnet' &&
+    Boolean(deal.stellar_contract_id) &&
+    Boolean(deal.stellar_escrow_id) &&
+    Boolean(lockTxHash);
   const completionMetadata = latestCompletionEvent?.metadata ?? {};
   const settlementReference =
     buyerOutcomeEvent?.settlement_reference ??
@@ -634,7 +677,23 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             <div className="text-sm leading-6 text-slate-600">{helperText}</div>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500">
               <span>Protected value {protectedValueText}</span>
-              {txHref ? (
+              {isPostLock ? (
+                lockTxHref ? (
+                  <a
+                    href={lockTxHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 font-medium text-emerald-700 hover:text-emerald-800"
+                  >
+                    View Lock Proof
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
+                ) : (
+                  <span className="inline-flex items-center rounded-md border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-500">
+                    Lock proof pending
+                  </span>
+                )
+              ) : txHref ? (
                 <a
                   href={txHref}
                   target="_blank"
@@ -650,6 +709,18 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 </span>
               )}
             </div>
+            {isPostLock ? (
+              <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+                  Lock truth
+                </div>
+                <div className="mt-2 text-xs leading-5 text-slate-600">
+                  {hasLockTruth
+                    ? 'Contract, escrow, and lock proof are now public references for this protected room.'
+                    : 'Protected lock is active. Public references are still being prepared for display.'}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -759,9 +830,16 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                           <div className="text-sm font-semibold text-slate-900">{wallet.title}</div>
                           <div className="mt-1 text-xs text-slate-500">{wallet.owner_label}</div>
                         </div>
-                        <Badge className="bg-slate-100 text-slate-700 ring-1 ring-slate-200">
-                          {wallet.network_label}
-                        </Badge>
+                        <div className="flex flex-col items-end gap-2">
+                          <Badge className="bg-slate-100 text-slate-700 ring-1 ring-slate-200">
+                            {wallet.network_label}
+                          </Badge>
+                          <span
+                            className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${walletStateBadgeClassName(wallet.status_tone)}`}
+                          >
+                            {wallet.status_label}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="mt-4 space-y-3 text-sm">
@@ -799,6 +877,15 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                             <div className="mt-1 font-medium text-slate-900">
                               {wallet.commitment_value}
                             </div>
+                          </div>
+                        </div>
+
+                        <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
+                          <div className="text-xs uppercase tracking-[0.12em] text-slate-400">
+                            {wallet.movement_label}
+                          </div>
+                          <div className="mt-1 text-xs leading-5 text-slate-600">
+                            {wallet.movement_value}
                           </div>
                         </div>
 
@@ -1303,11 +1390,17 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
 
           <Card>
             <CardHeader className="border-b border-slate-100 pb-3">
-              <CardTitle className="text-sm">Stellar Reference</CardTitle>
+              <CardTitle className="text-sm">Stellar References</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 p-6 text-sm">
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <div className="text-xs text-slate-500">Contract / mode</div>
+                <div className="text-xs text-slate-500">Verification mode</div>
+                <div className="mt-1 text-xs text-slate-700">
+                  {deal.stellar_mode === 'testnet' ? 'Testnet-backed room' : 'Demo mode'}
+                </div>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs text-slate-500">Contract ID</div>
                 <div className="mt-1 break-all font-mono text-xs text-slate-700">
                   {deal.stellar_contract_id
                     ? deal.stellar_contract_id
@@ -1317,15 +1410,55 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 </div>
               </div>
               <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <div className="text-xs text-slate-500">Latest Tx</div>
+                <div className="text-xs text-slate-500">Escrow reference</div>
                 <div className="mt-1 break-all font-mono text-xs text-slate-700">
-                  {deal.latest_stellar_tx_hash
-                    ? deal.latest_stellar_tx_hash
+                  {deal.stellar_escrow_id
+                    ? deal.stellar_escrow_id
                     : deal.stellar_mode === 'mock_only'
                       ? 'Demo mode'
                       : 'Pending'}
                 </div>
               </div>
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                <div className="text-xs text-slate-500">Lock proof</div>
+                {lockTxHref ? (
+                  <a
+                    href={lockTxHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-flex break-all font-mono text-xs text-emerald-700 hover:text-emerald-800"
+                  >
+                    {lockTxHash}
+                  </a>
+                ) : (
+                  <div className="mt-1 break-all font-mono text-xs text-slate-700">
+                    {isPostLock
+                      ? 'Pending'
+                      : deal.stellar_mode === 'mock_only'
+                        ? 'Demo mode'
+                        : 'Appears after both deposits lock the room'}
+                  </div>
+                )}
+              </div>
+              {deal.latest_stellar_tx_hash && deal.latest_stellar_tx_hash !== lockTxHash ? (
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                  <div className="text-xs text-slate-500">Latest room tx</div>
+                  {txHref ? (
+                    <a
+                      href={txHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-flex break-all font-mono text-xs text-emerald-700 hover:text-emerald-800"
+                    >
+                      {deal.latest_stellar_tx_hash}
+                    </a>
+                  ) : (
+                    <div className="mt-1 break-all font-mono text-xs text-slate-700">
+                      {deal.latest_stellar_tx_hash}
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </CardContent>
           </Card>
         </div>

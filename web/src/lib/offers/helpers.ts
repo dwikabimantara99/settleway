@@ -9,6 +9,7 @@ import type {
 } from '@/lib/db/types';
 import type { DbDeal } from '@/lib/db/types';
 import { buildActiveRoomDealTerms } from '@/lib/deals/terms';
+import { resolveDealRoomDefaultStellarState } from '@/lib/stellar/server/deal-room-testnet-runtime';
 
 const BUYER_BOND_BPS = 500;
 const SELLER_BOND_BPS = 500;
@@ -152,6 +153,7 @@ export function buildDealFromOffer(input: {
     activatedAt: input.now,
     depositWindowHours,
   });
+  const stellarDefaults = resolveDealRoomDefaultStellarState();
 
   return {
     id: input.id,
@@ -169,8 +171,8 @@ export function buildDealFromOffer(input: {
     buyer_total_idr: principalIdr + buyerBondIdr + buyerFeeIdr,
     seller_total_idr: sellerBondIdr + sellerFeeIdr,
     status: 'WAITING_DEPOSITS',
-    stellar_mode: 'mock_only',
-    stellar_contract_id: null,
+    stellar_mode: stellarDefaults.stellar_mode,
+    stellar_contract_id: stellarDefaults.stellar_contract_id,
     stellar_escrow_id: null,
     latest_stellar_tx_hash: null,
     stellar_sync_status: 'idle',

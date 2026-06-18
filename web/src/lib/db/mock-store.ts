@@ -5,6 +5,7 @@ import { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, Db
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
 import { buildActiveRoomDealTerms } from '../deals/terms';
+import { resolveDealRoomDefaultStellarState } from '../stellar/server/deal-room-testnet-runtime';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -50,6 +51,7 @@ const toDbBuyerRequest = (r: any): DbBuyerRequest => ({
 });
 
 const toDbDeal = (d: any): DbDeal => ({
+  ...resolveDealRoomDefaultStellarState(),
   id: d.id,
   listing_id: d.listingId || null,
   buyer_request_id: d.buyerRequestId || null,
@@ -65,8 +67,6 @@ const toDbDeal = (d: any): DbDeal => ({
   buyer_total_idr: d.buyerTotalIdr,
   seller_total_idr: d.sellerTotalIdr,
   status: d.status,
-  stellar_mode: d.stellarMode === "testnet" ? "testnet" : "mock_only",
-  stellar_contract_id: null,
   stellar_escrow_id: null,
   latest_stellar_tx_hash: null,
   stellar_sync_status: "idle",

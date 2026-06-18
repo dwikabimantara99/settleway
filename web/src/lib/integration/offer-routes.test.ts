@@ -12,9 +12,28 @@ import { PATCH as acceptOfferRoute } from '../../app/api/offers/[offerId]/route'
 import { POST as addOfferMessageRoute } from '../../app/api/offers/[offerId]/messages/route';
 import { POST as openDealRoomRoute } from '../../app/api/offers/[offerId]/open-deal-room/route';
 
+vi.mock('../stellar/server/deal-room-testnet-runtime', async () => {
+  const actual = await vi.importActual<typeof import('../stellar/server/deal-room-testnet-runtime')>(
+    '../stellar/server/deal-room-testnet-runtime',
+  );
+  return {
+    ...actual,
+    resolveDealRoomDefaultStellarState: vi.fn(() => ({
+      stellar_mode: 'mock_only',
+      stellar_contract_id: null,
+    })),
+  };
+});
+
+import { resolveDealRoomDefaultStellarState } from '../stellar/server/deal-room-testnet-runtime';
+
 describe('Phase B offer routes', () => {
   beforeEach(() => {
     mockStore.seed();
+    vi.mocked(resolveDealRoomDefaultStellarState).mockReturnValue({
+      stellar_mode: 'mock_only',
+      stellar_contract_id: null,
+    });
   });
 
   it('creates an offer from a marketplace listing and notifies the seller', async () => {
@@ -221,6 +240,50 @@ describe('Phase B offer routes', () => {
     expect(activeDeal?.terms.deposit_window_hours).toBe(24);
     expect(typeof activeDeal?.terms.deposit_deadline_at).toBe('string');
     expect(typeof activeDeal?.terms.activated_at).toBe('string');
+    expect(activeDeal?.stellar_mode).toBe('mock_only');
     expect(mockStore.offers.get(offerId)?.active_deal_id).toBe(`deal-${offerId}`);
+  });
+
+  it('creates a testnet-backed active room when Phase W runtime config is available', async () => {
+    const offerId = 'offer-open-testnet-1';
+    const now = new Date().toISOString();
+    mockStore.offers.set(offerId, {
+      id: offerId,
+      listing_id: 'listing-cabai-001',
+      buyer_request_id: null,
+      buyer_id: 'buyer-surabaya-restaurant',
+      seller_id: 'seller-probolinggo-cabai',
+      initiated_by_id: 'buyer-surabaya-restaurant',
+      commodity: "Red Chili (Bird's Eye Chili)",
+      volume_kg: 700,
+      price_per_kg_idr: 28500,
+      principal_idr: 19950000,
+      terms_note: 'Terms already accepted.',
+      status: 'terms_accepted',
+      latest_message_preview: 'Opening thread',
+      terms_submitted_at: now,
+      terms_accepted_at: now,
+      terms_accepted_by_id: 'seller-probolinggo-cabai',
+      buyer_open_room_at: now,
+      seller_open_room_at: null,
+      active_deal_id: null,
+      created_at: now,
+      updated_at: now,
+    });
+    mockStore.offerMessages.set(offerId, []);
+    vi.mocked(resolveDealRoomDefaultStellarState).mockReturnValue({
+      stellar_mode: 'testnet',
+      stellar_contract_id: 'CCONTRACT123',
+    });
+
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-probolinggo-cabai' }) } as any);
+    const sellerResponse = await openDealRoomRoute(new Request(`http://localhost/api/offers/${offerId}/open-deal-room`, { method: 'POST' }), {
+      params: Promise.resolve({ offerId }),
+    });
+
+    expect(sellerResponse.status).toBe(200);
+    const activeDeal = mockStore.deals.get(`deal-${offerId}`);
+    expect(activeDeal?.stellar_mode).toBe('testnet');
+    expect(activeDeal?.stellar_contract_id).toBe('CCONTRACT123');
   });
 });

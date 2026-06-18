@@ -168,7 +168,7 @@ class FakeStellarCliRunner implements StellarCliProcessRunner {
       return this.result(role === null ? "" : `${PUBLIC_ADDRESSES[role]}\n`);
     }
 
-    const alias = request.args[7] ?? "";
+    const alias = request.args[9] ?? "";
     const role = roleForAlias(alias);
     if (role === null) {
       return this.result("");
@@ -313,6 +313,8 @@ describe("Stellar CLI secure-store signer", () => {
       "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
       "--network",
       "settleway-testnet",
+      "--network-passphrase",
+      Networks.TESTNET,
       "--sign-with-key",
       ROLE_ALIASES.admin,
     ]);

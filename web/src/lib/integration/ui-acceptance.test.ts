@@ -137,6 +137,9 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(hasText(page, 'Buyer Testnet wallet')).toBe(true);
       expect(hasText(page, 'Seller Testnet wallet')).toBe(true);
       expect(hasText(page, 'Settleway fee wallet')).toBe(true);
+      expect(hasText(page, 'Awaiting buyer deposit')).toBe(true);
+      expect(hasText(page, 'Awaiting seller deposit')).toBe(true);
+      expect(hasText(page, 'Fee routing stays pending until the room clears funding and eventually reaches settlement.')).toBe(true);
       expect(hasText(page, 'settleway-testnet-buyer-demo')).toBe(true);
       expect(hasText(page, 'settleway-testnet-seller-demo')).toBe(true);
       expect(hasText(page, 'settleway-testnet-admin')).toBe(true);
@@ -215,14 +218,20 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
     it('shows protected execution timeline and room events after lock', async () => {
       const dealId = 'demo-cabai-001';
-      mockStore.updateDeal(dealId, { status: 'LOCKED' });
+      mockStore.updateDeal(dealId, {
+        status: 'LOCKED',
+        stellar_mode: 'testnet',
+        stellar_contract_id: 'C-LOCK-TRUTH-123',
+        stellar_escrow_id: 'escrow-lock-123',
+        latest_stellar_tx_hash: 'locktruth1234567890abcdef',
+      });
       mockStore.addEvent({
         id: 'event-lock-1',
         deal_id: dealId,
         event_type: 'escrow_locked',
         actor_id: 'seller-probolinggo-cabai',
         message: 'Escrow locked after both required deposits were confirmed.',
-        tx_hash: null,
+        tx_hash: 'locktruth1234567890abcdef',
         proof_hash: null,
         metadata: { protected_value_idr: 21945000 },
         created_at: new Date().toISOString(),
@@ -234,6 +243,15 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(hasText(page, 'Escrow Locked')).toBe(true);
       expect(hasText(page, 'Room Events')).toBe(true);
       expect(hasText(page, 'Newest entries appear first.')).toBe(true);
+      expect(hasText(page, 'Lock truth')).toBe(true);
+      expect(hasText(page, 'View Lock Proof')).toBe(true);
+      expect(hasText(page, 'Contract ID')).toBe(true);
+      expect(hasText(page, 'Escrow reference')).toBe(true);
+      expect(hasText(page, 'Lock proof')).toBe(true);
+      expect(hasText(page, 'Locked in escrow')).toBe(true);
+      expect(hasText(page, 'Waiting for settlement')).toBe(true);
+      expect(hasText(page, 'C-LOCK-TRUTH-123')).toBe(true);
+      expect(hasText(page, 'escrow-lock-123')).toBe(true);
       expect(hasText(page, 'Escrow locked after both required deposits were confirmed.')).toBe(true);
     });
 
@@ -439,7 +457,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
       ).toBe(true);
     });
 
-    it('displays Demo mode fallback only when contract ID is absent and mode is mock_only', async () => {
+    it('keeps mock-mode honesty while still showing any stored Stellar references', async () => {
       const dealId = 'demo-cabai-001';
       // Mock mode without contract ID
       mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: null });
@@ -457,7 +475,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
       page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
       expect(hasText(page, 'C-MOCK-123')).toBe(true);
       expect(hasText(page, 'tx-123')).toBe(true);
-      expect(hasText(page, 'Demo mode')).toBe(false);
+      expect(hasText(page, 'Demo mode')).toBe(true);
     });
   });
 

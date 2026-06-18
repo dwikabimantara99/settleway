@@ -367,6 +367,8 @@ export class StellarCliSecureStoreSigner implements StellarSignerPort {
         this.#config.config_dir,
         "--network",
         this.#config.network_alias,
+        "--network-passphrase",
+        request.expected_network_passphrase,
         "--sign-with-key",
         identityAlias,
       ],

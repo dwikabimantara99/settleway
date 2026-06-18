@@ -5,8 +5,8 @@ This is the live handoff for the founder-authorized Settleway rebuild direction.
 ## Current Repository State
 
 - Active branch at latest inspection: `phase-10-persistence-identity`
-- HEAD at latest inspection: `1f4dcc9ed60e0ebb5d0f47f3119691de1947254a`
-- Working tree at latest inspection: dirty with local doc realignment and runtime offer/deal corridor work in progress
+- HEAD at latest inspection: `9c9ee989cc6937fa82178caa9823d0b3742fc13e`
+- Working tree at latest inspection: dirty with active Phase W runtime, signer, route-test, and handoff synchronization work in progress
 
 Future sessions must verify Git state directly rather than trusting this snapshot blindly.
 
@@ -87,26 +87,28 @@ Status:
 - Phase T boundary technical spec lifecycle alignment: implemented locally and docs-validated
 - Phase U contract source cleanup decision: implemented locally and docs-validated
 - Phase V demo corridor narrative consistency pass: implemented locally and targeted-validated
-- Phase W Testnet-backed wallet and deposit foundation: authorized, not yet implemented in runtime
+- Phase W Testnet-backed wallet and deposit foundation: implemented locally and targeted-validated, with live default-room Testnet activation still gated by local runtime configuration
 - Active phase contract: promoted to Phase W
 - Live handoff: updated for Phase W authorization
 - Salvage audit: complete in `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 
-## Phase W Opening Snapshot
+## Phase W Implementation Snapshot
 
-Phase W exists to move the active Deal Room funding gate from local-only demo toggles into controlled Stellar Testnet-backed wallet truth.
+Phase W moved the active Deal Room funding gate beyond local-only narration by introducing controlled Stellar Testnet wallet and funding runtime surfaces, while keeping the room honest when the local Testnet runtime is not configured.
 
-Why this phase is next:
+Delivered outcomes so far:
 
-- the visible Settleway corridor is now coherent enough to present
-- the next credibility gap is that room funding still behaves too locally
-- the founder-authorized direction now requires the funding gate to feel protected by real Testnet wallet and transaction evidence
+- buyer, seller, and platform Testnet role identities now exist as visible wallet cards in the active room
+- buyer and seller funding routes now support a Testnet-backed execution path instead of only a local toggle path
+- the room surfaces public funding proof, wallet references, and lock-facing trust copy in the active funding slice
+- seeded and newly activated rooms now resolve to `testnet` only when the frozen `SETTLEWAY_SMOKE_*` runtime configuration is valid; otherwise they fall back honestly to `mock_only`
+- the runtime returns explicit not-ready or invalid-state failures when a room is marked for Testnet execution but the local runtime cannot safely compose that path
 
-Phase W objective:
+Current truth boundary:
 
-- expose the existing synthetic Testnet identities as controlled demo wallets in the active room
-- replace buyer and seller funding toggles with controlled Testnet-backed deposit actions
-- surface public funding and lock evidence in the room without broadening into full settlement routing
+- the implementation path for Phase W now exists locally and is covered by targeted tests
+- the current local shell still has no `SETTLEWAY_SMOKE_*` runtime variables loaded, so the default room on this machine remains truthfully in `mock_only` unless configuration is supplied
+- this means the phase is implemented at the runtime and UI-contract level, but live local Testnet activation has not yet been re-proved in this shell session
 
 Authorized scope for Phase W:
 
@@ -133,6 +135,69 @@ Frozen implementation truth for Phase W:
 - keep commercial value display in product-facing `IDR`
 - keep Testnet asset and custody language honest and synthetic where required
 - prove the happy path only through `buyer funded -> seller funded -> locked`
+
+Phase W targeted validation most recently rerun:
+
+- `npm.cmd test -- src/lib/stellar/demo-wallets.test.ts src/lib/stellar/server/deal-room-funding-runtime.test.ts src/lib/stellar/server/deal-room-testnet-runtime.test.ts src/lib/integration/offer-routes.test.ts src/app/api/deals/[dealId]/buyer-deposit/route.test.ts src/app/api/deals/[dealId]/seller-deposit/route.test.ts src/lib/integration/route-evidence.test.ts src/lib/integration/ui-acceptance.test.ts`
+  - passing
+  - `8` test files
+  - `53` tests
+- `git diff --check`
+  - no content errors
+  - only existing LF/CRLF working-copy warnings were emitted
+
+Phase W local runtime verification most recently observed:
+
+- `web/.env.local` now contains the public `SETTLEWAY_SMOKE_*` runtime keys required by the active room loader
+- the local public Soroban fee ceiling in `web/.env.local` was raised from `1000` to `100000` stroops after direct live inspection proved:
+  - `create_deal` prepared fee: `92612`
+  - `buyer_deposit` prepared fee: `18562`
+  - `seller_deposit` prepared fee: `18562`
+- a direct unsandboxed confirmation lookup proved that the previously submitted `create_deal` transaction hash `c76b5e35354b8a86a6a8d65e974d0bb6fcb5cb46c6968311dbf096ee6809dbe4` was confirmed and produced escrow id `6`
+- a direct repository-backed reconciliation probe then proved that an `unknown` stored `create_deal` operation can be reconciled safely into:
+  - `stellar_escrow_id: "6"`
+  - `stellar_sync_status: "idle"`
+  - confirmed stored operation state
+- a fresh live local `next dev` session on `http://localhost:3020` served `GET /deals/demo-cabai-001` with:
+  - `Testnet-backed room`
+  - `Protected by escrow logic and recorded on Stellar`
+  - `Buyer Testnet wallet`
+  - `Seller Testnet wallet`
+  - `Settleway fee wallet`
+- live local route validation originally proved the full Phase W funding corridor through lock on this machine, but still required repeated requests when live Soroban confirmation returned `unknown` inside the request window
+- route-level bounded reconciliation has now been added inside both funding routes, and a fresh reset-to-lock verification on `http://localhost:3020` proved the smoother path:
+  - `POST /api/demo/reset` returned `200`
+  - a single `POST /api/deals/demo-cabai-001/buyer-deposit` returned `200` with:
+    - status `BUYER_FUNDED`
+    - escrow id `8`
+    - buyer funding tx hash `bf3618d789ffe1e91dcb1d2e57a9990a885e99bad2b92670bb33554439f73b5d`
+  - a single `POST /api/deals/demo-cabai-001/seller-deposit` returned `200`
+  - `GET /api/deals/demo-cabai-001` then returned:
+    - status `LOCKED`
+    - escrow id `8`
+    - lock tx hash `947989883c04d7400a1d12b7dff722f2964b122b8eef568368a03a526ef5019a`
+- a live follow-up `GET /deals/demo-cabai-001` then rendered the locked room state with:
+  - `Locked (Protected)`
+  - `2 of 2 funded`
+  - escrow reference `8`
+  - `View Lock Proof`
+  - both buyer and seller wallet cards marked `Locked in escrow`
+- therefore Phase W room activation, buyer funding, seller funding, and lock proof are now locally proved through the real Next route path
+- the remaining runtime truth is narrower: confirmation still depends on bounded in-request reconciliation timing, but the validated default room no longer requires manual repeat clicks in the happy path
+
+Phase W implementation details that matter for the next session:
+
+- `web/src/lib/stellar/demo-wallets.ts` builds the active-room wallet cards and public proof references
+- `web/src/lib/stellar/server/deal-room-funding-runtime.ts` composes the role-wallet, actor, and proof payload for buyer and seller funding actions
+- `web/src/lib/stellar/server/deal-room-testnet-runtime.ts` validates the frozen public runtime config and resolves whether a room should default to `testnet` or `mock_only`
+- `web/src/lib/offers/helpers.ts` and `web/src/lib/db/mock-store.ts` now use that runtime-resolution helper so new and seeded rooms can auto-select the honest Stellar mode
+- `web/src/lib/stellar/server/smoke/stellar-cli-secure-store-signer.ts` now passes `--network-passphrase` to `stellar tx sign`, which was required for RPC-prepared Soroban signing to work locally
+- `web/.env.local` now carries the public runtime values required for local Phase W room activation, without adding any secret seed material to the repository working slice
+- the current local fee ceiling required for the live Phase W corridor is at least above `92612` stroops; the latest local value used successfully was `100000`
+- the local route behavior is now known precisely:
+  - funding routes now perform bounded repository-backed reconciliation inside the request before surfacing `STELLAR_EXECUTION_UNCONFIRMED`
+  - the validated default happy path from reset completed with one buyer request and one seller request
+  - if live confirmation remains unresolved after the bounded reconciliation window, the route still fails honestly instead of fabricating success
 
 Phase W required execution inputs:
 
@@ -1102,10 +1167,11 @@ The next session should:
 3. read `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 4. read `docs/43_PHASE_W_IMPLEMENTATION_PLAN.md`
 5. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the happy-path post-lock corridor from Phase D, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
-6. begin only with the active-room wallet identity and funding-proof slice
-7. keep the work inside buyer deposit, seller deposit, and locked-state proof only
-8. do not broaden into settlement routing, bank rails, dispute redesign, or wallet-connect
-9. stop if the work tries to spill into transaction-logic redesign beyond the approved funding foundation
+6. preserve the implemented Phase W wallet and funding runtime without rewriting it opportunistically
+7. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
+8. if Phase W must be finished operationally, isolate the remaining live buyer/seller funding failure outside the UI wrapper and prove buyer funded -> seller funded -> locked with truthful Testnet evidence
+9. otherwise stop Phase W at this truthful handoff boundary and do not broaden into settlement routing, bank rails, dispute redesign, or wallet-connect
+10. stop if the work tries to spill into transaction-logic redesign beyond the approved funding foundation
 
 ## No-Touch Boundary For Next Session
 
@@ -1157,5 +1223,6 @@ The next meaningful blockers are:
 
 - any contradiction between the frozen product vocabulary and a wallet-first implementation that starts to feel like a generic crypto app
 - any attempt to broaden Phase W into final settlement routing before funding truth is stable
+- the local Next route still relies on repeat requests to reconcile `unknown` or `unconfirmed` Soroban confirmations instead of collapsing that recovery into one smoother route-level experience
 - the repo-wide TypeScript debt outside the active runtime slice
 - the repo-wide production build/runtime blocker caused by persistent-mode repository failsafe without Supabase configuration
