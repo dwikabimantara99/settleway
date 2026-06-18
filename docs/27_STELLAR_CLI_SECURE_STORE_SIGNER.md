@@ -1,5 +1,17 @@
 # 27 - Stellar CLI Secure-Store Signer
 
+## Supersession Note
+
+This document captures the original secure-store signer introduction checkpoint.
+
+It predates the later live Soroban signing hardening where the CLI signer also needed the public RPC URL during `stellar tx sign` for RPC-prepared Soroban transactions.
+
+It remains useful as the origin record for the secure-store signer boundary, but the current live backend/Testnet truth now lives in:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+
 ## Objective
 
 Record the safe public evidence for the local Stellar CLI secure-store signer adapter and the operator harness migration away from raw secret-seed injection.

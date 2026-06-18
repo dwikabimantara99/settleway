@@ -1,5 +1,17 @@
 # 24 - Controlled Testnet Smoke Runbook
 
+## Supersession Note
+
+This document is historical preparation material.
+
+It was written before the current local secure-store signer wiring, smoke harness confirmation polling, and live public Testnet scenario proofs were completed.
+
+For the current live backend/Testnet truth, read:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+
 This runbook prepares Settleway for a future controlled Stellar Testnet smoke. It is evidence-driven and repository-bound. It does not authorize live RPC, deployment, contract invocation, transaction submission, secret access, product route wiring, UI work, schema work, contract-source changes, workflow changes, dependency changes, test changes, product-code changes, or Phase 8.
 
 ## 1. Objective

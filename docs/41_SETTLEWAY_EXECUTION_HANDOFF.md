@@ -1343,6 +1343,60 @@ Verified against a live local Next dev server in demo mode:
   - room shows `Dispute Handling Placeholder`
   - room explicitly says the MVP does not auto-decide fault
 
+## Latest Backend And Testnet Readiness Update
+
+Latest backend/Testnet readiness update date:
+
+- `2026-06-18`
+
+This update preserves the frozen product corridor and narrows only the execution truth around live Stellar Testnet behavior.
+
+What was tightened:
+
+- the local secure-store signer path now includes the public RPC URL when invoking `stellar tx sign`
+- this was required for locally prepared Soroban transactions to sign successfully through the official Stellar CLI
+- the local smoke operator now uses bounded confirmation polling from the already-declared `confirmation.max_attempts` policy instead of making only a single immediate confirmation decision
+- this preserves the no-blind-resubmission rule while allowing live Testnet confirmation lag to resolve honestly
+- the pre-lock `expire` and `refund` API routes now share the same controlled Testnet-backed route execution boundary already used by the funding and post-lock room actions
+- targeted route tests now exist for the pre-lock `expire` and `refund` Testnet-backed paths
+
+Most recent targeted validation rerun:
+
+- `npm.cmd test -- src/lib/stellar/server/smoke/stellar-cli-secure-store-signer.test.ts src/lib/stellar/server/smoke/operator-env.test.ts src/lib/stellar/server/deal-room-testnet-runtime.test.ts src/app/api/deals/[dealId]/expire/route.test.ts src/app/api/deals/[dealId]/refund/route.test.ts src/lib/integration/integration.test.ts`: passed with `56` tests
+- `npx.cmd eslint src/lib/stellar/server/smoke/operator-env.ts src/lib/stellar/server/smoke/operator-env.test.ts src/lib/stellar/server/smoke/stellar-cli-secure-store-signer.ts src/lib/stellar/server/smoke/stellar-cli-secure-store-signer.test.ts src/lib/stellar/server/deal-room-testnet-runtime.ts src/app/api/deals/[dealId]/expire/route.ts src/app/api/deals/[dealId]/refund/route.ts src/lib/stellar/server/deal-execution-coordinator.ts src/lib/stellar/server/deal-room-route-execution.ts`: passed
+- `git diff --check`: passing aside from expected LF/CRLF working-copy warnings
+
+Most recent live public Testnet scenario proofs:
+
+- happy path smoke: passing
+  - `create_deal`: `f9c08a2d901c1438de0a1b1793a818248a8c4ac10edadc6259efff76113d40db`
+  - `buyer_deposit`: `cced7689d15ddca006710925b80c5f57d0b30cfd745abf43a21b06de06fc3133`
+  - `seller_deposit`: `155601db1ed482fbbf378fbeeb35829b10b8108226d0221705e6dfa5e9bde23e`
+  - `submit_proof`: `17b7b9a32b9b00c569416117be668b11c8b994b9f63abb0eda8afba6cf259612`
+  - `mark_delivered`: `776c40338ef075a28049956f2f1a972586082f78ec48e454144534984757b095`
+  - `accept_delivery`: `889ae826fcb97b51ce165161987247dca6ab6e48acfb1b013de45874d3bda058`
+  - final state: `COMPLETED`
+- one-sided refund smoke: passing
+  - `create_deal`: `47afa4592ffce53cfc5daa51f31b33e5f7e84051949846b28d4a37204083b5fe`
+  - `buyer_deposit`: `cea3987bb7610906dfb7e4c9b99d432475762e55cc56dd3bb4f88a7a55e65d29`
+  - `refund`: `9b9f68e9c0726d507037898dd1fb6fce86159df4b67679c079829a96b28bcea4`
+  - final state: `REFUNDED`
+- unfunded expiry smoke: passing
+  - `create_deal`: `eef32b399e1ad3ef92c1b6e9a6406fe86d4792ff2215f5d89b424229ab29ff44`
+  - `expire`: `4579db52fe3009f6044cf28caa326b54e56742f39e8aed80d1bbce057bf7088c`
+  - final state: `EXPIRED`
+
+Current backend/Testnet truth after this update:
+
+- the secure-store signer boundary is live-proven for RPC-prepared Soroban transactions
+- the bounded confirmation model is live-proven for happy-path and fallback smoke scenarios
+- happy path, refund, and expiry now all have fresh public Testnet evidence
+- the remaining gap is no longer execution truth; it is freeze discipline:
+  - the current readiness patch is still uncommitted in the working tree
+  - the historical source docs above this section remain superseded unless refreshed
+
+This means the backend/Testnet corridor is now ready for hackathon-demo use, provided the patch is frozen cleanly and the UI/demo narration remains consistent with the validated room states.
+
 ## Next Required Action
 
 The next session should:
@@ -1356,8 +1410,9 @@ The next session should:
 7. preserve the implemented Phase W and Phase X runtime path without rewriting it opportunistically
 8. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
 9. preserve the frozen Phase Y payout-destination slice exactly as implemented unless the founder explicitly reopens it
-10. do not promote a new active phase until the founder authorizes the next contract freeze
-11. stop if the work tries to spill into wallet-connect, bank payout claims, or arbitrary-address settlement redesign beyond the approved active phase
+10. freeze the current backend/Testnet readiness patch cleanly before opening broader scope again
+11. do not promote a new active phase until the founder authorizes the next contract freeze
+12. stop if the work tries to spill into wallet-connect, bank payout claims, or arbitrary-address settlement redesign beyond the approved active phase
 
 ## No-Touch Boundary For Next Session
 
@@ -1412,3 +1467,4 @@ The next meaningful blockers are:
 - the current Stellar execution shape still lacks arbitrary external-destination arguments, so deeper payout execution beyond managed demo identities would require explicit re-authorization
 - the repo-wide TypeScript debt outside the active runtime slice
 - the repo-wide production build/runtime blocker caused by persistent-mode repository failsafe without Supabase configuration
+- the current backend/Testnet readiness patch is still uncommitted and therefore not yet frozen as the next settled checkpoint

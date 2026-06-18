@@ -1,5 +1,17 @@
 # 25 - Testnet Contract Artifact
 
+## Supersession Note
+
+This document is historical artifact-freeze evidence from before the current trusted Testnet contract deployment and live smoke proofs were recorded elsewhere.
+
+It remains useful for local Wasm verification history, but it is no longer the source of truth for current Testnet deployment readiness or current contract-id trust.
+
+For current runtime/Testnet truth, read:
+
+- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
+- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
+- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
+
 ## Objective
 
 Record the trusted local verification evidence for the current `settleway_escrow` Soroban contract artifact before any future fresh Testnet deployment.
