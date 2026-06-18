@@ -5,9 +5,9 @@ This is the live handoff for the founder-authorized Settleway rebuild direction.
 ## Current Repository State
 
 - Active branch at latest settled implementation freeze: `phase-10-persistence-identity`
-- Latest settled implementation freeze commit: `809e0c25927b81a736157c140dfe0233d6e8ce9c`
-- Latest settled implementation freeze subject: `feat: freeze phase x testnet settlement corridor`
-- Working tree immediately after the Phase X freeze commit: clean
+- Latest settled implementation freeze commit: `ef79d9f6920bcd68038a5ee7055c3455a1e7dc6c`
+- Latest settled implementation freeze subject: `feat: freeze phase y payout destination wiring`
+- Working tree immediately after the Phase Y code freeze commit: clean
 
 Future sessions must verify Git state directly rather than trusting this snapshot blindly.
 
@@ -90,9 +90,9 @@ Status:
 - Phase V demo corridor narrative consistency pass: implemented locally and targeted-validated
 - Phase W Testnet-backed wallet and deposit foundation: frozen and pushed at `f4d20b7`
 - Phase X Testnet settlement routing and reputation anchoring: frozen at `809e0c2`
-- Phase Y controlled payout destination wiring: active and contract-frozen only
-- Active phase contract: promoted to Phase Y
-- Live handoff: updated for Phase Y authorization
+- Phase Y controlled payout destination wiring: frozen at `ef79d9f`
+- Active phase contract: still points to Phase Y until the founder authorizes the next promotion
+- Live handoff: updated for the completed Phase Y freeze
 - Salvage audit: complete in `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
 
 ## Phase X Opening Snapshot
@@ -222,73 +222,60 @@ Phase X required execution inputs:
 - `docs/27_STELLAR_CLI_SECURE_STORE_SIGNER.md`
 - `docs/28_TESTNET_ACCOUNT_READINESS.md`
 
-## Phase Y Opening Snapshot
+## Phase Y Implementation Snapshot
 
-Phase Y is the next founder-authorized slice after the now-frozen Phase X success-path settlement proof.
+Phase Y is now locally implemented and frozen at `ef79d9f` after the Phase X Testnet-backed completion corridor.
 
-Why this phase is next:
+Why this phase existed:
 
 - Phase X already proved the protected room can move from `LOCKED` to `COMPLETED` through the real Next route path
-- the room now has truthful settlement completion and reputation anchoring
-- but the product still does not truthfully answer the next user-facing question:
-  - where do buyer and seller proceeds intend to land after settlement closes
-- the current app still lacks:
-  - payout-destination fields on `DbProfile`
-  - seeded wallet destination truth in demo profiles
-  - a narrow settings or profile-adjacent destination surface
-  - a completed-room summary that names user-selected destination targets instead of only generic buyer and seller wallet language
+- the room already had truthful settlement completion and reputation anchoring
+- but the product still did not truthfully answer the next user-facing question:
+  - where buyer and seller proceeds are intended to land after settlement closes
 
-Important architectural truth discovered before Phase Y implementation:
+Important architectural truth preserved during implementation:
 
-- the current Stellar execution assembly and invocation path only understands:
+- the current Stellar execution assembly and invocation path still only understands:
   - `admin_address`
   - `buyer_demo_address`
   - `seller_demo_address`
-- there is no current arbitrary payout-destination argument in the Testnet execution input shape
-- therefore Phase Y is intentionally frozen as a destination-wiring and payout-intent phase, not a contract-level arbitrary-address settlement phase
+- there is still no arbitrary payout-destination argument in the current Testnet execution input shape
+- therefore Phase Y remained intentionally narrow as a destination-wiring and payout-intent phase, not a contract-level arbitrary-address settlement phase
 
-Phase Y objective:
+Delivered outcomes:
 
-- add truthful payout-destination data for buyer and seller
-- expose that truth in a narrow profile-adjacent surface
-- carry that truth into the completed Deal Room payout summary
-- preserve the Phase X settlement corridor without pretending bank payout or wallet-connect already exists
+- `DbProfile` now stores:
+  - `payout_rail_preference`
+  - `payout_wallet_label`
+  - `payout_wallet_address`
+  - `payout_bank_name`
+  - `payout_bank_account_masked`
+- seeded demo profiles now include linked wallet destination defaults and honest bank-placeholder defaults
+- repository adapters now support `updateProfile(...)` for payout-destination truth
+- `web/src/app/api/profiles/[userId]/route.ts` now exposes owner-only payout-destination updates and explicitly rejects local-bank selection as not live in this MVP
+- `web/src/components/profile/PayoutDestinationCard.tsx` now provides a narrow profile-adjacent surface for reviewing and editing linked wallet payout destination truth while keeping local bank visible but inactive
+- `web/src/app/api/deals/[dealId]/accept-delivery/route.ts` now snapshots buyer, seller, and Settleway payout-destination intent into completion event metadata
+- `web/src/app/deals/[dealId]/page.tsx` now renders completed-room payout destinations by party instead of relying only on generic buyer and seller wallet language
+- no wallet-connect, signer exposure, live bank payout, or arbitrary-address Soroban method expansion was introduced
 
-Authorized scope for Phase Y:
+Phase Y targeted validation most recently rerun:
 
-- payout-destination profile data
-- payout-destination repository and demo seed wiring
-- narrow profile or settings destination surface
-- completed-room payout destination summary
-- tightly related tests and execution-doc synchronization
+- `npm.cmd test -- src/app/api/profiles/[userId]/route.test.ts src/app/api/deals/[dealId]/accept-delivery/route.test.ts src/components/profile/PayoutDestinationCard.test.tsx src/lib/integration/ui-acceptance.test.ts src/lib/repositories/mock-adapter.test.ts src/lib/repositories/shared-contract.test.ts`
+  - passing
+  - `6` test files
+  - `44` tests
+- `npx.cmd eslint src/app/api/profiles/[userId]/route.ts src/app/api/profiles/[userId]/route.test.ts src/app/api/deals/[dealId]/accept-delivery/route.ts src/app/api/deals/[dealId]/accept-delivery/route.test.ts src/app/deals/[dealId]/page.tsx src/app/profiles/[userId]/page.tsx src/components/profile/PayoutDestinationCard.tsx src/components/profile/PayoutDestinationCard.test.tsx src/lib/payout-destinations.ts src/lib/integration/ui-acceptance.test.ts src/lib/repositories/mock-adapter.test.ts src/lib/repositories/shared-contract.test.ts`
+  - passing
+- `git diff --check`
+  - passing
+  - only existing LF/CRLF working-copy warnings were emitted
 
-Not in scope for Phase Y:
+Current truth boundary:
 
-- live bank payout
-- QRIS or anchor execution
-- wallet-connect
-- signer-seed exposure
-- arbitrary-address Soroban method expansion
-- broad profile redesign
-- dispute or marketplace redesign
-
-Phase Y required execution inputs:
-
-- `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
-- `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
-- `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
-- `docs/42_SETTLEWAY_SALVAGE_AUDIT.md`
-- `docs/44_PHASE_X_IMPLEMENTATION_PLAN.md`
-- `docs/45_PHASE_Y_IMPLEMENTATION_PLAN.md`
-- `docs/06_STELLAR_SOROBAN_SPEC.md`
-- `docs/08_ESCROW_STATE_MACHINE.md`
-- `docs/10_REPUTATION_SPEC.md`
-- `docs/11_DEMO_SCRIPT.md`
-- `docs/12_ACCEPTANCE_CRITERIA.md`
-- `docs/24_CONTROLLED_TESTNET_SMOKE_RUNBOOK.md`
-- `docs/26_TESTNET_SYNTHETIC_IDENTITIES.md`
-- `docs/27_STELLAR_CLI_SECURE_STORE_SIGNER.md`
-- `docs/28_TESTNET_ACCOUNT_READINESS.md`
+- linked wallet destination is the only active payout target rail in Phase Y
+- local bank payout remains visible but clearly non-live
+- completed rooms now preserve payout-destination intent in completion-facing metadata and surface it in the settlement summary
+- settlement execution still closes through managed demo identities, but the UI no longer pretends destination intent is unknowable
 
 ## Phase W Implementation Snapshot
 
@@ -1368,12 +1355,13 @@ The next session should:
 6. preserve the completed pre-deal architecture from Phase B, the funding-room clarity from Phase C, the post-lock settlement corridor from Phase X, the failure/outcome slice from Phase E, the trust/demo consolidation work from Phases F through V, and the source-of-truth doc realignment already completed
 7. preserve the implemented Phase W and Phase X runtime path without rewriting it opportunistically
 8. preserve the now-wired public runtime config and do not remove it unless a safer local operator path replaces it
-9. begin Phase Y with the payout-destination data contract, not with broad UI or contract rewrites
-10. stop if the work tries to spill into wallet-connect, bank payout claims, or arbitrary-address settlement redesign beyond the approved active phase
+9. preserve the frozen Phase Y payout-destination slice exactly as implemented unless the founder explicitly reopens it
+10. do not promote a new active phase until the founder authorizes the next contract freeze
+11. stop if the work tries to spill into wallet-connect, bank payout claims, or arbitrary-address settlement redesign beyond the approved active phase
 
 ## No-Touch Boundary For Next Session
 
-During Phase Y, do not:
+Until the founder promotes the next phase, do not:
 
 - redesign the completed pre-deal offer and notification layer
 - reopen the completed happy-path or failure-path room flow beyond what is required for payout-destination truth
@@ -1399,7 +1387,7 @@ the agent must:
 
 ## Phase Y Working Focus
 
-Phase Y should make the completed Deal Room tell a more truthful payout story by proving that buyer and seller have controlled payout-destination preferences that the room can display and preserve without pretending bank payout or wallet-connect already exists.
+Phase Y now makes the completed Deal Room tell a more truthful payout story by proving that buyer and seller have controlled payout-destination preferences that the room can display and preserve without pretending bank payout or wallet-connect already exists.
 
 Primary targets:
 
@@ -1409,7 +1397,7 @@ Primary targets:
 - completed-room payout route summary
 - honest bank-placeholder language
 
-This phase should strengthen payout-destination truth inside the product, not broaden the rest of the product.
+This frozen result strengthens payout-destination truth inside the product without broadening the rest of the product.
 
 ## Blockers
 
