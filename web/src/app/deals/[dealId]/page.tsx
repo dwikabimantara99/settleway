@@ -35,6 +35,14 @@ import {
   type DealRoomWalletStateTone,
 } from '@/lib/stellar/demo-wallets';
 import type { DbEscrowEvent, DbReputationEvent } from '@/lib/db/types';
+import {
+  createProfilePayoutDestinationSnapshot,
+  createWalletPayoutDestinationSnapshot,
+  formatPayoutDestinationLabel,
+  formatPayoutDestinationRail,
+  formatPayoutDestinationReference,
+  isPayoutDestinationSnapshot,
+} from '@/lib/payout-destinations';
 import { repository } from '@/lib/repositories';
 
 type ViewerRole = 'buyer' | 'seller' | null;
@@ -68,18 +76,6 @@ function formatCountdown(deadlineAt: string): string {
   }
 
   return `${hours}h ${minutes}m remaining`;
-}
-
-function getFundedCount(status: DealStatus): number {
-  if (status === 'BUYER_FUNDED' || status === 'SELLER_FUNDED') {
-    return 1;
-  }
-
-  if (isPostLockDealStatus(status)) {
-    return 2;
-  }
-
-  return 0;
 }
 
 function getPartyFundingStatus(
@@ -301,11 +297,26 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
 
   const buyer = demoProfiles[deal.buyer_id];
   const seller = demoProfiles[deal.seller_id];
-  const evidenceList = await repository.getDealEvidence(deal.id);
-  const dealEvents = await repository.getDealEvents(deal.id);
-  const dealReputationEvents = await repository.getDealReputationEvents(deal.id);
-  const buyerReputationEvents = await repository.getParticipantReputationEvents(deal.buyer_id);
-  const sellerReputationEvents = await repository.getParticipantReputationEvents(deal.seller_id);
+  const [
+    buyerProfile,
+    sellerProfile,
+    evidenceList,
+    dealEvents,
+    dealReputationEvents,
+    buyerReputationEvents,
+    sellerReputationEvents,
+  ] = await Promise.all([
+    repository.getProfile(deal.buyer_id),
+    repository.getProfile(deal.seller_id),
+    repository.getDealEvidence(deal.id),
+    repository.getDealEvents(deal.id),
+    repository.getDealReputationEvents(deal.id),
+    repository.getParticipantReputationEvents(deal.buyer_id),
+    repository.getParticipantReputationEvents(deal.seller_id),
+  ]);
+
+  const buyerDisplayName = buyerProfile?.display_name ?? buyer?.displayName ?? 'Buyer';
+  const sellerDisplayName = sellerProfile?.display_name ?? seller?.displayName ?? 'Seller';
 
   const offerId = getDealOfferId(deal.terms);
   const sourceOffer = offerId ? await repository.getOffer(offerId) : null;
@@ -328,8 +339,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     sortedDealReputationEvents.find((event) => event.participant_role === 'seller') ?? null;
   const buyerAggregate = rebuildReputationAggregate(buyerReputationEvents);
   const sellerAggregate = rebuildReputationAggregate(sellerReputationEvents);
-  const buyerCurrentScore = (buyer?.buyerScore ?? 0) + buyerAggregate.buyer_score;
-  const sellerCurrentScore = (seller?.sellerScore ?? 0) + sellerAggregate.seller_score;
+  const buyerCurrentScore = (buyerProfile?.buyer_score ?? buyer?.buyerScore ?? 0) + buyerAggregate.buyer_score;
+  const sellerCurrentScore = (sellerProfile?.seller_score ?? seller?.sellerScore ?? 0) + sellerAggregate.seller_score;
   const platformFeeTotalIdr = deal.buyer_fee_idr + deal.seller_fee_idr;
   const anchoredEvidenceCount = evidenceList.filter(
     (evidence) => evidence.chain_operation_reference !== null,
@@ -356,8 +367,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   const fundingSectionTitle =
     isFundingWindowDealStatus(status) ? 'Funding Gate' : 'Funding Record';
   const walletCards = buildDealRoomWalletCards({
-    buyer_label: buyer?.displayName ?? 'Buyer',
-    seller_label: seller?.displayName ?? 'Seller',
+    buyer_label: buyerDisplayName,
+    seller_label: sellerDisplayName,
     buyer_commitment_idr: deal.buyer_total_idr,
     seller_commitment_idr: deal.seller_total_idr,
     platform_fee_target_idr: platformFeeTotalIdr,
@@ -459,6 +470,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     Boolean(deal.stellar_escrow_id) &&
     Boolean(lockTxHash);
   const completionMetadata = latestCompletionEvent?.metadata ?? {};
+  const platformWalletCard = walletCards.find((wallet) => wallet.key === 'platform') ?? null;
   const settlementReference =
     buyerOutcomeEvent?.settlement_reference ??
     sellerOutcomeEvent?.settlement_reference ??
@@ -469,6 +481,59 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     buyerOutcomeEvent?.settled_at ??
     sellerOutcomeEvent?.settled_at ??
     (typeof completionMetadata.settled_at === 'string' ? completionMetadata.settled_at : null);
+  const buyerPayoutDestination =
+    isPayoutDestinationSnapshot(completionMetadata.buyer_payout_destination)
+      ? completionMetadata.buyer_payout_destination
+      : buyerProfile
+        ? createProfilePayoutDestinationSnapshot(buyerProfile)
+        : null;
+  const sellerPayoutDestination =
+    isPayoutDestinationSnapshot(completionMetadata.seller_payout_destination)
+      ? completionMetadata.seller_payout_destination
+      : sellerProfile
+        ? createProfilePayoutDestinationSnapshot(sellerProfile)
+        : null;
+  const platformPayoutDestination =
+    isPayoutDestinationSnapshot(completionMetadata.platform_payout_destination)
+      ? completionMetadata.platform_payout_destination
+      : createWalletPayoutDestinationSnapshot(
+          'Settleway fee wallet',
+          platformWalletCard?.public_address ?? null,
+        );
+  const completedPayoutRoutes = [
+    {
+      key: 'buyer-bond',
+      title: 'Buyer bond return',
+      statusLabel: 'Returned',
+      amount: formatCurrency(deal.buyer_bond_idr),
+      destination: buyerPayoutDestination,
+      fallbackLabel: 'Buyer destination',
+    },
+    {
+      key: 'seller-principal',
+      title: 'Seller principal receipt',
+      statusLabel: 'Released',
+      amount: formatCurrency(deal.principal_idr),
+      destination: sellerPayoutDestination,
+      fallbackLabel: 'Seller destination',
+    },
+    {
+      key: 'seller-bond',
+      title: 'Seller bond return',
+      statusLabel: 'Returned',
+      amount: formatCurrency(deal.seller_bond_idr),
+      destination: sellerPayoutDestination,
+      fallbackLabel: 'Seller destination',
+    },
+    {
+      key: 'platform-fees',
+      title: 'Platform fee retention',
+      statusLabel: 'Retained',
+      amount: formatCurrency(platformFeeTotalIdr),
+      destination: platformPayoutDestination,
+      fallbackLabel: 'Settleway fee wallet',
+    },
+  ] as const;
 
   const postLockMilestones = [
     {
@@ -740,7 +805,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 <div className="rounded-xl border border-slate-200 bg-white p-5">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">{buyer?.displayName}</div>
+                      <div className="text-sm font-semibold text-slate-900">{buyerDisplayName}</div>
                       <div className="text-xs text-slate-500">Buyer deposit obligation</div>
                     </div>
                     <Badge className={buyerFundingStatus.className}>{buyerFundingStatus.label}</Badge>
@@ -772,7 +837,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 <div className="rounded-xl border border-slate-200 bg-white p-5">
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">{seller?.displayName}</div>
+                      <div className="text-sm font-semibold text-slate-900">{sellerDisplayName}</div>
                       <div className="text-xs text-slate-500">Seller deposit obligation</div>
                     </div>
                     <Badge className={sellerFundingStatus.className}>{sellerFundingStatus.label}</Badge>
@@ -1242,48 +1307,78 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Buyer principal to seller wallet</span>
-                  <span className="font-medium text-slate-900">
-                    {status === 'COMPLETED'
-                      ? 'Released'
-                      : isClosed
-                        ? 'Did not start'
-                        : 'Pending'}
-                  </span>
+              {status === 'COMPLETED' ? (
+                <div className="rounded-lg border border-slate-200 bg-white p-4">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Payout Destinations
+                  </div>
+                  <div className="mt-3 space-y-3">
+                    {completedPayoutRoutes.map((route) => (
+                      <div
+                        key={route.key}
+                        className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-xs font-medium text-slate-900">{route.title}</span>
+                          <span className="text-xs font-medium text-emerald-700">
+                            {route.statusLabel} | {route.amount}
+                          </span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-between gap-3">
+                          <span className="text-xs text-slate-500">
+                            {formatPayoutDestinationLabel(route.destination, route.fallbackLabel)}
+                          </span>
+                          <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-700">
+                            {formatPayoutDestinationRail(route.destination)}
+                          </span>
+                        </div>
+                        <div className="mt-2 break-all font-mono text-[11px] text-slate-600">
+                          {formatPayoutDestinationReference(route.destination)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-[11px] leading-5 text-slate-600">
+                    Linked wallet destination is the only active payout rail in this MVP. Local
+                    bank payout remains visible on profiles but is not live yet.
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Buyer bond back to buyer wallet</span>
-                  <span className="font-medium text-slate-900">
-                    {status === 'COMPLETED'
-                      ? 'Returned'
-                      : isClosed
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Buyer principal to seller wallet</span>
+                    <span className="font-medium text-slate-900">
+                      {isClosed ? 'Did not start' : 'Pending'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Buyer bond back to buyer wallet</span>
+                    <span className="font-medium text-slate-900">
+                      {isClosed
                         ? buyerFundedHistorically
                           ? 'Closed before lock'
                           : 'Not funded'
                         : 'Pending'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-500">Seller bond back to seller wallet</span>
-                  <span className="font-medium text-slate-900">
-                    {status === 'COMPLETED'
-                      ? 'Returned'
-                      : isClosed
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Seller bond back to seller wallet</span>
+                    <span className="font-medium text-slate-900">
+                      {isClosed
                         ? sellerFundedHistorically
                           ? 'Closed before lock'
                           : 'Not funded'
                         : 'Pending'}
-                  </span>
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+                    <span className="text-slate-500">Platform fees to Settleway wallet</span>
+                    <span className="font-medium text-slate-900">
+                      {isClosed ? 'Not charged before lock' : formatCurrency(platformFeeTotalIdr)}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between border-t border-slate-200 pt-3">
-                  <span className="text-slate-500">Platform fees to Settleway wallet</span>
-                  <span className="font-medium text-slate-900">
-                    {isClosed ? 'Not charged before lock' : formatCurrency(platformFeeTotalIdr)}
-                  </span>
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 

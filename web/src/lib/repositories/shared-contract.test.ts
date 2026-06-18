@@ -79,6 +79,21 @@ const runSharedSuite = (name: string, getRepo: () => IRepository, seedData: () =
       const profile = await repo.getProfile('buyer-surabaya-restaurant');
       expect(profile).not.toBeNull();
       expect(profile?.display_name).toBe('Surabaya Spice Co.');
+      expect(profile?.payout_rail_preference).toBe('wallet');
+      expect(profile?.payout_wallet_address).toBeTruthy();
+    });
+
+    it('updates payout destination on a profile', async () => {
+      await repo.updateProfile('buyer-surabaya-restaurant', {
+        payout_rail_preference: 'wallet',
+        payout_wallet_label: 'Treasury hot wallet',
+        payout_wallet_address: 'GDESTINATION123',
+      });
+
+      const updated = await repo.getProfile('buyer-surabaya-restaurant');
+      expect(updated?.payout_rail_preference).toBe('wallet');
+      expect(updated?.payout_wallet_label).toBe('Treasury hot wallet');
+      expect(updated?.payout_wallet_address).toBe('GDESTINATION123');
     });
 
     it('retrieves listings', async () => {
@@ -140,7 +155,15 @@ runSharedSuite('MockRepositoryAdapter', () => new MockRepositoryAdapter(), () =>
 runSharedSuite('SupabaseRepositoryAdapter', () => new SupabaseRepositoryAdapter(), () => {
   const s = supabase as any;
   s.__seed('profiles', [
-    { id: 'buyer-surabaya-restaurant', display_name: 'Surabaya Spice Co.' }
+    {
+      id: 'buyer-surabaya-restaurant',
+      display_name: 'Surabaya Spice Co.',
+      payout_rail_preference: 'wallet',
+      payout_wallet_label: 'Procurement treasury wallet',
+      payout_wallet_address: 'GBL7R3X4YTF7Q7M6M2J3QK7A4ZJ5V8L2P6N4R9T2C7Y5M3W6K8A1B2CD',
+      payout_bank_name: 'Bank settlement rail',
+      payout_bank_account_masked: 'Not live in MVP',
+    }
   ]);
   s.__seed('listings', [
     { id: 'list-1', created_at: new Date().toISOString() }

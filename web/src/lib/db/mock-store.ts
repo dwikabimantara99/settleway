@@ -19,6 +19,11 @@ const toDbProfile = (p: any): DbProfile => ({
   buyer_completed_count: p.buyerCompletedCount,
   verified_volume_idr: p.verifiedVolumeIdr,
   proof_visibility: p.proofVisibility,
+  payout_rail_preference: p.payoutRailPreference,
+  payout_wallet_label: p.payoutWalletLabel,
+  payout_wallet_address: p.payoutWalletAddress,
+  payout_bank_name: p.payoutBankName,
+  payout_bank_account_masked: p.payoutBankAccountMasked,
   created_at: new Date().toISOString(),
 });
 
@@ -201,6 +206,12 @@ export class MockStore {
     const existing = this.deals.get(dealId);
     if (!existing) throw new Error('Deal not found');
     this.deals.set(dealId, { ...existing, ...partialDeal, updated_at: new Date().toISOString() });
+  }
+
+  updateProfile(profileId: string, partialProfile: Partial<DbProfile>) {
+    const existing = this.profiles.get(profileId);
+    if (!existing) throw new Error('Profile not found');
+    this.profiles.set(profileId, { ...existing, ...partialProfile });
   }
 
   updateOffer(offerId: string, partialOffer: Partial<DbOffer>) {

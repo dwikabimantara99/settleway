@@ -15,6 +15,11 @@ export class SupabaseRepositoryAdapter implements IRepository {
     return data || null;
   }
 
+  async updateProfile(id: string, partial: Partial<DbProfile>): Promise<void> {
+    const { error } = await this.client.from('profiles').update(partial).eq('id', id);
+    if (error) throw error;
+  }
+
   async getListings(): Promise<DbListing[]> {
     const { data, error } = await this.client.from('listings').select('*').order('created_at', { ascending: false });
     if (error) throw error;

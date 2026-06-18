@@ -20,6 +20,11 @@ export interface DbProfile {
   buyer_completed_count: number;
   verified_volume_idr: number;
   proof_visibility: 'public' | 'private';
+  payout_rail_preference: 'wallet' | 'bank';
+  payout_wallet_label: string | null;
+  payout_wallet_address: string | null;
+  payout_bank_name: string | null;
+  payout_bank_account_masked: string | null;
   created_at: string;
 }
 

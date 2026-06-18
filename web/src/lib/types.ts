@@ -2,6 +2,7 @@ import type { DealStatus } from './escrow/state-machine';
 
 export type UserRole = 'seller' | 'buyer' | 'both' | 'operator';
 export type ProfileVisibility = 'public' | 'private';
+export type PayoutRailPreference = 'wallet' | 'bank';
 
 export type BuyerRequestStatus = 'open' | 'fulfilled' | 'cancelled';
 
@@ -31,6 +32,11 @@ export interface Profile {
   buyerCompletedCount: number;
   verifiedVolumeIdr: number;
   proofVisibility: ProfileVisibility;
+  payoutRailPreference: PayoutRailPreference;
+  payoutWalletLabel: string | null;
+  payoutWalletAddress: string | null;
+  payoutBankName: string | null;
+  payoutBankAccountMasked: string | null;
 }
 
 export type ListingStatus = 'ready_stock' | 'pre_harvest';

@@ -15,6 +15,21 @@ describe('MockRepositoryAdapter Contract Tests', () => {
     const profile = await repo.getProfile('buyer-surabaya-restaurant');
     expect(profile).not.toBeNull();
     expect(profile?.display_name).toBe('Surabaya Spice Co.');
+    expect(profile?.payout_rail_preference).toBe('wallet');
+    expect(profile?.payout_wallet_address).toBeTruthy();
+  });
+
+  it('updates payout destination fields on a profile', async () => {
+    await repo.updateProfile('buyer-surabaya-restaurant', {
+      payout_rail_preference: 'wallet',
+      payout_wallet_label: 'Treasury hot wallet',
+      payout_wallet_address: 'GDESTINATION123',
+    });
+
+    const updated = await repo.getProfile('buyer-surabaya-restaurant');
+    expect(updated?.payout_rail_preference).toBe('wallet');
+    expect(updated?.payout_wallet_label).toBe('Treasury hot wallet');
+    expect(updated?.payout_wallet_address).toBe('GDESTINATION123');
   });
 
   it('retrieves listings', async () => {

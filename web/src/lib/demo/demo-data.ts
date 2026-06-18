@@ -13,6 +13,11 @@ export const demoProfiles: Record<string, Profile> = {
     buyerCompletedCount: 0,
     verifiedVolumeIdr: 450000000,
     proofVisibility: 'public',
+    payoutRailPreference: 'wallet',
+    payoutWalletLabel: 'Farmer treasury wallet',
+    payoutWalletAddress: 'GCWQG2J4WLQG4ZB5PXJ4G3FQ4FQ3B6Q6L6M2Y7K4L5N2R6H4M1Q7S4AA',
+    payoutBankName: 'Bank settlement rail',
+    payoutBankAccountMasked: 'Not live in MVP',
   },
   'buyer-surabaya-restaurant': {
     id: 'buyer-surabaya-restaurant',
@@ -26,6 +31,11 @@ export const demoProfiles: Record<string, Profile> = {
     buyerCompletedCount: 42,
     verifiedVolumeIdr: 1200000000,
     proofVisibility: 'public',
+    payoutRailPreference: 'wallet',
+    payoutWalletLabel: 'Procurement treasury wallet',
+    payoutWalletAddress: 'GBL7R3X4YTF7Q7M6M2J3QK7A4ZJ5V8L2P6N4R9T2C7Y5M3W6K8A1B2CD',
+    payoutBankName: 'Bank settlement rail',
+    payoutBankAccountMasked: 'Not live in MVP',
   },
   'seller-sumatra-coffee': {
     id: 'seller-sumatra-coffee',
@@ -39,6 +49,11 @@ export const demoProfiles: Record<string, Profile> = {
     buyerCompletedCount: 0,
     verifiedVolumeIdr: 1500000000,
     proofVisibility: 'public',
+    payoutRailPreference: 'wallet',
+    payoutWalletLabel: 'Cooperative treasury wallet',
+    payoutWalletAddress: 'GCF4Y2W8L9M1Q3S5T7V2X4Z6A8C1E3G5J7L9N2P4R6T8V1X3Z5B7D9EF',
+    payoutBankName: 'Bank settlement rail',
+    payoutBankAccountMasked: 'Not live in MVP',
   },
   'buyer-jakarta-factory': {
     id: 'buyer-jakarta-factory',
@@ -52,6 +67,11 @@ export const demoProfiles: Record<string, Profile> = {
     buyerCompletedCount: 110,
     verifiedVolumeIdr: 5800000000,
     proofVisibility: 'private',
+    payoutRailPreference: 'wallet',
+    payoutWalletLabel: 'Factory settlement wallet',
+    payoutWalletAddress: 'GDQ5S7W9Y2A4C6E8G1J3L5N7P9R2T4V6X8Z1B3D5F7H9K2M4Q6S8U1VW',
+    payoutBankName: 'Bank settlement rail',
+    payoutBankAccountMasked: 'Not live in MVP',
   }
 };
 

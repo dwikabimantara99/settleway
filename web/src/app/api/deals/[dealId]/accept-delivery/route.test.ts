@@ -53,6 +53,45 @@ describe("accept-delivery route", () => {
   });
 
   function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+    mockStore.profiles.set("buyer-1", {
+      id: "buyer-1",
+      display_name: "Buyer One",
+      role_label: "Buyer",
+      location: "Surabaya",
+      user_type: "buyer",
+      seller_score: 0,
+      buyer_score: 75,
+      seller_completed_count: 0,
+      buyer_completed_count: 4,
+      verified_volume_idr: 5000000,
+      proof_visibility: "public",
+      payout_rail_preference: "wallet",
+      payout_wallet_label: "Buyer treasury wallet",
+      payout_wallet_address: "GBUYERPAYOUT1234567890",
+      payout_bank_name: "Bank settlement rail",
+      payout_bank_account_masked: "Not live in MVP",
+      created_at: new Date().toISOString(),
+    });
+    mockStore.profiles.set("seller-1", {
+      id: "seller-1",
+      display_name: "Seller One",
+      role_label: "Seller",
+      location: "Probolinggo",
+      user_type: "seller",
+      seller_score: 81,
+      buyer_score: 0,
+      seller_completed_count: 3,
+      buyer_completed_count: 0,
+      verified_volume_idr: 8000000,
+      proof_visibility: "public",
+      payout_rail_preference: "wallet",
+      payout_wallet_label: "Seller treasury wallet",
+      payout_wallet_address: "GSELLERPAYOUT1234567890",
+      payout_bank_name: "Bank settlement rail",
+      payout_bank_account_masked: "Not live in MVP",
+      created_at: new Date().toISOString(),
+    });
+
     mockStore.deals.set(dealId, {
       id: dealId,
       buyer_id: "buyer-1",
@@ -103,6 +142,20 @@ describe("accept-delivery route", () => {
     expect(roomEvents.at(-1)?.event_type).toBe("accept_delivery");
     expect(roomEvents.at(-1)?.tx_hash).toBe("e".repeat(64));
     expect(roomEvents.at(-1)?.metadata.settlement_reference).toBe("e".repeat(64));
+    expect(roomEvents.at(-1)?.metadata.buyer_payout_destination).toMatchObject({
+      rail_preference: "wallet",
+      wallet_label: "Buyer treasury wallet",
+      wallet_address: "GBUYERPAYOUT1234567890",
+    });
+    expect(roomEvents.at(-1)?.metadata.seller_payout_destination).toMatchObject({
+      rail_preference: "wallet",
+      wallet_label: "Seller treasury wallet",
+      wallet_address: "GSELLERPAYOUT1234567890",
+    });
+    expect(roomEvents.at(-1)?.metadata.platform_payout_destination).toMatchObject({
+      rail_preference: "wallet",
+      wallet_label: "Settleway fee wallet",
+    });
 
     const reputationEvents = mockStore.getDealReputationEvents("deal-accept-testnet");
     expect(reputationEvents.length).toBe(2);

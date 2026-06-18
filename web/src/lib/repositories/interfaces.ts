@@ -4,6 +4,7 @@ import type { StellarOperation } from '../stellar/types';
 export interface IRepository {
   // Profiles
   getProfile(id: string): Promise<DbProfile | null>;
+  updateProfile(id: string, partial: Partial<DbProfile>): Promise<void>;
 
   // Listings
   getListings(): Promise<DbListing[]>;

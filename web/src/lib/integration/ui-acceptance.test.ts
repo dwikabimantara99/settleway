@@ -264,11 +264,16 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(hasText(page, 'Success Settlement Summary')).toBe(true);
       expect(hasText(page, 'Settled')).toBe(true);
       expect(hasText(page, 'Settlement Record')).toBe(true);
+      expect(hasText(page, 'Payout Destinations')).toBe(true);
       expect(hasText(page, 'Reputation ledger')).toBe(true);
-      expect(hasText(page, 'Buyer principal to seller')).toBe(true);
-      expect(hasText(page, 'Buyer bond back to buyer')).toBe(true);
-      expect(hasText(page, 'Seller bond back to seller')).toBe(true);
-      expect(hasText(page, 'Platform fees to Settleway')).toBe(true);
+      expect(hasText(page, 'Buyer bond return')).toBe(true);
+      expect(hasText(page, 'Seller principal receipt')).toBe(true);
+      expect(hasText(page, 'Seller bond return')).toBe(true);
+      expect(hasText(page, 'Platform fee retention')).toBe(true);
+      expect(hasText(page, 'Procurement treasury wallet')).toBe(true);
+      expect(hasText(page, 'Farmer treasury wallet')).toBe(true);
+      expect(hasText(page, 'Settleway fee wallet')).toBe(true);
+      expect(hasText(page, 'Linked wallet destination is the only active payout rail in this MVP.')).toBe(true);
       expect(hasText(page, 'Settlement completed')).toBe(true);
     });
 

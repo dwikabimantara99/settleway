@@ -8,6 +8,31 @@ import { createEvent } from '@/lib/escrow/events';
 import { processReputationOutcome } from '@/lib/reputation/engine';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
+import {
+  createProfilePayoutDestinationSnapshot,
+  createWalletPayoutDestinationSnapshot,
+} from '@/lib/payout-destinations';
+import { TESTNET_DEMO_IDENTITIES } from '@/lib/stellar/testnet-demo-identities';
+
+async function buildCompletionPayoutMetadata(deal: DbDeal) {
+  const [buyerProfile, sellerProfile] = await Promise.all([
+    repository.getProfile(deal.buyer_id),
+    repository.getProfile(deal.seller_id),
+  ]);
+
+  return {
+    buyer_payout_destination: buyerProfile
+      ? createProfilePayoutDestinationSnapshot(buyerProfile)
+      : createWalletPayoutDestinationSnapshot('Buyer payout destination', null),
+    seller_payout_destination: sellerProfile
+      ? createProfilePayoutDestinationSnapshot(sellerProfile)
+      : createWalletPayoutDestinationSnapshot('Seller payout destination', null),
+    platform_payout_destination: createWalletPayoutDestinationSnapshot(
+      'Settleway fee wallet',
+      TESTNET_DEMO_IDENTITIES.platform.public_address,
+    ),
+  };
+}
 
 async function runLegacyLocalAcceptance(
   dealId: string,
@@ -21,6 +46,7 @@ async function runLegacyLocalAcceptance(
     updatedDeal.latest_stellar_tx_hash ??
     (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
   const settledAt = new Date().toISOString();
+  const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
 
   const event = createEvent(
     dealId,
@@ -38,6 +64,7 @@ async function runLegacyLocalAcceptance(
       platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
       settlement_reference: settlementReference,
       settled_at: settledAt,
+      ...payoutMetadata,
     },
   );
   await repository.addEvent(event);
@@ -113,6 +140,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       updatedDeal.latest_stellar_tx_hash ??
       (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
     const settledAt = new Date().toISOString();
+    const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
 
     const event = createEvent(
       dealId,
@@ -132,6 +160,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         settled_at: settledAt,
         contract_id: runtimeLoaded.runtime.contract_id,
         actor_address: runtimeLoaded.runtime.metadata.buyer_demo_address,
+        ...payoutMetadata,
       },
     );
     event.tx_hash = executionResult.operation.transaction_hash;

@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { StatCard } from '@/components/ui/StatCard';
 import { Badge } from '@/components/ui/Badge';
-import { demoProfiles } from '@/lib/demo/demo-data';
 import {
   ArrowRight,
   CheckCircle2,
@@ -18,7 +17,9 @@ import {
 import { notFound } from 'next/navigation';
 import { rebuildReputationAggregate } from '@/lib/reputation/engine';
 import type { DbReputationEvent } from '@/lib/db/types';
+import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
+import { PayoutDestinationCard } from '@/components/profile/PayoutDestinationCard';
 
 function formatOutcomeLabel(outcome: DbReputationEvent['reputation_outcome']): string {
   switch (outcome) {
@@ -59,9 +60,10 @@ function formatReference(value: string): string {
 
 export default async function ProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const resolvedParams = await params;
-  const profile = demoProfiles[resolvedParams.userId];
-  
+  const profile = await repository.getProfile(resolvedParams.userId);
   if (!profile) return notFound();
+  const currentUser = await getCurrentUser();
+  const canEditPayoutDestination = currentUser?.id === profile.id;
 
   const reputationEvents = await repository.getParticipantReputationEvents(resolvedParams.userId);
   const agg = rebuildReputationAggregate(reputationEvents);
@@ -69,18 +71,15 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 5);
 
-  const finalVerifiedVolume = profile.verifiedVolumeIdr + agg.verified_volume_idr;
-  const finalSellerScore = profile.sellerScore + agg.seller_score;
-  const finalBuyerScore = profile.buyerScore + agg.buyer_score;
-  const finalSellerCompleted = profile.sellerCompletedCount + agg.seller_completed_count;
-  const finalBuyerCompleted = profile.buyerCompletedCount + agg.buyer_completed_count;
+  const finalVerifiedVolume = profile.verified_volume_idr + agg.verified_volume_idr;
+  const finalSellerScore = profile.seller_score + agg.seller_score;
+  const finalBuyerScore = profile.buyer_score + agg.buyer_score;
+  const finalSellerCompleted = profile.seller_completed_count + agg.seller_completed_count;
+  const finalBuyerCompleted = profile.buyer_completed_count + agg.buyer_completed_count;
   const totalCompleted = finalSellerCompleted + finalBuyerCompleted;
-  const publicProofMode = profile.proofVisibility === 'public';
+  const publicProofMode = profile.proof_visibility === 'public';
   const proofVisibilityLabel =
     publicProofMode ? 'Public proof mode' : 'Private proof mode';
-  const completedOutcomeCount = reputationEvents.filter(
-    (event) => event.reputation_outcome === 'transaction_completed',
-  ).length;
   const failedFundingCount = reputationEvents.filter(
     (event) =>
       event.reputation_outcome === 'buyer_failed_deposit' ||
@@ -115,11 +114,11 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
               {proofVisibilityLabel}
             </Badge>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">{profile.displayName}</h1>
+          <h1 className="text-3xl font-bold text-slate-900">{profile.display_name}</h1>
           <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
             <div className="flex items-center">
               <Briefcase className="mr-1.5 h-4 w-4 text-slate-400" />
-              {profile.roleLabel}
+              {profile.role_label}
             </div>
             <div className="flex items-center">
               <MapPin className="mr-1.5 h-4 w-4 text-slate-400" />
@@ -214,7 +213,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
                   Proof visibility policy
                 </h4>
                 <p className="text-xs">
-                  {profile.proofVisibility === 'public'
+                  {profile.proof_visibility === 'public'
                     ? 'This profile is allowed to expose transaction-level proof references when available.'
                     : 'This profile keeps transaction-level proof references private and relies on aggregate trust presentation instead.'}
                 </p>
@@ -266,6 +265,15 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
             </div>
           </CardContent>
         </Card>
+
+        <PayoutDestinationCard
+          profileId={profile.id}
+          canEdit={canEditPayoutDestination}
+          initialWalletLabel={profile.payout_wallet_label}
+          initialWalletAddress={profile.payout_wallet_address}
+          initialBankName={profile.payout_bank_name}
+          initialBankAccountMasked={profile.payout_bank_account_masked}
+        />
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-8">

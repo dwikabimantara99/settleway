@@ -9,6 +9,10 @@ export class MockRepositoryAdapter implements IRepository {
     return p ? { ...p } : null;
   }
 
+  async updateProfile(id: string, partial: Partial<DbProfile>): Promise<void> {
+    mockStore.updateProfile(id, partial);
+  }
+
   async getListings(): Promise<DbListing[]> {
     return Array.from(mockStore.listings.values()).map(l => ({ ...l }));
   }
