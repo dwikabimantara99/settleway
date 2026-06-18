@@ -320,6 +320,16 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
+    if (coordinatorResult === null) {
+      return NextResponse.json(
+        createErrorResponse(
+          'STELLAR_EXECUTION_UNCONFIRMED',
+          'Buyer funding could not be finalized because the Stellar execution result was unavailable.',
+        ),
+        { status: 502 },
+      );
+    }
+
     const updatedDeal =
       (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
     const event = createEvent(

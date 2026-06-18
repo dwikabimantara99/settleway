@@ -54,7 +54,7 @@ export const TERMINAL_DEAL_STATUSES = [
 ] as const satisfies readonly DealStatus[];
 
 export function isFundingWindowDealStatus(status: DealStatus): boolean {
-  return FUNDING_WINDOW_DEAL_STATUSES.includes(status);
+  return (FUNDING_WINDOW_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
 export function isPreLockDealStatus(status: DealStatus): boolean {
@@ -62,19 +62,19 @@ export function isPreLockDealStatus(status: DealStatus): boolean {
 }
 
 export function isPostLockDealStatus(status: DealStatus): boolean {
-  return POST_LOCK_DEAL_STATUSES.includes(status);
+  return (POST_LOCK_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
 export function isPostProofDealStatus(status: DealStatus): boolean {
-  return POST_PROOF_DEAL_STATUSES.includes(status);
+  return (POST_PROOF_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
 export function isClosedDealStatus(status: DealStatus): boolean {
-  return CLOSED_DEAL_STATUSES.includes(status);
+  return (CLOSED_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
 export function isTerminalDealStatus(status: DealStatus): boolean {
-  return TERMINAL_DEAL_STATUSES.includes(status);
+  return (TERMINAL_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
 export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
