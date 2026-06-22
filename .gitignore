@@ -1,6 +1,8 @@
 node_modules/
-.env
-.env.local
+.env*
+!.env.example
+!web/.env.example
 .DS_Store
 web/.next/
 /contracts/settleway_escrow/target/
+/contracts/settleway_escrow/test_snapshots/

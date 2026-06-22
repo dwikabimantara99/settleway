@@ -1,225 +1,182 @@
 # Settleway
 
-**The Safer Way to Settle Real-World Trade**
+Settleway is a B2B agricultural trade-assurance platform that turns commodity discovery into recorded negotiation, bilateral commitment, escrow-style execution, Stellar-backed proof, and outcome-based reputation.
 
-Settleway is a hackathon MVP for high-value agricultural commodity trade. It turns marketplace discovery into a more disciplined trust workflow: counterparties discover each other, negotiate in a recorded thread, commit together, fund escrow, prove delivery, and build reputation from verifiable transaction outcomes.
+## Product Thesis
 
-This repository is not a generic crypto demo and not just a listing board. It is a product story about how real buyers and real sellers can move from first contact to protected settlement without forcing blockchain complexity into the center of the user experience.
+Agricultural commodity trades often start in informal channels, but the trust problem begins after discovery. Buyers need confidence that goods, quality, delivery, and evidence are real. Sellers need confidence that buyers are serious, funded, and accountable. Settleway makes that corridor explicit.
 
-## Why Settleway Exists
-
-Agricultural commodity trade often becomes fragile after buyer and seller first meet.
-
-Common failure points:
-
-- buyers do not know whether stock, quality, or delivery claims are credible
-- sellers do not know whether the buyer is serious or will cancel unfairly
-- negotiation often disappears into fragmented chat with weak evidence continuity
-- there is no structured commitment gate before payment, delivery, and dispute risk begin
-- reputation is usually shallow, manual, or easy to manipulate
-
-Settleway is designed to make these transactions feel less like informal promises and more like protected execution.
-
-## What This MVP Proves
-
-The current MVP direction focuses on four connected ideas:
-
-1. **Discovery is only the start.** Marketplace listings and buyer requests help supply and demand meet, but trust work begins after discovery.
-2. **Negotiation should be recorded before money moves.** `Submit Offer` opens a recorded negotiation path before the protected room becomes active.
-3. **Commitment should be mutual.** `Open Deal Room` is a two-sided gate, not a one-click shortcut into escrow.
-4. **Outcomes should become reputation.** Proof, lock, refund, settlement, and dispute-related outcomes should support a durable trust history.
-
-## Canonical Product Corridor
-
-The founder-authorized Settleway story is:
+The validated workflow is:
 
 ```text
-Marketplace or buyer request
+Marketplace or Buyer Request
 -> Submit Offer
--> negotiation chat
--> mutual Open Deal Room
--> deposit window
--> escrow locked on Stellar
--> active Deal Room with chat and evidence
--> success or dispute outcome
--> reputation accumulation from verifiable transaction history
+-> Recorded Negotiation
+-> Both parties agree commercial terms
+-> Open Deal Room
+-> Buyer principal + buyer commitment bond
+-> Seller performance bond
+-> Stellar-backed funding and settlement proof
+-> Delivery evidence
+-> Acceptance or constrained dispute path
+-> Deterministic terminal outcome
+-> Verifiable reputation
 ```
 
-### Mutual Commitment Gate
+## What Exists Now
 
-`Open Deal Room` is not a navigation shortcut.
+- Public landing page and Get Started modal.
+- Buy and Sell marketplace discovery surfaces.
+- Listing and buyer-request detail flows.
+- Offer submission, recorded negotiation, agreed terms, notifications, and mutual Deal Room activation.
+- Active Deal Room with funding, lock, evidence, delivery, settlement, refund, expiry, and reputation states.
+- Outcome-backed profile and reputation surfaces.
+- Demo/operator role switching kept out of the primary public UI.
+- Repository abstraction for demo/mock mode and persistent Supabase mode.
+- Stellar Testnet-oriented proof infrastructure for funding, custody sweep, proof, settlement, and external payout experiments.
+- Soroban event-contract baseline for escrow state and proof events.
 
-- one side can signal intent first
-- the counterpart receives a notification
-- the room becomes active only after both sides click `Open Deal Room`
-- deposit starts only after that mutual commitment is complete
+## Honest Implementation Boundary
 
-## Trust And Money Model
+The current repository is hackathon/demo-ready infrastructure, not production financial custody.
 
-For the demo money model:
+Implemented or demonstrable:
 
-- buyer principal: `100%`
-- buyer commitment bond: `5%`
-- seller performance bond: `5%`
-- buyer service fee: `0.5%`
-- seller service fee: `0.5%`
+- deterministic app state transitions;
+- local/demo repository mode;
+- persistent-mode boundary that fails closed without Supabase config;
+- Stellar Testnet proof and transaction-reference modules;
+- managed demo-role Testnet rails;
+- event-contract Soroban baseline;
+- simulated local-bank UX copy where applicable.
 
-Before lock:
+Not production-ready yet:
 
-- if only one side funds, that side receives a full refund
-- the non-funding side receives a reputation penalty
-- no compensatory slashing happens before lock
+- real QRIS;
+- real bank transfer;
+- real fiat anchor payout;
+- real KYC/KYB;
+- production custody;
+- full trustless token escrow contract;
+- automated dispute adjudication;
+- production key-management operations.
 
-After lock:
+## Why Stellar Matters
 
-- both bonds remain protected during execution
-- success returns both bonds, routes principal to the seller, and routes fees to Settleway
-- cancellation or dispute can lead to refund, compensation, or penalty logic
-- settlement and outcome framing are tied back to Stellar-backed trust records
+Stellar is used as a verifiable trust layer, not as a user-facing crypto dashboard. The product needs inspection points for funding, lock, proof, refund, settlement, and reputation-supporting transaction history while keeping ordinary user flows simple.
 
-Settleway is also designed around a dual-rail experience:
+Current Stellar-related modules are intentionally labeled as Testnet proof, demo-managed, or legacy bridge where they do not yet represent final custody architecture.
 
-- `local bank` rail for a Web2-simple user experience
-- `crypto wallet` rail for direct on-chain participants
+## Architecture Overview
 
-Both rails converge on the same trust layer and protected product logic.
+- `web/` - Next.js App Router application, route handlers, UI, repository adapters, state machine, evidence, reputation, Stellar/Testnet integration helpers.
+- `contracts/settleway_escrow/` - Soroban Rust contract baseline for escrow state and event/proof recording.
+- `docs/active/` - current authoritative product, workflow, architecture, status, roadmap, handoff, and consolidation report.
+- `docs/archive/` - historical phase plans, handoffs, acceptance reports, Testnet runbooks, and old prompts.
+- `.github/workflows/` - CI gates for web and Soroban contract validation.
 
-## Why Stellar Stays Behind The Scenes
+## Local Setup
 
-Blockchain is not the headline. Trust is.
+Requirements:
 
-Settleway uses Stellar so the product can honestly say:
+- Node.js `24.15.0` or compatible current Node 24 runtime.
+- npm `11.x`.
+- Rust stable toolchain.
+- `wasm32v1-none` Rust target for Soroban Wasm builds.
+- Optional Stellar CLI `26.1.0` for local Testnet operator work.
 
-`This transaction is secured by the Stellar blockchain.`
+Install web dependencies:
 
-Stellar exists in the product to support:
-
-- escrow lock proof
-- refund or cancellation proof
-- settlement proof
-- evidence hash references
-- reputation-supporting transaction history
-
-The intended user experience stays operational and simple. Blockchain should remain mostly invisible until a buyer, seller, judge, or operator needs to inspect proof.
-
-## AI Role
-
-AI is a support layer, not an automated judge.
-
-In the Settleway concept, AI may help summarize:
-
-- negotiation chat
-- Deal Room chronology
-- evidence context for operator review
-
-It does not silently determine guilt, invent facts, or replace accountable product rules.
-
-## Honest MVP Boundaries
-
-Settleway is a demo-stage product. This repository should stay explicit about what is modeled versus what is already production-ready.
-
-Not claimed as fully implemented production infrastructure:
-
-- real bank transfer rails
-- real QRIS
-- real payout orchestration
-- real KYC or KYB
-- full dispute court
-- autonomous AI judgment
-- production-grade custody
-- completed production persistence rollout
-
-The product vision includes both `local bank` and `crypto wallet` rails converging on the same Stellar-backed trust layer, but the MVP must remain honest about what is simulated, what is represented, and what is already operational.
-
-## Current MVP Surface
-
-The current product direction includes:
-
-- marketplace listings
-- buyer request discovery
-- offer and negotiation flow
-- mutual `Open Deal Room` activation
-- deal funding and escrow-state progression
-- post-lock evidence and delivery milestones
-- refund and expiry outcome narration
-- profile-level reputation visibility
-- Stellar trust framing inside the Deal Room
-
-The strongest screen in the product is the Deal Room, because that is where commitment, funding, evidence, settlement, and reputation become legible to the user and to the demo audience.
-
-## Repository Guide
-
-```text
-settleway/
-  README.md
-  AGENTS.md
-  GEMINI.md
-  docs/
-  diagrams/
-  prompts/
-  contracts/
-  web/
-```
-
-Main directories:
-
-- `web/` - Next.js application, routes, UI, and repository layer
-- `contracts/` - Soroban contract work and related blockchain artifacts
-- `docs/` - product, execution, engineering, and acceptance source of truth
-- `diagrams/` - supporting visual references
-- `prompts/` - historical phase prompts and operator instructions
-
-## Local Development
-
-Run the web app locally:
-
-```bash
+```powershell
 cd web
-npm install
+npm ci
+```
+
+Use demo mode for local development and CI-like builds:
+
+```powershell
+$env:NEXT_PUBLIC_RUNTIME_MODE="demo"
 npm run dev
 ```
 
-Open:
+Persistent mode requires Supabase configuration and intentionally fails closed if required values are absent.
+
+## Environment Files
+
+Use placeholders only in committed examples:
+
+- `.env.example`
+- `web/.env.example`
+
+Never commit `.env`, `.env.local`, private keys, seed phrases, service-role keys, or managed-account secrets.
+
+## Quality Gates
+
+Web:
+
+```powershell
+cd web
+npm ci
+npm run test
+npm run lint
+npm run typecheck
+$env:NEXT_PUBLIC_RUNTIME_MODE="demo"; npm run build
+```
+
+Contract:
+
+```powershell
+cd contracts/settleway_escrow
+cargo fmt --check
+cargo test --verbose
+cargo build --target wasm32v1-none --release --verbose
+```
+
+`cargo clippy` is recommended when the local toolchain has the component installed.
+
+## Demo Corridor
+
+The hackathon demo should show:
+
+1. Landing page.
+2. Buy or Sell marketplace discovery.
+3. Listing or buyer request detail.
+4. Submit Offer.
+5. Recorded negotiation and terms.
+6. Counterparty acceptance.
+7. Mutual Open Deal Room.
+8. Buyer and seller funding.
+9. Escrow lock and Stellar trust reference.
+10. Delivery evidence and proof hash.
+11. Buyer acceptance or constrained failure path.
+12. Settlement/refund outcome and reputation update.
+
+## Documentation
+
+Start here:
+
+- `docs/active/00_PRODUCT_CONSTITUTION.md`
+- `docs/active/01_PRODUCT_WORKFLOW.md`
+- `docs/active/02_SYSTEM_AND_STELLAR_ARCHITECTURE.md`
+- `docs/active/03_CURRENT_IMPLEMENTATION_STATUS.md`
+- `docs/active/04_PRODUCTIZATION_ROADMAP.md`
+- `docs/active/05_CURRENT_HANDOFF.md`
+- `docs/active/06_MAIN_CONSOLIDATION_REPORT.md`
+
+Historical documents remain available in `docs/archive/` but are not active source of truth when they conflict with `docs/active/`.
+
+## Branch Policy
+
+After Macro Batch 2 review, the intended policy is:
 
 ```text
-http://localhost:3000
+main = protected canonical product branch
+work/<milestone> = short-lived implementation branch
+cleanup/<milestone> = bounded repository maintenance branch
+one coherent milestone per branch
+merge only after gates pass
+no force-push to main
+delete phase branches only after tags and review
 ```
 
-Useful commands:
-
-```bash
-npm test
-npx eslint .
-npx tsc --noEmit
-npm run build
-```
-
-Notes:
-
-- local demo development is the primary supported mode for the current MVP
-- repository-wide TypeScript and production-build hardening are still being resolved outside the active product slice
-
-## Source Of Truth
-
-If you are working on this repository, start with:
-
-1. `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`
-2. `docs/40_SETTLEWAY_ACTIVE_PHASE_CONTRACT.md`
-3. `docs/41_SETTLEWAY_EXECUTION_HANDOFF.md`
-
-Useful supporting product context:
-
-- `docs/22_ONBOARDING_BLUEPRINT.md`
-- `docs/00_PRODUCT_BLUEPRINT.md`
-- `docs/01_MASTER_PRD.md`
-- `docs/08_ESCROW_STATE_MACHINE.md`
-- `docs/09_PROOF_AND_EVIDENCE_SPEC.md`
-- `docs/10_REPUTATION_SPEC.md`
-
-## Positioning
-
-Settleway is not trying to be a marketplace that stops at discovery, and not trying to be a blockchain interface that forgets the user.
-
-It is trying to prove something more useful:
-
-that agricultural buyers and sellers can move from first contact to protected settlement in a workflow that feels operationally serious, visibly fair, and verifiable when trust is tested.
+Macro Batch 1 creates and pushes a candidate branch only. It does not modify `main`.

@@ -16,7 +16,7 @@ Use this matrix to decide whether a product slice is complete under the founder-
 
 ## Historical acceptance notes
 
-The repository contains historical acceptance notes for earlier phase-based implementation work. They remain useful as evidence checkpoints, but they are no longer the primary product-flow authority when they conflict with the founder-authorized corridor in `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`.
+The repository contains historical acceptance notes for earlier phase-based implementation work. They remain useful as evidence checkpoints, but they are no longer the primary product-flow authority when they conflict with the founder-authorized corridor in `docs/active/00_PRODUCT_CONSTITUTION.md` and `docs/active/01_PRODUCT_WORKFLOW.md`.
 
 ## Current MVP acceptance
 

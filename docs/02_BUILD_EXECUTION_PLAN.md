@@ -231,4 +231,4 @@ Acceptance criteria:
 
 ## Historical note
 
-The older direct-to-Deal-Room phase order is superseded by the founder-authorized rebuild direction. If any older planning artifact conflicts with the sequence above, this plan yields to `docs/39_SETTLEWAY_EXECUTION_CONSTITUTION.md`.
+The older direct-to-Deal-Room phase order is superseded by the founder-authorized rebuild direction. If any older planning artifact conflicts with the sequence above, this plan yields to `docs/active/00_PRODUCT_CONSTITUTION.md` and `docs/active/01_PRODUCT_WORKFLOW.md`.

@@ -1,63 +1,85 @@
-# AGENTS.md - Repository-level Instructions for AI Coding Agents
+# AGENTS.md - Settleway Repository Instructions
 
-You are an implementation agent for Settleway. Your role is to build the hackathon MVP according to the PRD, not to redesign the product.
+You are an implementation and maintenance agent for Settleway. Your job is to protect the founder-approved product direction while keeping the repository clean, truthful, and auditable.
 
-## Source-of-truth files
+## Active Source Of Truth
 
 Read these before planning or coding:
 
-- `docs/22_ONBOARDING_BLUEPRINT.md`
-- `docs/23_CURRENT_HANDOFF.md`
-- `GEMINI.md`
+1. `docs/active/00_PRODUCT_CONSTITUTION.md`
+2. `docs/active/01_PRODUCT_WORKFLOW.md`
+3. `docs/active/02_SYSTEM_AND_STELLAR_ARCHITECTURE.md`
+4. `docs/active/03_CURRENT_IMPLEMENTATION_STATUS.md`
+5. `docs/active/05_CURRENT_HANDOFF.md`
+6. `docs/active/06_MAIN_CONSOLIDATION_REPORT.md` when doing repository consolidation or branch promotion
+
+Supporting domain references remain useful:
+
 - `docs/00_PRODUCT_BLUEPRINT.md`
 - `docs/01_MASTER_PRD.md`
-- `docs/02_BUILD_EXECUTION_PLAN.md`
-- `docs/03_FRONTEND_SPEC.md`
-- `docs/04_BACKEND_SPEC.md`
 - `docs/05_DATABASE_SCHEMA.md`
 - `docs/06_STELLAR_SOROBAN_SPEC.md`
-- `docs/07_API_CONTRACT.md`
 - `docs/08_ESCROW_STATE_MACHINE.md`
 - `docs/09_PROOF_AND_EVIDENCE_SPEC.md`
 - `docs/10_REPUTATION_SPEC.md`
-- `docs/11_DEMO_SCRIPT.md`
 - `docs/12_ACCEPTANCE_CRITERIA.md`
-- `docs/13_AI_CODING_GUARDRAILS.md`
-- `docs/14_RISK_REGISTER.md`
-- `docs/15_DESIGN_SYSTEM_SPEC.md`
-- `docs/16_TESTING_AND_QA_PLAN.md`
-- `docs/17_TECHNICAL_REFERENCES.md`
-- `docs/18_FILE_CREATION_MAP.md`
-- `docs/19_SCREEN_LEVEL_FRONTEND_PRD.md`
-- `docs/20_IMPLEMENTATION_ACCEPTANCE_MATRIX.md`
-- `docs/21_GEMINI_HANDOFF_JSON_CONTRACT.md`
 
-## Document precedence
+Historical material lives under `docs/archive/`. It must not override `docs/active/`.
 
-- Product vision: `docs/00_PRODUCT_BLUEPRINT.md`, `docs/01_MASTER_PRD.md`, and `docs/22_ONBOARDING_BLUEPRINT.md` as the entry map.
-- Domain authority: `docs/05_DATABASE_SCHEMA.md` through `docs/10_REPUTATION_SPEC.md`.
-- Implementation truth: committed source, registered tests, Git history, and CI evidence.
-- Operating rules: `AGENTS.md` and `docs/13_AI_CODING_GUARDRAILS.md`.
-- Executor-specific guidance: `GEMINI.md`, `web/CLAUDE.md`, and `docs/21_GEMINI_HANDOFF_JSON_CONTRACT.md`.
-- Historical material: `prompts/*` and stale status statements in README files.
+## Product Direction
 
-## Do not read by default
+Settleway is a B2B agricultural trade-assurance platform. The canonical flow is:
 
-Do not search for or rely on the human operator guide. It is not part of the implementation source-of-truth.
+```text
+Marketplace or Buyer Request
+-> Submit Offer
+-> Recorded Negotiation
+-> Agreed Terms
+-> Mutual Open Deal Room
+-> Buyer principal + buyer bond
+-> Seller performance bond
+-> Stellar-backed funding and settlement proof
+-> Delivery evidence
+-> Acceptance or constrained failure path
+-> Deterministic outcome
+-> Verifiable reputation
+```
 
-## Working rules
+Do not turn Settleway into a generic wallet dashboard, generic marketplace checkout, or unbounded crypto demo.
 
-1. Do not code before producing a phase-specific implementation plan.
-2. Work only on the current approved phase.
-3. Do not add new product scope without explicit approval.
-4. Prefer a working vertical slice over broad unfinished screens.
-5. Report every file created, modified, or deleted.
-6. Run typecheck/lint/build when the phase asks for it.
-7. If a command might overwrite existing work, ask before running it.
-8. Never put secrets in committed files.
-9. If Stellar/Soroban token custody becomes too risky, implement the mandatory event-contract fallback and clearly label it.
-10. Do not claim real bank transfer, real QRIS, real KYC, real payout, or real custody unless actually implemented.
+## Working Rules
 
-## MVP identity
+1. State the active task, scope, and no-touch areas before implementation.
+2. Work only inside the approved scope.
+3. Do not add product scope without founder approval.
+4. Prefer vertical coherence over broad unfinished changes.
+5. Do not claim real bank transfer, QRIS, KYC/KYB, production custody, or trustless token escrow unless implemented and proven.
+6. Keep demo/Testnet bridges explicitly labeled as demo, legacy, or Testnet proof where appropriate.
+7. Never commit secrets, seed phrases, private keys, service-role keys, or real credential material.
+8. Do not rewrite public history or force-push.
+9. Do not modify `main` unless the user explicitly authorizes that phase.
+10. Do not mark PASS without command evidence.
 
-Settleway is not a generic crypto demo. It is a marketplace for high-value agricultural commodity trades, starting with a chili transaction demo. The blockchain layer must support the marketplace story, not replace it.
+## Validation
+
+Use the narrowest sufficient gates for small work and the full gates for consolidation/release work.
+
+Expected full gates:
+
+- `cd web && npm ci`
+- `cd web && npm run test`
+- `cd web && npm run lint`
+- `cd web && npm run typecheck`
+- `cd web && $env:NEXT_PUBLIC_RUNTIME_MODE="demo"; npm run build`
+- `cd contracts/settleway_escrow && cargo fmt --check`
+- `cd contracts/settleway_escrow && cargo test --verbose`
+- `cd contracts/settleway_escrow && cargo build --target wasm32v1-none --release --verbose`
+
+Run `cargo clippy` when the local Rust toolchain has the component available.
+
+## Git Discipline
+
+- Preserve important historical branch heads with annotated tags before cleanup or branch deletion.
+- Use candidate branches for consolidation.
+- Do not delete remote phase branches during Macro Batch 1.
+- Push candidate work for review before promoting to `main`.
