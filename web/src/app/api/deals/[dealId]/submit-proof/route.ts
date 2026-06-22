@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server';
-import { repository } from '@/lib/repositories';
+import { repository, runtimeMode } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
 import { verifyAndConstructEvidence } from '@/lib/evidence/verification';
-import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import {
+  loadDealRoomTestnetRuntime,
+  type DealRoomTestnetRuntime,
+} from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
+import { executeCustodyProofReference } from '@/lib/stellar/testnet-proof';
 
 async function runLegacyLocalProofSubmission(
   dealId: string,
@@ -44,6 +48,175 @@ async function runLegacyLocalProofSubmission(
   await repository.addEvent(event);
 
   return NextResponse.json(createSuccessResponse(updatedDeal));
+}
+
+async function persistCustodyWalletProofSubmission(input: {
+  dealId: string;
+  existingDeal: DbDeal;
+  actorId: string;
+  proofHash: string;
+  transactionHash: string;
+  custodyAddress: string;
+  proofDataKey: string;
+  evidenceMetadata:
+    | {
+        evidence_id: string;
+        original_filename: string;
+        byte_size: number;
+        evidence_kind: string;
+      }
+    | null;
+}) {
+  const nextDeal = {
+    ...transition(input.existingDeal, 'submit_proof'),
+    proof_hash: input.proofHash,
+    latest_stellar_tx_hash: input.transactionHash,
+    stellar_sync_status: 'idle' as const,
+  };
+
+  const replaced = await repository.replaceDealIfCurrent({
+    current: input.existingDeal,
+    next: nextDeal,
+  });
+
+  let updatedDeal = replaced.deal ?? nextDeal;
+  if (!replaced.replaced) {
+    const currentDeal = await repository.getDeal(input.existingDeal.id);
+    if (
+      currentDeal?.status === 'PROOF_SUBMITTED' &&
+      currentDeal.proof_hash === input.proofHash &&
+      currentDeal.latest_stellar_tx_hash === input.transactionHash
+    ) {
+      updatedDeal = currentDeal;
+    } else if (
+      runtimeMode === 'demo' &&
+      currentDeal &&
+      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
+    ) {
+      await repository.updateDeal(input.existingDeal.id, {
+        status: nextDeal.status,
+        proof_hash: nextDeal.proof_hash,
+        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+        stellar_sync_status: nextDeal.stellar_sync_status,
+        updated_at: nextDeal.updated_at,
+      });
+      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
+      if (!recoveredDeal) {
+        return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+      }
+      updatedDeal = recoveredDeal;
+    } else {
+      return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+    }
+  }
+
+  const existingEvents = await repository.getDealEvents(input.dealId);
+  const hasProofEvent = existingEvents.some(
+    (event) =>
+      event.event_type === 'submit_proof' &&
+      event.proof_hash === input.proofHash &&
+      event.tx_hash === input.transactionHash,
+  );
+
+  if (!hasProofEvent) {
+    const event = createEvent(
+      input.dealId,
+      'submit_proof',
+      input.actorId,
+      'Seller submitted delivery proof and Settleway recorded the SHA-256 proof reference through the custody wallet on Stellar Testnet.',
+      {
+        next_status: updatedDeal.status,
+        proof_recording_route: 'settleway_custody_wallet_memo_hash',
+        custody_address: input.custodyAddress,
+        proof_data_key: input.proofDataKey,
+        lock_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
+        ...input.evidenceMetadata,
+      },
+    );
+    event.proof_hash = input.proofHash;
+    event.tx_hash = input.transactionHash;
+    await repository.addEvent(event);
+  }
+
+  return NextResponse.json(createSuccessResponse(updatedDeal));
+}
+
+async function runCustodyWalletProofSubmission(input: {
+  dealId: string;
+  existingDeal: DbDeal;
+  actorId: string;
+  proofHash: string;
+  evidenceMetadata:
+    | {
+        evidence_id: string;
+        original_filename: string;
+        byte_size: number;
+        evidence_kind: string;
+      }
+    | null;
+  runtime: DealRoomTestnetRuntime;
+}) {
+  if (input.existingDeal.status !== 'LOCKED' || !input.existingDeal.latest_stellar_tx_hash) {
+    return NextResponse.json(
+      createErrorResponse(
+        'STELLAR_EXECUTION_INVALID',
+        'Proof submission requires a locked custody room with a confirmed lock transaction.',
+      ),
+      { status: 400 },
+    );
+  }
+
+  const existingEvents = await repository.getDealEvents(input.dealId);
+  const existingProofEvent = existingEvents.find(
+    (event) =>
+      event.event_type === 'submit_proof' &&
+      event.proof_hash === input.proofHash &&
+      event.tx_hash,
+  );
+
+  if (existingProofEvent?.tx_hash) {
+    return persistCustodyWalletProofSubmission({
+      dealId: input.dealId,
+      existingDeal: input.existingDeal,
+      actorId: input.actorId,
+      proofHash: input.proofHash,
+      transactionHash: existingProofEvent.tx_hash,
+      custodyAddress: String(existingProofEvent.metadata?.custody_address ?? input.runtime.metadata.admin_address),
+      proofDataKey: String(existingProofEvent.metadata?.proof_data_key ?? `SWP:${input.dealId.slice(-20)}`),
+      evidenceMetadata: input.evidenceMetadata,
+    });
+  }
+
+  let proofReference;
+  try {
+    proofReference = await executeCustodyProofReference({
+      deal: input.existingDeal,
+      proofHash: input.proofHash,
+      signer: input.runtime.signer_port,
+      custodyAddress: input.runtime.metadata.admin_address,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      createErrorResponse(
+        'STELLAR_EXECUTION_FAILED',
+        error instanceof Error
+          ? error.message
+          : 'The Stellar Testnet proof reference could not be confirmed.',
+      ),
+      { status: 502 },
+    );
+  }
+
+  return persistCustodyWalletProofSubmission({
+    dealId: input.dealId,
+    existingDeal: input.existingDeal,
+    actorId: input.actorId,
+    proofHash: input.proofHash,
+    transactionHash: proofReference.transactionHash,
+    custodyAddress: proofReference.custodyAddress,
+    proofDataKey: proofReference.proofDataKey,
+    evidenceMetadata: input.evidenceMetadata,
+  });
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
@@ -136,6 +309,17 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         ),
         { status: 503 },
       );
+    }
+
+    if (existingDeal.stellar_escrow_id === null) {
+      return runCustodyWalletProofSubmission({
+        dealId,
+        existingDeal,
+        actorId,
+        proofHash,
+        evidenceMetadata,
+        runtime: runtimeLoaded.runtime,
+      });
     }
 
     const executionResult = await executeConfirmedDealRoomRouteAction({

@@ -35,6 +35,10 @@ export interface Profile {
   payoutRailPreference: PayoutRailPreference;
   payoutWalletLabel: string | null;
   payoutWalletAddress: string | null;
+  connectedWalletAddress?: string | null;
+  connectedWalletNetwork?: 'testnet' | null;
+  connectedWalletProvider?: string | null;
+  connectedWalletLinkedAt?: string | null;
   payoutBankName: string | null;
   payoutBankAccountMasked: string | null;
 }

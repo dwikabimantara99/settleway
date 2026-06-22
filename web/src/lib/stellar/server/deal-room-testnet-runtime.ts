@@ -34,6 +34,7 @@ export interface DealRoomTestnetRuntime {
   contract_id: string;
   metadata: StellarExecutionPublicMetadata;
   execution_adapter: StellarExecutionAdapter;
+  signer_port: StellarSignerPort;
 }
 
 export interface DealRoomDefaultStellarState {
@@ -318,6 +319,7 @@ export function loadDealRoomTestnetRuntime(
       contract_id: contractId!,
       metadata,
       execution_adapter: executionAdapter,
+      signer_port: signerPort,
     },
   };
 }

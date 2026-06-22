@@ -45,26 +45,25 @@ describe('Offer Detail Page', () => {
 
     expect(html).toContain('Back to notifications');
     expect(html).toContain('Back to source listing');
-    expect(html).toContain('Terms must be accepted first,');
-    expect(html).toContain('Deal Terms');
+    expect(html).toContain('Commercial terms are aligned. Review the agreement summary below.');
+    expect(html).toContain('Agreed Deal Terms');
     expect(html).toContain(
-      'One commitment click is only a signal. The second confirmed click activates the active escrow room and opens the deposit window.',
+      'One commitment click is only a signal. The second confirmation activates the escrow',
     );
     expect(html).toContain('Enter Active Escrow Room');
   });
 
-  it('presents the offer thread as a shared negotiation conversation', async () => {
+  it('presents the agreed offer as a locked recorded conversation', async () => {
     const html = renderToString(
       await OfferDetailPage({
         params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
       }),
     );
 
-    expect(html).toContain('Buyer and seller exchange messages here before either side opens the protected');
-    expect(html).toContain('Recorded messages');
-    expect(html).toContain('Type a message...');
-    expect(html).toContain('aria-label="Send message"');
+    expect(html).toContain('Recorded Conversation History');
+    expect(html).toContain('Conversation Locked');
+    expect(html).toContain('View Full Conversation');
     expect(html).toContain('Wed 17 Jun');
-    expect(html).toContain('Terms note');
+    expect(html).toContain('Agreed Points');
   });
 });

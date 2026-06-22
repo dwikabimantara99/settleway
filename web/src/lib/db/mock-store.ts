@@ -22,6 +22,10 @@ const toDbProfile = (p: any): DbProfile => ({
   payout_rail_preference: p.payoutRailPreference,
   payout_wallet_label: p.payoutWalletLabel,
   payout_wallet_address: p.payoutWalletAddress,
+  connected_wallet_address: p.connectedWalletAddress ?? null,
+  connected_wallet_network: p.connectedWalletNetwork ?? null,
+  connected_wallet_provider: p.connectedWalletProvider ?? null,
+  connected_wallet_linked_at: p.connectedWalletLinkedAt ?? null,
   payout_bank_name: p.payoutBankName,
   payout_bank_account_masked: p.payoutBankAccountMasked,
   created_at: new Date().toISOString(),
@@ -285,6 +289,16 @@ export class MockStore {
 
     let isLegal = false;
     if (input.current.status === input.next.status) {
+      isLegal = true;
+    } else if (
+      ((input.current.status === 'BUYER_FUNDED' && input.next.status === 'CUSTODY_PENDING') ||
+        (input.current.status === 'SELLER_FUNDED' && input.next.status === 'CUSTODY_PENDING'))
+    ) {
+      isLegal = true;
+    } else if (
+      input.current.status === 'CUSTODY_PENDING' &&
+      input.next.status === 'LOCKED'
+    ) {
       isLegal = true;
     } else {
       const allActions: EscrowAction[] = [

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { StrKey } from '@stellar/stellar-sdk';
 import { repository } from '@/lib/repositories';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { requireAuth } from '@/lib/auth/server';
@@ -24,7 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
   try {
     const authUser = await requireAuth();
     if (authUser.id !== userId) {
-      return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'You can only update your own payout destination.'), { status: 403 });
+      return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'You can only update your own profile.'), { status: 403 });
     }
 
     const existingProfile = await repository.getProfile(userId);
@@ -36,6 +37,77 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ us
     const payoutRailPreference = body.payout_rail_preference;
     const payoutWalletLabel = body.payout_wallet_label;
     const payoutWalletAddress = body.payout_wallet_address;
+    const connectedWalletAddress = body.connected_wallet_address;
+    const connectedWalletNetwork = body.connected_wallet_network;
+    const connectedWalletProvider = body.connected_wallet_provider;
+    const displayName = typeof body.display_name === 'string' ? body.display_name.trim() : null;
+    const roleLabel = typeof body.role_label === 'string' ? body.role_label.trim() : null;
+    const location = typeof body.location === 'string' ? body.location.trim() : null;
+
+    const isIdentityUpdate =
+      displayName !== null || roleLabel !== null || location !== null;
+
+    if (isIdentityUpdate) {
+      if (!displayName || !roleLabel || !location) {
+        return NextResponse.json(
+          createErrorResponse('BAD_REQUEST', 'display_name, role_label, and location are required'),
+          { status: 400 },
+        );
+      }
+
+      await repository.updateProfile(userId, {
+        display_name: displayName,
+        role_label: roleLabel,
+        location,
+      });
+
+      const updatedProfile = await repository.getProfile(userId);
+      return NextResponse.json(createSuccessResponse(updatedProfile, { source: 'mock' }));
+    }
+
+    const isConnectedWalletUpdate =
+      connectedWalletAddress !== undefined ||
+      connectedWalletNetwork !== undefined ||
+      connectedWalletProvider !== undefined;
+
+    if (isConnectedWalletUpdate) {
+      if (typeof connectedWalletAddress !== 'string' || connectedWalletAddress.trim() === '') {
+        return NextResponse.json(
+          createErrorResponse('BAD_REQUEST', 'connected_wallet_address is required'),
+          { status: 400 },
+        );
+      }
+
+      const normalizedAddress = connectedWalletAddress.trim();
+      if (!StrKey.isValidEd25519PublicKey(normalizedAddress)) {
+        return NextResponse.json(
+          createErrorResponse('BAD_REQUEST', 'connected_wallet_address must be a valid Stellar public key'),
+          { status: 400 },
+        );
+      }
+
+      if (connectedWalletNetwork !== 'testnet') {
+        return NextResponse.json(
+          createErrorResponse('BAD_REQUEST', 'Only Stellar Testnet wallets can be linked in this MVP.'),
+          { status: 400 },
+        );
+      }
+
+      const provider =
+        typeof connectedWalletProvider === 'string' && connectedWalletProvider.trim()
+          ? connectedWalletProvider.trim()
+          : 'Freighter';
+
+      await repository.updateProfile(userId, {
+        connected_wallet_address: normalizedAddress,
+        connected_wallet_network: 'testnet',
+        connected_wallet_provider: provider,
+        connected_wallet_linked_at: new Date().toISOString(),
+      });
+
+      const updatedProfile = await repository.getProfile(userId);
+      return NextResponse.json(createSuccessResponse(updatedProfile, { source: 'mock' }));
+    }
 
     if (payoutRailPreference !== 'wallet' && payoutRailPreference !== 'bank') {
       return NextResponse.json(createErrorResponse('BAD_REQUEST', 'payout_rail_preference must be wallet or bank'), { status: 400 });

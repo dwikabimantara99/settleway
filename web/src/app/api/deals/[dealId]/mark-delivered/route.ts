@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
-import { repository } from '@/lib/repositories';
+import { repository, runtimeMode } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
-import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import {
+  loadDealRoomTestnetRuntime,
+  type DealRoomTestnetRuntime,
+} from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
+import { executeCustodyDeliveryReference } from '@/lib/stellar/testnet-proof';
 
 async function runLegacyLocalDeliveryMilestone(
   dealId: string,
@@ -30,6 +34,149 @@ async function runLegacyLocalDeliveryMilestone(
   await repository.addEvent(event);
 
   return NextResponse.json(createSuccessResponse(updatedDeal));
+}
+
+async function persistCustodyWalletDeliveryMilestone(input: {
+  dealId: string;
+  existingDeal: DbDeal;
+  actorId: string;
+  transactionHash: string;
+  custodyAddress: string;
+  deliveryDataKey: string;
+}) {
+  const nextDeal = {
+    ...transition(input.existingDeal, 'mark_delivered'),
+    latest_stellar_tx_hash: input.transactionHash,
+    stellar_sync_status: 'idle' as const,
+  };
+
+  const replaced = await repository.replaceDealIfCurrent({
+    current: input.existingDeal,
+    next: nextDeal,
+  });
+
+  let updatedDeal = replaced.deal ?? nextDeal;
+  if (!replaced.replaced) {
+    const currentDeal = await repository.getDeal(input.existingDeal.id);
+    if (
+      currentDeal?.status === 'DELIVERED' &&
+      currentDeal.latest_stellar_tx_hash === input.transactionHash
+    ) {
+      updatedDeal = currentDeal;
+    } else if (
+      runtimeMode === 'demo' &&
+      currentDeal &&
+      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
+    ) {
+      await repository.updateDeal(input.existingDeal.id, {
+        status: nextDeal.status,
+        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+        stellar_sync_status: nextDeal.stellar_sync_status,
+        updated_at: nextDeal.updated_at,
+      });
+      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
+      if (!recoveredDeal) {
+        return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+      }
+      updatedDeal = recoveredDeal;
+    } else {
+      return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+    }
+  }
+
+  const existingEvents = await repository.getDealEvents(input.dealId);
+  const hasDeliveryEvent = existingEvents.some(
+    (event) =>
+      event.event_type === 'mark_delivered' &&
+      event.tx_hash === input.transactionHash,
+  );
+
+  if (!hasDeliveryEvent) {
+    const event = createEvent(
+      input.dealId,
+      'mark_delivered',
+      input.actorId,
+      'Seller marked delivery and Settleway recorded the delivery milestone through the custody wallet on Stellar Testnet.',
+      {
+        next_status: updatedDeal.status,
+        proof_hash: updatedDeal.proof_hash,
+        delivery_recording_route: 'settleway_custody_wallet_memo_hash',
+        custody_address: input.custodyAddress,
+        delivery_data_key: input.deliveryDataKey,
+        proof_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
+      },
+    );
+    event.proof_hash = updatedDeal.proof_hash;
+    event.tx_hash = input.transactionHash;
+    await repository.addEvent(event);
+  }
+
+  return NextResponse.json(createSuccessResponse(updatedDeal));
+}
+
+async function runCustodyWalletDeliveryMilestone(input: {
+  dealId: string;
+  existingDeal: DbDeal;
+  actorId: string;
+  runtime: DealRoomTestnetRuntime;
+}) {
+  if (
+    input.existingDeal.status !== 'PROOF_SUBMITTED' ||
+    !input.existingDeal.proof_hash ||
+    !input.existingDeal.latest_stellar_tx_hash
+  ) {
+    return NextResponse.json(
+      createErrorResponse(
+        'STELLAR_EXECUTION_INVALID',
+        'Delivery confirmation requires a proof-submitted custody room with a confirmed proof transaction.',
+      ),
+      { status: 400 },
+    );
+  }
+
+  const existingEvents = await repository.getDealEvents(input.dealId);
+  const existingDeliveryEvent = existingEvents.find(
+    (event) => event.event_type === 'mark_delivered' && event.tx_hash,
+  );
+
+  if (existingDeliveryEvent?.tx_hash) {
+    return persistCustodyWalletDeliveryMilestone({
+      dealId: input.dealId,
+      existingDeal: input.existingDeal,
+      actorId: input.actorId,
+      transactionHash: existingDeliveryEvent.tx_hash,
+      custodyAddress: String(existingDeliveryEvent.metadata?.custody_address ?? input.runtime.metadata.admin_address),
+      deliveryDataKey: String(existingDeliveryEvent.metadata?.delivery_data_key ?? `SWD:${input.dealId.slice(-20)}`),
+    });
+  }
+
+  let deliveryReference;
+  try {
+    deliveryReference = await executeCustodyDeliveryReference({
+      deal: input.existingDeal,
+      signer: input.runtime.signer_port,
+      custodyAddress: input.runtime.metadata.admin_address,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      createErrorResponse(
+        'STELLAR_EXECUTION_FAILED',
+        error instanceof Error
+          ? error.message
+          : 'The Stellar Testnet delivery reference could not be confirmed.',
+      ),
+      { status: 502 },
+    );
+  }
+
+  return persistCustodyWalletDeliveryMilestone({
+    dealId: input.dealId,
+    existingDeal: input.existingDeal,
+    actorId: input.actorId,
+    transactionHash: deliveryReference.transactionHash,
+    custodyAddress: deliveryReference.custodyAddress,
+    deliveryDataKey: deliveryReference.deliveryDataKey,
+  });
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
@@ -65,6 +212,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         ),
         { status: 503 },
       );
+    }
+
+    if (existingDeal.stellar_escrow_id === null) {
+      return runCustodyWalletDeliveryMilestone({
+        dealId,
+        existingDeal,
+        actorId: authUser.id,
+        runtime: runtimeLoaded.runtime,
+      });
     }
 
     const executionResult = await executeConfirmedDealRoomRouteAction({

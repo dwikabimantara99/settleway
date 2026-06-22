@@ -4,6 +4,7 @@ export type DealStatus =
   | "WAITING_DEPOSITS"
   | "BUYER_FUNDED"
   | "SELLER_FUNDED"
+  | "CUSTODY_PENDING"
   | "LOCKED"
   | "PROOF_SUBMITTED"
   | "DELIVERED"
@@ -25,6 +26,7 @@ export const FUNDING_WINDOW_DEAL_STATUSES = [
   'WAITING_DEPOSITS',
   'BUYER_FUNDED',
   'SELLER_FUNDED',
+  'CUSTODY_PENDING',
 ] as const satisfies readonly DealStatus[];
 
 export const POST_LOCK_DEAL_STATUSES = [
@@ -77,6 +79,18 @@ export function isTerminalDealStatus(status: DealStatus): boolean {
   return (TERMINAL_DEAL_STATUSES as readonly DealStatus[]).includes(status);
 }
 
+export function lockAfterCustody(deal: DbDeal): DbDeal {
+  if (deal.status !== 'CUSTODY_PENDING') {
+    throw new Error(`Invalid custody lock transition from ${deal.status}`);
+  }
+
+  return {
+    ...deal,
+    status: 'LOCKED',
+    updated_at: new Date().toISOString(),
+  };
+}
+
 export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
   const currentStatus = deal.status as DealStatus;
   let nextStatus: DealStatus = currentStatus;
@@ -102,6 +116,9 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
       else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
+
+    case 'CUSTODY_PENDING':
+      throw new Error('Custody transfer must complete before escrow can lock');
 
     case 'LOCKED':
       if (action === 'submit_proof') nextStatus = 'PROOF_SUBMITTED';

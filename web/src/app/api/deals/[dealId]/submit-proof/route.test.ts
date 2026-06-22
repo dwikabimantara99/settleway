@@ -31,7 +31,12 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
   })),
 }));
 
+vi.mock("@/lib/stellar/testnet-proof", () => ({
+  executeCustodyProofReference: vi.fn(),
+}));
+
 import { mockStore } from "@/lib/db/mock-store";
+import { executeCustodyProofReference } from "@/lib/stellar/testnet-proof";
 import { POST as submitProofRoute } from "./route";
 
 describe("submit-proof route", () => {
@@ -49,6 +54,12 @@ describe("submit-proof route", () => {
       action: "submit_proof",
       transaction_hash: "c".repeat(64),
       result_escrow_id: null,
+    });
+    vi.mocked(executeCustodyProofReference).mockResolvedValue({
+      transactionHash: "d".repeat(64),
+      custodyAddress: "GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG",
+      proofHash: "7f5f3a96bcb7c4bbf76c2c3d4e7b7e85752f50eb0d98111f6f9b2e1a2c3d4e5f",
+      proofDataKey: "SWP:proof-custody-testnet",
     });
   });
 
@@ -111,5 +122,44 @@ describe("submit-proof route", () => {
     expect(events.at(-1)?.event_type).toBe("submit_proof");
     expect(events.at(-1)?.tx_hash).toBe("c".repeat(64));
     expect(events.at(-1)?.proof_hash).toBe(proofHash);
+  });
+
+  it("records proof for a custody-locked testnet room without a Soroban escrow id", async () => {
+    const proofHash = "7f5f3a96bcb7c4bbf76c2c3d4e7b7e85752f50eb0d98111f6f9b2e1a2c3d4e5f";
+    setupDeal("deal-proof-custody-testnet", {
+      stellar_escrow_id: null,
+      latest_stellar_tx_hash: "b".repeat(64),
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: () => ({ value: "seller-1" }),
+    } as any);
+
+    const response = await submitProofRoute(
+      new Request("http://localhost/api/deals/deal-proof-custody-testnet/submit-proof", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          proof_hash: proofHash,
+        }),
+      }),
+      { params: Promise.resolve({ dealId: "deal-proof-custody-testnet" }) },
+    );
+
+    expect(response.status).toBe(200);
+    expect(executeCustodyProofReference).toHaveBeenCalledOnce();
+    expect(mockStore.deals.get("deal-proof-custody-testnet")?.status).toBe("PROOF_SUBMITTED");
+    expect(mockStore.deals.get("deal-proof-custody-testnet")?.proof_hash).toBe(proofHash);
+    expect(mockStore.deals.get("deal-proof-custody-testnet")?.latest_stellar_tx_hash).toBe("d".repeat(64));
+
+    const events = mockStore.getDealEvents("deal-proof-custody-testnet");
+    expect(events.at(-1)?.event_type).toBe("submit_proof");
+    expect(events.at(-1)?.tx_hash).toBe("d".repeat(64));
+    expect(events.at(-1)?.proof_hash).toBe(proofHash);
+    expect(events.at(-1)?.metadata).toMatchObject({
+      proof_recording_route: "settleway_custody_wallet_memo_hash",
+      lock_transaction_hash: "b".repeat(64),
+    });
   });
 });

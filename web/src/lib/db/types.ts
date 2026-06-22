@@ -23,6 +23,10 @@ export interface DbProfile {
   payout_rail_preference: 'wallet' | 'bank';
   payout_wallet_label: string | null;
   payout_wallet_address: string | null;
+  connected_wallet_address: string | null;
+  connected_wallet_network: 'testnet' | null;
+  connected_wallet_provider: string | null;
+  connected_wallet_linked_at: string | null;
   payout_bank_name: string | null;
   payout_bank_account_masked: string | null;
   created_at: string;

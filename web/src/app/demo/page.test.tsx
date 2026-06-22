@@ -31,7 +31,7 @@ describe('Demo Page', () => {
 
     expect(html).toContain('Guided founder demo corridor');
     expect(html).toContain('Demo Controls');
-    expect(html).toContain('Quick Demo Jumps');
+    expect(html).toContain('Quick Jumps');
     expect(html).toContain('Presentation Route');
     expect(html).toContain('Talk Track Anchors');
     expect(html).toContain('Trust Checkpoints');
@@ -46,9 +46,9 @@ describe('Demo Page', () => {
     expect(html).toContain('Open Deal Room is mutual commitment');
     expect(html).toContain('Local-bank funding remains simulated in this MVP.');
     expect(html).toContain('Stellar-backed trust references');
-    expect(html).toContain('Open Notifications Inbox');
-    expect(html).toContain('Open Negotiation Thread');
-    expect(html).toContain('Open Active Deal Room');
+    expect(html).toContain('Notifications');
+    expect(html).toContain('Negotiation Thread');
+    expect(html).toContain('Active Deal Room');
     expect(html).toContain('Start From Landing Page');
     expect(html).toContain(
       'Settleway helps real commodity buyers and sellers move from discovery to settlement',

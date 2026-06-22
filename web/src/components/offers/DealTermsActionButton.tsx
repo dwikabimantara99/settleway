@@ -49,7 +49,13 @@ export function DealTermsActionButton({
   if (!termsAccepted) {
     return (
       <div className="space-y-3">
-        <Button type="button" size="lg" className="w-full" onClick={handleAccept} disabled={loading || !canAcceptTerms}>
+        <Button
+          type="button"
+          size="lg"
+          className="h-14 w-full rounded-xl"
+          onClick={handleAccept}
+          disabled={loading || !canAcceptTerms}
+        >
           {loading
             ? 'Processing...'
             : canAcceptTerms

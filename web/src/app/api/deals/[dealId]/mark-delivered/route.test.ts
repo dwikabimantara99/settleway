@@ -31,7 +31,12 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
   })),
 }));
 
+vi.mock("@/lib/stellar/testnet-proof", () => ({
+  executeCustodyDeliveryReference: vi.fn(),
+}));
+
 import { mockStore } from "@/lib/db/mock-store";
+import { executeCustodyDeliveryReference } from "@/lib/stellar/testnet-proof";
 import { POST as markDeliveredRoute } from "./route";
 
 describe("mark-delivered route", () => {
@@ -49,6 +54,11 @@ describe("mark-delivered route", () => {
       action: "mark_delivered",
       transaction_hash: "d".repeat(64),
       result_escrow_id: null,
+    });
+    vi.mocked(executeCustodyDeliveryReference).mockResolvedValue({
+      transactionHash: "e".repeat(64),
+      custodyAddress: "GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG",
+      deliveryDataKey: "SWD:delivered-custody",
     });
   });
 
@@ -102,5 +112,35 @@ describe("mark-delivered route", () => {
     const events = mockStore.getDealEvents("deal-delivered-testnet");
     expect(events.at(-1)?.event_type).toBe("mark_delivered");
     expect(events.at(-1)?.tx_hash).toBe("d".repeat(64));
+  });
+
+  it("records the delivery milestone for a custody-locked testnet room without a Soroban escrow id", async () => {
+    setupDeal("deal-delivered-custody", {
+      stellar_escrow_id: null,
+      latest_stellar_tx_hash: "c".repeat(64),
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: () => ({ value: "seller-1" }),
+    } as any);
+
+    const response = await markDeliveredRoute(
+      new Request("http://localhost/api/deals/deal-delivered-custody/mark-delivered", {
+        method: "POST",
+      }),
+      { params: Promise.resolve({ dealId: "deal-delivered-custody" }) },
+    );
+
+    expect(response.status).toBe(200);
+    expect(executeCustodyDeliveryReference).toHaveBeenCalledOnce();
+    expect(mockStore.deals.get("deal-delivered-custody")?.status).toBe("DELIVERED");
+    expect(mockStore.deals.get("deal-delivered-custody")?.latest_stellar_tx_hash).toBe("e".repeat(64));
+
+    const events = mockStore.getDealEvents("deal-delivered-custody");
+    expect(events.at(-1)?.event_type).toBe("mark_delivered");
+    expect(events.at(-1)?.tx_hash).toBe("e".repeat(64));
+    expect(events.at(-1)?.metadata).toMatchObject({
+      delivery_recording_route: "settleway_custody_wallet_memo_hash",
+      proof_transaction_hash: "c".repeat(64),
+    });
   });
 });

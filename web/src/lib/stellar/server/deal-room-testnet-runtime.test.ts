@@ -1,5 +1,5 @@
 import { Buffer } from "node:buffer";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { StrKey } from "@stellar/stellar-sdk";
 import type { StellarExecutionAdapter } from "./adapter-contracts";
 import type { StellarRpcPort } from "./stellar-rpc-port";

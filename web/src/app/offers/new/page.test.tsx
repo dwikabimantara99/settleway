@@ -13,6 +13,10 @@ vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
 }));
 
+vi.mock('@/lib/auth/server', () => ({
+  getCurrentUser: vi.fn(async () => ({ id: 'buyer-surabaya-restaurant' })),
+}));
+
 describe('New Offer Page', () => {
   it('presents offer creation as the start of a negotiation conversation', async () => {
     const html = renderToString(
@@ -21,9 +25,11 @@ describe('New Offer Page', () => {
       }),
     );
 
-    expect(html).toContain('Negotiate here first, then submit the commercial terms from the Deal Terms card.');
+    expect(html).toContain('This is the recorded negotiation area.');
     expect(html).toContain('Pre-Deal Negotiation');
     expect(html).toContain('Indicative baseline:');
+    expect(html).toContain('Recorded Negotiation');
+    expect(html).toContain('Deal Terms');
     expect(html).toContain('Submit Offer');
   });
 });

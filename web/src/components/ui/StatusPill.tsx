@@ -11,6 +11,7 @@ export function StatusPill({ status, className, ...props }: StatusPillProps) {
     WAITING_DEPOSITS: { label: 'Waiting Deposits', classes: 'bg-amber-100 text-amber-800 border-amber-200' },
     BUYER_FUNDED: { label: 'Buyer Funded', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
     SELLER_FUNDED: { label: 'Seller Funded', classes: 'bg-blue-100 text-blue-800 border-blue-200' },
+    CUSTODY_PENDING: { label: 'Preparing Escrow', classes: 'bg-amber-100 text-amber-800 border-amber-200' },
     LOCKED: { label: 'Locked (Protected)', classes: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
     PROOF_SUBMITTED: { label: 'Proof Submitted', classes: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
     DELIVERED: { label: 'Delivered', classes: 'bg-purple-100 text-purple-800 border-purple-200' },

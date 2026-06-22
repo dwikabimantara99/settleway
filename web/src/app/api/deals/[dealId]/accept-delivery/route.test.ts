@@ -31,7 +31,17 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
   })),
 }));
 
+vi.mock("@/lib/stellar/testnet-settlement", () => ({
+  executeSuccessSettlement: vi.fn(),
+}));
+
+vi.mock("@/lib/stellar/testnet-external-payout", () => ({
+  executeExternalWalletPayouts: vi.fn(),
+}));
+
 import { mockStore } from "@/lib/db/mock-store";
+import { executeExternalWalletPayouts } from "@/lib/stellar/testnet-external-payout";
+import { executeSuccessSettlement } from "@/lib/stellar/testnet-settlement";
 import { POST as acceptDeliveryRoute } from "./route";
 
 describe("accept-delivery route", () => {
@@ -50,6 +60,27 @@ describe("accept-delivery route", () => {
       transaction_hash: "e".repeat(64),
       result_escrow_id: null,
     }));
+    vi.mocked(executeSuccessSettlement).mockResolvedValue({
+      transactionHash: "a".repeat(64),
+      custodyAddress: "GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG",
+      buyerManagedAddress: "GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX",
+      sellerManagedAddress: "GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU",
+      assetCode: "XLM",
+      buyerBondReturnXlm: "0.0000010",
+      sellerPayoutXlm: "0.0000110",
+      platformFeeRetainedXlm: "0.0000002",
+    });
+    vi.mocked(executeExternalWalletPayouts).mockResolvedValue({
+      transactionHash: "b".repeat(64),
+      custodyAddress: "GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG",
+      buyerManagedAddress: "GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX",
+      sellerManagedAddress: "GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU",
+      buyerConnectedAddress: "GBUYERCONNECTED0000000000000000000000000000000000000000000000",
+      sellerConnectedAddress: "GSELLERCONNECTED000000000000000000000000000000000000000000000",
+      buyerBondReturnXlm: "0.0000010",
+      sellerPayoutXlm: "0.0000110",
+      assetCode: "XLM",
+    });
   });
 
   function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
@@ -68,6 +99,10 @@ describe("accept-delivery route", () => {
       payout_rail_preference: "wallet",
       payout_wallet_label: "Buyer treasury wallet",
       payout_wallet_address: "GBUYERPAYOUT1234567890",
+      connected_wallet_address: "GBUYERCONNECTED0000000000000000000000000000000000000000000000",
+      connected_wallet_network: "testnet",
+      connected_wallet_provider: "Freighter",
+      connected_wallet_linked_at: new Date().toISOString(),
       payout_bank_name: "Bank settlement rail",
       payout_bank_account_masked: "Not live in MVP",
       created_at: new Date().toISOString(),
@@ -87,6 +122,10 @@ describe("accept-delivery route", () => {
       payout_rail_preference: "wallet",
       payout_wallet_label: "Seller treasury wallet",
       payout_wallet_address: "GSELLERPAYOUT1234567890",
+      connected_wallet_address: "GSELLERCONNECTED000000000000000000000000000000000000000000000",
+      connected_wallet_network: "testnet",
+      connected_wallet_provider: "Freighter",
+      connected_wallet_linked_at: new Date().toISOString(),
       payout_bank_name: "Bank settlement rail",
       payout_bank_account_masked: "Not live in MVP",
       created_at: new Date().toISOString(),
@@ -207,5 +246,46 @@ describe("accept-delivery route", () => {
     expect(mockExecutionAdapter.confirm).toHaveBeenCalledTimes(2);
     expect(mockStore.deals.get("deal-accept-reconcile")?.status).toBe("COMPLETED");
     expect(mockStore.deals.get("deal-accept-reconcile")?.latest_stellar_tx_hash).toBe("f".repeat(64));
+  });
+
+  it("executes success settlement for a custody-delivered testnet room without a Soroban escrow id", async () => {
+    setupDeal("deal-accept-custody", {
+      stellar_escrow_id: null,
+      latest_stellar_tx_hash: "d".repeat(64),
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: () => ({ value: "buyer-1" }),
+    } as any);
+
+    const response = await acceptDeliveryRoute(
+      new Request("http://localhost/api/deals/deal-accept-custody/accept-delivery", {
+        method: "POST",
+      }),
+      { params: Promise.resolve({ dealId: "deal-accept-custody" }) },
+    );
+
+    expect(response.status).toBe(200);
+    expect(executeSuccessSettlement).toHaveBeenCalledOnce();
+    expect(executeExternalWalletPayouts).toHaveBeenCalledOnce();
+    expect(mockStore.deals.get("deal-accept-custody")?.status).toBe("COMPLETED");
+    expect(mockStore.deals.get("deal-accept-custody")?.latest_stellar_tx_hash).toBe("a".repeat(64));
+
+    const roomEvents = mockStore.getDealEvents("deal-accept-custody");
+    expect(roomEvents.at(-1)?.event_type).toBe("accept_delivery");
+    expect(roomEvents.at(-1)?.tx_hash).toBe("a".repeat(64));
+    expect(roomEvents.at(-1)?.metadata).toMatchObject({
+      settlement_route: "settleway_custody_to_managed_profile_wallets",
+      buyer_managed_wallet_address: "GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX",
+      seller_managed_wallet_address: "GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU",
+      external_payout_transaction_hash: "b".repeat(64),
+      buyer_connected_wallet_address: "GBUYERCONNECTED0000000000000000000000000000000000000000000000",
+      seller_connected_wallet_address: "GSELLERCONNECTED000000000000000000000000000000000000000000000",
+      delivery_transaction_hash: "d".repeat(64),
+    });
+
+    const reputationEvents = mockStore.getDealReputationEvents("deal-accept-custody");
+    expect(reputationEvents).toHaveLength(2);
+    expect(reputationEvents[0]?.transaction_hash).toBe("a".repeat(64));
+    expect(reputationEvents[1]?.transaction_hash).toBe("a".repeat(64));
   });
 });

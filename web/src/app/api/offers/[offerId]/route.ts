@@ -3,6 +3,7 @@ import { createErrorResponse, createSuccessResponse } from '@/lib/api/validation
 import { repository } from '@/lib/repositories';
 import { requireOfferParticipant } from '@/lib/auth/server';
 import { buildNotification, getCounterpartyId } from '@/lib/offers/helpers';
+import { performOpenDealRoomCommitment } from '@/lib/offers/open-deal-room';
 
 export async function GET(_request: Request, { params }: { params: Promise<{ offerId: string }> }) {
   try {
@@ -76,4 +77,13 @@ export async function PATCH(
     const status = message === 'Offer not found' ? 404 : message === 'Unauthorized' ? 401 : 403;
     return NextResponse.json(createErrorResponse('ACCESS_DENIED', message), { status });
   }
+}
+
+export async function POST(
+  _request: Request,
+  { params }: { params: Promise<{ offerId: string }> },
+) {
+  const { offerId } = await params;
+  const result = await performOpenDealRoomCommitment(offerId);
+  return NextResponse.json(result.payload, { status: result.status });
 }

@@ -26,7 +26,7 @@ describe('Notifications Page', () => {
 
     const html = renderToString(await NotificationsPage());
 
-    expect(html).toContain('No notifications yet');
+    expect(html).toContain('All clear');
     expect(html).toContain('Submit Offer');
     expect(html).toContain('negotiation thread');
   });
@@ -47,7 +47,7 @@ describe('Notifications Page', () => {
 
     const html = renderToString(await NotificationsPage());
 
-    expect(html).toContain('Open negotiation thread');
+    expect(html).toContain('Open thread');
     expect(html).toContain('Open Deal Room Requested');
   });
 });

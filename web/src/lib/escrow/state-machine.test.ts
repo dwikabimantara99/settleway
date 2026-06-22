@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  lockAfterCustody,
   isClosedDealStatus,
   isFundingWindowDealStatus,
   isPostLockDealStatus,
@@ -45,12 +46,19 @@ describe('escrow state semantics', () => {
     expect(isFundingWindowDealStatus('WAITING_DEPOSITS')).toBe(true);
     expect(isFundingWindowDealStatus('BUYER_FUNDED')).toBe(true);
     expect(isFundingWindowDealStatus('SELLER_FUNDED')).toBe(true);
+    expect(isFundingWindowDealStatus('CUSTODY_PENDING')).toBe(true);
     expect(isFundingWindowDealStatus('LOCKED')).toBe(false);
 
     expect(isPreLockDealStatus('WAITING_DEPOSITS')).toBe(true);
     expect(isPreLockDealStatus('BUYER_FUNDED')).toBe(true);
     expect(isPreLockDealStatus('SELLER_FUNDED')).toBe(true);
+    expect(isPreLockDealStatus('CUSTODY_PENDING')).toBe(true);
     expect(isPreLockDealStatus('LOCKED')).toBe(false);
+  });
+
+  it('locks only from custody pending', () => {
+    expect(lockAfterCustody(makeDeal('CUSTODY_PENDING')).status).toBe('LOCKED');
+    expect(() => lockAfterCustody(makeDeal('BUYER_FUNDED'))).toThrow('custody lock');
   });
 
   it('classifies post-lock, post-proof, closed, and terminal statuses consistently', () => {

@@ -23,9 +23,16 @@ export function OpenDealRoomButton({
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/offers/${offerId}/open-deal-room`, {
+      const response = await fetch(`/api/offers/${offerId}`, {
         method: 'POST',
       });
+      const contentType = response.headers.get('content-type') ?? '';
+
+      if (!contentType.includes('application/json')) {
+        setError('Open Deal Room is temporarily unavailable. Refresh the page and try again.');
+        return;
+      }
+
       const payload = await response.json();
 
       if (!response.ok || !payload.ok) {
@@ -49,9 +56,14 @@ export function OpenDealRoomButton({
   if (activeDealId) {
     return (
       <div className="space-y-3">
-      <Button type="button" size="lg" onClick={() => router.push(`/deals/${activeDealId}`)}>
-        Enter Active Escrow Room
-      </Button>
+        <Button
+          type="button"
+          size="lg"
+          className="h-14 w-full rounded-xl"
+          onClick={() => router.push(`/deals/${activeDealId}`)}
+        >
+          Enter Active Escrow Room
+        </Button>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
       </div>
     );
@@ -59,7 +71,13 @@ export function OpenDealRoomButton({
 
   return (
     <div className="space-y-3">
-      <Button type="button" size="lg" onClick={handleOpen} disabled={loading || hasOpened}>
+      <Button
+        type="button"
+        size="lg"
+        className="h-14 w-full rounded-xl"
+        onClick={handleOpen}
+        disabled={loading || hasOpened}
+      >
         {loading
           ? 'Processing...'
           : hasOpened

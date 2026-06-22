@@ -3,30 +3,32 @@ import { renderToString } from 'react-dom/server';
 import LandingPage from './page';
 
 describe('Landing Page', () => {
-  it('renders the founder-facing product story and demo corridor', () => {
+  it('renders the approved hero, CTA row, and trust highlights', () => {
     const html = renderToString(LandingPage());
 
-    expect(html).toContain('Agricultural trade infrastructure');
+    expect(html).toContain('Settleway');
+    expect(html).toContain('Agricultural trade,');
+    expect(html).toContain('from discovery to settlement.');
     expect(html).toContain(
-      'Settleway turns commodity trade from blind trust into disciplined execution.',
+      'Settleway is a secure marketplace and settlement flow for agricultural commodity',
     );
-    expect(html).toContain('Protected trade flow');
-    expect(html).toContain('What Settleway makes possible');
-    expect(html).toContain(
-      'Settleway transactions are protected by escrow logic and recorded on Stellar.',
-    );
+    expect(html).toContain('Explore Marketplace');
+    expect(html).toContain('Learn How It Works');
+    expect(html).toContain('Protected Trade Flow');
+    expect(html).toContain('Recorded &amp; Verifiable');
+    expect(html).toContain('Built on Trust');
   });
 
-  it('keeps the main workflow and CTAs visible', () => {
+  it('keeps the restored below-fold product story available', () => {
     const html = renderToString(LandingPage());
 
-    expect(html).toContain('1. Discover');
-    expect(html).toContain('3. Submit offer');
-    expect(html).toContain('4. Open Deal Room together');
-    expect(html).toContain('View Marketplace');
-    expect(html).toContain('Explore Guided Flow');
+    expect(html).toContain('id="about"');
+    expect(html).toContain('The Problem');
+    expect(html).toContain('What Settleway Makes Possible');
+    expect(html).toContain('The Corridor');
+    expect(html).toContain('Why Stellar Stays Mostly Invisible');
     expect(html).toContain(
-      'Settleway brings negotiation, escrow protection, delivery proof, and reputation into one transaction workspace.',
+      'Settleway brings negotiation, escrow protection, delivery proof, and reputation into one workspace.',
     );
   });
 });

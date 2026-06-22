@@ -7,33 +7,52 @@ import type { DealStatus } from '@/lib/escrow/state-machine';
 import {
   isFundingWindowDealStatus,
 } from '@/lib/escrow/state-machine';
+import {
+  getFreighterApi,
+  isTestnetNetwork,
+  readStringResult,
+} from '@/lib/stellar/freighter-client';
 
 interface DealActionsProps {
   dealId: string;
   status: DealStatus;
   viewerRole?: 'buyer' | 'seller' | null;
+  connectedWalletAddress?: string | null;
 }
 
 function getActionLabel(action: string): string {
   switch (action) {
     case 'buyer-deposit':
-      return 'Record Buyer Funding';
+      return 'Fund Buyer Commitment';
     case 'seller-deposit':
-      return 'Record Seller Funding';
+      return 'Fund Seller Commitment';
     case 'expire':
       return 'Expire Funding Window';
     case 'refund':
       return 'Record Pre-Lock Refund';
     case 'mark-delivered':
-      return 'Record Delivery Milestone';
+      return 'Confirm Delivery Milestone';
     case 'accept-delivery':
-      return 'Confirm Receipt And Release';
+      return 'Confirm Receipt And Settle';
     default:
       return 'Run Action';
   }
 }
 
-export function DealActions({ dealId, status, viewerRole = null }: DealActionsProps) {
+function isFundingAction(action: string): action is 'buyer-deposit' | 'seller-deposit' {
+  return action === 'buyer-deposit' || action === 'seller-deposit';
+}
+
+function toApiFundingAction(action: 'buyer-deposit' | 'seller-deposit') {
+  return action === 'buyer-deposit' ? 'buyer_deposit' : 'seller_deposit';
+}
+
+export function DealActions({
+  dealId,
+  status,
+  viewerRole = null,
+  connectedWalletAddress = null,
+}: DealActionsProps) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -42,10 +61,115 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
   const canTriggerProofMilestone = viewerRole === null || viewerRole === 'seller';
   const canTriggerAcceptance = viewerRole === null || viewerRole === 'buyer';
 
+  const handleSignedFunding = async (action: 'buyer-deposit' | 'seller-deposit') => {
+    if (!connectedWalletAddress) {
+      setError('Connect a Stellar Testnet wallet on your profile before funding.');
+      return;
+    }
+
+    const freighter = await getFreighterApi();
+    if (!freighter?.signTransaction) {
+      setError('A Stellar wallet with transaction signing is required before funding can continue.');
+      return;
+    }
+
+    const accessResult = freighter.requestAccess ? await freighter.requestAccess() : null;
+    const addressResult = freighter.getAddress
+      ? await freighter.getAddress()
+      : freighter.getPublicKey
+        ? await freighter.getPublicKey()
+        : accessResult;
+    const walletAddress = readStringResult(addressResult, ['address', 'publicKey', 'public_key']);
+
+    if (walletAddress !== connectedWalletAddress) {
+      setError('The active wallet must match the wallet linked on this profile.');
+      return;
+    }
+
+    const networkResult = freighter.getNetworkDetails
+      ? await freighter.getNetworkDetails()
+      : freighter.getNetwork
+        ? await freighter.getNetwork()
+        : null;
+    if (networkResult && !isTestnetNetwork(networkResult)) {
+      setError('Switch your Stellar wallet to Testnet before funding.');
+      return;
+    }
+
+    const apiAction = toApiFundingAction(action);
+    const reconcileResponse = await fetch(`/api/deals/${dealId}/signed-funding/reconcile`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: apiAction,
+        source_address: connectedWalletAddress,
+      }),
+    });
+    const reconciliation = await reconcileResponse.json();
+    if (!reconcileResponse.ok) {
+      setError(`Error: ${reconciliation.error?.message || 'Funding reconciliation failed'}`);
+      return;
+    }
+    if (reconciliation.meta?.reconciled === true) {
+      router.refresh();
+      return;
+    }
+
+    const prepareResponse = await fetch(`/api/deals/${dealId}/signed-funding/prepare`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: apiAction,
+        source_address: connectedWalletAddress,
+      }),
+    });
+    const prepared = await prepareResponse.json();
+    if (!prepareResponse.ok) {
+      setError(`Error: ${prepared.error?.message || 'Funding preparation failed'}`);
+      return;
+    }
+
+    const signedResult = await freighter.signTransaction(prepared.data.unsigned_xdr, {
+      networkPassphrase: prepared.data.network_passphrase,
+      accountToSign: connectedWalletAddress,
+      address: connectedWalletAddress,
+    });
+    const signedXdr = readStringResult(signedResult, ['signedTxXdr', 'signed_xdr', 'xdr']) ?? (
+      typeof signedResult === 'string' ? signedResult : null
+    );
+
+    if (!signedXdr) {
+      setError('The wallet did not return a signed transaction.');
+      return;
+    }
+
+    const submitResponse = await fetch(`/api/deals/${dealId}/signed-funding/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: apiAction,
+        source_address: connectedWalletAddress,
+        signed_xdr: signedXdr,
+      }),
+    });
+    const submitted = await submitResponse.json();
+    if (!submitResponse.ok) {
+      setError(`Error: ${submitted.error?.message || 'Signed funding submission failed'}`);
+      return;
+    }
+
+    router.refresh();
+  };
+
   const handleAction = async (action: string) => {
     setLoading(action);
     setError(null);
     try {
+      if (isFundingAction(action)) {
+        await handleSignedFunding(action);
+        return;
+      }
+
       const fetchOptions: RequestInit = {
         method: 'POST',
       };
@@ -77,7 +201,9 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
             ? 'Record the first funding event to start the escrow lock gate.'
             : status === 'BUYER_FUNDED'
               ? 'Buyer is funded. Seller funding is now required before lock can begin.'
-              : 'Seller is funded. Buyer funding is now required before lock can begin.'}
+              : status === 'SELLER_FUNDED'
+                ? 'Seller is funded. Buyer funding is now required before lock can begin.'
+                : 'Both funding transfers are confirmed. Settleway is preparing the custody transfer before escrow lock.'}
         </div>
       )}
       {status === 'LOCKED' && (
@@ -86,6 +212,15 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
             ? 'Escrow is locked. Wait for the seller to submit delivery proof.'
             : 'Escrow is locked. The next step is recording delivery proof.'}
         </div>
+      )}
+      {status === 'CUSTODY_PENDING' && (
+        <Button
+          variant="primary"
+          onClick={() => handleAction('custody-sweep')}
+          disabled={loading !== null}
+        >
+          {loading === 'custody-sweep' ? 'Preparing Escrow...' : 'Refresh Escrow Status'}
+        </Button>
       )}
       {status === 'PROOF_SUBMITTED' && viewerRole === 'buyer' && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
@@ -137,13 +272,15 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
                 {loading === 'buyer-deposit' ? 'Processing...' : getActionLabel('buyer-deposit')}
               </Button>
             ) : null}
-            <Button
-              variant="ghost"
-              onClick={() => handleAction('expire')}
-              disabled={loading !== null}
-            >
-              {loading === 'expire' ? 'Processing...' : getActionLabel('expire')}
-            </Button>
+            {viewerRole === null ? (
+              <Button
+                variant="ghost"
+                onClick={() => handleAction('expire')}
+                disabled={loading !== null}
+              >
+                {loading === 'expire' ? 'Processing...' : getActionLabel('expire')}
+              </Button>
+            ) : null}
           </>
         )}
 
@@ -160,20 +297,24 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
                   : getActionLabel('seller-deposit')}
               </Button>
             ) : null}
-            <Button
-              variant="ghost"
-              onClick={() => handleAction('expire')}
-              disabled={loading !== null}
-            >
-              {loading === 'expire' ? 'Processing...' : 'Expire And Refund Buyer'}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => handleAction('refund')}
-              disabled={loading !== null}
-            >
-              {loading === 'refund' ? 'Processing...' : getActionLabel('refund')}
-            </Button>
+            {viewerRole === null ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleAction('expire')}
+                  disabled={loading !== null}
+                >
+                  {loading === 'expire' ? 'Processing...' : 'Expire And Refund Buyer'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleAction('refund')}
+                  disabled={loading !== null}
+                >
+                  {loading === 'refund' ? 'Processing...' : getActionLabel('refund')}
+                </Button>
+              </>
+            ) : null}
           </>
         )}
 
@@ -190,20 +331,24 @@ export function DealActions({ dealId, status, viewerRole = null }: DealActionsPr
                   : getActionLabel('buyer-deposit')}
               </Button>
             ) : null}
-            <Button
-              variant="ghost"
-              onClick={() => handleAction('expire')}
-              disabled={loading !== null}
-            >
-              {loading === 'expire' ? 'Processing...' : 'Expire And Refund Seller'}
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => handleAction('refund')}
-              disabled={loading !== null}
-            >
-              {loading === 'refund' ? 'Processing...' : getActionLabel('refund')}
-            </Button>
+            {viewerRole === null ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleAction('expire')}
+                  disabled={loading !== null}
+                >
+                  {loading === 'expire' ? 'Processing...' : 'Expire And Refund Seller'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleAction('refund')}
+                  disabled={loading !== null}
+                >
+                  {loading === 'refund' ? 'Processing...' : getActionLabel('refund')}
+                </Button>
+              </>
+            ) : null}
           </>
         )}
 

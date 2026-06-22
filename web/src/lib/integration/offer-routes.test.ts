@@ -8,7 +8,10 @@ vi.mock('next/headers', () => ({
 
 import { mockStore } from '../db/mock-store';
 import { POST as createOfferRoute } from '../../app/api/offers/route';
-import { PATCH as acceptOfferRoute } from '../../app/api/offers/[offerId]/route';
+import {
+  PATCH as acceptOfferRoute,
+  POST as openDealRoomParentRoute,
+} from '../../app/api/offers/[offerId]/route';
 import { POST as addOfferMessageRoute } from '../../app/api/offers/[offerId]/messages/route';
 import { POST as openDealRoomRoute } from '../../app/api/offers/[offerId]/open-deal-room/route';
 
@@ -241,6 +244,61 @@ describe('Phase B offer routes', () => {
     expect(typeof activeDeal?.terms.deposit_deadline_at).toBe('string');
     expect(typeof activeDeal?.terms.activated_at).toBe('string');
     expect(activeDeal?.stellar_mode).toBe('mock_only');
+    expect(mockStore.offers.get(offerId)?.active_deal_id).toBe(`deal-${offerId}`);
+  });
+
+  it('supports Open Deal Room through the parent offer POST route for UI stability', async () => {
+    const offerId = 'offer-open-parent-1';
+    const now = new Date().toISOString();
+    mockStore.offers.set(offerId, {
+      id: offerId,
+      listing_id: 'listing-cabai-001',
+      buyer_request_id: null,
+      buyer_id: 'buyer-surabaya-restaurant',
+      seller_id: 'seller-probolinggo-cabai',
+      initiated_by_id: 'buyer-surabaya-restaurant',
+      commodity: "Red Chili (Bird's Eye Chili)",
+      volume_kg: 700,
+      price_per_kg_idr: 28500,
+      principal_idr: 19950000,
+      terms_note: 'Terms already accepted.',
+      status: 'terms_accepted',
+      latest_message_preview: 'Opening thread',
+      terms_submitted_at: now,
+      terms_accepted_at: now,
+      terms_accepted_by_id: 'seller-probolinggo-cabai',
+      buyer_open_room_at: null,
+      seller_open_room_at: null,
+      active_deal_id: null,
+      created_at: now,
+      updated_at: now,
+    });
+    mockStore.offerMessages.set(offerId, []);
+
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-surabaya-restaurant' }) } as any);
+    const buyerResponse = await openDealRoomParentRoute(
+      new Request(`http://localhost/api/offers/${offerId}`, { method: 'POST' }),
+      {
+        params: Promise.resolve({ offerId }),
+      },
+    );
+    const buyerPayload = await buyerResponse.json();
+
+    expect(buyerResponse.status).toBe(200);
+    expect(buyerPayload.data.deal_id).toBeNull();
+    expect(mockStore.offers.get(offerId)?.status).toBe('awaiting_counterparty_open');
+
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-probolinggo-cabai' }) } as any);
+    const sellerResponse = await openDealRoomParentRoute(
+      new Request(`http://localhost/api/offers/${offerId}`, { method: 'POST' }),
+      {
+        params: Promise.resolve({ offerId }),
+      },
+    );
+    const sellerPayload = await sellerResponse.json();
+
+    expect(sellerResponse.status).toBe(200);
+    expect(sellerPayload.data.deal_id).toBe(`deal-${offerId}`);
     expect(mockStore.offers.get(offerId)?.active_deal_id).toBe(`deal-${offerId}`);
   });
 

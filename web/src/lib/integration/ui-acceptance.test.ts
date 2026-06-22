@@ -1,9 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as nextHeaders from 'next/headers';
+import { renderToString } from 'react-dom/server';
+import { createElement } from 'react';
 
 vi.mock('next/headers', () => ({
   cookies: vi.fn(),
 }));
+
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn(),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+  })),
+}));
+
 import DealRoomPage from '../../app/deals/[dealId]/page';
 import LandingPage from '../../app/page';
 import MarketplacePage from '../../app/marketplace/page';
@@ -57,25 +69,27 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
   describe('Discovery Trust UI', () => {
     it('shows a founder-facing landing corridor before users enter the marketplace', async () => {
-      const page = LandingPage();
+      const html = renderToString(LandingPage());
 
-      expect(hasText(page, 'Protected trade flow')).toBe(true);
-      expect(hasText(page, 'What Settleway makes possible')).toBe(true);
-      expect(
-        hasText(page, 'Settleway transactions are protected by escrow logic and recorded on Stellar.'),
-      ).toBe(true);
-      expect(hasText(page, 'Explore Guided Flow')).toBe(true);
+      expect(html).toContain('Protected Trade Flow');
+      expect(html).toContain('What Settleway Makes Possible');
+      expect(html).toContain(
+        'Settleway brings negotiation, escrow protection, delivery proof, and reputation into one workspace.',
+      );
+      expect(html).toContain('Explore Guided Flow');
     });
 
     it('shows trust signals on marketplace cards and includes three demo listings', async () => {
-      const page = MarketplacePage();
+      const html = renderToString(createElement(MarketplacePage));
 
-      expect(hasText(page, 'Trust Signal')).toBe(true);
-      expect(hasText(page, 'Protected transaction history visible before negotiation starts')).toBe(
-        true,
+      expect(html).toContain('Buy');
+      expect(html).toContain(
+        'Browse agricultural products listed by sellers before any protected room is opened.',
       );
-      expect(hasText(page, 'Submit Offer starts recorded negotiation before any protected room opens')).toBe(true);
-      expect(hasText(page, 'White Rice (Premium Milling)')).toBe(true);
+      expect(html).toContain('Verified Seller');
+      expect(html).toContain('15 completed deals');
+      expect(html).toContain('Search commodities, location');
+      expect(html).toContain('White Rice (Premium Milling)');
     });
 
     it('shows seller credibility and offer continuity on listing detail', async () => {
@@ -85,35 +99,34 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       expect(hasText(page, 'Why this seller looks credible')).toBe(true);
       expect(hasText(page, 'Protected volume')).toBe(true);
-      expect(hasText(page, 'Proof visibility')).toBe(true);
+      expect(hasText(page, 'Proof mode')).toBe(true);
       expect(hasText(page, 'Recorded negotiation starts first.')).toBe(true);
     });
 
     it('shows buyer trust signals and protected-room continuity on buyer requests', async () => {
-      const page = BuyerRequestsPage();
+      const html = renderToString(createElement(BuyerRequestsPage));
 
-      expect(hasText(page, 'Procurement Trust Signal')).toBe(true);
-      expect(hasText(page, 'Protected purchase history visible before supply discussion')).toBe(
-        true,
+      expect(html).toContain('Sell');
+      expect(html).toContain(
+        'Browse active agricultural purchase requests posted by buyers before any protected room is opened.',
       );
-      expect(
-        hasText(page, 'Protected escrow begins only after both sides commit to open the Deal Room.'),
-      ).toBe(true);
+      expect(html).toContain('Verified Buyer');
+      expect(html).toContain('42 completed purchases');
+      expect(html).toContain('Submit Offer');
     });
 
     it('frames submit offer as the start of a shared negotiation conversation', async () => {
-      const page = await NewOfferPage({
-        searchParams: Promise.resolve({ listingId: 'listing-cabai-001' }),
-      });
+      const html = renderToString(
+        await NewOfferPage({
+          searchParams: Promise.resolve({ listingId: 'listing-cabai-001' }),
+        }),
+      );
 
-      expect(
-        hasText(
-          page,
-          'Negotiate here first, then submit the commercial terms from the Deal Terms card.',
-        ),
-      ).toBe(true);
-      expect(hasText(page, 'Pre-Deal Negotiation')).toBe(true);
-      expect(hasText(page, 'Indicative baseline:')).toBe(true);
+      expect(html).toContain('This is the recorded negotiation area.');
+      expect(html).toContain('Pre-Deal Negotiation');
+      expect(html).toContain('Indicative baseline:');
+      expect(html).toContain('Recorded Negotiation');
+      expect(html).toContain('Deal Terms');
     });
   });
 
@@ -527,9 +540,9 @@ describe('Product UI Acceptance (Phase 8)', () => {
       const expectedBuyerScore = profile.buyerScore + 10;
       
       // Ensure we see the updated score
-      expect(hasText(page, `${expectedBuyerScore}/100`)).toBe(true);
-      expect(hasText(page, 'Buyer Reputation')).toBe(true);
-      expect(hasText(page, 'Seller Reputation')).toBe(true);
+      expect(hasText(page, `${expectedBuyerScore} / 100`)).toBe(true);
+      expect(hasText(page, 'Reputation Score')).toBe(true);
+      expect(hasText(page, 'Completed Deals')).toBe(true);
     });
 
     it('renders zero values and no public transaction hash', async () => {
@@ -537,14 +550,15 @@ describe('Product UI Acceptance (Phase 8)', () => {
       
       const page = await ProfilePage({ params: Promise.resolve({ userId }) });
       
-      expect(hasText(page, '0/100')).toBe(true);
-      expect(hasText(page, 'Rp 5.800M')).toBe(true); // verified volume formatting using id-ID locale
-      expect(hasText(page, 'Private verification mode')).toBe(true);
-      expect(hasText(page, 'Visible verification signals')).toBe(true);
+      expect(hasText(page, '88 / 100')).toBe(true);
+      expect(hasText(page, 'Rp 5.800.000.000')).toBe(true);
+      expect(hasText(page, 'Verified Profile')).toBe(true);
+      expect(hasText(page, 'Private verification mode')).toBe(false);
+      expect(hasText(page, 'Public verification mode')).toBe(false);
       expect(hasText(page, 'tx_hash')).toBe(false); // No public transaction hash exposed
     });
 
-    it('shows recent verified outcomes and dispute honesty on the profile page', async () => {
+    it('keeps the profile focused on identity, volume, reputation, and activity', async () => {
       const userId = 'buyer-surabaya-restaurant';
       mockStore.appendReputationEventPair([
         {
@@ -575,18 +589,22 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       const page = await ProfilePage({ params: Promise.resolve({ userId }) });
 
-      expect(hasText(page, 'Reputation Ledger')).toBe(true);
-      expect(hasText(page, 'Trust Passport')).toBe(true);
-      expect(hasText(page, 'Verification Model')).toBe(true);
+      expect(hasText(page, 'Transaction Volume')).toBe(true);
+      expect(hasText(page, 'Sell (My Listings)')).toBe(true);
+      expect(hasText(page, 'Buy (My Requests)')).toBe(true);
       expect(hasText(page, 'Outcome-backed reputation')).toBe(true);
-      expect(hasText(page, 'Refunded Before Lock')).toBe(true);
-      expect(hasText(page, 'Open protected room')).toBe(true);
+      expect(hasText(page, 'Managed Profile Wallet')).toBe(true);
+      expect(hasText(page, 'Testnet')).toBe(true);
       expect(
-        hasText(page, 'After lock, disputes still require operator review using room chat'),
+        hasText(page, 'GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX'),
       ).toBe(true);
+      expect(hasText(page, 'Recent Outcomes')).toBe(false);
+      expect(hasText(page, 'Payout Destination')).toBe(false);
+      expect(hasText(page, 'No buyer requests are attached to this profile yet.')).toBe(false);
+      expect(hasText(page, 'Public Proof Mode')).toBe(false);
     });
 
-    it('shows public verification references when a linked public room has them', async () => {
+    it('does not expose room references in the simplified profile surface', async () => {
       const userId = 'seller-probolinggo-cabai';
       const dealId = 'deal-phase-i-public';
       const now = new Date().toISOString();
@@ -647,10 +665,10 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       const page = await ProfilePage({ params: Promise.resolve({ userId }) });
 
-      expect(hasText(page, 'Public verification mode')).toBe(true);
-      expect(hasText(page, 'Transaction reference:')).toBe(true);
-      expect(hasText(page, 'Proof hash:')).toBe(true);
-      expect(hasText(page, 'Open protected room')).toBe(true);
+      expect(hasText(page, 'Public verification mode')).toBe(false);
+      expect(hasText(page, 'Transaction reference:')).toBe(false);
+      expect(hasText(page, 'Proof hash:')).toBe(false);
+      expect(hasText(page, 'Open protected room')).toBe(false);
     });
   });
 });
