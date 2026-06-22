@@ -1,4 +1,5 @@
 import { EventEmitter } from "node:events";
+import path from "node:path";
 import { PassThrough } from "node:stream";
 import {
   Account,
@@ -52,6 +53,16 @@ const PUBLIC_ADDRESSES: Readonly<Record<StellarSignerRole, string>> = {
   buyer_demo: BUYER_KP.publicKey(),
   seller_demo: SELLER_KP.publicKey(),
 };
+const FIXTURE_ROOT = path.resolve(
+  path.parse(process.cwd()).root,
+  "settleway-secure-store-signer-fixtures",
+);
+const STELLAR_CLI_PATH = path.join(
+  FIXTURE_ROOT,
+  "bin",
+  process.platform === "win32" ? "stellar.exe" : "stellar",
+);
+const STELLAR_CONFIG_DIR = path.join(FIXTURE_ROOT, "stellar-config");
 
 function roleForAlias(alias: string): StellarSignerRole | null {
   if (alias === ROLE_ALIASES.admin) return "admin";
@@ -129,8 +140,8 @@ function makeConfig(
   overrides: Partial<StellarCliSecureStoreSignerConfig> = {},
 ): StellarCliSecureStoreSignerConfig {
   return {
-    stellar_cli_path: "C:\\Users\\ACER\\.cargo\\bin\\stellar.exe",
-    config_dir: "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
+    stellar_cli_path: STELLAR_CLI_PATH,
+    config_dir: STELLAR_CONFIG_DIR,
     rpc_url: "https://soroban-testnet.stellar.org",
     network_alias: "settleway-testnet",
     role_aliases: {
@@ -295,6 +306,13 @@ describe("Stellar CLI process runner", () => {
 });
 
 describe("Stellar CLI secure-store signer", () => {
+  it("uses host-platform absolute path fixtures for portable CI", () => {
+    expect(path.isAbsolute(STELLAR_CLI_PATH)).toBe(true);
+    expect(path.isAbsolute(STELLAR_CONFIG_DIR)).toBe(true);
+    expect(STELLAR_CLI_PATH).not.toContain("C:\\Users\\ACER");
+    expect(STELLAR_CONFIG_DIR).not.toContain("C:\\Users\\ACER");
+  });
+
   it("signs through stdin using the configured alias and verifies the result", async () => {
     const runner = new FakeStellarCliRunner();
     const signer = new StellarCliSecureStoreSigner(makeConfig({ process_runner: runner }));
@@ -312,7 +330,7 @@ describe("Stellar CLI secure-store signer", () => {
       "tx",
       "sign",
       "--config-dir",
-      "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
+      STELLAR_CONFIG_DIR,
       "--rpc-url",
       "https://soroban-testnet.stellar.org",
       "--network",
@@ -341,7 +359,7 @@ describe("Stellar CLI secure-store signer", () => {
       "keys",
       "public-key",
       "--config-dir",
-      "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke",
+      STELLAR_CONFIG_DIR,
       ROLE_ALIASES.buyer_demo,
     ]);
   });

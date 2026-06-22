@@ -52,7 +52,7 @@ Frozen local validation after the final code and documentation edit:
 | Gate | Result |
 |---|---|
 | `cd web && npm ci` | Pass; 431 packages installed, 0 vulnerabilities. |
-| `cd web && npm run test` | Pass; 72 files, 773 tests. |
+| `cd web && npm run test` | Pass; 72 files, 774 tests after the portable secure-store signer regression was added. |
 | `cd web && npm run lint` | Pass. |
 | `cd web && npm run typecheck` | Pass. |
 | `NEXT_PUBLIC_RUNTIME_MODE=demo npm run build` | Pass; 17 app routes generated. Transitive `Buffer()` warnings remain documented. |
