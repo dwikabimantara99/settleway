@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { StrKey } from "@stellar/stellar-sdk";
 import type { StellarExecutionAdapter } from "./adapter-contracts";
@@ -10,14 +11,24 @@ import {
 } from "./deal-room-testnet-runtime";
 
 const CONTRACT_ID = StrKey.encodeContract(Buffer.alloc(32, 9));
+const FIXTURE_ROOT = path.resolve(
+  path.parse(process.cwd()).root,
+  "settleway-deal-room-testnet-fixtures",
+);
+const STELLAR_CLI_PATH = path.join(
+  FIXTURE_ROOT,
+  "bin",
+  process.platform === "win32" ? "stellar.exe" : "stellar",
+);
+const STELLAR_CONFIG_DIR = path.join(FIXTURE_ROOT, "stellar-config");
 
 function makeEnv(overrides: Record<string, string | undefined> = {}) {
   return {
     SETTLEWAY_SMOKE_RPC_URL: "https://soroban-testnet.stellar.org",
     SETTLEWAY_SMOKE_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015",
     SETTLEWAY_SMOKE_CONTRACT_ID: CONTRACT_ID,
-    SETTLEWAY_SMOKE_STELLAR_CLI_PATH: "C:\\stellar\\stellar.exe",
-    SETTLEWAY_SMOKE_STELLAR_CONFIG_DIR: "C:\\settleway\\stellar-config",
+    SETTLEWAY_SMOKE_STELLAR_CLI_PATH: STELLAR_CLI_PATH,
+    SETTLEWAY_SMOKE_STELLAR_CONFIG_DIR: STELLAR_CONFIG_DIR,
     SETTLEWAY_SMOKE_STELLAR_NETWORK_ALIAS: "settleway-testnet",
     SETTLEWAY_SMOKE_ADMIN_KEY_ALIAS: "settleway-testnet-admin",
     SETTLEWAY_SMOKE_BUYER_DEMO_KEY_ALIAS: "settleway-testnet-buyer-demo",
@@ -30,6 +41,13 @@ function makeEnv(overrides: Record<string, string | undefined> = {}) {
 }
 
 describe("deal room testnet runtime loader", () => {
+  it("uses host-platform absolute path fixtures for portable CI", () => {
+    expect(path.isAbsolute(STELLAR_CLI_PATH)).toBe(true);
+    expect(path.isAbsolute(STELLAR_CONFIG_DIR)).toBe(true);
+    expect(STELLAR_CLI_PATH).not.toContain("C:\\stellar");
+    expect(STELLAR_CONFIG_DIR).not.toContain("C:\\settleway");
+  });
+
   it("builds a runtime from the frozen public Testnet config surface", () => {
     const reader = (name: string) => makeEnv()[name];
     const rpcPort = {} as StellarRpcPort;

@@ -1,6 +1,8 @@
 #![no_std]
 
-use soroban_sdk::{contract, contractimpl, contracttype, Address, BytesN, Env, Symbol};
+use soroban_sdk::{
+    contract, contractimpl, contracttype, symbol_short, Address, BytesN, Env, Symbol,
+};
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -36,8 +38,8 @@ pub struct Escrow {
     pub expires_at: u64,
 }
 
-const ADMIN_KEY: Symbol = Symbol::short("ADMIN");
-const ESCROW_COUNTER_KEY: Symbol = Symbol::short("COUNTER");
+const ADMIN_KEY: Symbol = symbol_short!("ADMIN");
+const ESCROW_COUNTER_KEY: Symbol = symbol_short!("COUNTER");
 
 #[contracttype]
 pub enum DataKey {
@@ -47,6 +49,7 @@ pub enum DataKey {
 #[contract]
 pub struct SettlewayEscrowContract;
 
+#[allow(clippy::too_many_arguments)]
 #[contractimpl]
 impl SettlewayEscrowContract {
     pub fn initialize(env: Env, admin: Address) {
@@ -57,6 +60,9 @@ impl SettlewayEscrowContract {
         env.storage().instance().set(&ESCROW_COUNTER_KEY, &0u64);
     }
 
+    // The contract ABI is intentionally explicit so off-chain proof tooling can
+    // preserve each settlement field without introducing a new serialized shape.
+    #[allow(clippy::too_many_arguments, deprecated)]
     pub fn create_escrow(
         env: Env,
         deal_hash: BytesN<32>,
@@ -107,6 +113,7 @@ impl SettlewayEscrowContract {
         counter
     }
 
+    #[allow(deprecated)]
     pub fn deposit_buyer(env: Env, escrow_id: u64, actor: Address) {
         actor.require_auth();
         let mut escrow: Escrow = Self::get_escrow(env.clone(), escrow_id);
@@ -132,6 +139,7 @@ impl SettlewayEscrowContract {
         }
     }
 
+    #[allow(deprecated)]
     pub fn deposit_seller(env: Env, escrow_id: u64, actor: Address) {
         actor.require_auth();
         let mut escrow: Escrow = Self::get_escrow(env.clone(), escrow_id);
@@ -157,6 +165,7 @@ impl SettlewayEscrowContract {
         }
     }
 
+    #[allow(deprecated)]
     pub fn submit_proof_hash(env: Env, escrow_id: u64, actor: Address, proof_hash: BytesN<32>) {
         actor.require_auth();
         let mut escrow: Escrow = Self::get_escrow(env.clone(), escrow_id);
@@ -177,6 +186,7 @@ impl SettlewayEscrowContract {
             .publish((Symbol::new(&env, "ProofSubmitted"), escrow_id), proof_hash);
     }
 
+    #[allow(deprecated)]
     pub fn mark_delivered(env: Env, escrow_id: u64, actor: Address) {
         actor.require_auth();
         let mut escrow: Escrow = Self::get_escrow(env.clone(), escrow_id);
@@ -195,6 +205,7 @@ impl SettlewayEscrowContract {
             .publish((Symbol::new(&env, "DeliveryMarked"), escrow_id), ());
     }
 
+    #[allow(deprecated)]
     pub fn accept_and_complete(env: Env, escrow_id: u64, actor: Address) {
         actor.require_auth();
         let mut escrow: Escrow = Self::get_escrow(env.clone(), escrow_id);
@@ -213,6 +224,7 @@ impl SettlewayEscrowContract {
             .publish((Symbol::new(&env, "EscrowCompleted"), escrow_id), ());
     }
 
+    #[allow(deprecated)]
     pub fn expire_if_unfunded(env: Env, escrow_id: u64) {
         let admin: Address = env
             .storage()
@@ -246,6 +258,7 @@ impl SettlewayEscrowContract {
         }
     }
 
+    #[allow(deprecated)]
     pub fn refund_before_locked(env: Env, escrow_id: u64) {
         let admin: Address = env
             .storage()

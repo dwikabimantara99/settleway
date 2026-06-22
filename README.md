@@ -1,5 +1,8 @@
 # Settleway
 
+[![Web CI](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml)
+[![Soroban Contract CI](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml)
+
 Settleway is a B2B agricultural trade-assurance platform that turns commodity discovery into recorded negotiation, bilateral commitment, escrow-style execution, Stellar-backed proof, and outcome-based reputation.
 
 ## Product Thesis
@@ -128,11 +131,17 @@ Contract:
 ```powershell
 cd contracts/settleway_escrow
 cargo fmt --check
+cargo clippy --all-targets --all-features -- -D warnings
 cargo test --verbose
 cargo build --target wasm32v1-none --release --verbose
 ```
 
-`cargo clippy` is recommended when the local toolchain has the component installed.
+Security:
+
+```powershell
+cd web
+npm audit --omit=dev --audit-level=high
+```
 
 ## Demo Corridor
 
@@ -162,12 +171,13 @@ Start here:
 - `docs/active/04_PRODUCTIZATION_ROADMAP.md`
 - `docs/active/05_CURRENT_HANDOFF.md`
 - `docs/active/06_MAIN_CONSOLIDATION_REPORT.md`
+- `docs/active/07_MAIN_PROMOTION_REPORT.md`
 
 Historical documents remain available in `docs/archive/` but are not active source of truth when they conflict with `docs/active/`.
 
 ## Branch Policy
 
-After Macro Batch 2 review, the intended policy is:
+The intended branch policy is:
 
 ```text
 main = protected canonical product branch
@@ -176,7 +186,5 @@ cleanup/<milestone> = bounded repository maintenance branch
 one coherent milestone per branch
 merge only after gates pass
 no force-push to main
-delete phase branches only after tags and review
+delete obsolete branches only after tags and green main verification
 ```
-
-Macro Batch 1 creates and pushes a candidate branch only. It does not modify `main`.

@@ -12,6 +12,7 @@ Read these before planning or coding:
 4. `docs/active/03_CURRENT_IMPLEMENTATION_STATUS.md`
 5. `docs/active/05_CURRENT_HANDOFF.md`
 6. `docs/active/06_MAIN_CONSOLIDATION_REPORT.md` when doing repository consolidation or branch promotion
+7. `docs/active/07_MAIN_PROMOTION_REPORT.md` when doing `main` promotion or post-promotion cleanup
 
 Supporting domain references remain useful:
 
@@ -71,15 +72,15 @@ Expected full gates:
 - `cd web && npm run lint`
 - `cd web && npm run typecheck`
 - `cd web && $env:NEXT_PUBLIC_RUNTIME_MODE="demo"; npm run build`
+- `cd web && npm audit --omit=dev --audit-level=high`
 - `cd contracts/settleway_escrow && cargo fmt --check`
+- `cd contracts/settleway_escrow && cargo clippy --all-targets --all-features -- -D warnings`
 - `cd contracts/settleway_escrow && cargo test --verbose`
 - `cd contracts/settleway_escrow && cargo build --target wasm32v1-none --release --verbose`
-
-Run `cargo clippy` when the local Rust toolchain has the component available.
 
 ## Git Discipline
 
 - Preserve important historical branch heads with annotated tags before cleanup or branch deletion.
 - Use candidate branches for consolidation.
-- Do not delete remote phase branches during Macro Batch 1.
+- Do not delete remote phase branches before archive tags and green `main` verification.
 - Push candidate work for review before promoting to `main`.

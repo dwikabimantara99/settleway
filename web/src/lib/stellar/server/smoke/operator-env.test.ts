@@ -1,3 +1,4 @@
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   FeeBumpTransaction,
@@ -29,8 +30,16 @@ const ADMIN_ADDRESS = "GBXZG2PGM62LHQ7CSKZ6HDMK5HOTNCBTS6XTCUWUP3AO3V6D7RHSXEYU"
 const BUYER_ADDRESS = "GBVNGU2QIQDENWOVV24AH4HXHFGIZWBY4ICXAPCQ6Y7A55E3V6PTN7PM";
 const SELLER_ADDRESS = "GDI2FHOWZCGLR5QRBJC2G3P3M52SSBLQWSDTF4Q4KBHAIZULHDMTM2CJ";
 const CONTRACT_ID = StrKey.encodeContract(Buffer.alloc(32, 12));
-const STELLAR_CLI_PATH = "C:\\Users\\ACER\\.cargo\\bin\\stellar.exe";
-const STELLAR_CONFIG_DIR = "C:\\Users\\ACER\\AppData\\Local\\Settleway\\stellar-testnet-smoke";
+const FIXTURE_ROOT = path.resolve(
+  path.parse(process.cwd()).root,
+  "settleway-testnet-smoke-fixtures",
+);
+const STELLAR_CLI_PATH = path.join(
+  FIXTURE_ROOT,
+  "bin",
+  process.platform === "win32" ? "stellar.exe" : "stellar",
+);
+const STELLAR_CONFIG_DIR = path.join(FIXTURE_ROOT, "stellar-config");
 const STELLAR_NETWORK_ALIAS = "settleway-testnet";
 const ADMIN_ALIAS = "settleway-testnet-admin";
 const BUYER_ALIAS = "settleway-testnet-buyer-demo";
@@ -149,6 +158,30 @@ function loadValid(
 }
 
 describe("local Testnet operator environment parsing", () => {
+  it("builds host-platform absolute path fixtures for portable CI", () => {
+    expect(path.isAbsolute(STELLAR_CLI_PATH)).toBe(true);
+    expect(path.isAbsolute(STELLAR_CONFIG_DIR)).toBe(true);
+    expect(STELLAR_CLI_PATH).not.toContain("C:\\Users\\ACER");
+    expect(STELLAR_CONFIG_DIR).not.toContain("C:\\Users\\ACER");
+  });
+
+  it("keeps current-host relative signer paths invalid", () => {
+    const result = loadValid({
+      [TESTNET_SMOKE_ENV.stellar_cli_path]: "stellar",
+      [TESTNET_SMOKE_ENV.stellar_config_dir]: "stellar-config",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          { code: "ERR_INVALID_SIGNER_CONFIG", field: "stellar_cli_path" },
+          { code: "ERR_INVALID_SIGNER_CONFIG", field: "stellar_config_dir" },
+        ]),
+      );
+    }
+  });
+
   it("defaults to preflight safely", () => {
     const result = loadValid();
     expect(result.ok).toBe(true);

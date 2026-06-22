@@ -8,17 +8,18 @@
 
 ## Current Task Boundary
 
-Macro Batch 1 is a repository consolidation batch. It may archive historical docs, create active documentation, repair CI, run gates, and push the candidate branch and archive tags. It must not modify `main`, delete remote phase branches, force-push, or expose secrets.
+Macro Batch 2 is the final repository consolidation and promotion batch. It may fix CI, remove proven dead weight, remediate dependency risk, update public documentation, validate locally and remotely, promote the green candidate to `main` by fast-forward, tag the baseline, and delete archived obsolete branches.
 
 ## No-Touch Areas
 
-- No `main` promotion in Macro Batch 1.
-- No remote branch deletion in Macro Batch 1.
 - No frontend redesign.
 - No new custody contract.
 - No bank/QRIS implementation.
 - No live secret access.
+- No force-push or history rewrite.
+- No deletion of untagged remote branches.
+- No `main` promotion while candidate CI is red or missing.
 
-## Next Human Review
+## Current Operator Focus
 
-Review the candidate branch, consolidation report, CI output, and active documentation. If approved, Macro Batch 2 can promote the candidate to `main` and retire phase branches safely.
+Finish Macro Batch 2 evidence collection. If any local or GitHub-hosted gate fails, fix forward on the candidate branch before touching `main`.

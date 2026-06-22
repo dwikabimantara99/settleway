@@ -40,7 +40,7 @@ The batch did not modify `main`, did not delete remote branches, did not force-p
 
 ## Product-code cleanup stance
 
-No product runtime code was removed in this batch. The consolidation intentionally focused on repository authority, documentation structure, CI gates, generated-output hygiene, and candidate-branch packaging.
+Macro Batch 1 did not remove product runtime code. Macro Batch 2 performs the follow-up evidence-based cleanup recorded in `docs/active/07_MAIN_PROMOTION_REPORT.md`.
 
 ## Archive tags prepared
 
@@ -64,11 +64,11 @@ Final gates were rerun from the candidate tree before commit:
 | `npm run typecheck` in `web` | Pass. |
 | `NEXT_PUBLIC_RUNTIME_MODE=demo npm run build` in `web` | Pass: 17 app routes generated. |
 | `cargo fmt --check` in `contracts/settleway_escrow` | Pass. |
-| `cargo clippy --all-targets --all-features` in `contracts/settleway_escrow` | Pass with existing warnings. |
+| `cargo clippy --all-targets --all-features` in `contracts/settleway_escrow` | Superseded by Macro Batch 2 strict Clippy gate. |
 | `cargo test --verbose` in `contracts/settleway_escrow` | Pass: 15 tests. |
 | `cargo build --target wasm32v1-none --release --verbose` in `contracts/settleway_escrow` | Pass. |
 | `git diff --check` | Pass with line-ending warnings only. |
-| `npm audit --omit=dev` in `web` | Fails: 4 known vulnerabilities, including `axios` through `@stellar/stellar-sdk` and `postcss` through `next`. |
+| `npm audit --omit=dev` in `web` | Superseded by Macro Batch 2 dependency remediation. |
 
 Known expected distinction:
 
@@ -79,7 +79,5 @@ Known expected distinction:
 
 - A human architectural review is still required before replacing `main`.
 - `origin/phase-7-stellar-integration` is intentionally archived as an older divergent branch; it should be reviewed before remote deletion in a later destructive cleanup batch.
-- NPM audit currently reports dependency vulnerabilities. This batch did not run `npm audit fix --force` because it would force breaking upgrades, including a Stellar SDK major-version change.
-- Contract Clippy passes but reports historical warnings around deprecated Soroban APIs, unused test variables, and a large contract method argument list.
-- Web build passes but emits Node `Buffer()` deprecation warnings during the Next.js build.
+- Macro Batch 2 must be consulted for final audit, strict Clippy, and build-warning disposition.
 - Live Testnet custody and payout completion remain product work, not repository consolidation work.

@@ -13,7 +13,7 @@ fn setup() -> (
     u64,
 ) {
     let env = Env::default();
-    let contract_id = env.register_contract(None, SettlewayEscrowContract);
+    let contract_id = env.register(SettlewayEscrowContract, ());
     let client = SettlewayEscrowContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
@@ -46,7 +46,7 @@ fn setup() -> (
 
 #[test]
 fn test_buyer_first_seller_second_locks() {
-    let (env, client, _, buyer, seller, escrow_id) = setup();
+    let (_env, client, _, buyer, seller, escrow_id) = setup();
 
     client.deposit_buyer(&escrow_id, &buyer);
     assert_eq!(
@@ -60,7 +60,7 @@ fn test_buyer_first_seller_second_locks() {
 
 #[test]
 fn test_seller_first_buyer_second_locks() {
-    let (env, client, _, buyer, seller, escrow_id) = setup();
+    let (_env, client, _, buyer, seller, escrow_id) = setup();
 
     client.deposit_seller(&escrow_id, &seller);
     assert_eq!(
@@ -74,7 +74,7 @@ fn test_seller_first_buyer_second_locks() {
 
 #[test]
 fn test_expiry_no_deposit_becomes_expired() {
-    let (env, client, admin, _, _, escrow_id) = setup();
+    let (env, client, _admin, _, _, escrow_id) = setup();
     env.ledger().set_timestamp(100_001); // Past expires_at
     client.expire_if_unfunded(&escrow_id);
     assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Expired);
@@ -82,7 +82,7 @@ fn test_expiry_no_deposit_becomes_expired() {
 
 #[test]
 fn test_expiry_buyer_funded_becomes_refunded() {
-    let (env, client, admin, buyer, _, escrow_id) = setup();
+    let (env, client, _admin, buyer, _, escrow_id) = setup();
     client.deposit_buyer(&escrow_id, &buyer);
     env.ledger().set_timestamp(100_001); // Past expires_at
     client.expire_if_unfunded(&escrow_id);
@@ -91,7 +91,7 @@ fn test_expiry_buyer_funded_becomes_refunded() {
 
 #[test]
 fn test_expiry_seller_funded_becomes_refunded() {
-    let (env, client, admin, _, seller, escrow_id) = setup();
+    let (env, client, _admin, _, seller, escrow_id) = setup();
     client.deposit_seller(&escrow_id, &seller);
     env.ledger().set_timestamp(100_001); // Past expires_at
     client.expire_if_unfunded(&escrow_id);
@@ -101,7 +101,7 @@ fn test_expiry_seller_funded_becomes_refunded() {
 #[test]
 #[should_panic(expected = "Cannot expire after lock")]
 fn test_expiry_after_locked_rejected() {
-    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let (env, client, _admin, buyer, seller, escrow_id) = setup();
     client.deposit_buyer(&escrow_id, &buyer);
     client.deposit_seller(&escrow_id, &seller);
     env.ledger().set_timestamp(100_001); // Past expires_at
@@ -111,7 +111,7 @@ fn test_expiry_after_locked_rejected() {
 #[test]
 #[should_panic(expected = "Not expired yet")]
 fn test_expiry_before_time_rejected() {
-    let (env, client, admin, _, _, escrow_id) = setup();
+    let (env, client, _admin, _, _, escrow_id) = setup();
     env.ledger().set_timestamp(99_999); // Before expires_at
     client.expire_if_unfunded(&escrow_id);
 }
@@ -120,7 +120,7 @@ fn test_expiry_before_time_rejected() {
 #[should_panic]
 fn test_expiry_auth_required() {
     let env = Env::default();
-    let contract_id = env.register_contract(None, SettlewayEscrowContract);
+    let contract_id = env.register(SettlewayEscrowContract, ());
     let client = SettlewayEscrowContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
@@ -157,13 +157,13 @@ fn test_expiry_auth_required() {
 #[test]
 #[should_panic(expected = "No funds to refund")]
 fn test_refund_no_deposit_rejected() {
-    let (env, client, admin, _, _, escrow_id) = setup();
+    let (_env, client, _admin, _, _, escrow_id) = setup();
     client.refund_before_locked(&escrow_id);
 }
 
 #[test]
 fn test_refund_buyer_funded_becomes_refunded() {
-    let (env, client, admin, buyer, _, escrow_id) = setup();
+    let (_env, client, _admin, buyer, _, escrow_id) = setup();
     client.deposit_buyer(&escrow_id, &buyer);
     client.refund_before_locked(&escrow_id);
     assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
@@ -171,7 +171,7 @@ fn test_refund_buyer_funded_becomes_refunded() {
 
 #[test]
 fn test_refund_seller_funded_becomes_refunded() {
-    let (env, client, admin, _, seller, escrow_id) = setup();
+    let (_env, client, _admin, _, seller, escrow_id) = setup();
     client.deposit_seller(&escrow_id, &seller);
     client.refund_before_locked(&escrow_id);
     assert_eq!(client.get_escrow(&escrow_id).status, EscrowStatus::Refunded);
@@ -180,7 +180,7 @@ fn test_refund_seller_funded_becomes_refunded() {
 #[test]
 #[should_panic(expected = "Cannot refund after locked")]
 fn test_refund_after_locked_rejected() {
-    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let (_env, client, _admin, buyer, seller, escrow_id) = setup();
     client.deposit_buyer(&escrow_id, &buyer);
     client.deposit_seller(&escrow_id, &seller);
     client.refund_before_locked(&escrow_id);
@@ -190,7 +190,7 @@ fn test_refund_after_locked_rejected() {
 #[should_panic]
 fn test_refund_auth_required() {
     let env = Env::default();
-    let contract_id = env.register_contract(None, SettlewayEscrowContract);
+    let contract_id = env.register(SettlewayEscrowContract, ());
     let client = SettlewayEscrowContractClient::new(&env, &contract_id);
 
     let admin = Address::generate(&env);
@@ -223,7 +223,7 @@ fn test_refund_auth_required() {
 #[test]
 #[should_panic(expected = "Invalid state for acceptance")]
 fn test_completion_from_proof_submitted_rejected() {
-    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let (env, client, _admin, buyer, seller, escrow_id) = setup();
     let proof_hash = BytesN::from_array(&env, &[1; 32]);
 
     client.deposit_buyer(&escrow_id, &buyer);
@@ -235,7 +235,7 @@ fn test_completion_from_proof_submitted_rejected() {
 
 #[test]
 fn test_completion_from_delivered_produces_completed() {
-    let (env, client, admin, buyer, seller, escrow_id) = setup();
+    let (env, client, _admin, buyer, seller, escrow_id) = setup();
     let proof_hash = BytesN::from_array(&env, &[1; 32]);
 
     client.deposit_buyer(&escrow_id, &buyer);
