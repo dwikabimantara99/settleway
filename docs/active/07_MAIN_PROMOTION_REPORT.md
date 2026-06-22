@@ -8,8 +8,12 @@ Date: 2026-06-22
 |---|---|
 | Starting candidate | `1161326f8ac0214376a8505c4ec6ef7d51df6cbe` |
 | Starting `origin/main` | `8c5628d0ca8a2603993ac90d3aec679e8f573fa9` |
-| Final candidate | Pending remote CI verification |
-| Final `main` | Pending promotion |
+| Promoted product candidate | `961a111b608112ba893980de8164b6e409a8ed0c` |
+| Promoted `main` before this report-only finalization | `961a111b608112ba893980de8164b6e409a8ed0c` |
+
+The final repository SHA includes this evidence-report finalization commit. The
+immutable `v0.1.0-hackathon-baseline` tag resolves the exact final `main`
+checkpoint after its GitHub-hosted checks pass.
 
 ## Cross-Platform CI Correction
 
@@ -73,15 +77,80 @@ Safe secret scan disposition:
 
 ## Candidate Remote CI
 
-Pending candidate push and GitHub-hosted verification.
+Final candidate at `961a111b608112ba893980de8164b6e409a8ed0c`:
+
+| Workflow | Run | Result |
+|---|---|---|
+| Web CI | [`27949927905`](https://github.com/dwikabimantara99/settleway/actions/runs/27949927905) | Pass on Ubuntu and Windows, including demo build and production dependency audit. |
+| Soroban Contract CI | [`27949927912`](https://github.com/dwikabimantara99/settleway/actions/runs/27949927912) | Pass; Wasm artifact `settleway-escrow-wasm` produced. |
+
+An earlier candidate Web CI run, `27949380201`, exposed two remaining
+Windows-only secure-store signer fixtures on Ubuntu. Commit
+`961a111b608112ba893980de8164b6e409a8ed0c` fixed those fixtures without
+weakening assertions, and the frozen candidate validation was restarted.
 
 ## Main Promotion Evidence
 
-Pending. `main` must not be promoted until candidate Web CI and Soroban Contract CI are green.
+The candidate was a fast-forward descendant of `8c5628d0ca8a2603993ac90d3aec679e8f573fa9`.
+It was pushed directly to `main` without force and with no history rewrite.
+The candidate and promoted `main` trees were identical.
+
+| Workflow | Run | Result |
+|---|---|---|
+| Web CI | [`27950212710`](https://github.com/dwikabimantara99/settleway/actions/runs/27950212710) | Pass: Ubuntu quality, Windows quality, demo production build, and production dependency audit. |
+| Soroban Contract CI | [`27950212780`](https://github.com/dwikabimantara99/settleway/actions/runs/27950212780) | Pass; artifact ID `7791331545`, `settleway-escrow-wasm`, 10,367 bytes. |
 
 ## Tag And Branch Cleanup Evidence
 
-Pending final green `main`.
+Finalization uses the annotated tag:
+
+```text
+v0.1.0-hackathon-baseline
+```
+
+Its annotation states that this is the consolidated pre-productization
+baseline and not production financial custody.
+
+The following historical branch heads were verified against their pushed
+archive tags before deletion:
+
+- `phase-6-soroban-contract`
+- `phase-7-stellar-integration`
+- `phase-7-rebuild`
+- `phase-8-proof-reputation`
+- `phase-9-demo-hardening`
+- `phase-10-scope-definition`
+- `phase-10-persistence-identity`
+
+The temporary `cleanup/main-candidate-2026-06` branch is removed only after
+the final report commit is green on `main` and the baseline tag is present on
+the remote. Dependabot branches are automation-owned and are not classified
+as obsolete phase branches by this cleanup.
+
+## Dependency Cleanup
+
+No direct package dependency was removed merely to increase deletion counts.
+Repository-wide import, route, script, and package-tree checks did not prove
+another installed direct dependency safe to remove. Security-related package
+versions and the narrow `postcss` override were updated as recorded above.
+
+## Repository Metadata And Protection
+
+The repository remains public with `main` as its default branch. At final
+verification, the public API reported no description, homepage, or topics.
+No authenticated GitHub API token or GitHub CLI session was available in this
+execution environment, so the following settings could not be applied
+truthfully from this run:
+
+- repository description and topics;
+- automatic deletion of merged branches;
+- `main` branch protection and required status checks;
+- a GitHub Release object for the baseline tag.
+
+The annotated Git tag remains the release checkpoint. Manual repository
+settings must require Web CI and Soroban Contract CI, prohibit force pushes
+and branch deletion, keep branches up to date, and avoid requiring external
+reviewers for the solo-maintainer workflow.
 
 ## Remaining Product Work
 
