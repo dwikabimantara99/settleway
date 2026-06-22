@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDown, ShieldCheck, ShoppingBag, Store } from 'lucide-react';
+import { ChevronDown, ShoppingBag, Store } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { GetStartedModal } from './GetStartedModal';
 import { isEscapeDismissKey, isMarketplaceOpenKey } from './landing-interactions';
 import { getFreighterApi, readStringResult, shortenStellarAddress } from '@/lib/stellar/freighter-client';
+import { SettlewayLogo } from '@/components/brand/SettlewayLogo';
 
 const marketplaceItems = [
   { href: '/marketplace', label: 'Buy', icon: ShoppingBag },
@@ -88,12 +89,7 @@ export function PublicLandingHeader({
     <>
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm">
         <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8">
-          <Link href="/" className="order-1 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-[0_8px_18px_rgba(16,185,129,0.16)]">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-slate-950">Settleway</span>
-          </Link>
+          <SettlewayLogo className="order-1" />
 
           <nav className="order-3 flex basis-full items-center justify-center gap-5 text-sm font-semibold text-slate-950 sm:gap-6 lg:order-2 lg:basis-auto lg:flex-1 lg:gap-9">
             <Link href="/" className="relative py-2 text-emerald-600">

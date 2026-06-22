@@ -86,9 +86,9 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(html).toContain(
         'Browse agricultural products listed by sellers before any protected room is opened.',
       );
-      expect(html).toContain('Verified Seller');
+      expect(html).toContain('Verified seller');
       expect(html).toContain('15 completed deals');
-      expect(html).toContain('Search commodities, location');
+      expect(html).toContain('Search commodities, origin, or variety');
       expect(html).toContain('White Rice (Premium Milling)');
     });
 
@@ -97,10 +97,10 @@ describe('Product UI Acceptance (Phase 8)', () => {
         params: Promise.resolve({ listingId: 'listing-cabai-001' }),
       });
 
-      expect(hasText(page, 'Why this seller looks credible')).toBe(true);
-      expect(hasText(page, 'Protected volume')).toBe(true);
-      expect(hasText(page, 'Proof mode')).toBe(true);
-      expect(hasText(page, 'Recorded negotiation starts first.')).toBe(true);
+      expect(hasText(page, 'Seller Assurance')).toBe(true);
+      expect(hasText(page, 'Commercial Baseline')).toBe(true);
+      expect(hasText(page, 'Recorded negotiation is the first gate')).toBe(true);
+      expect(hasText(page, 'Submit Offer')).toBe(true);
     });
 
     it('shows buyer trust signals and protected-room continuity on buyer requests', async () => {
@@ -108,11 +108,11 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       expect(html).toContain('Sell');
       expect(html).toContain(
-        'Browse active agricultural purchase requests posted by buyers before any protected room is opened.',
+        'Browse active agricultural purchase requests posted by buyers.',
       );
-      expect(html).toContain('Verified Buyer');
+      expect(html).toContain('Verified buyer');
       expect(html).toContain('42 completed purchases');
-      expect(html).toContain('Submit Offer');
+      expect(html).toContain('View Request');
     });
 
     it('frames submit offer as the start of a shared negotiation conversation', async () => {

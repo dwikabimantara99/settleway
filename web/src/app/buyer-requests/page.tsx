@@ -1,126 +1,121 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { demoBuyerRequests, demoProfiles } from '@/lib/demo/demo-data';
-import { Search, SlidersHorizontal, X, Package2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Package2, Search, SlidersHorizontal, X } from 'lucide-react';
+import { EmptyState, SectionHeader, StatusBadge } from '@/components/field-ledger/primitives';
+import { TextInput } from '@/components/field-ledger/forms';
 import { TradeSurfaceCard } from '@/components/marketplace/TradeSurfaceCard';
+import { Button } from '@/components/ui/Button';
+import { demoBuyerRequests, demoProfiles } from '@/lib/demo/demo-data';
 
-const BADGE_LABELS = ['Immediate Need', 'Recurring Demand', 'Scheduled Purchase'];
-const BADGE_TONES = ['emerald', 'violet', 'blue'] as const;
+const BADGE_LABELS = ['Immediate need', 'Recurring demand', 'Scheduled purchase'];
+const BADGE_TONES = ['warning', 'success', 'info'] as const;
 
 export default function BuyerRequestsPage() {
   const [search, setSearch] = useState('');
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return demoBuyerRequests.filter((req) =>
-      !q ||
-      req.commodity.toLowerCase().includes(q) ||
-      req.variety?.toLowerCase().includes(q) ||
-      req.deliveryLocation?.toLowerCase().includes(q),
+    return demoBuyerRequests.filter(
+      (request) =>
+        !q ||
+        request.commodity.toLowerCase().includes(q) ||
+        request.variety?.toLowerCase().includes(q) ||
+        request.deliveryLocation?.toLowerCase().includes(q),
     );
   }, [search]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* ── Header ── */}
-      <div className="mb-10 flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-500" />
-            </span>
-            {filtered.length} active request{filtered.length !== 1 ? 's' : ''}
-          </div>
-          <h1 className="mt-3 text-5xl font-extrabold tracking-tight text-slate-950">Sell</h1>
-          <p className="mt-3 text-xl leading-8 text-slate-600">
-            Browse active agricultural purchase requests posted by buyers before any protected room is opened.
-          </p>
-          <p className="mt-2 text-base leading-7 text-slate-400">
-            Review demand, target prices, and delivery needs, then respond with the right supply offer.
-          </p>
-        </div>
+    <main className="field-container py-10">
+      <SectionHeader
+        eyebrow="Sell marketplace"
+        title="Sell"
+        description="Browse active agricultural purchase requests posted by buyers. Review demand, target prices, delivery needs, and reputation before responding with a supply offer."
+        action={
+          <StatusBadge
+            label={`${filtered.length} request${filtered.length === 1 ? '' : 's'} active`}
+            tone="info"
+          />
+        }
+      />
 
-        <div className="flex flex-col gap-3 sm:flex-row xl:pt-8">
+      <section className="mt-8 field-surface p-4">
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
+            <TextInput
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search commodity, location…"
-              className="h-13 w-full rounded-2xl border border-slate-200 bg-white pl-12 pr-10 text-base text-slate-700 outline-none transition-all placeholder:text-slate-400 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 sm:w-80"
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search commodity, destination, or variety..."
+              className="pl-10 pr-10"
             />
-            {search && (
+            {search ? (
               <button
                 type="button"
                 onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-[var(--text-muted)] hover:bg-[var(--surface-subtle)]"
+                aria-label="Clear search"
               >
                 <X className="h-4 w-4" />
               </button>
-            )}
+            ) : null}
           </div>
-          <button
-            type="button"
-            className="flex h-13 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 text-base font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-          >
-            <SlidersHorizontal className="h-5 w-5" />
+          <Button type="button" variant="outline">
+            <SlidersHorizontal className="h-4 w-4" />
             Filters
-          </button>
+          </Button>
+          {search ? (
+            <Button type="button" variant="ghost" onClick={() => setSearch('')}>
+              Clear
+            </Button>
+          ) : null}
         </div>
-      </div>
+      </section>
 
-      {/* ── Results ── */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-slate-200 bg-white py-20 text-center shadow-sm">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-            <Package2 className="h-8 w-8" />
-          </div>
-          <h2 className="mt-5 text-xl font-bold text-slate-900">No requests found</h2>
-          <p className="mt-2 text-sm text-slate-500">Try adjusting your search.</p>
-          {search && (
-            <button
-              type="button"
-              onClick={() => setSearch('')}
-              className="mt-5 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              Clear search
-            </button>
-          )}
+        <div className="mt-8">
+          <EmptyState
+            icon={<Package2 className="h-8 w-8" />}
+            title="No buyer requests found"
+            description="Try another commodity, destination, or variety."
+            action={
+              search ? (
+                <Button type="button" variant="outline" onClick={() => setSearch('')}>
+                  Clear search
+                </Button>
+              ) : null
+            }
+          />
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-          {filtered.map((req, index) => {
-            const buyer = demoProfiles[req.buyerId];
-            const badgeLabel = BADGE_LABELS[index % BADGE_LABELS.length];
-            const badgeTone = BADGE_TONES[index % BADGE_TONES.length];
+        <section className="mt-8 grid grid-cols-1 gap-6 xl:grid-cols-2">
+          {filtered.map((request, index) => {
+            const buyer = demoProfiles[request.buyerId];
 
             return (
               <TradeSurfaceCard
-                key={req.id}
+                key={request.id}
                 audience="sell"
-                commodity={req.commodity}
-                subtitle={req.variety}
-                badgeLabel={badgeLabel}
-                badgeTone={badgeTone}
+                commodity={request.commodity}
+                subtitle={request.variety}
+                badgeLabel={BADGE_LABELS[index % BADGE_LABELS.length]}
+                badgeTone={BADGE_TONES[index % BADGE_TONES.length]}
                 locationLabel="Delivery to"
-                locationValue={req.deliveryLocation}
-                volumeValue={`${req.requiredVolumeKg.toLocaleString('id-ID')} kg needed`}
-                pricePerKgIdr={req.targetPricePerKgIdr}
-                estimatedValueIdr={req.estimatedTotalIdr}
+                locationValue={request.deliveryLocation}
+                volumeValue={`${request.requiredVolumeKg.toLocaleString('id-ID')} kg needed`}
+                pricePerKgIdr={request.targetPricePerKgIdr}
+                estimatedValueIdr={request.estimatedTotalIdr}
                 trustScore={buyer?.buyerScore ?? 0}
-                verificationLabel="Verified Buyer"
+                verificationLabel="Verified buyer"
                 activityLabel={`${buyer?.buyerCompletedCount ?? 0} completed purchases`}
                 counterpartyName={buyer?.displayName ?? 'Counterparty'}
-                detailHref={`/offers/new?buyerRequestId=${req.id}`}
-                detailLabel="Submit Offer"
+                detailHref={`/buyer-requests/${request.id}`}
+                detailLabel="View Request"
               />
             );
           })}
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 }

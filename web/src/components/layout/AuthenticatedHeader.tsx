@@ -8,14 +8,16 @@ import {
   ChevronDown,
   CircleHelp,
   LogOut,
+  Menu,
   Settings,
-  ShieldCheck,
   ShoppingBag,
   Store,
   UserRound,
   WalletCards,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SettlewayLogo } from '@/components/brand/SettlewayLogo';
 
 const DEFAULT_ACTOR = 'buyer-surabaya-restaurant';
 
@@ -35,6 +37,7 @@ export function AuthenticatedHeader() {
   const [actorId, setActorId] = useState('operator');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const marketplaceRef = useRef<HTMLDivElement>(null);
 
@@ -53,24 +56,18 @@ export function AuthenticatedHeader() {
     window.location.href = '/';
   };
 
+  const navigation = [
+    { href: '/marketplace', label: 'Buy' },
+    { href: '/buyer-requests', label: 'Sell' },
+    { href: '/notifications', label: 'Activity' },
+  ];
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-sm">
-      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="order-1 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-[0_8px_18px_rgba(16,185,129,0.16)]">
-            <ShieldCheck className="h-5 w-5" />
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-slate-950">Settleway</span>
-        </Link>
+    <header className="sticky top-0 z-50 w-full border-b border-[var(--border-default)] bg-[var(--surface)]">
+      <div className="field-container flex min-h-16 items-center gap-5">
+        <SettlewayLogo />
 
-        <nav className="order-3 flex basis-full items-center justify-center gap-5 text-sm font-semibold text-slate-950 sm:gap-6 lg:order-2 lg:basis-auto lg:flex-1 lg:gap-9">
-          <Link
-            href="/"
-            className="relative py-2 transition-colors hover:text-emerald-600"
-          >
-            Home
-          </Link>
-
+        <nav className="hidden flex-1 items-center gap-1 lg:flex" aria-label="Primary navigation">
           <div
             ref={marketplaceRef}
             className="relative"
@@ -88,63 +85,63 @@ export function AuthenticatedHeader() {
               aria-expanded={isMarketplaceOpen}
               onClick={() => setIsMarketplaceOpen((open) => !open)}
               className={cn(
-                'relative inline-flex items-center gap-2 py-2 transition-colors hover:text-emerald-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500',
-                isMarketplaceRoute ? 'text-emerald-600' : 'text-slate-950',
+                'relative inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-semibold transition-colors hover:bg-[var(--surface-subtle)]',
+                isMarketplaceRoute ? 'text-[var(--green-700)]' : 'text-[var(--text-secondary)]',
               )}
             >
-              Marketplace
+              Trade
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${isMarketplaceOpen ? 'rotate-180 text-emerald-600' : 'text-slate-500'}`}
+                className={`h-4 w-4 transition-transform ${isMarketplaceOpen ? 'rotate-180 text-[var(--green-700)]' : ''}`}
               />
-              {isMarketplaceRoute ? (
-                <span className="absolute inset-x-1 -bottom-1 h-0.5 rounded-full bg-emerald-600" />
-              ) : null}
             </button>
 
             {isMarketplaceOpen ? (
               <div
                 role="menu"
                 aria-label="Marketplace routes"
-                className="absolute left-1/2 top-full z-30 w-56 -translate-x-1/2 pt-3"
+                className="absolute left-0 top-full z-30 w-56 pt-2"
               >
-                <div className="overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.14)]">
+                <div className="overflow-hidden rounded-lg border bg-[var(--surface-elevated)] p-1 shadow-[var(--shadow-float)]">
                   <Link
                     href="/marketplace"
                     role="menuitem"
-                    className="flex items-center gap-3 border-b border-slate-200 px-5 py-4 text-left text-base font-semibold text-slate-950 transition-colors hover:bg-emerald-50 focus-visible:bg-emerald-50 focus-visible:outline-none"
+                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--green-50)]"
                   >
-                    <ShoppingBag className="h-6 w-6 text-emerald-600" />
-                    Buy
+                    <ShoppingBag className="h-5 w-5 text-[var(--green-700)]" />
+                    Buy supply
                   </Link>
                   <Link
                     href="/buyer-requests"
                     role="menuitem"
-                    className="flex items-center gap-3 px-5 py-4 text-left text-base font-semibold text-slate-950 transition-colors hover:bg-emerald-50 focus-visible:bg-emerald-50 focus-visible:outline-none"
+                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--green-50)]"
                   >
-                    <Store className="h-6 w-6 text-emerald-600" />
-                    Sell
+                    <Store className="h-5 w-5 text-[var(--green-700)]" />
+                    Sell to requests
                   </Link>
                 </div>
               </div>
             ) : null}
           </div>
 
-          <Link href="/#about" className="py-2 transition-colors hover:text-emerald-600">
-            About
-          </Link>
-          <Link href="/#faq" className="py-2 transition-colors hover:text-emerald-600">
-            FAQ
+          <Link
+            href="/notifications"
+            className={cn(
+              'inline-flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]',
+              pathname.startsWith('/notifications') && 'text-[var(--green-700)]',
+            )}
+          >
+            Activity
           </Link>
         </nav>
 
-        <div className="order-2 ml-auto flex items-center gap-3 lg:order-3">
+        <div className="ml-auto flex items-center gap-2">
           <Link
             href="/notifications"
             aria-label="Notifications"
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-700 transition-colors hover:bg-slate-100 hover:text-emerald-700"
+            className="relative flex h-11 w-11 items-center justify-center rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
           >
             <Bell className="h-5 w-5" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-white" />
+            <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--green-700)] ring-2 ring-[var(--surface)]" />
           </Link>
 
           <div
@@ -162,9 +159,9 @@ export function AuthenticatedHeader() {
               aria-expanded={isMenuOpen}
               aria-label="Open account menu"
               onClick={() => setIsMenuOpen((open) => !open)}
-              className="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              className="flex min-h-11 items-center gap-2 rounded-md px-2 hover:bg-[var(--surface-subtle)]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-800 ring-2 ring-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy-100)] text-xs font-bold text-[var(--navy-800)]">
                 {getActorInitials(actorId)}
               </span>
               <ChevronDown
@@ -176,12 +173,12 @@ export function AuthenticatedHeader() {
               <div
                 role="menu"
                 aria-label="Account menu"
-                className="absolute right-0 top-full mt-3 w-56 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-[0_20px_55px_rgba(15,23,42,0.16)]"
+                className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-lg border bg-[var(--surface-elevated)] p-1.5 shadow-[var(--shadow-float)]"
               >
                 <Link
                   href={profileHref}
                   role="menuitem"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                  className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >
                   <UserRound className="h-4 w-4" />
                   Profile
@@ -189,7 +186,7 @@ export function AuthenticatedHeader() {
                 <Link
                   href="/deals/demo-cabai-001"
                   role="menuitem"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                  className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >
                   <WalletCards className="h-4 w-4" />
                   Transactions
@@ -199,7 +196,7 @@ export function AuthenticatedHeader() {
                   role="menuitem"
                   disabled
                   title="Settings are not available in the current MVP."
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-muted)]"
                 >
                   <Settings className="h-4 w-4" />
                   Settings
@@ -207,17 +204,17 @@ export function AuthenticatedHeader() {
                 <Link
                   href="/demo"
                   role="menuitem"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"
+                  className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >
                   <CircleHelp className="h-4 w-4" />
                   Help
                 </Link>
-                <div className="my-2 border-t border-slate-200" />
+                <div className="my-1 border-t border-[var(--border-subtle)]" />
                 <button
                   type="button"
                   role="menuitem"
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50"
+                  className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-semibold text-[var(--danger-600)] hover:bg-[var(--danger-50)]"
                 >
                   <LogOut className="h-4 w-4" />
                   Logout
@@ -225,8 +222,38 @@ export function AuthenticatedHeader() {
               </div>
             ) : null}
           </div>
+
+          <button
+            type="button"
+            aria-label={isMobileOpen ? 'Close navigation' : 'Open navigation'}
+            aria-expanded={isMobileOpen}
+            onClick={() => setIsMobileOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] lg:hidden"
+          >
+            {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {isMobileOpen ? (
+        <nav
+          aria-label="Mobile navigation"
+          className="border-t border-[var(--border-subtle)] bg-[var(--surface)] px-3 py-2 lg:hidden"
+        >
+          <div className="field-container grid gap-1">
+            {navigation.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileOpen(false)}
+                className="flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      ) : null}
     </header>
   );
 }

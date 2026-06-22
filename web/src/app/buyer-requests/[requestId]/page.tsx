@@ -6,10 +6,9 @@ import {
   BadgeCheck,
   CalendarDays,
   ChevronLeft,
-  FileText,
   Handshake,
   MapPin,
-  Package,
+  Scale,
   ShieldCheck,
   Tag,
 } from 'lucide-react';
@@ -21,7 +20,7 @@ import {
   StatusBadge,
 } from '@/components/field-ledger/primitives';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { demoListings, demoProfiles } from '@/lib/demo/demo-data';
+import { demoBuyerRequests, demoProfiles } from '@/lib/demo/demo-data';
 
 function formatIdr(value: number): string {
   return `Rp ${value.toLocaleString('id-ID')}`;
@@ -44,39 +43,33 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
-export default async function ListingDetailPage({
+export default async function BuyerRequestDetailPage({
   params,
 }: {
-  params: Promise<{ listingId: string }>;
+  params: Promise<{ requestId: string }>;
 }) {
-  const { listingId } = await params;
-  const listing = demoListings.find((item) => item.id === listingId);
+  const { requestId } = await params;
+  const request = demoBuyerRequests.find((item) => item.id === requestId);
 
-  if (!listing) return notFound();
+  if (!request) return notFound();
 
-  const seller = demoProfiles[listing.sellerId];
-  const isReadyStock = listing.status === 'ready_stock';
+  const buyer = demoProfiles[request.buyerId];
 
   return (
     <main className="field-container py-10">
       <Link
-        href="/marketplace"
+        href="/buyer-requests"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--green-700)]"
       >
         <ChevronLeft className="h-4 w-4" />
-        Back to Buy marketplace
+        Back to Sell marketplace
       </Link>
 
       <SectionHeader
-        eyebrow="Seller listing"
-        title={listing.commodity}
-        description={listing.description}
-        action={
-          <StatusBadge
-            label={isReadyStock ? 'Ready stock' : 'Pre-harvest'}
-            tone={isReadyStock ? 'success' : 'info'}
-          />
-        }
+        eyebrow="Buyer request"
+        title={request.commodity}
+        description={request.description}
+        action={<StatusBadge label="Open request" tone="info" />}
       />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
@@ -85,19 +78,19 @@ export default async function ListingDetailPage({
             <CardContent className="p-0">
               <div className="relative aspect-[16/7] min-h-72 bg-[var(--surface-subtle)]">
                 <Image
-                  src={getCommodityImage(listing.commodity)}
-                  alt={listing.commodity}
+                  src={getCommodityImage(request.commodity)}
+                  alt={request.commodity}
                   fill
                   sizes="(min-width: 1024px) 760px, 100vw"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(3,8,31,0.72)] to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <StatusBadge label="Offer before escrow" tone="success" />
-                  <h2 className="mt-4 max-w-2xl text-3xl font-semibold">{listing.variety}</h2>
+                  <StatusBadge label="Demand before escrow" tone="warning" />
+                  <h2 className="mt-4 max-w-2xl text-3xl font-semibold">{request.variety}</h2>
                   <p className="mt-2 text-sm text-white/80">
-                    Submit Offer starts recorded negotiation. The active room opens only after
-                    accepted terms and mutual commitment.
+                    This request starts with a submitted offer and recorded negotiation before the
+                    Deal Room can open.
                   </p>
                 </div>
               </div>
@@ -106,39 +99,36 @@ export default async function ListingDetailPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>Listing Snapshot</CardTitle>
+              <CardTitle>Request Requirements</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-[var(--border-subtle)] p-4">
-                  <Package className="h-5 w-5 text-[var(--green-700)]" />
+                  <Scale className="h-5 w-5 text-[var(--green-700)]" />
                   <AmountDisplay
-                    label="Available volume"
-                    value={`${listing.estimatedVolumeKg.toLocaleString('id-ID')} kg`}
+                    label="Required volume"
+                    value={`${request.requiredVolumeKg.toLocaleString('id-ID')} kg`}
                   />
                 </div>
                 <div className="rounded-lg border border-[var(--border-subtle)] p-4">
                   <Tag className="h-5 w-5 text-[var(--green-700)]" />
-                  <AmountDisplay label="Price per kg" value={`${formatIdr(listing.pricePerKgIdr)} /kg`} />
+                  <AmountDisplay label="Target price" value={`${formatIdr(request.targetPricePerKgIdr)} /kg`} />
                 </div>
                 <div className="rounded-lg border border-[var(--border-subtle)] p-4">
                   <MapPin className="h-5 w-5 text-[var(--green-700)]" />
-                  <AmountDisplay label="Origin" value={listing.location} />
+                  <AmountDisplay label="Delivery destination" value={request.deliveryLocation} />
                 </div>
                 <div className="rounded-lg border border-[var(--border-subtle)] p-4">
                   <CalendarDays className="h-5 w-5 text-[var(--green-700)]" />
-                  <AmountDisplay
-                    label={listing.harvestDate ? 'Harvest date' : 'Availability'}
-                    value={listing.harvestDate ? formatDate(listing.harvestDate) : 'Available now'}
-                  />
+                  <AmountDisplay label="Required date" value={formatDate(request.requiredDate)} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Notice title="Recorded negotiation is the first gate" tone="success">
-            Buyers and sellers discuss price, quantity, delivery, quality, and evidence before any
-            deposit or escrow action begins.
+          <Notice title="Offer first, Deal Room later" tone="info">
+            Submit Offer creates the commercial baseline and starts the recorded negotiation. The
+            active escrow room opens only after the offer is accepted and both parties commit.
           </Notice>
         </section>
 
@@ -149,16 +139,16 @@ export default async function ListingDetailPage({
             </CardHeader>
             <CardContent>
               <dl>
-                <DataRow label="Volume" value={`${listing.estimatedVolumeKg.toLocaleString('id-ID')} kg`} />
-                <DataRow label="Price" value={`${formatIdr(listing.pricePerKgIdr)} /kg`} />
+                <DataRow label="Volume" value={`${request.requiredVolumeKg.toLocaleString('id-ID')} kg`} />
+                <DataRow label="Target price" value={`${formatIdr(request.targetPricePerKgIdr)} /kg`} />
                 <DataRow
                   label="Indicative value"
-                  value={<span className="text-[var(--green-700)]">{formatIdr(listing.estimatedValueIdr)}</span>}
+                  value={<span className="text-[var(--green-700)]">{formatIdr(request.estimatedTotalIdr)}</span>}
                   emphasized
                 />
               </dl>
               <Link
-                href={`/offers/new?listingId=${listing.id}`}
+                href={`/offers/new?buyerRequestId=${request.id}`}
                 className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--green-700)] bg-[var(--green-700)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--green-800)]"
               >
                 Submit Offer
@@ -169,33 +159,29 @@ export default async function ListingDetailPage({
 
           <Card>
             <CardHeader>
-              <CardTitle>Seller Assurance</CardTitle>
+              <CardTitle>Buyer Assurance</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-semibold text-[var(--navy-900)]">{seller?.displayName}</h3>
-                <p className="text-sm text-[var(--text-secondary)]">{seller?.roleLabel}</p>
+                <h3 className="font-semibold text-[var(--navy-900)]">{buyer?.displayName}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">{buyer?.roleLabel}</p>
                 <p className="mt-1 flex items-center gap-1.5 text-sm text-[var(--text-muted)]">
                   <MapPin className="h-4 w-4" />
-                  {seller?.location}
+                  {buyer?.location}
                 </p>
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center gap-3 rounded-md border border-[var(--border-subtle)] p-3">
                   <ShieldCheck className="h-5 w-5 text-[var(--green-700)]" />
-                  <span className="text-sm">Reputation {seller?.sellerScore ?? 0}/100</span>
+                  <span className="text-sm">Reputation {buyer?.buyerScore ?? 0}/100</span>
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-[var(--border-subtle)] p-3">
                   <Handshake className="h-5 w-5 text-[var(--green-700)]" />
-                  <span className="text-sm">{seller?.sellerCompletedCount ?? 0} completed deals</span>
+                  <span className="text-sm">{buyer?.buyerCompletedCount ?? 0} completed purchases</span>
                 </div>
                 <div className="flex items-center gap-3 rounded-md border border-[var(--border-subtle)] p-3">
                   <BadgeCheck className="h-5 w-5 text-[var(--green-700)]" />
-                  <span className="text-sm">Verified seller</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-md border border-[var(--border-subtle)] p-3">
-                  <FileText className="h-5 w-5 text-[var(--green-700)]" />
-                  <span className="text-sm">Evidence expected after escrow activation</span>
+                  <span className="text-sm">Verified buyer</span>
                 </div>
               </div>
             </CardContent>
