@@ -10,10 +10,8 @@ import {
   LogOut,
   Menu,
   Settings,
-  ShoppingBag,
-  Store,
+  Handshake,
   UserRound,
-  WalletCards,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -36,10 +34,8 @@ export function AuthenticatedHeader() {
   const pathname = usePathname();
   const [actorId, setActorId] = useState('operator');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const marketplaceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Sync the demo actor from the browser cookie after hydration.
@@ -48,9 +44,6 @@ export function AuthenticatedHeader() {
 
   const profileHref =
     actorId === 'operator' ? '/demo' : `/profiles/${actorId}`;
-  const isMarketplaceRoute =
-    pathname.startsWith('/marketplace') || pathname.startsWith('/buyer-requests');
-
   const handleLogout = () => {
     document.cookie = 'mock_actor=; path=/; max-age=0';
     window.location.href = '/';
@@ -59,86 +52,41 @@ export function AuthenticatedHeader() {
   const navigation = [
     { href: '/marketplace', label: 'Buy' },
     { href: '/buyer-requests', label: 'Sell' },
-    { href: '/notifications', label: 'Activity' },
+    { href: '/deals/demo-cabai-001', label: 'Deals' },
+    { href: '/notifications', label: 'Notifications' },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[var(--border-default)] bg-[var(--surface)]">
-      <div className="field-container flex min-h-16 items-center gap-5">
+    <header className="sticky top-0 z-50 w-full border-b border-white/65 bg-white/82 backdrop-blur-xl">
+      <div className="field-container flex min-h-[4.5rem] items-center gap-5">
         <SettlewayLogo />
 
-        <nav className="hidden flex-1 items-center gap-1 lg:flex" aria-label="Primary navigation">
-          <div
-            ref={marketplaceRef}
-            className="relative"
-            onMouseEnter={() => setIsMarketplaceOpen(true)}
-            onMouseLeave={() => setIsMarketplaceOpen(false)}
-            onBlur={(event) => {
-              const nextTarget = event.relatedTarget;
-              if (nextTarget instanceof Node && event.currentTarget.contains(nextTarget)) return;
-              setIsMarketplaceOpen(false);
-            }}
-          >
-            <button
-              type="button"
-              aria-haspopup="menu"
-              aria-expanded={isMarketplaceOpen}
-              onClick={() => setIsMarketplaceOpen((open) => !open)}
-              className={cn(
-                'relative inline-flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-semibold transition-colors hover:bg-[var(--surface-subtle)]',
-                isMarketplaceRoute ? 'text-[var(--green-700)]' : 'text-[var(--text-secondary)]',
-              )}
-            >
-              Trade
-              <ChevronDown
-                className={`h-4 w-4 transition-transform ${isMarketplaceOpen ? 'rotate-180 text-[var(--green-700)]' : ''}`}
-              />
-            </button>
-
-            {isMarketplaceOpen ? (
-              <div
-                role="menu"
-                aria-label="Marketplace routes"
-                className="absolute left-0 top-full z-30 w-56 pt-2"
+        <nav className="mx-auto hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
+          {navigation.map((item) => {
+            const active =
+              item.href.startsWith('/deals/')
+                ? pathname.startsWith('/deals')
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'relative inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:bg-white hover:text-[var(--navy-900)]',
+                  active && 'bg-white text-[var(--green-700)] shadow-sm',
+                )}
               >
-                <div className="overflow-hidden rounded-lg border bg-[var(--surface-elevated)] p-1 shadow-[var(--shadow-float)]">
-                  <Link
-                    href="/marketplace"
-                    role="menuitem"
-                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--green-50)]"
-                  >
-                    <ShoppingBag className="h-5 w-5 text-[var(--green-700)]" />
-                    Buy supply
-                  </Link>
-                  <Link
-                    href="/buyer-requests"
-                    role="menuitem"
-                    className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--green-50)]"
-                  >
-                    <Store className="h-5 w-5 text-[var(--green-700)]" />
-                    Sell to requests
-                  </Link>
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <Link
-            href="/notifications"
-            className={cn(
-              'inline-flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]',
-              pathname.startsWith('/notifications') && 'text-[var(--green-700)]',
-            )}
-          >
-            Activity
-          </Link>
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/notifications"
             aria-label="Notifications"
-            className="relative flex h-11 w-11 items-center justify-center rounded-md text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
+            className="relative flex h-11 w-11 items-center justify-center rounded-xl text-[var(--text-secondary)] hover:bg-white hover:text-[var(--navy-900)]"
           >
             <Bell className="h-5 w-5" />
             <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[var(--green-700)] ring-2 ring-[var(--surface)]" />
@@ -159,7 +107,7 @@ export function AuthenticatedHeader() {
               aria-expanded={isMenuOpen}
               aria-label="Open account menu"
               onClick={() => setIsMenuOpen((open) => !open)}
-              className="flex min-h-11 items-center gap-2 rounded-md px-2 hover:bg-[var(--surface-subtle)]"
+              className="flex min-h-11 items-center gap-2 rounded-xl px-2 hover:bg-white"
             >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--navy-100)] text-xs font-bold text-[var(--navy-800)]">
                 {getActorInitials(actorId)}
@@ -173,7 +121,7 @@ export function AuthenticatedHeader() {
               <div
                 role="menu"
                 aria-label="Account menu"
-                className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-lg border bg-[var(--surface-elevated)] p-1.5 shadow-[var(--shadow-float)]"
+                className="aurora-acrylic absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl p-1.5"
               >
                 <Link
                   href={profileHref}
@@ -188,7 +136,7 @@ export function AuthenticatedHeader() {
                   role="menuitem"
                   className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >
-                  <WalletCards className="h-4 w-4" />
+                  <Handshake className="h-4 w-4" />
                   Transactions
                 </Link>
                 <button

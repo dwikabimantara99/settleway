@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -11,8 +10,8 @@ import {
   Tag,
   UserRound,
 } from 'lucide-react';
+import { CommodityImage } from './CommodityImage';
 import { StatusBadge } from '@/components/field-ledger/primitives';
-import { Card, CardContent } from '@/components/ui/Card';
 
 type SurfaceAudience = 'buy' | 'sell';
 type BadgeTone = 'success' | 'info' | 'warning';
@@ -34,41 +33,11 @@ interface TradeSurfaceCardProps {
   counterpartyName: string;
   detailHref: string;
   detailLabel: string;
+  featured?: boolean;
 }
 
 function formatIdr(value: number): string {
   return `Rp ${value.toLocaleString('id-ID')}`;
-}
-
-function getCommodityImage(commodity: string) {
-  const normalized = commodity.toLowerCase();
-  if (normalized.includes('coffee') || normalized.includes('arabica') || normalized.includes('beans')) {
-    return '/commodities/green-coffee.png';
-  }
-  if (normalized.includes('rice')) return '/commodities/white-rice.png';
-  return '/commodities/red-chili.png';
-}
-
-function Metric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof MapPin;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--navy-400)]" />
-      <div className="min-w-0">
-        <div className="text-xs font-medium text-[var(--text-muted)]">{label}</div>
-        <div className="mt-0.5 text-base font-semibold text-[var(--navy-900)] financial-figures">
-          {value}
-        </div>
-      </div>
-    </div>
-  );
 }
 
 function TrustItem({
@@ -79,9 +48,9 @@ function TrustItem({
   label: string;
 }) {
   return (
-    <div className="flex min-w-0 items-center gap-2 text-sm text-[var(--text-secondary)]">
+    <div className="flex min-w-0 items-center gap-2 text-xs text-[var(--text-secondary)]">
       <Icon className="h-4 w-4 shrink-0 text-[var(--green-700)]" />
-      <span className="truncate">{label}</span>
+      <span>{label}</span>
     </div>
   );
 }
@@ -92,7 +61,6 @@ export function TradeSurfaceCard({
   subtitle,
   badgeLabel,
   badgeTone,
-  locationLabel,
   locationValue,
   volumeValue,
   pricePerKgIdr,
@@ -103,54 +71,73 @@ export function TradeSurfaceCard({
   counterpartyName,
   detailHref,
   detailLabel,
+  featured = false,
 }: TradeSurfaceCardProps) {
   const CounterpartyIcon = audience === 'buy' ? Store : UserRound;
 
-  return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-0">
-        <div className="grid gap-0 lg:grid-cols-[minmax(0,1.04fr)_minmax(260px,0.86fr)]">
-          <div className="p-6">
-            <StatusBadge label={badgeLabel} tone={badgeTone} />
-            <div className="relative mt-4 aspect-[16/9] overflow-hidden rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-subtle)]">
-              <Image
-                src={getCommodityImage(commodity)}
-                alt={commodity}
-                fill
-                sizes="(min-width: 1280px) 520px, (min-width: 1024px) 45vw, 100vw"
-                className="object-cover"
-              />
+  if (featured) {
+    return (
+      <article className="aurora-feature-surface aurora-hover overflow-hidden">
+        <div className="grid min-h-[31rem] lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="relative min-h-[19rem] overflow-hidden lg:min-h-full">
+            <CommodityImage
+              commodity={commodity}
+              sizes="(min-width: 1280px) 760px, (min-width: 1024px) 58vw, 100vw"
+              priority
+              className="transition-transform duration-500 hover:scale-[1.025]"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-[var(--navy-900)]/72 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white">
+              <div>
+                <div className="text-xs font-semibold uppercase text-white/75">Featured supply</div>
+                <h2 className="mt-1 text-2xl font-semibold">{commodity}</h2>
+              </div>
+              <StatusBadge label={badgeLabel} tone={badgeTone} className="bg-white/90" />
             </div>
-            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-[var(--navy-900)]">
-              {commodity}
-            </h2>
-            <p className="mt-1 text-base text-[var(--text-secondary)]">{subtitle}</p>
           </div>
 
-          <div className="flex flex-col border-t border-[var(--border-subtle)] p-6 lg:border-l lg:border-t-0">
-            <div className="grid gap-5">
-              <Metric icon={MapPin} label={locationLabel} value={locationValue} />
-              <Metric icon={Scale} label="Volume" value={volumeValue} />
-              <Metric icon={Tag} label="Price" value={`${formatIdr(pricePerKgIdr)} /kg`} />
-              <Metric icon={Tag} label="Estimated value" value={formatIdr(estimatedValueIdr)} />
+          <div className="flex flex-col p-6 sm:p-8">
+            <p className="text-sm text-[var(--text-secondary)]">{subtitle}</p>
+            <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-5 w-5 text-[var(--azure-600)]" />
+                <div>
+                  <div className="text-xs text-[var(--text-muted)]">Origin</div>
+                  <div className="mt-1 font-semibold text-[var(--navy-900)]">{locationValue}</div>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Scale className="mt-0.5 h-5 w-5 text-[var(--azure-600)]" />
+                <div>
+                  <div className="text-xs text-[var(--text-muted)]">Available volume</div>
+                  <div className="mt-1 font-semibold text-[var(--navy-900)]">{volumeValue}</div>
+                </div>
+              </div>
             </div>
-
-            <div className="mt-6 grid gap-3 border-y border-[var(--border-subtle)] py-4">
+            <div className="mt-7 border-y border-[var(--border-subtle)] py-5">
+              <div className="text-xs text-[var(--text-muted)]">Price per kg</div>
+              <div className="mt-1 text-3xl font-semibold financial-figures text-[var(--navy-900)]">
+                {formatIdr(pricePerKgIdr)}
+              </div>
+              <div className="mt-2 text-sm text-[var(--text-secondary)]">
+                Estimated value {formatIdr(estimatedValueIdr)}
+              </div>
+            </div>
+            <div className="mt-5 grid gap-2">
               <TrustItem icon={ShieldCheck} label={`Reputation ${trustScore}/100`} />
               <TrustItem icon={BadgeCheck} label={verificationLabel} />
               <TrustItem icon={Handshake} label={activityLabel} />
             </div>
-
-            <div className="mt-5 flex flex-1 flex-col justify-end gap-4 sm:flex-row sm:items-end sm:justify-between lg:flex-col lg:items-stretch">
+            <div className="mt-auto flex flex-col gap-4 pt-7 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--green-50)] text-[var(--green-700)]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--green-50)] text-[var(--green-700)]">
                   <CounterpartyIcon className="h-5 w-5" />
-                </div>
-                <span className="font-medium text-[var(--green-700)]">{counterpartyName}</span>
+                </span>
+                <span className="text-sm font-semibold text-[var(--green-700)]">{counterpartyName}</span>
               </div>
               <Link
                 href={detailHref}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--green-700)] bg-[var(--green-700)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--green-800)]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--green-700)] px-4 text-sm font-semibold text-white hover:bg-[var(--green-800)]"
               >
                 {detailLabel}
                 <ArrowRight className="h-4 w-4" />
@@ -158,7 +145,69 @@ export function TradeSurfaceCard({
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </article>
+    );
+  }
+
+  return (
+    <article className="aurora-surface aurora-hover overflow-hidden">
+      <div className="grid sm:grid-cols-[13rem_minmax(0,1fr)]">
+        <div className="relative min-h-52 overflow-hidden sm:min-h-full">
+          <CommodityImage
+            commodity={commodity}
+            sizes="(min-width: 1280px) 260px, (min-width: 640px) 34vw, 100vw"
+          />
+        </div>
+        <div className="flex min-w-0 flex-col p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <StatusBadge label={badgeLabel} tone={badgeTone} />
+              <h2 className="mt-3 text-xl font-semibold text-[var(--navy-900)]">{commodity}</h2>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">{subtitle}</p>
+            </div>
+            <div className="text-right">
+              <div className="text-lg font-semibold financial-figures text-[var(--navy-900)]">
+                {formatIdr(pricePerKgIdr)}
+              </div>
+              <div className="text-xs text-[var(--text-muted)]">per kg</div>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+              <MapPin className="h-4 w-4 text-[var(--azure-600)]" />
+              {locationValue}
+            </div>
+            <div className="flex items-center gap-2 text-[var(--text-secondary)]">
+              <Scale className="h-4 w-4 text-[var(--azure-600)]" />
+              {volumeValue}
+            </div>
+            <div className="flex items-center gap-2 text-[var(--text-secondary)] sm:col-span-2">
+              <Tag className="h-4 w-4 text-[var(--azure-600)]" />
+              Estimated value {formatIdr(estimatedValueIdr)}
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 border-t border-[var(--border-subtle)] pt-4">
+            <TrustItem icon={ShieldCheck} label={`${trustScore}/100 reputation`} />
+            <TrustItem icon={BadgeCheck} label={verificationLabel} />
+            <TrustItem icon={Handshake} label={activityLabel} />
+          </div>
+
+          <div className="mt-auto flex items-center justify-between gap-4 pt-5">
+            <span className="truncate text-sm font-semibold text-[var(--green-700)]">
+              {counterpartyName}
+            </span>
+            <Link
+              href={detailHref}
+              aria-label={`${detailLabel}: ${commodity}`}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-default)] text-[var(--navy-900)] hover:border-[var(--azure-300)] hover:bg-[var(--azure-50)]"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }

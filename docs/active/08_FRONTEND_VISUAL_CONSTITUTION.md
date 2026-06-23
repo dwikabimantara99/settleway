@@ -1,5 +1,10 @@
 # Settleway Frontend Visual Constitution
 
+> Historical Batch 1 baseline. New frontend work is governed by
+> `docs/active/11_SETTLEWAY_AURORA_VISUAL_DIRECTION.md`. Product truth and
+> transaction-language rules in this file remain useful where they do not
+> conflict with the Aurora direction.
+
 ## Thesis
 
 Settleway uses the **Field Ledger** visual language: an institutional trade

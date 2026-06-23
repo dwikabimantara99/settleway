@@ -14,10 +14,10 @@ describe('GetStartedModal', () => {
     );
 
     expect(html).toContain('role="dialog"');
-    expect(html).toContain('Welcome to Settleway');
+    expect(html).toContain('Enter Settleway');
     expect(html).toContain('Continue with Google');
     expect(html).toContain('Connect Stellar Wallet');
-    expect(html).toContain('Secure by design');
+    expect(html).toContain('Protected by design');
   });
 
   it('keeps the provider buttons and legal text visible without fabricating routes', () => {

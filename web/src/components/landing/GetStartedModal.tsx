@@ -152,7 +152,7 @@ export function GetStartedModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/45 px-4 py-6 backdrop-blur-[1px] sm:px-6"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#07152b]/58 px-4 py-6 backdrop-blur-md sm:px-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
@@ -165,41 +165,41 @@ export function GetStartedModal({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="relative flex max-h-[calc(100vh-32px)] w-full max-w-[520px] flex-col overflow-y-auto rounded-[1.5rem] bg-white p-6 shadow-[0_28px_80px_rgba(15,23,42,0.18)] sm:p-8"
+        className="aurora-enter relative flex max-h-[calc(100vh-32px)] w-full max-w-[500px] flex-col overflow-y-auto rounded-[var(--radius-dialog)] border border-white/75 bg-white/95 p-6 shadow-[var(--shadow-dialog)] backdrop-blur-xl sm:p-8"
       >
         <button
           ref={closeButtonRef}
           type="button"
-          aria-label="Close Get Started modal"
+          aria-label="Close Login modal"
           onClick={onClose}
           className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
           <X className="h-6 w-6" />
         </button>
 
-        <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+        <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--navy-900)] text-white shadow-[0_12px_30px_rgb(16_32_59_/_0.2)]">
           <ShieldCheck className="h-7 w-7" />
         </div>
 
         <h2
           id={titleId}
-          className="mt-6 text-center text-[clamp(2rem,7vw,2.75rem)] font-semibold tracking-tight text-slate-950"
+          className="mt-6 text-center text-[clamp(1.8rem,6vw,2.35rem)] font-semibold tracking-tight text-[var(--navy-900)]"
         >
-          Welcome to Settleway
+          Enter Settleway
         </h2>
 
         <p
           id={descriptionId}
           className="mx-auto mt-4 max-w-sm text-center text-base leading-7 text-slate-600"
         >
-          Access a secure marketplace and settlement flow for agricultural trade.
+          Choose an available account path for the agricultural trade workspace.
         </p>
 
         <div className="mt-8 space-y-4">
           <button
             type="button"
             onClick={onGoogleClick}
-            className="inline-flex h-14 w-full items-center justify-center gap-4 rounded-xl border border-slate-200 bg-white px-5 text-lg font-semibold text-slate-950 transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="inline-flex min-h-14 w-full items-center justify-center gap-4 rounded-2xl border border-[var(--border-default)] bg-white px-5 text-base font-semibold text-[var(--navy-900)] transition-colors hover:bg-[var(--surface-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
           >
             <GoogleMark />
             <span>Continue with Google</span>
@@ -214,7 +214,7 @@ export function GetStartedModal({
           <button
             type="button"
             onClick={onStellarClick}
-            className="inline-flex h-14 w-full items-center justify-center gap-4 rounded-xl border border-emerald-200 bg-white px-5 text-lg font-semibold text-slate-950 transition-colors hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+            className="inline-flex min-h-14 w-full items-center justify-center gap-4 rounded-2xl border border-[var(--azure-300)]/60 bg-[var(--azure-50)] px-5 text-base font-semibold text-[var(--navy-900)] transition-colors hover:bg-[var(--azure-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
           >
             <Wallet className="h-6 w-6 text-slate-950" />
             <span>Connect Stellar Wallet</span>
@@ -236,13 +236,13 @@ export function GetStartedModal({
           ) : null}
         </div>
 
-        <div className="mt-6 rounded-2xl bg-emerald-50 px-5 py-4">
+        <div className="mt-6 rounded-2xl border border-[var(--border-subtle)] bg-gradient-to-br from-[var(--green-50)] to-[var(--azure-50)] px-5 py-4">
           <div className="flex items-start gap-4">
             <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-emerald-600">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-slate-950">Secure by design</h3>
+              <h3 className="text-base font-semibold text-[var(--navy-900)]">Protected by design</h3>
               <p className="mt-1 text-sm leading-6 text-slate-600">
                 Escrow-backed transactions, on-chain verification, and transparent settlements.
               </p>

@@ -71,12 +71,12 @@ describe('Product UI Acceptance (Phase 8)', () => {
     it('shows a founder-facing landing corridor before users enter the marketplace', async () => {
       const html = renderToString(LandingPage());
 
-      expect(html).toContain('Protected Trade Flow');
-      expect(html).toContain('What Settleway Makes Possible');
+      expect(html).toContain('Trade with commitment on both sides.');
+      expect(html).toContain('Discover Supply');
       expect(html).toContain(
-        'Settleway brings negotiation, escrow protection, delivery proof, and reputation into one workspace.',
+        'Capital, commitment, evidence, and outcome remain legible.',
       );
-      expect(html).toContain('Explore Guided Flow');
+      expect(html).toContain('See How It Works');
     });
 
     it('shows trust signals on marketplace cards and includes three demo listings', async () => {
@@ -84,11 +84,11 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       expect(html).toContain('Buy');
       expect(html).toContain(
-        'Browse agricultural products listed by sellers before any protected room is opened.',
+        'Review origin, quantity, price, and outcome-backed seller confidence',
       );
       expect(html).toContain('Verified seller');
       expect(html).toContain('15 completed deals');
-      expect(html).toContain('Search commodities, origin, or variety');
+      expect(html).toContain('Search commodity, origin, or variety');
       expect(html).toContain('White Rice (Premium Milling)');
     });
 
@@ -135,35 +135,27 @@ describe('Product UI Acceptance (Phase 8)', () => {
       const dealId = 'demo-cabai-001';
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
+      const html = renderToString(page);
 
       expect(hasText(page, 'Funding Gate')).toBe(true);
       expect(hasText(page, 'Back to recorded negotiation')).toBe(true);
-      expect(hasText(page, 'Activated from recorded negotiation')).toBe(true);
-      expect(hasText(page, 'Buyer deposit obligation')).toBe(true);
-      expect(hasText(page, 'Seller deposit obligation')).toBe(true);
-      expect(hasText(page, 'Funding gate')).toBe(true);
-      expect(hasText(page, 'Deposit deadline:')).toBe(true);
-      expect(hasText(page, 'Protected by escrow logic and recorded on Stellar')).toBe(true);
-      expect(hasText(page, 'Negotiation Context')).toBe(true);
-      expect(hasText(page, 'Open recorded thread')).toBe(true);
-      expect(hasText(page, 'Role Wallets')).toBe(true);
-      expect(hasText(page, 'Buyer Testnet wallet')).toBe(true);
-      expect(hasText(page, 'Seller Testnet wallet')).toBe(true);
-      expect(hasText(page, 'Settleway fee wallet')).toBe(true);
-      expect(hasText(page, 'Awaiting buyer deposit')).toBe(true);
-      expect(hasText(page, 'Awaiting seller deposit')).toBe(true);
-      expect(hasText(page, 'Fee routing stays pending until the room clears funding and eventually reaches settlement.')).toBe(true);
-      expect(hasText(page, 'settleway-testnet-buyer-demo')).toBe(true);
-      expect(hasText(page, 'settleway-testnet-seller-demo')).toBe(true);
-      expect(hasText(page, 'settleway-testnet-admin')).toBe(true);
+      expect(hasText(page, 'Bilateral commitments')).toBe(true);
+      expect(html).toContain('Buyer principal');
+      expect(html).toContain('Seller performance bond');
+      expect(hasText(page, 'Funding deadline')).toBe(true);
+      expect(html).toContain('Aurora Assurance Rail');
+      expect(hasText(page, 'Commercial context')).toBe(true);
+      expect(html).toContain('Technical verification');
+      expect(html).toContain('No funds locked');
+      expect(html).toContain('Demo mode; no confirmed chain reference');
       expect(
         hasText(
           page,
           'We can prepare the lot and upload shipment evidence after both deposits clear.',
         ),
       ).toBe(true);
-      expect(hasText(page, 'Trust layer')).toBe(true);
-      expect(hasText(page, 'View Transaction')).toBe(true);
+      expect(html).toContain('Settlement policy');
+      expect(html).toContain('Stellar verification');
     });
 
     it('carries negotiation continuity into the active room when activated from an offer', async () => {
@@ -220,8 +212,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
 
-      expect(hasText(page, 'Negotiation Context')).toBe(true);
-      expect(hasText(page, 'Open recorded thread')).toBe(true);
+      expect(hasText(page, 'Commercial context')).toBe(true);
       expect(hasText(page, 'Recorded negotiation')).toBe(true);
       expect(hasText(page, 'Please confirm same-day pickup window.')).toBe(true);
       expect(hasText(page, 'We can prepare the lot after both deposits clear.')).toBe(
@@ -485,20 +476,21 @@ describe('Product UI Acceptance (Phase 8)', () => {
       // Mock mode without contract ID
       mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: null });
       let page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
-      expect(hasText(page, 'Demo mode')).toBe(true);
+      expect(renderToString(page)).toContain('Demo mode');
       
       // Testnet mode without contract ID
       mockStore.updateDeal(dealId, { stellar_mode: 'testnet', stellar_contract_id: null });
       page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
-      expect(hasText(page, 'Pending')).toBe(true);
-      expect(hasText(page, 'Demo mode')).toBe(false);
+      expect(renderToString(page)).toContain('Pending');
+      expect(renderToString(page)).not.toContain('Demo mode');
 
       // With contract ID (Confirmed)
       mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: 'C-MOCK-123', latest_stellar_tx_hash: 'tx-123' });
       page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
-      expect(hasText(page, 'C-MOCK-123')).toBe(true);
-      expect(hasText(page, 'tx-123')).toBe(true);
-      expect(hasText(page, 'Demo mode')).toBe(true);
+      const html = renderToString(page);
+      expect(html).toContain('C-MOCK-123');
+      expect(html).toContain('tx-123');
+      expect(html).toContain('Demo mode');
     });
   });
 

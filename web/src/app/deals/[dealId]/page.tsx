@@ -18,6 +18,7 @@ import { StatusPill } from '@/components/ui/StatusPill';
 import { Stepper, Step } from '@/components/ui/Stepper';
 import { DealActions } from '@/components/deal/DealActions';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
+import { AuroraFundingDealRoom } from '@/components/deal/AuroraFundingDealRoom';
 import { getCurrentUser } from '@/lib/auth/server';
 import { demoProfiles } from '@/lib/demo/demo-data';
 import { getDeal } from '@/lib/db/deals';
@@ -415,6 +416,29 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
       'Both deposits cleared and this transaction has moved into the protected execution corridor.';
     protectedValueText = formatCurrency(deal.principal_idr + deal.buyer_bond_idr + deal.seller_bond_idr);
     fundingWindowLabel = 'Deposits complete';
+  }
+
+  if (isFundingWindow) {
+    return AuroraFundingDealRoom({
+      deal,
+      buyerDisplayName,
+      sellerDisplayName,
+      viewerRole,
+      connectedWallet,
+      connectedWalletPreview,
+      sourceOfferId: sourceOffer?.id ?? null,
+      latestNegotiationMessages,
+      recentRoomEvents,
+      depositDeadlineAt,
+      fundingWindowLabel,
+      roomSubline,
+      pricePerKg,
+      deliveryDeadline,
+      fundedCount,
+      buyerFundingStatus,
+      sellerFundingStatus,
+      steps,
+    });
   }
 
   let outcomeCardTitle = 'Outcome & Reputation Consequences';
