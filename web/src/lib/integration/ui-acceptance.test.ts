@@ -98,6 +98,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
       });
 
       expect(hasText(page, 'Seller Assurance')).toBe(true);
+      expect(hasText(page, 'Seller Description')).toBe(true);
       expect(hasText(page, 'Commercial Baseline')).toBe(true);
       expect(hasText(page, 'Recorded negotiation is the first gate')).toBe(true);
       expect(hasText(page, 'Submit Offer')).toBe(true);
@@ -112,7 +113,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
       );
       expect(html).toContain('Verified buyer');
       expect(html).toContain('42 completed purchases');
-      expect(html).toContain('View Request');
+      expect(html).toContain('Review opportunity');
     });
 
     it('frames submit offer as the start of a shared negotiation conversation', async () => {

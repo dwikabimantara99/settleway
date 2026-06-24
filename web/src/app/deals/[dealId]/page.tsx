@@ -602,9 +602,9 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-base text-slate-600">
             <span>{(deal.volume_kg ?? 0).toLocaleString('id-ID')} kg</span>
-            <span className="text-slate-300">•</span>
+            <span className="text-slate-300">|</span>
             <span>{pricePerKg}</span>
-            <span className="text-slate-300">•</span>
+            <span className="text-slate-300">|</span>
             <span>Protected value {protectedValueText}</span>
           </div>
           <p className="mt-4 max-w-4xl text-sm leading-6 text-slate-600">{roomSubline}</p>

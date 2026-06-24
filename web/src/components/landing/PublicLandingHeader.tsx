@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDown, Menu, ShoppingBag, Store, X } from 'lucide-react';
+import { ChevronDown, Menu, ShoppingBag, Store } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { SettlewayLogo } from '@/components/brand/SettlewayLogo';
 import { GetStartedModal } from './GetStartedModal';
@@ -15,13 +15,13 @@ import {
 const marketplaceItems = [
   {
     href: '/marketplace',
-    label: 'Buy commodities',
+    label: 'Buy',
     description: 'Review verified agricultural supply.',
     icon: ShoppingBag,
   },
   {
     href: '/buyer-requests',
-    label: 'Sell to verified demand',
+    label: 'Sell',
     description: 'Respond to active buyer requirements.',
     icon: Store,
   },
@@ -36,12 +36,11 @@ export function PublicLandingHeader({
 }) {
   const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(initialMarketplaceOpen);
   const [isModalOpen, setIsModalOpen] = useState(initialModalOpen);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [modalFeedback, setModalFeedback] = useState<{
     message: string;
     tone: 'info' | 'success' | 'error';
   } | null>(null);
-  const loginButtonRef = useRef<HTMLButtonElement>(null);
+  const loginButtonRef = useRef<HTMLAnchorElement>(null);
 
   const handleOpenModal = () => {
     setModalFeedback(null);
@@ -108,7 +107,7 @@ export function PublicLandingHeader({
             aria-label="Public navigation"
           >
             <div
-              className="relative"
+              className="group relative"
               onMouseEnter={() => setIsMarketplaceOpen(true)}
               onMouseLeave={() => setIsMarketplaceOpen(false)}
               onBlur={(event) => {
@@ -141,34 +140,32 @@ export function PublicLandingHeader({
                 />
               </button>
 
-              {isMarketplaceOpen ? (
-                <div
-                  role="menu"
-                  aria-label="Marketplace routes"
-                  className="absolute left-1/2 top-full z-30 w-[22rem] -translate-x-1/2 pt-3"
-                >
-                  <div className="aurora-acrylic overflow-hidden rounded-[1.25rem] p-2">
-                    {marketplaceItems.map(({ href, label, description, icon: Icon }) => (
-                      <Link
-                        key={href}
-                        href={href}
-                        role="menuitem"
-                        className="flex min-h-16 items-start gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-[var(--azure-50)] focus-visible:bg-[var(--azure-50)] focus-visible:outline-none"
-                      >
-                        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--green-700)]" />
-                        <span>
-                          <span className="block text-sm font-semibold text-[var(--navy-900)]">
-                            {label}
-                          </span>
-                          <span className="mt-1 block text-xs leading-5 text-[var(--text-secondary)]">
-                            {description}
-                          </span>
+              <div
+                role="menu"
+                aria-label="Marketplace routes"
+                className={`absolute left-1/2 top-full z-30 w-[22rem] -translate-x-1/2 pt-3 ${isMarketplaceOpen ? 'block' : 'hidden'} group-hover:block group-focus-within:block`}
+              >
+                <div className="aurora-acrylic overflow-hidden rounded-[1.25rem] p-2">
+                  {marketplaceItems.map(({ href, label, description, icon: Icon }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      role="menuitem"
+                      className="flex min-h-16 items-start gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-[var(--azure-50)] focus-visible:bg-[var(--azure-50)] focus-visible:outline-none"
+                    >
+                      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--green-700)]" />
+                      <span>
+                        <span className="block text-sm font-semibold text-[var(--navy-900)]">
+                          {label}
                         </span>
-                      </Link>
-                    ))}
-                  </div>
+                        <span className="mt-1 block text-xs leading-5 text-[var(--text-secondary)]">
+                          {description}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
                 </div>
-              ) : null}
+              </div>
             </div>
 
             <a
@@ -186,69 +183,59 @@ export function PublicLandingHeader({
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <button
+            <a
               ref={loginButtonRef}
-              type="button"
+              href="#settleway-login"
               onClick={handleOpenModal}
               className="hidden min-h-11 items-center justify-center rounded-xl bg-[var(--navy-900)] px-5 text-sm font-semibold text-white shadow-[0_12px_28px_rgb(16_32_59_/_0.18)] transition-colors hover:bg-[var(--navy-700)] sm:inline-flex"
             >
               Login
-            </button>
-            <button
-              type="button"
-              aria-label={isMobileOpen ? 'Close navigation' : 'Open navigation'}
-              aria-expanded={isMobileOpen}
-              onClick={() => setIsMobileOpen((open) => !open)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-[var(--navy-900)] hover:bg-white/80 lg:hidden"
-            >
-              {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            </a>
+            <details className="group/mobile relative lg:hidden">
+              <summary
+                aria-label="Open navigation"
+                className="inline-flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-xl text-[var(--navy-900)] hover:bg-white/80 [&::-webkit-details-marker]:hidden"
+              >
+                <Menu className="h-5 w-5" />
+              </summary>
+              <nav
+                aria-label="Mobile public navigation"
+                className="absolute right-0 top-full z-40 mt-3 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-[var(--border-subtle)] bg-white/96 p-3 shadow-[var(--shadow-panel)] backdrop-blur-xl"
+              >
+                <div className="grid gap-1">
+                  {marketplaceItems.map(({ href, label }) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
+                    >
+                      {label}
+                    </Link>
+                  ))}
+                  <a
+                    href="#how-it-works"
+                    className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
+                  >
+                    How It Works
+                  </a>
+                  <a
+                    href="#trust-settlement"
+                    className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
+                  >
+                    Trust &amp; Settlement
+                  </a>
+                  <a
+                    href="#settleway-login"
+                    onClick={handleOpenModal}
+                    className="mt-2 inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--navy-900)] px-4 text-sm font-semibold text-white"
+                  >
+                    Login
+                  </a>
+                </div>
+              </nav>
+            </details>
           </div>
         </div>
-
-        {isMobileOpen ? (
-          <nav
-            aria-label="Mobile public navigation"
-            className="border-t border-[var(--border-subtle)] bg-white/94 px-3 py-3 backdrop-blur-xl lg:hidden"
-          >
-            <div className="field-container grid gap-1">
-              {marketplaceItems.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setIsMobileOpen(false)}
-                  className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
-                >
-                  {label}
-                </Link>
-              ))}
-              <a
-                href="#how-it-works"
-                onClick={() => setIsMobileOpen(false)}
-                className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
-              >
-                How It Works
-              </a>
-              <a
-                href="#trust-settlement"
-                onClick={() => setIsMobileOpen(false)}
-                className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
-              >
-                Trust &amp; Settlement
-              </a>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsMobileOpen(false);
-                  handleOpenModal();
-                }}
-                className="mt-2 inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--navy-900)] px-4 text-sm font-semibold text-white"
-              >
-                Login
-              </button>
-            </div>
-          </nav>
-        ) : null}
       </header>
 
       <GetStartedModal

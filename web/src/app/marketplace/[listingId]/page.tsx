@@ -44,6 +44,21 @@ function formatDate(value: string) {
   }).format(new Date(`${value}T00:00:00`));
 }
 
+function buildSellerDescription(input: {
+  variety: string;
+  isReadyStock: boolean;
+  location: string;
+  volumeKg: number;
+  harvestDate?: string;
+  sellerName?: string;
+}) {
+  const readiness = input.isReadyStock
+    ? 'This lot is already sorted and ready for buyer review, pickup coordination, or delivery scheduling.'
+    : `This lot is planned from the upcoming harvest window${input.harvestDate ? ` around ${formatDate(input.harvestDate)}` : ''}, so buyers should confirm the final delivery schedule during negotiation.`;
+
+  return `${input.sellerName ?? 'The seller'} is offering ${input.volumeKg.toLocaleString('id-ID')} kg of ${input.variety} from ${input.location}. ${readiness} Buyers should use the recorded negotiation to confirm final quantity, price, grading expectations, packaging, delivery handoff, and the product photos or documents that should be attached before the protected Deal Room opens.`;
+}
+
 export default async function ListingDetailPage({
   params,
 }: {
@@ -56,9 +71,17 @@ export default async function ListingDetailPage({
 
   const seller = demoProfiles[listing.sellerId];
   const isReadyStock = listing.status === 'ready_stock';
+  const sellerDescription = buildSellerDescription({
+    variety: listing.variety,
+    isReadyStock,
+    location: listing.location,
+    volumeKg: listing.estimatedVolumeKg,
+    harvestDate: listing.harvestDate,
+    sellerName: seller?.displayName,
+  });
 
   return (
-    <main className="field-container py-10">
+    <main className="field-container min-w-0 py-10">
       <Link
         href="/marketplace"
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--green-700)]"
@@ -79,11 +102,11 @@ export default async function ListingDetailPage({
         }
       />
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <section className="space-y-6">
+      <div className="mt-8 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <section className="min-w-0 space-y-6">
           <Card className="overflow-hidden">
             <CardContent className="p-0">
-              <div className="relative aspect-[16/7] min-h-72 bg-[var(--surface-subtle)]">
+              <div className="relative aspect-[16/7] min-h-72 max-w-full bg-[var(--surface-subtle)]">
                 <Image
                   src={getCommodityImage(listing.commodity)}
                   alt={listing.commodity}
@@ -136,13 +159,42 @@ export default async function ListingDetailPage({
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Seller Description</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_16rem]">
+                <div>
+                  <p className="text-base leading-8 text-[var(--text-secondary)]">
+                    {sellerDescription}
+                  </p>
+                  <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">
+                    Seller notes are part of pre-deal context. Final commercial terms must still be
+                    confirmed through Submit Offer and the recorded negotiation thread.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[var(--green-100)] bg-[var(--green-50)] p-4">
+                  <h3 className="text-sm font-semibold text-[var(--green-800)]">
+                    What to clarify next
+                  </h3>
+                  <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+                    <li>Quality grade and sorting tolerance</li>
+                    <li>Delivery timing and handoff location</li>
+                    <li>Photos, receipts, or quality documents</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Notice title="Recorded negotiation is the first gate" tone="success">
             Buyers and sellers discuss price, quantity, delivery, quality, and evidence before any
             deposit or escrow action begins.
           </Notice>
         </section>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           <Card className="border-[var(--green-700)]/25">
             <CardHeader>
               <CardTitle>Commercial Baseline</CardTitle>

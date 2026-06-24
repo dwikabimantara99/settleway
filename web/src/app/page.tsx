@@ -94,32 +94,39 @@ export default function LandingPage() {
             <div className="aurora-feature-surface absolute left-0 top-[7%] w-[76%] overflow-hidden p-6 sm:w-[68%]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase text-[var(--text-muted)]">
-                  Buyer intent
+                  Buyer assurance
                 </span>
                 <span className="rounded-full bg-[var(--azure-50)] px-2.5 py-1 text-xs font-semibold text-[var(--azure-700)]">
-                  Principal secured
+                  Pre-lock intent
                 </span>
               </div>
-              <div className="mt-8 text-3xl font-semibold financial-figures text-[var(--navy-900)]">
-                Rp 19.950.000
+              <div className="mt-8 text-2xl font-semibold text-[var(--navy-900)]">
+                Principal + commitment bond
               </div>
-              <p className="mt-2 text-sm text-[var(--text-secondary)]">
-                Purchase value plus buyer commitment bond.
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                The buyer prepares purchase value and a seriousness bond before escrow can lock.
               </p>
-              <div className="mt-7 h-1.5 overflow-hidden rounded-full bg-[var(--surface-muted)]">
-                <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-[var(--azure-500)] to-[var(--cyan-600)]" />
+              <div className="mt-7 grid grid-cols-2 gap-2 text-xs font-semibold text-[var(--navy-900)]">
+                <span className="rounded-full bg-[var(--azure-50)] px-3 py-2 text-center text-[var(--azure-700)]">
+                  Buyer principal
+                </span>
+                <span className="rounded-full bg-[var(--green-50)] px-3 py-2 text-center text-[var(--green-700)]">
+                  Buyer bond
+                </span>
               </div>
             </div>
 
             <div className="aurora-assurance absolute bottom-[7%] right-0 w-[82%] rounded-[2rem] p-6 sm:w-[72%]">
               <div className="flex items-center justify-between text-xs font-semibold uppercase text-slate-300">
-                <span>Seller commitment</span>
+                <span>Seller assurance</span>
                 <ShieldCheck className="h-5 w-5 text-emerald-300" />
               </div>
               <div className="mt-8 flex items-end justify-between gap-4">
                 <div>
-                  <div className="text-3xl font-semibold financial-figures">Rp 997.500</div>
-                  <p className="mt-2 text-sm text-slate-300">Performance bond held before lock.</p>
+                  <div className="text-2xl font-semibold">Performance bond</div>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">
+                    The seller commits delivery seriousness before protected execution begins.
+                  </p>
                 </div>
                 <div className="flex h-16 w-16 items-center justify-center rounded-[1.4rem] border border-white/15 bg-white/10">
                   <Handshake className="h-8 w-8 text-emerald-200" />
@@ -127,15 +134,26 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="aurora-acrylic absolute left-[10%] top-[45%] z-10 flex items-center gap-3 rounded-2xl px-4 py-3">
+            <div className="aurora-acrylic absolute left-[10%] top-[42%] z-10 flex max-w-[18rem] items-center gap-3 rounded-2xl px-4 py-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--green-700)] text-white">
                 <Scale className="h-4 w-4" />
               </span>
               <span>
-                <span className="block text-xs text-[var(--text-muted)]">Mutual gate</span>
+                <span className="block text-xs text-[var(--text-muted)]">Mutual terms gate</span>
                 <span className="block text-sm font-semibold text-[var(--navy-900)]">
-                  Both parties commit
+                  Commercial terms locked by both sides
                 </span>
+              </span>
+            </div>
+
+            <div className="aurora-acrylic absolute right-[6%] top-[50%] z-10 grid gap-2 rounded-2xl px-4 py-3 text-xs font-semibold text-[var(--navy-900)] sm:right-[10%]">
+              <span className="flex items-center gap-2">
+                <FileCheck2 className="h-4 w-4 text-[var(--green-700)]" />
+                Evidence verification
+              </span>
+              <span className="flex items-center gap-2">
+                <BadgeCheck className="h-4 w-4 text-[var(--azure-700)]" />
+                Stellar-backed settlement
               </span>
             </div>
 

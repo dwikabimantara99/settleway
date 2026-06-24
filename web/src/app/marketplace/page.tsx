@@ -189,7 +189,7 @@ export default function MarketplacePage() {
                         activityLabel={`${seller?.sellerCompletedCount ?? 0} completed deals`}
                         counterpartyName={seller?.displayName ?? 'Counterparty'}
                         detailHref={`/marketplace/${listing.id}`}
-                        detailLabel="View Details"
+                        detailLabel="Review opportunity"
                       />
                     );
                   })}

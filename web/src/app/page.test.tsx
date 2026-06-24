@@ -12,8 +12,15 @@ describe('Landing Page', () => {
     );
     expect(html).toContain('Explore Marketplace');
     expect(html).toContain('See How It Works');
-    expect(html).toContain('Buyer intent');
-    expect(html).toContain('Seller commitment');
+    expect(html).toContain('Buyer assurance');
+    expect(html).toContain('Principal + commitment bond');
+    expect(html).toContain('Seller assurance');
+    expect(html).toContain('Performance bond');
+    expect(html).toContain('Commercial terms locked by both sides');
+    expect(html).toContain('Evidence verification');
+    expect(html).toContain('Stellar-backed settlement');
+    expect(html).not.toContain('Rp 19.950.000');
+    expect(html).not.toContain('Rp 997.500');
   });
 
   it('keeps capability, workflow, and settlement truth available below the fold', () => {

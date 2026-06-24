@@ -110,7 +110,7 @@ export default function BuyerRequestsPage() {
                 activityLabel={`${buyer?.buyerCompletedCount ?? 0} completed purchases`}
                 counterpartyName={buyer?.displayName ?? 'Counterparty'}
                 detailHref={`/buyer-requests/${request.id}`}
-                detailLabel="View Request"
+                detailLabel="Review opportunity"
               />
             );
           })}

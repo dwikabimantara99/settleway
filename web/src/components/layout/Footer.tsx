@@ -16,10 +16,10 @@ export function Footer() {
           </div>
           <nav className="grid grid-cols-2 gap-x-8 gap-y-3 text-sm" aria-label="Footer">
             <Link href="/marketplace" className="text-slate-300 hover:text-white">
-              Buy commodities
+              Buy
             </Link>
             <Link href="/buyer-requests" className="text-slate-300 hover:text-white">
-              Sell to demand
+              Sell
             </Link>
             <Link href="/#how-it-works" className="text-slate-300 hover:text-white">
               How It Works

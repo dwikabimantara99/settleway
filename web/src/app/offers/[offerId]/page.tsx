@@ -141,7 +141,7 @@ export default async function OfferDetailPage({
           : 'Commercial terms are aligned. Both parties must still confirm Open Deal Room before deposits begin.';
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl overflow-x-hidden px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-6 flex flex-wrap items-center gap-4 text-sm">
         <Link
           href="/notifications"
@@ -184,8 +184,8 @@ export default async function OfferDetailPage({
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_27rem]">
-        <main className="space-y-6">
+      <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_27rem]">
+        <main className="min-w-0 space-y-6">
           <section className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
             <div className="border-b border-slate-100 px-6 py-5">
               <div className="flex flex-wrap items-center gap-3">
@@ -327,7 +327,7 @@ export default async function OfferDetailPage({
           {!termsAccepted && isParticipant ? <NegotiationComposer offerId={offer.id} /> : null}
         </main>
 
-        <aside className="space-y-6">
+        <aside className="min-w-0 space-y-6">
           <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
             <header className="border-b border-emerald-100 bg-emerald-50 px-6 py-5">
               <div className="flex items-center gap-3">

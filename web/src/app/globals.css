@@ -135,6 +135,15 @@ a {
   background: var(--surface);
 }
 
+.settleway-modal-shell {
+  display: none !important;
+}
+
+.settleway-modal-shell[data-open="true"],
+.settleway-modal-shell:target {
+  display: flex !important;
+}
+
 .aurora-canvas {
   background:
     radial-gradient(circle at 12% 12%, rgb(37 131 216 / 0.11), transparent 31rem),

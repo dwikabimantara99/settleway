@@ -164,7 +164,7 @@ function ReputationRecordCard({ record }: { record: ReputationRecord }) {
       </div>
 
       <div className="mt-5 flex flex-col gap-3 xl:flex-row xl:items-center">
-        <span className="shrink-0 text-sm font-medium text-slate-500">Stellar Tx Hash</span>
+        <span className="shrink-0 text-sm font-medium text-slate-500">Testnet proof reference</span>
         <div className="flex min-w-0 flex-1 items-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
           <span className="min-w-0 flex-1 truncate px-4 font-mono text-xs text-slate-600 sm:text-sm">
             {record.txHash}
@@ -177,7 +177,7 @@ function ReputationRecordCard({ record }: { record: ReputationRecord }) {
           rel="noreferrer"
           className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg border border-emerald-300 px-4 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50"
         >
-          View on Stellar
+          View Testnet reference
           <ExternalLink className="h-4 w-4" />
         </a>
       </div>
@@ -216,8 +216,12 @@ export function ReputationPageClient({ userId }: { userId: string }) {
         </Link>
         <h1 className="mt-4 text-4xl font-bold text-slate-950 sm:text-5xl">Reputation</h1>
         <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600">
-          Review verified transaction outcomes, successful deals, failed deals, and Stellar proof
-          records connected to this account.
+          Review transaction outcomes, funding discipline, and Stellar Testnet proof references
+          connected to this account.
+        </p>
+        <p className="mt-3 max-w-3xl rounded-2xl border border-[var(--azure-300)]/40 bg-white/70 px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+          Reputation is presented as an outcome ledger. Testnet references are inspectable proof
+          surfaces where available; they are not production custody or bank-settlement claims.
         </p>
       </div>
 

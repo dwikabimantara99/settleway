@@ -53,7 +53,6 @@ export function AuthenticatedHeader() {
     { href: '/marketplace', label: 'Buy' },
     { href: '/buyer-requests', label: 'Sell' },
     { href: '/deals/demo-cabai-001', label: 'Deals' },
-    { href: '/notifications', label: 'Notifications' },
   ];
 
   return (

@@ -7,10 +7,14 @@ describe('PublicLandingHeader', () => {
     const html = renderToString(<PublicLandingHeader initialMarketplaceOpen />);
 
     expect(html).toContain('Marketplace');
-    expect(html).toContain('Buy commodities');
+    expect(html).toContain('Buy');
     expect(html).toContain('href="/marketplace"');
-    expect(html).toContain('Sell to verified demand');
+    expect(html).toContain('Review verified agricultural supply.');
+    expect(html).toContain('Sell');
     expect(html).toContain('href="/buyer-requests"');
+    expect(html).toContain('Respond to active buyer requirements.');
+    expect(html).not.toContain('Buy commodities');
+    expect(html).not.toContain('Sell to verified demand');
     expect(html).toContain('How It Works');
     expect(html).toContain('href="#how-it-works"');
     expect(html).toContain('Trust &amp; Settlement');

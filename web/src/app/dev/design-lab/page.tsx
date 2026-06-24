@@ -153,11 +153,11 @@ export default function DesignLabPage() {
               featured
             />
             <AuroraAssuranceRail
-              principal="Rp 19.950.000"
-              buyerBond="Rp 997.500"
-              sellerBond="Rp 997.500"
-              fees="Rp 199.500"
-              totalExpected="Rp 22.144.500"
+              principal="Buyer principal"
+              buyerBond="Buyer commitment bond"
+              sellerBond="Seller performance bond"
+              fees="Platform fee policy"
+              totalExpected="Bilateral commitments"
               nextActor="Buyer"
               custodyState="One commitment held; escrow not locked"
               verificationLabel="Awaiting verified Testnet reference"

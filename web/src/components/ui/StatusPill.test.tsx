@@ -3,6 +3,27 @@ import { renderToString } from 'react-dom/server';
 import { StatusPill } from './StatusPill';
 
 describe('StatusPill', () => {
+  it('renders deliberate labels for every Deal Room status', () => {
+    const expectedLabels = {
+      WAITING_DEPOSITS: 'Awaiting deposits',
+      BUYER_FUNDED: 'Buyer funded',
+      SELLER_FUNDED: 'Seller funded',
+      CUSTODY_PENDING: 'Confirming custody',
+      LOCKED: 'Escrow protected',
+      PROOF_SUBMITTED: 'Evidence submitted',
+      DELIVERED: 'Buyer review',
+      COMPLETED: 'Settled',
+      EXPIRED: 'Expired',
+      REFUNDED: 'Refunded',
+      CANCELLED: 'Cancelled',
+    };
+
+    for (const [status, label] of Object.entries(expectedLabels)) {
+      const html = renderToString(<StatusPill status={status} />);
+      expect(html).toContain(label);
+    }
+  });
+
   it('renders COMPLETED as the canonical terminal success label', () => {
     const html = renderToString(<StatusPill status="COMPLETED" />);
 

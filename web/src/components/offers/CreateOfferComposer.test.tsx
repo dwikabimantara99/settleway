@@ -54,8 +54,11 @@ describe('CreateOfferComposer', () => {
     expect(html).toContain('Ask for recent photos');
     expect(html).toContain('Write a message...');
     expect(html).toContain('aria-label="Send message"');
-    expect(html).toContain('Attachments (3)');
+    expect(html).toContain('fresh-chili-lot.jpg');
+    expect(html).toContain('quality-check.pdf');
+    expect(html).toContain('packing-walkthrough.mp4');
     expect(html).toContain('Terms note');
+    expect(html).not.toContain('Attachments (3)');
     expect(html).not.toContain('Shared negotiation panel');
   });
 });

@@ -201,8 +201,13 @@ export function TradeSurfaceCard({
             <Link
               href={detailHref}
               aria-label={`${detailLabel}: ${commodity}`}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-default)] text-[var(--navy-900)] hover:border-[var(--azure-300)] hover:bg-[var(--azure-50)]"
+              className={
+                audience === 'sell'
+                  ? 'inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[var(--border-default)] px-4 text-sm font-semibold text-[var(--navy-900)] hover:border-[var(--azure-300)] hover:bg-[var(--azure-50)]'
+                  : 'inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--border-default)] text-[var(--navy-900)] hover:border-[var(--azure-300)] hover:bg-[var(--azure-50)]'
+              }
             >
+              {audience === 'sell' ? <span>{detailLabel}</span> : null}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

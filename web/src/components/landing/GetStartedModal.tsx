@@ -1,6 +1,6 @@
 'use client';
 
-import { RefObject, useEffect, useId, useRef } from 'react';
+import { MouseEvent, RefObject, useEffect, useId, useRef } from 'react';
 import { ShieldCheck, Wallet, X } from 'lucide-react';
 import { getNextFocusIndex, isEscapeDismissKey } from './landing-interactions';
 
@@ -71,7 +71,7 @@ export function GetStartedModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  returnFocusRef: RefObject<HTMLButtonElement | null>;
+  returnFocusRef: RefObject<HTMLElement | null>;
   onGoogleClick?: () => void;
   onStellarClick?: () => void;
   feedbackMessage?: string | null;
@@ -80,7 +80,7 @@ export function GetStartedModal({
   privacyHref?: string;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLAnchorElement>(null);
   const titleId = useId();
   const descriptionId = useId();
 
@@ -146,13 +146,11 @@ export function GetStartedModal({
     };
   }, [isOpen, onClose, returnFocusRef]);
 
-  if (!isOpen) {
-    return null;
-  }
-
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-[#07152b]/58 px-4 py-6 backdrop-blur-md sm:px-6"
+      id="settleway-login"
+      data-open={isOpen ? 'true' : 'false'}
+      className="settleway-modal-shell fixed inset-0 z-[100] items-center justify-center overflow-y-auto bg-[#07152b]/58 px-4 py-6 backdrop-blur-md sm:px-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
@@ -167,15 +165,20 @@ export function GetStartedModal({
         aria-describedby={descriptionId}
         className="aurora-enter relative flex max-h-[calc(100vh-32px)] w-full max-w-[500px] flex-col overflow-y-auto rounded-[var(--radius-dialog)] border border-white/75 bg-white/95 p-6 shadow-[var(--shadow-dialog)] backdrop-blur-xl sm:p-8"
       >
-        <button
+        <a
           ref={closeButtonRef}
-          type="button"
+          href="#"
+          role="button"
           aria-label="Close Login modal"
-          onClick={onClose}
+          onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+            event.preventDefault();
+            onClose();
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          }}
           className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
           <X className="h-6 w-6" />
-        </button>
+        </a>
 
         <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--navy-900)] text-white shadow-[0_12px_30px_rgb(16_32_59_/_0.2)]">
           <ShieldCheck className="h-7 w-7" />

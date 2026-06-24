@@ -1,7 +1,7 @@
 # Settleway Aurora Visual Direction
 
 Date: 2026-06-23
-Status: Founder-approved visual gate
+Status: Official founder-approved frontend direction
 
 This document supersedes the Batch 1 Field Ledger art direction for new
 frontend work. The product constitution, workflow, system architecture, and
@@ -37,6 +37,21 @@ The implementation was informed by current public product and design guidance:
 The implementation adapts principles, not pixels. It does not copy Microsoft
 branding, proprietary assets, application icons, illustrations, layouts, font
 files, or source code.
+
+## Binding Founder Corrections
+
+- Authenticated navigation is `Logo | Buy | Sell | Deals | Bell | Profile`.
+  Notifications are accessed through the bell icon, not a text navigation item.
+- Public Marketplace dropdown item titles are `Buy` and `Sell`; explanatory
+  subtext remains underneath each item.
+- Seller listing detail pages must include a seller description or product
+  narrative, not only image, price, and metrics.
+- Sell marketplace buyer-demand cards use explicit `Review opportunity` action
+  text.
+- Negotiation attachment previews must look like realistic product, proof,
+  PDF, video, or delivery evidence, not abstract gradient placeholders.
+- Landing hero visuals explain the bilateral assurance mechanism without seed
+  transaction amounts or funded-state claims.
 
 ## Settleway-Specific Interpretation
 
