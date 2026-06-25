@@ -3,7 +3,7 @@
 Status: active frontend completion evidence
 Branch: `work/frontend-productization-field-ledger`
 Baseline SHA: `c49bc2d3b366667cfe50d843bbb24cd888be128b`
-Final pushed SHA: recorded in the completion response after commit and push
+Final pushed SHA: superseded by the final Aurora acceptance commit recorded in `14_AURORA_FRONTEND_FINAL_ACCEPTANCE_REPORT.md` and the final operator response.
 Date: 2026-06-24
 
 ## Scope
@@ -88,8 +88,9 @@ Build warning observed:
 
 ## Evidence Limits
 
-- Screenshot evidence covers the active Deal Room route in awaiting-funding state. The local API funding transition was not forced for screenshot capture because the Testnet-backed funding route returned `STELLAR_EXECUTION_FAILED` without a confirmable local Testnet runtime. This preserves backend/Testnet behavior instead of faking post-funding UI state.
-- Remote GitHub checks are verified after the branch push. Exact run IDs and conclusions are recorded in the final completion response.
+- The original completion batch screenshot evidence covered the active Deal Room route in awaiting-funding state only.
+- Final acceptance closed that gap with development-only deterministic Deal Room state fixtures that render through the normal production Deal Room route and components. See `14_AURORA_FRONTEND_FINAL_ACCEPTANCE_REPORT.md`.
+- Remote GitHub checks for the final acceptance promotion are recorded in the final acceptance report and final operator response.
 
 ## Preservation
 

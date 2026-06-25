@@ -358,7 +358,11 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
 
   const steps: Step[] = [
     { label: 'Terms Agreed', status: 'complete' },
-    { label: 'Funding', status: isFundingWindow ? 'current' : 'complete' },
+    {
+      label: 'Funding',
+      status: isFundingWindow || isClosed ? 'current' : 'complete',
+      detail: isClosed ? 'Closed before lock' : undefined,
+    },
     {
       label: 'Escrow Locked',
       status:

@@ -6,6 +6,7 @@ import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
 import { buildActiveRoomDealTerms } from '../deals/terms';
 import { resolveDealRoomDefaultStellarState } from '../stellar/server/deal-room-testnet-runtime';
+import { buildDealStateGalleryFixtures } from '../deal-state-gallery';
 
 const toDbProfile = (p: any): DbProfile => ({
   id: p.id,
@@ -91,7 +92,10 @@ const DEMO_NEGOTIATION_CREATED_AT = '2026-06-17T08:45:00.000Z';
 const DEMO_TERMS_ACCEPTED_AT = '2026-06-17T09:06:00.000Z';
 const DEMO_BUYER_OPEN_ROOM_AT = '2026-06-17T09:10:00.000Z';
 const DEMO_SELLER_OPEN_ROOM_AT = '2026-06-17T09:18:00.000Z';
-const DEMO_DEPOSIT_DEADLINE_AT = '2026-06-18T09:18:00.000Z';
+
+function buildDemoDepositDeadlineAt(): string {
+  return new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+}
 
 function buildSeededActiveOffer(): DbOffer {
   return {
@@ -200,8 +204,17 @@ export class MockStore {
             activatedAt: DEMO_SELLER_OPEN_ROOM_AT,
             depositWindowHours: 24,
           }),
-          deposit_deadline_at: DEMO_DEPOSIT_DEADLINE_AT,
+          deposit_deadline_at: buildDemoDepositDeadlineAt(),
         },
+      });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      buildDealStateGalleryFixtures().forEach((fixture) => {
+        this.offers.set(fixture.offer.id, fixture.offer);
+        this.deals.set(fixture.deal.id, fixture.deal);
+        this.events.set(fixture.deal.id, fixture.events);
+        fixture.evidence.forEach((evidence) => this.evidenceFiles.set(evidence.id, evidence));
       });
     }
   }

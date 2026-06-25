@@ -33,6 +33,7 @@ Marketplace or Buyer Request
 - Listing and buyer-request detail flows.
 - Offer submission, recorded negotiation, agreed terms, notifications, and mutual Deal Room activation.
 - Active Deal Room with funding, lock, evidence, delivery, settlement, refund, expiry, and reputation states.
+- Aurora frontend direction with deterministic development-only Deal Room state coverage for final visual acceptance.
 - Outcome-backed profile and reputation surfaces.
 - Demo/operator role switching kept out of the primary public UI.
 - Repository abstraction for demo/mock mode and persistent Supabase mode.
@@ -172,6 +173,8 @@ Start here:
 - `docs/active/05_CURRENT_HANDOFF.md`
 - `docs/active/06_MAIN_CONSOLIDATION_REPORT.md`
 - `docs/active/07_MAIN_PROMOTION_REPORT.md`
+- `docs/active/13_AURORA_FRONTEND_COMPLETION_REPORT.md`
+- `docs/active/14_AURORA_FRONTEND_FINAL_ACCEPTANCE_REPORT.md`
 
 Historical documents remain available in `docs/archive/` but are not active source of truth when they conflict with `docs/active/`.
 
