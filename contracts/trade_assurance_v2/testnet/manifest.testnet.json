@@ -1,0 +1,86 @@
+{
+  "status": "verified-testnet-proof",
+  "network": "testnet",
+  "stellar_cli": "26.1.0",
+  "asset": {
+    "selection": "native-xlm-sac",
+    "asset_code": "native",
+    "issuer": null,
+    "asset_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "verification_basis": "Resolved with `stellar contract id asset --asset native --network testnet`."
+  },
+  "contract": {
+    "source_commit": "recorded-in-final-delivery-report",
+    "contract_id": "CBRYEOJLG4LB5KDOJUV3HLOSFFX7PZZZJRT5QMAN7CLMDUAZ5FLPYOKA",
+    "wasm_path": "target/wasm32v1-none/release/trade_assurance_v2.wasm",
+    "wasm_sha256": "932d64218bfcb0d3ab036597b702388768f4250f1f23c15604dfd74fcdcc9604",
+    "wasm_size_bytes": 43333,
+    "policy_version": 1,
+    "interface_version": 1
+  },
+  "deployment": {
+    "deployer_public_address": "GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG",
+    "wasm_upload_transaction_hash": "ea29c2df1c8c53df4a53c18acb0a7a907e701839d56a41612933c5257814ddf7",
+    "wasm_upload_ledger": 3269682,
+    "deployment_transaction_hash": "e35db99730d7bd43763a852cf52b599dd166fc34e9dbdb2fd0edbb5469492571",
+    "deployment_ledger": 3269684,
+    "initialization_transaction_hash": "44aa0a249c1cbb61089a7bfbb69ec849429c334deb12c4c943ccde2e4b4e062b",
+    "initialization_ledger": 3269693
+  },
+  "participants": {
+    "buyer_public_address": "GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX",
+    "seller_public_address": "GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU"
+  },
+  "success_scenario": {
+    "deal_id": "89cf97d6bd48fdaf2334ff0048ef0622c395a778452d842d5a449c4168258469",
+    "terms_hash": "9137192a3822259a9ecce592ed9222b557488379752f27625a8457bee3849014",
+    "evidence_hash": "551b45c0d2c0a9f196a9e1ae966fbfe38e6bedba95c5f6d4ceeaa6c2ca4765e5",
+    "amounts_stroops": {
+      "principal": 10000000,
+      "buyer_bond": 500000,
+      "seller_bond": 500000
+    },
+    "transaction_hashes": {
+      "create_deal": "43d71a95560dd83d74f123ca5d106c103cb4b0fac04e61dd152a4fda38784558",
+      "accept_terms": "32a227c4846f3b099f81574228ac5cee418a93f7b988464eac7ffc30f4caffce",
+      "fund_buyer": "7baf5602e848bb552393b49a4141cb332c0b46fff43f9ae68361844dac247cc0",
+      "fund_seller": "ff6e0ba0615880ee65ab371d44a601f7893b1aa404927d15cf205dccdb1be40f",
+      "submit_evidence": "56d5413ab3b888a770e64942b70ee22107ee74632510eaec1eb31cca25aed8c2",
+      "accept_delivery": "ada2eacb868c15b5aba6e4d5f0bed621b6529a50e39c8928231923d8997616d6"
+    },
+    "balance_evidence_xlm": {
+      "buyer_before_success": "10000.1966239",
+      "buyer_after_success_calculated_from_public_fees": "9999.1035903",
+      "seller_before_success": "10000.2171047",
+      "seller_after_success_calculated_from_public_fees": "10001.2110840",
+      "contract_after_settlement": "0"
+    },
+    "terminal_state": "SettledSuccess"
+  },
+  "funding_expiry_scenario": {
+    "deal_id": "0ecb1ee229f9cc3b9b39c13363110417a5a8a08e5733ddc479e3804156121630",
+    "terms_hash": "9137192a3822259a9ecce592ed9222b557488379752f27625a8457bee3849014",
+    "amounts_stroops": {
+      "principal": 10000000,
+      "buyer_bond": 500000,
+      "seller_bond": 500000,
+      "buyer_refund": 10500000,
+      "seller_refund": 0
+    },
+    "transaction_hashes": {
+      "create_deal": "52402535bb3d7f6cb1a5f8ef6be9e5a0d27a6a82fd6a70ada15fca19685c5214",
+      "accept_terms": "78af7cc35d618dc1853389a8b0923878c91cdb5ada4f5bb0d39dcef806dc5c8f",
+      "fund_buyer": "c05a3087176ffd879bf1e3e5481cefccc2c030781c68e95170c92307f1f35211",
+      "expire_funding": "2ff7e7ad669f6a967206407b046740ae320d4484f2db8a2dd5d5c3b712c4ec4b"
+    },
+    "balance_evidence_xlm": {
+      "buyer_before_expiry": "9999.1035903",
+      "buyer_after_expiry": "9999.0535249",
+      "seller_before_expiry": "10001.2110840",
+      "seller_after_expiry": "10001.2099797",
+      "contract_after_expiry": "0"
+    },
+    "terminal_state": "FundingExpired"
+  },
+  "secrets": "No secret keys, signed XDR, or private signer internals are recorded in this manifest."
+}

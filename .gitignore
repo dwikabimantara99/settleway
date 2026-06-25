@@ -6,3 +6,5 @@ node_modules/
 web/.next/
 /contracts/settleway_escrow/target/
 /contracts/settleway_escrow/test_snapshots/
+/contracts/trade_assurance_v2/test_snapshots/
+/target/

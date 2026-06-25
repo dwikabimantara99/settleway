@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "contracts/settleway_escrow",
+    "contracts/trade_assurance_v2",
+]
+resolver = "2"
+
+[workspace.dependencies]
+soroban-sdk = "=26.1.0"

@@ -1,0 +1,52 @@
+{
+  "status": "example-template",
+  "network": "testnet",
+  "asset": {
+    "selection": "native-xlm-sac-or-verified-test-asset",
+    "asset_code": "native",
+    "issuer": null,
+    "asset_contract_id": "TO_BE_RECORDED",
+    "verification_basis": "Record the Stellar CLI command and public network basis used to select this asset."
+  },
+  "contract": {
+    "source_commit": "TO_BE_RECORDED",
+    "contract_id": "TO_BE_RECORDED",
+    "wasm_path": "target/wasm32v1-none/release/trade_assurance_v2.wasm",
+    "wasm_sha256": "TO_BE_RECORDED",
+    "wasm_size_bytes": 0,
+    "policy_version": 1,
+    "interface_version": 1
+  },
+  "deployment": {
+    "deployer_public_address": "TO_BE_RECORDED",
+    "deployment_transaction_hash": "TO_BE_RECORDED",
+    "deployment_ledger": "TO_BE_RECORDED",
+    "initialization_transaction_hash": "TO_BE_RECORDED",
+    "initialization_ledger": "TO_BE_RECORDED"
+  },
+  "success_scenario": {
+    "deal_id": "TO_BE_RECORDED",
+    "transaction_hashes": [],
+    "balance_evidence": {
+      "buyer_before": "TO_BE_RECORDED",
+      "seller_before": "TO_BE_RECORDED",
+      "contract_after_funding": "TO_BE_RECORDED",
+      "buyer_after_settlement": "TO_BE_RECORDED",
+      "seller_after_settlement": "TO_BE_RECORDED",
+      "contract_after_settlement": "TO_BE_RECORDED"
+    },
+    "terminal_state": "SettledSuccess"
+  },
+  "funding_expiry_scenario": {
+    "deal_id": "TO_BE_RECORDED",
+    "transaction_hashes": [],
+    "balance_evidence": {
+      "funder_before": "TO_BE_RECORDED",
+      "contract_after_partial_funding": "TO_BE_RECORDED",
+      "funder_after_expiry": "TO_BE_RECORDED",
+      "contract_after_expiry": "TO_BE_RECORDED"
+    },
+    "terminal_state": "FundingExpired"
+  },
+  "secrets": "No secret keys, signed XDR, or private signer internals belong in this manifest."
+}
