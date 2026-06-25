@@ -6,7 +6,8 @@
 - Next.js route handlers for API behavior.
 - Mock/demo repository adapter for deterministic local and CI execution.
 - Supabase repository adapter for persistent mode.
-- Soroban Rust contract in `contracts/settleway_escrow`.
+- Soroban Rust contract baseline in `contracts/settleway_escrow`.
+- Isolated Soroban Custody V2.1 contract in `contracts/trade_assurance_v2`.
 - Stellar Testnet helper modules for proof, funding, custody sweep, settlement, and payout experiments.
 
 ## Runtime Modes
@@ -30,16 +31,21 @@ Current Stellar modules support:
 - Testnet external payout helper;
 - secure-store/operator smoke tooling;
 - Soroban event-contract interaction.
+- isolated Custody V2.1 Testnet proof contract.
 
-These rails are not final production custody. They are Testnet proof and demo-managed infrastructure until Soroban custody V2 exists.
+The application still uses the existing repository and Testnet helper rail. Custody V2.1 exists as an isolated proof and is not yet wired into backend route handlers, the Aurora UI, event indexing, database records, or reputation projection.
 
-## Soroban Contract
+## Soroban Contracts
 
-The current contract is event/state oriented. It validates escrow progression and emits proof events. It is not yet a full token custody contract that can independently enforce all payout paths.
+`contracts/settleway_escrow` is the legacy event/state contract. It validates escrow progression and emits proof events, but it is not full token custody.
 
-## Production Custody V2 Target
+`contracts/trade_assurance_v2` is the isolated Custody V2.1 contract. It has real Testnet token custody for native XLM SAC proof scenarios, immutable one-asset configuration, bilateral terms acceptance, buyer principal and buyer bond custody, seller performance bond custody, deterministic success settlement, funding expiry, seller breach, buyer breach, mutual cancellation, dispute freeze, constrained mediator resolution, structured events, and TTL handling.
 
-Future custody work must support:
+Custody V2.1 is not externally audited, not mainnet-ready, and not production governance. The proof deployment uses the same Testnet address as treasury and mediator; that is a proof-only limitation and must not be inherited silently by application integration.
+
+## Production Custody Integration Target
+
+Future application integration must connect app state to the accepted V2.1 custody contract without weakening product boundaries. It must support:
 
 - token asset model;
 - contract-held funds;
@@ -48,3 +54,5 @@ Future custody work must support:
 - destination-aware payout;
 - operator and user authorization boundaries;
 - auditable event history.
+
+Bank, QRIS, anchor, fiat settlement, KYC/KYB, passkeys, and mainnet custody remain out of scope until explicitly specified.

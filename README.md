@@ -39,10 +39,11 @@ Marketplace or Buyer Request
 - Repository abstraction for demo/mock mode and persistent Supabase mode.
 - Stellar Testnet-oriented proof infrastructure for funding, custody sweep, proof, settlement, and external payout experiments.
 - Soroban event-contract baseline for escrow state and proof events.
+- Isolated Soroban Custody V2.1 contract proof for real Testnet token custody, deterministic success settlement, funding expiry, seller breach, buyer breach, mutual cancellation, and constrained mediated resolution.
 
 ## Honest Implementation Boundary
 
-The current repository is hackathon/demo-ready infrastructure, not production financial custody.
+The current repository is hackathon/demo-ready infrastructure with an isolated Testnet custody proof. It is not production financial custody.
 
 Implemented or demonstrable:
 
@@ -52,6 +53,8 @@ Implemented or demonstrable:
 - Stellar Testnet proof and transaction-reference modules;
 - managed demo-role Testnet rails;
 - event-contract Soroban baseline;
+- isolated Soroban Custody V2.1 token custody contract on Stellar Testnet;
+- V2.1 success, expiry, breach, cancellation, and mediated-resolution proof scenarios using native XLM SAC;
 - simulated local-bank UX copy where applicable.
 
 Not production-ready yet:
@@ -61,7 +64,8 @@ Not production-ready yet:
 - real fiat anchor payout;
 - real KYC/KYB;
 - production custody;
-- full trustless token escrow contract;
+- app-integrated production custody;
+- externally audited or mainnet-ready token escrow;
 - automated dispute adjudication;
 - production key-management operations.
 
@@ -74,7 +78,8 @@ Current Stellar-related modules are intentionally labeled as Testnet proof, demo
 ## Architecture Overview
 
 - `web/` - Next.js App Router application, route handlers, UI, repository adapters, state machine, evidence, reputation, Stellar/Testnet integration helpers.
-- `contracts/settleway_escrow/` - Soroban Rust contract baseline for escrow state and event/proof recording.
+- `contracts/settleway_escrow/` - legacy Soroban Rust contract baseline for escrow state and event/proof recording.
+- `contracts/trade_assurance_v2/` - isolated Soroban Custody V2.1 contract proof; not yet integrated into the application.
 - `docs/active/` - current authoritative product, workflow, architecture, status, roadmap, handoff, and consolidation report.
 - `docs/archive/` - historical phase plans, handoffs, acceptance reports, Testnet runbooks, and old prompts.
 - `.github/workflows/` - CI gates for web and Soroban contract validation.
@@ -130,11 +135,10 @@ $env:NEXT_PUBLIC_RUNTIME_MODE="demo"; npm run build
 Contract:
 
 ```powershell
-cd contracts/settleway_escrow
-cargo fmt --check
-cargo clippy --all-targets --all-features -- -D warnings
-cargo test --verbose
-cargo build --target wasm32v1-none --release --verbose
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --all-features -- -D warnings
+cargo test --workspace --verbose
+cargo build --workspace --target wasm32v1-none --release --locked --verbose
 ```
 
 Security:
@@ -175,6 +179,10 @@ Start here:
 - `docs/active/07_MAIN_PROMOTION_REPORT.md`
 - `docs/active/13_AURORA_FRONTEND_COMPLETION_REPORT.md`
 - `docs/active/14_AURORA_FRONTEND_FINAL_ACCEPTANCE_REPORT.md`
+- `docs/active/15_SOROBAN_CUSTODY_V2_SPEC.md`
+- `docs/active/17_SOROBAN_CUSTODY_V2_1_POLICY_AND_LIVENESS_SPEC.md`
+- `docs/active/18_SOROBAN_CUSTODY_V2_1_IMPLEMENTATION_REPORT.md`
+- `docs/active/19_SOROBAN_CUSTODY_V2_1_FINAL_ACCEPTANCE_REPORT.md`
 
 Historical documents remain available in `docs/archive/` but are not active source of truth when they conflict with `docs/active/`.
 

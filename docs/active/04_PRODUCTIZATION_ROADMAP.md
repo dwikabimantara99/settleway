@@ -1,28 +1,23 @@
 # Productization Roadmap
 
-## Immediate Candidate Review
+## Current Milestone
 
-1. Review `cleanup/main-candidate-2026-06`.
-2. Confirm CI passes on the candidate branch.
-3. Review `docs/active/06_MAIN_CONSOLIDATION_REPORT.md`.
-4. Decide whether Macro Batch 2 may promote the candidate to `main`.
+Custody V2.1 is the active milestone. It promotes an isolated Soroban custody proof into `main` after final security acceptance, reproducible artifact verification, Testnet evidence review, full gates, remote CI, and release tagging.
 
-## Macro Batch 2
+## Custody V2.1 Promotion Boundary
 
-- Promote candidate to `main` by merge or fast-forward after review.
-- Push `main`.
-- Verify GitHub Actions.
-- Create release tag.
-- Delete old remote phase branches only after confirming archive tags.
-- Configure branch protection.
+- Promote only by fast-forward after green local and remote gates.
+- Keep the Aurora frontend, backend route handlers, current Testnet helper rail, and legacy contract behavior unchanged.
+- Tag the accepted milestone as `v0.3.0-soroban-custody-v2.1`.
+- Stop before application integration.
 
 ## Product Engineering Roadmap
 
-1. Stabilize candidate as canonical `main`.
-2. Finish destination-aware Testnet settlement exit if still required.
-3. Define Soroban custody V2 contract.
-4. Replace demo-managed custody bridges with contract-enforced token custody.
-5. Add constrained dispute and slashing model.
+1. Complete Custody V2.1 security acceptance and promotion.
+2. Review V2.1 architecture and security risks before integration.
+3. Define backend integration plan for contract invocation and event indexing.
+4. Define reputation projection from V2.1 events.
+5. Replace demo-managed custody bridges with contract-enforced token custody only after integration acceptance.
 6. Add production persistence deployment.
 7. Add real authentication hardening.
 8. Explore anchor/bank integration only after custody and compliance assumptions are explicit.

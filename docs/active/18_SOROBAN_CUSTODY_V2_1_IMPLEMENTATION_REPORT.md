@@ -1,7 +1,7 @@
 # Settleway Soroban Custody V2.1 Implementation Report
 
-Status: implemented on `work/soroban-custody-v2`  
-Contract: `contracts/trade_assurance_v2`  
+Status: implemented on `work/soroban-custody-v2`
+Contract: `contracts/trade_assurance_v2`
 Main branch status: unchanged during this batch
 
 ## V2.0 Baseline Preserved
@@ -56,7 +56,7 @@ Local V2.1 focused test suite:
 - `cargo test -p trade-assurance-v2 --verbose`: PASS, 26 tests.
 - `cargo fmt --all --check`: PASS.
 - `cargo clippy --workspace --all-targets --all-features -- -D warnings`: PASS after a crate-level ABI exception for Soroban public methods with more than seven parameters.
-- `cargo build --workspace --target wasm32v1-none --release --verbose`: PASS.
+- `cargo build --workspace --target wasm32v1-none --release --locked --verbose`: PASS.
 
 ## Test Coverage Added
 
@@ -98,6 +98,7 @@ Deployment:
 - Contract ID: `CA5O4INKF4BVRDOSHWH6GVD6GQRGL7P5NIAQHXA2JPQYLRHI3PRNHSSO`.
 - Treasury: `GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG`.
 - Mediator used for proof scenarios: `GCTGB45KC7CGLSH7AWNCI7TGG4OU23JWIPU4WHD6OI7P2DIBZ55N3FJG`.
+- Proof governance limitation: treasury and mediator intentionally use the same Testnet address for proof-only execution. Application integration must configure explicit roles and must not silently inherit this setup.
 - Wasm upload tx: `9effb38aac4b198fb5d2cfb905fb4539bcef4cd18689b37abfc189056be9877a`.
 - Deployment tx: `bdad92d703ec67db421df6cfc22edf2d2fa6857c06f171616ad2cc8045e941b2`.
 - Initialization tx: `dfc52afe861df8f4fce2908c43503462a0a90d4a3e9287ba917e0d804a47a297`.

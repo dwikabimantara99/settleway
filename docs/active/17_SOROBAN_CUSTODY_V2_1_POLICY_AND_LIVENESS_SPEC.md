@@ -1,7 +1,7 @@
 # Settleway Soroban Custody V2.1 Policy and Liveness Spec
 
-Status: active implementation specification  
-Branch: `work/soroban-custody-v2`  
+Status: active implementation specification
+Branch: `work/soroban-custody-v2`
 Scope: isolated `contracts/trade_assurance_v2` contract only
 
 ## Purpose

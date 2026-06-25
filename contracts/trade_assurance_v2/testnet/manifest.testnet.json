@@ -10,7 +10,7 @@
     "verification_basis": "stellar contract id asset --asset native --network testnet"
   },
   "contract": {
-    "source_commit": "e9cf7cde84e9d32fdfdc17fbb860bde7812665d4 plus work/soroban-custody-v2 V2.1 patch",
+    "source_commit": "442eb0b2817fe40d2d07b7db8f969d54ed771ad9",
     "contract_id": "CA5O4INKF4BVRDOSHWH6GVD6GQRGL7P5NIAQHXA2JPQYLRHI3PRNHSSO",
     "wasm_path": "target/wasm32v1-none/release/trade_assurance_v2.wasm",
     "wasm_sha256": "76808FB80BDDF432F771FA3106648B47B1E57DBC09FF6847D38719ECD702723C",
