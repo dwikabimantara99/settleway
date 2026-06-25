@@ -1,11 +1,13 @@
 #![no_std]
+#![allow(clippy::too_many_arguments)]
 
 use soroban_sdk::{
     contract, contracterror, contractevent, contractimpl, contracttype, token, Address, BytesN,
     Env, String,
 };
 
-const POLICY_INTERFACE_VERSION: u32 = 1;
+const POLICY_INTERFACE_VERSION: u32 = 2;
+const BPS_DENOMINATOR: i128 = 10_000;
 const INSTANCE_TTL_THRESHOLD: u32 = 30 * 24 * 60;
 const INSTANCE_TTL_EXTEND_TO: u32 = 90 * 24 * 60;
 const DEAL_TTL_THRESHOLD: u32 = 30 * 24 * 60;
@@ -19,6 +21,8 @@ pub enum ContractError {
     NotInitialized = 2,
     InvalidAsset = 3,
     InvalidPolicyVersion = 4,
+    InvalidBasisPoints = 5,
+    InvalidTreasury = 6,
     DuplicateDeal = 10,
     DealNotFound = 11,
     UnauthorizedParticipant = 12,
@@ -26,6 +30,7 @@ pub enum ContractError {
     InvalidAmount = 14,
     AmountOverflow = 15,
     InvalidDeadline = 16,
+    InvalidMediator = 17,
     InvalidState = 20,
     TermsAlreadyAccepted = 21,
     TermsNotAccepted = 22,
@@ -34,6 +39,15 @@ pub enum ContractError {
     FundingDeadlineOpen = 25,
     EvidenceAlreadySubmitted = 26,
     TerminalState = 27,
+    DeliveryDeadlinePassed = 28,
+    DeliveryDeadlineOpen = 29,
+    InspectionDeadlinePassed = 30,
+    InspectionDeadlineOpen = 31,
+    CancellationAlreadyApproved = 32,
+    DisputeAlreadyRaised = 33,
+    DisputeNotAllowed = 34,
+    EvidenceRequired = 35,
+    InvalidDisputeOutcome = 36,
 }
 
 #[contracttype]
@@ -43,8 +57,12 @@ pub enum DealState {
     AwaitingFunding = 1,
     Active = 2,
     EvidenceSubmitted = 3,
-    SettledSuccess = 4,
-    FundingExpired = 5,
+    Disputed = 4,
+    SettledSuccess = 5,
+    FundingExpired = 6,
+    SellerBreach = 7,
+    BuyerBreach = 8,
+    MutualCancellation = 9,
 }
 
 #[contracttype]
@@ -53,6 +71,18 @@ pub enum TerminalOutcome {
     None = 0,
     SettledSuccess = 1,
     FundingExpired = 2,
+    SellerBreach = 3,
+    BuyerBreach = 4,
+    MutualCancellation = 5,
+}
+
+#[contracttype]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum DisputeOutcome {
+    SettledSuccess = 1,
+    SellerBreach = 2,
+    BuyerBreach = 3,
+    MutualCancellation = 4,
 }
 
 #[contracttype]
@@ -60,8 +90,12 @@ pub enum TerminalOutcome {
 pub struct Config {
     pub initialized: bool,
     pub accepted_asset: Address,
+    pub treasury: Address,
     pub policy_version: u32,
     pub interface_version: u32,
+    pub success_fee_bps: u32,
+    pub seller_breach_treasury_bps: u32,
+    pub buyer_breach_treasury_bps: u32,
 }
 
 #[contracttype]
@@ -70,8 +104,11 @@ pub struct Deal {
     pub deal_id: BytesN<32>,
     pub buyer: Address,
     pub seller: Address,
+    pub mediator: Address,
     pub creator: Address,
     pub terms_hash: BytesN<32>,
+    pub accepted_asset: Address,
+    pub treasury: Address,
     pub principal: i128,
     pub buyer_bond: i128,
     pub seller_bond: i128,
@@ -79,11 +116,19 @@ pub struct Deal {
     pub delivery_deadline: u64,
     pub inspection_deadline: u64,
     pub policy_version: u32,
+    pub success_fee_bps: u32,
+    pub seller_breach_treasury_bps: u32,
+    pub buyer_breach_treasury_bps: u32,
     pub buyer_terms_accepted: bool,
     pub seller_terms_accepted: bool,
     pub buyer_funded: bool,
     pub seller_funded: bool,
+    pub buyer_cancellation_approved: bool,
+    pub seller_cancellation_approved: bool,
     pub evidence_commitment: Option<BytesN<32>>,
+    pub disputed: bool,
+    pub dispute_opener: Option<Address>,
+    pub dispute_reason_hash: Option<BytesN<32>>,
     pub state: DealState,
     pub terminal_outcome: TerminalOutcome,
     pub created_ledger_timestamp: u64,
@@ -98,14 +143,31 @@ pub struct ContractInfo {
     pub policy_version: u32,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct Distribution {
+    buyer_principal_refund: i128,
+    seller_principal: i128,
+    buyer_bond_refund: i128,
+    seller_bond_refund: i128,
+    buyer_bond_to_seller: i128,
+    buyer_bond_to_treasury: i128,
+    seller_bond_to_buyer: i128,
+    seller_bond_to_treasury: i128,
+    success_fee_to_treasury: i128,
+}
+
 #[contractevent(topics = ["init"])]
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct InitializedEvent {
     #[topic]
     pub asset: Address,
+    pub treasury: Address,
     pub initializer: Address,
     pub policy_version: u32,
     pub interface_version: u32,
+    pub success_fee_bps: u32,
+    pub seller_breach_treasury_bps: u32,
+    pub buyer_breach_treasury_bps: u32,
 }
 
 #[contractevent(topics = ["deal"])]
@@ -115,6 +177,7 @@ pub struct DealCreatedEvent {
     pub deal_id: BytesN<32>,
     pub buyer: Address,
     pub seller: Address,
+    pub mediator: Address,
     pub principal: i128,
     pub buyer_bond: i128,
     pub seller_bond: i128,
@@ -187,14 +250,53 @@ pub struct FundingExpiredEvent {
     pub seller_refund: i128,
 }
 
-#[contractevent(topics = ["settled"])]
+#[contractevent(topics = ["cancel"])]
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct SettlementCompletedEvent {
+pub struct CancellationApprovedEvent {
     #[topic]
     pub deal_id: BytesN<32>,
+    #[topic]
+    pub participant: Address,
+    pub buyer_approved: bool,
+    pub seller_approved: bool,
+}
+
+#[contractevent(topics = ["dispute"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DisputeRaisedEvent {
+    #[topic]
+    pub deal_id: BytesN<32>,
+    #[topic]
+    pub opener: Address,
+    pub previous_state: DealState,
+    pub reason_hash: BytesN<32>,
+}
+
+#[contractevent(topics = ["resolve"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DisputeResolvedEvent {
+    #[topic]
+    pub deal_id: BytesN<32>,
+    #[topic]
+    pub mediator: Address,
+    pub outcome: DisputeOutcome,
+}
+
+#[contractevent(topics = ["settlement"])]
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct SettlementDistributionEvent {
+    #[topic]
+    pub deal_id: BytesN<32>,
+    pub outcome: TerminalOutcome,
+    pub buyer_principal_refund: i128,
     pub seller_principal: i128,
     pub buyer_bond_refund: i128,
     pub seller_bond_refund: i128,
+    pub buyer_bond_to_seller: i128,
+    pub buyer_bond_to_treasury: i128,
+    pub seller_bond_to_buyer: i128,
+    pub seller_bond_to_treasury: i128,
+    pub success_fee_to_treasury: i128,
 }
 
 #[contracttype]
@@ -213,13 +315,23 @@ impl SettlewayCustodyV2 {
         env: Env,
         initializer: Address,
         accepted_asset: Address,
+        treasury: Address,
         policy_version: u32,
+        success_fee_bps: u32,
+        seller_breach_treasury_bps: u32,
+        buyer_breach_treasury_bps: u32,
     ) -> Result<(), ContractError> {
         if env.storage().instance().has(&DataKey::Config) {
             return Err(ContractError::AlreadyInitialized);
         }
         if policy_version == 0 {
             return Err(ContractError::InvalidPolicyVersion);
+        }
+        validate_bps(success_fee_bps)?;
+        validate_bps(seller_breach_treasury_bps)?;
+        validate_bps(buyer_breach_treasury_bps)?;
+        if treasury == env.current_contract_address() || treasury == accepted_asset {
+            return Err(ContractError::InvalidTreasury);
         }
 
         initializer.require_auth();
@@ -231,16 +343,24 @@ impl SettlewayCustodyV2 {
         let config = Config {
             initialized: true,
             accepted_asset: accepted_asset.clone(),
+            treasury: treasury.clone(),
             policy_version,
             interface_version: POLICY_INTERFACE_VERSION,
+            success_fee_bps,
+            seller_breach_treasury_bps,
+            buyer_breach_treasury_bps,
         };
         env.storage().instance().set(&DataKey::Config, &config);
         extend_instance_ttl(&env);
         InitializedEvent {
             asset: accepted_asset,
+            treasury,
             initializer,
             policy_version,
             interface_version: POLICY_INTERFACE_VERSION,
+            success_fee_bps,
+            seller_breach_treasury_bps,
+            buyer_breach_treasury_bps,
         }
         .publish(&env);
         Ok(())
@@ -253,6 +373,7 @@ impl SettlewayCustodyV2 {
         creator: Address,
         buyer: Address,
         seller: Address,
+        mediator: Address,
         terms_hash: BytesN<32>,
         principal: i128,
         buyer_bond: i128,
@@ -268,6 +389,9 @@ impl SettlewayCustodyV2 {
         }
         if buyer == seller {
             return Err(ContractError::BuyerSellerSame);
+        }
+        if mediator == buyer || mediator == seller || mediator == env.current_contract_address() {
+            return Err(ContractError::InvalidMediator);
         }
         require_positive(principal)?;
         require_positive(buyer_bond)?;
@@ -289,8 +413,11 @@ impl SettlewayCustodyV2 {
             deal_id: deal_id.clone(),
             buyer: buyer.clone(),
             seller: seller.clone(),
+            mediator: mediator.clone(),
             creator,
             terms_hash,
+            accepted_asset: config.accepted_asset,
+            treasury: config.treasury,
             principal,
             buyer_bond,
             seller_bond,
@@ -298,11 +425,19 @@ impl SettlewayCustodyV2 {
             delivery_deadline,
             inspection_deadline,
             policy_version: config.policy_version,
+            success_fee_bps: config.success_fee_bps,
+            seller_breach_treasury_bps: config.seller_breach_treasury_bps,
+            buyer_breach_treasury_bps: config.buyer_breach_treasury_bps,
             buyer_terms_accepted: creator_is_buyer,
             seller_terms_accepted: !creator_is_buyer,
             buyer_funded: false,
             seller_funded: false,
+            buyer_cancellation_approved: false,
+            seller_cancellation_approved: false,
             evidence_commitment: None,
+            disputed: false,
+            dispute_opener: None,
+            dispute_reason_hash: None,
             state: DealState::TermsPending,
             terminal_outcome: TerminalOutcome::None,
             created_ledger_timestamp: now,
@@ -313,6 +448,7 @@ impl SettlewayCustodyV2 {
             deal_id,
             buyer,
             seller,
+            mediator,
             principal,
             buyer_bond,
             seller_bond,
@@ -367,7 +503,7 @@ impl SettlewayCustodyV2 {
         let mut deal = read_deal(&env, &deal_id)?;
         require_state(&deal, DealState::AwaitingFunding)?;
         require_terms_accepted(&deal)?;
-        require_before_deadline(&env, deal.funding_deadline)?;
+        require_before_funding_deadline(&env, deal.funding_deadline)?;
         if buyer != deal.buyer {
             return Err(ContractError::UnauthorizedParticipant);
         }
@@ -375,7 +511,7 @@ impl SettlewayCustodyV2 {
             return Err(ContractError::AlreadyFunded);
         }
         let amount = checked_add(deal.principal, deal.buyer_bond)?;
-        transfer_to_contract(&env, &buyer, amount)?;
+        transfer_to_contract(&env, &buyer, amount, &deal.accepted_asset)?;
         deal.buyer_funded = true;
         BuyerFundedEvent {
             deal_id: deal_id.clone(),
@@ -385,7 +521,7 @@ impl SettlewayCustodyV2 {
             seller_funded: deal.seller_funded,
         }
         .publish(&env);
-        activate_if_fully_funded(&env, &deal_id, &mut deal)?;
+        activate_if_fully_funded(&env, &deal_id, &mut deal);
         write_deal(&env, &deal)?;
         Ok(())
     }
@@ -399,7 +535,7 @@ impl SettlewayCustodyV2 {
         let mut deal = read_deal(&env, &deal_id)?;
         require_state(&deal, DealState::AwaitingFunding)?;
         require_terms_accepted(&deal)?;
-        require_before_deadline(&env, deal.funding_deadline)?;
+        require_before_funding_deadline(&env, deal.funding_deadline)?;
         if seller != deal.seller {
             return Err(ContractError::UnauthorizedParticipant);
         }
@@ -407,7 +543,7 @@ impl SettlewayCustodyV2 {
             return Err(ContractError::AlreadyFunded);
         }
         let amount = deal.seller_bond;
-        transfer_to_contract(&env, &seller, amount)?;
+        transfer_to_contract(&env, &seller, amount, &deal.accepted_asset)?;
         deal.seller_funded = true;
         SellerFundedEvent {
             deal_id: deal_id.clone(),
@@ -417,7 +553,7 @@ impl SettlewayCustodyV2 {
             seller_funded: true,
         }
         .publish(&env);
-        activate_if_fully_funded(&env, &deal_id, &mut deal)?;
+        activate_if_fully_funded(&env, &deal_id, &mut deal);
         write_deal(&env, &deal)?;
         Ok(())
     }
@@ -425,43 +561,10 @@ impl SettlewayCustodyV2 {
     pub fn expire_funding(env: Env, deal_id: BytesN<32>) -> Result<(), ContractError> {
         let mut deal = read_deal(&env, &deal_id)?;
         require_state(&deal, DealState::AwaitingFunding)?;
-        if env.ledger().timestamp() <= deal.funding_deadline {
+        if env.ledger().timestamp() < deal.funding_deadline {
             return Err(ContractError::FundingDeadlineOpen);
         }
-
-        let buyer_refund = if deal.buyer_funded {
-            checked_add(deal.principal, deal.buyer_bond)?
-        } else {
-            0
-        };
-        let seller_refund = if deal.seller_funded {
-            deal.seller_bond
-        } else {
-            0
-        };
-
-        if buyer_refund > 0 {
-            transfer_from_contract(&env, &deal.buyer, buyer_refund)?;
-        }
-        if seller_refund > 0 {
-            transfer_from_contract(&env, &deal.seller, seller_refund)?;
-        }
-
-        let previous_state = deal.state.clone();
-        deal.state = DealState::FundingExpired;
-        deal.terminal_outcome = TerminalOutcome::FundingExpired;
-        deal.last_updated_ledger_timestamp = env.ledger().timestamp();
-        write_deal(&env, &deal)?;
-        FundingExpiredEvent {
-            deal_id: deal_id.clone(),
-            buyer_funded: deal.buyer_funded,
-            seller_funded: deal.seller_funded,
-            buyer_refund,
-            seller_refund,
-        }
-        .publish(&env);
-        publish_state_change(&env, &deal_id, previous_state, DealState::FundingExpired);
-        Ok(())
+        settle_funding_expiry(&env, &deal_id, &mut deal)
     }
 
     pub fn submit_evidence(
@@ -473,6 +576,7 @@ impl SettlewayCustodyV2 {
         seller.require_auth();
         let mut deal = read_deal(&env, &deal_id)?;
         require_state(&deal, DealState::Active)?;
+        require_before_delivery_deadline(&env, deal.delivery_deadline)?;
         if seller != deal.seller {
             return Err(ContractError::UnauthorizedParticipant);
         }
@@ -501,28 +605,142 @@ impl SettlewayCustodyV2 {
         buyer.require_auth();
         let mut deal = read_deal(&env, &deal_id)?;
         require_state(&deal, DealState::EvidenceSubmitted)?;
+        require_before_inspection_deadline(&env, deal.inspection_deadline)?;
         if buyer != deal.buyer {
             return Err(ContractError::UnauthorizedParticipant);
         }
+        settle_success(&env, &deal_id, &mut deal)
+    }
 
-        transfer_from_contract(&env, &deal.seller, deal.principal)?;
-        transfer_from_contract(&env, &deal.buyer, deal.buyer_bond)?;
-        transfer_from_contract(&env, &deal.seller, deal.seller_bond)?;
+    pub fn expire_delivery(env: Env, deal_id: BytesN<32>) -> Result<(), ContractError> {
+        let mut deal = read_deal(&env, &deal_id)?;
+        require_state(&deal, DealState::Active)?;
+        if env.ledger().timestamp() < deal.delivery_deadline {
+            return Err(ContractError::DeliveryDeadlineOpen);
+        }
+        if deal.evidence_commitment.is_some() {
+            return Err(ContractError::InvalidState);
+        }
+        settle_seller_breach(&env, &deal_id, &mut deal)
+    }
 
-        let previous_state = deal.state.clone();
-        deal.state = DealState::SettledSuccess;
-        deal.terminal_outcome = TerminalOutcome::SettledSuccess;
-        deal.last_updated_ledger_timestamp = env.ledger().timestamp();
-        write_deal(&env, &deal)?;
-        SettlementCompletedEvent {
+    pub fn expire_inspection(env: Env, deal_id: BytesN<32>) -> Result<(), ContractError> {
+        let mut deal = read_deal(&env, &deal_id)?;
+        require_state(&deal, DealState::EvidenceSubmitted)?;
+        if env.ledger().timestamp() < deal.inspection_deadline {
+            return Err(ContractError::InspectionDeadlineOpen);
+        }
+        settle_buyer_breach(&env, &deal_id, &mut deal)
+    }
+
+    pub fn approve_mutual_cancellation(
+        env: Env,
+        deal_id: BytesN<32>,
+        participant: Address,
+    ) -> Result<(), ContractError> {
+        participant.require_auth();
+        let mut deal = read_deal(&env, &deal_id)?;
+        require_state(&deal, DealState::Active)?;
+        require_before_delivery_deadline(&env, deal.delivery_deadline)?;
+        if participant != deal.buyer && participant != deal.seller {
+            return Err(ContractError::UnauthorizedParticipant);
+        }
+        if participant == deal.buyer {
+            if deal.buyer_cancellation_approved {
+                return Err(ContractError::CancellationAlreadyApproved);
+            }
+            deal.buyer_cancellation_approved = true;
+        } else {
+            if deal.seller_cancellation_approved {
+                return Err(ContractError::CancellationAlreadyApproved);
+            }
+            deal.seller_cancellation_approved = true;
+        }
+        CancellationApprovedEvent {
             deal_id: deal_id.clone(),
-            seller_principal: deal.principal,
-            buyer_bond_refund: deal.buyer_bond,
-            seller_bond_refund: deal.seller_bond,
+            participant,
+            buyer_approved: deal.buyer_cancellation_approved,
+            seller_approved: deal.seller_cancellation_approved,
         }
         .publish(&env);
-        publish_state_change(&env, &deal_id, previous_state, DealState::SettledSuccess);
+        if deal.buyer_cancellation_approved && deal.seller_cancellation_approved {
+            settle_mutual_cancellation(&env, &deal_id, &mut deal)
+        } else {
+            deal.last_updated_ledger_timestamp = env.ledger().timestamp();
+            write_deal(&env, &deal)
+        }
+    }
+
+    pub fn raise_dispute(
+        env: Env,
+        deal_id: BytesN<32>,
+        participant: Address,
+        reason_hash: BytesN<32>,
+    ) -> Result<(), ContractError> {
+        participant.require_auth();
+        let mut deal = read_deal(&env, &deal_id)?;
+        if participant != deal.buyer && participant != deal.seller {
+            return Err(ContractError::UnauthorizedParticipant);
+        }
+        if deal.disputed {
+            return Err(ContractError::DisputeAlreadyRaised);
+        }
+        let previous_state = deal.state.clone();
+        match previous_state {
+            DealState::Active => require_before_delivery_deadline(&env, deal.delivery_deadline)?,
+            DealState::EvidenceSubmitted => {
+                require_before_inspection_deadline(&env, deal.inspection_deadline)?
+            }
+            _ => return Err(ContractError::DisputeNotAllowed),
+        }
+        deal.disputed = true;
+        deal.dispute_opener = Some(participant.clone());
+        deal.dispute_reason_hash = Some(reason_hash.clone());
+        deal.state = DealState::Disputed;
+        deal.last_updated_ledger_timestamp = env.ledger().timestamp();
+        write_deal(&env, &deal)?;
+        DisputeRaisedEvent {
+            deal_id: deal_id.clone(),
+            opener: participant,
+            previous_state: previous_state.clone(),
+            reason_hash,
+        }
+        .publish(&env);
+        publish_state_change(&env, &deal_id, previous_state, DealState::Disputed);
         Ok(())
+    }
+
+    pub fn resolve_dispute(
+        env: Env,
+        deal_id: BytesN<32>,
+        mediator: Address,
+        outcome: DisputeOutcome,
+    ) -> Result<(), ContractError> {
+        mediator.require_auth();
+        let mut deal = read_deal(&env, &deal_id)?;
+        require_state(&deal, DealState::Disputed)?;
+        if mediator != deal.mediator {
+            return Err(ContractError::UnauthorizedParticipant);
+        }
+        DisputeResolvedEvent {
+            deal_id: deal_id.clone(),
+            mediator,
+            outcome: outcome.clone(),
+        }
+        .publish(&env);
+        match outcome {
+            DisputeOutcome::SettledSuccess => {
+                if deal.evidence_commitment.is_none() {
+                    return Err(ContractError::EvidenceRequired);
+                }
+                settle_success(&env, &deal_id, &mut deal)
+            }
+            DisputeOutcome::SellerBreach => settle_seller_breach(&env, &deal_id, &mut deal),
+            DisputeOutcome::BuyerBreach => settle_buyer_breach(&env, &deal_id, &mut deal),
+            DisputeOutcome::MutualCancellation => {
+                settle_mutual_cancellation(&env, &deal_id, &mut deal)
+            }
+        }
     }
 
     pub fn get_config(env: Env) -> Result<Config, ContractError> {
@@ -546,7 +764,7 @@ impl SettlewayCustodyV2 {
     pub fn contract_info(env: Env) -> Result<ContractInfo, ContractError> {
         let config = read_config(&env)?;
         Ok(ContractInfo {
-            name: String::from_str(&env, "settleway_trade_assurance_v2"),
+            name: String::from_str(&env, "settleway_trade_assurance_v2_1"),
             interface_version: config.interface_version,
             policy_version: config.policy_version,
         })
@@ -593,6 +811,13 @@ fn extend_deal_ttl(env: &Env, deal_id: &BytesN<32>) {
     );
 }
 
+fn validate_bps(value: u32) -> Result<(), ContractError> {
+    if value > 10_000 {
+        return Err(ContractError::InvalidBasisPoints);
+    }
+    Ok(())
+}
+
 fn require_positive(amount: i128) -> Result<(), ContractError> {
     if amount <= 0 {
         return Err(ContractError::InvalidAmount);
@@ -602,6 +827,26 @@ fn require_positive(amount: i128) -> Result<(), ContractError> {
 
 fn checked_add(a: i128, b: i128) -> Result<i128, ContractError> {
     a.checked_add(b).ok_or(ContractError::AmountOverflow)
+}
+
+fn checked_sub(a: i128, b: i128) -> Result<i128, ContractError> {
+    a.checked_sub(b).ok_or(ContractError::AmountOverflow)
+}
+
+fn checked_sum(values: &[i128]) -> Result<i128, ContractError> {
+    let mut total = 0;
+    for value in values {
+        total = checked_add(total, *value)?;
+    }
+    Ok(total)
+}
+
+fn bps_share(amount: i128, bps: u32) -> Result<i128, ContractError> {
+    amount
+        .checked_mul(bps as i128)
+        .ok_or(ContractError::AmountOverflow)?
+        .checked_div(BPS_DENOMINATOR)
+        .ok_or(ContractError::AmountOverflow)
 }
 
 fn validate_deadlines(
@@ -621,13 +866,24 @@ fn validate_deadlines(
 }
 
 fn require_state(deal: &Deal, state: DealState) -> Result<(), ContractError> {
-    if deal.state == DealState::SettledSuccess || deal.state == DealState::FundingExpired {
+    if is_terminal(&deal.state) {
         return Err(ContractError::TerminalState);
     }
     if deal.state != state {
         return Err(ContractError::InvalidState);
     }
     Ok(())
+}
+
+fn is_terminal(state: &DealState) -> bool {
+    matches!(
+        state,
+        DealState::SettledSuccess
+            | DealState::FundingExpired
+            | DealState::SellerBreach
+            | DealState::BuyerBreach
+            | DealState::MutualCancellation
+    )
 }
 
 fn require_terms_accepted(deal: &Deal) -> Result<(), ContractError> {
@@ -637,18 +893,28 @@ fn require_terms_accepted(deal: &Deal) -> Result<(), ContractError> {
     Ok(())
 }
 
-fn require_before_deadline(env: &Env, funding_deadline: u64) -> Result<(), ContractError> {
-    if env.ledger().timestamp() >= funding_deadline {
+fn require_before_funding_deadline(env: &Env, deadline: u64) -> Result<(), ContractError> {
+    if env.ledger().timestamp() >= deadline {
         return Err(ContractError::FundingDeadlinePassed);
     }
     Ok(())
 }
 
-fn activate_if_fully_funded(
-    env: &Env,
-    deal_id: &BytesN<32>,
-    deal: &mut Deal,
-) -> Result<(), ContractError> {
+fn require_before_delivery_deadline(env: &Env, deadline: u64) -> Result<(), ContractError> {
+    if env.ledger().timestamp() >= deadline {
+        return Err(ContractError::DeliveryDeadlinePassed);
+    }
+    Ok(())
+}
+
+fn require_before_inspection_deadline(env: &Env, deadline: u64) -> Result<(), ContractError> {
+    if env.ledger().timestamp() >= deadline {
+        return Err(ContractError::InspectionDeadlinePassed);
+    }
+    Ok(())
+}
+
+fn activate_if_fully_funded(env: &Env, deal_id: &BytesN<32>, deal: &mut Deal) {
     if deal.buyer_funded && deal.seller_funded {
         let previous_state = deal.state.clone();
         deal.state = DealState::Active;
@@ -661,19 +927,302 @@ fn activate_if_fully_funded(
     } else {
         deal.last_updated_ledger_timestamp = env.ledger().timestamp();
     }
+}
+
+fn settle_funding_expiry(
+    env: &Env,
+    deal_id: &BytesN<32>,
+    deal: &mut Deal,
+) -> Result<(), ContractError> {
+    let buyer_refund = if deal.buyer_funded {
+        checked_add(deal.principal, deal.buyer_bond)?
+    } else {
+        0
+    };
+    let seller_refund = if deal.seller_funded {
+        deal.seller_bond
+    } else {
+        0
+    };
+
+    if buyer_refund > 0 {
+        transfer_from_contract(env, &deal.buyer, buyer_refund, &deal.accepted_asset)?;
+    }
+    if seller_refund > 0 {
+        transfer_from_contract(env, &deal.seller, seller_refund, &deal.accepted_asset)?;
+    }
+
+    let previous_state = deal.state.clone();
+    deal.state = DealState::FundingExpired;
+    deal.terminal_outcome = TerminalOutcome::FundingExpired;
+    deal.last_updated_ledger_timestamp = env.ledger().timestamp();
+    write_deal(env, deal)?;
+    FundingExpiredEvent {
+        deal_id: deal_id.clone(),
+        buyer_funded: deal.buyer_funded,
+        seller_funded: deal.seller_funded,
+        buyer_refund,
+        seller_refund,
+    }
+    .publish(env);
+    publish_state_change(env, deal_id, previous_state, DealState::FundingExpired);
     Ok(())
 }
 
-fn transfer_to_contract(env: &Env, from: &Address, amount: i128) -> Result<(), ContractError> {
-    let config = read_config(env)?;
-    let token_client = token::TokenClient::new(env, &config.accepted_asset);
+fn success_distribution(deal: &Deal) -> Result<Distribution, ContractError> {
+    let success_fee = bps_share(deal.principal, deal.success_fee_bps)?;
+    let seller_principal = checked_sub(deal.principal, success_fee)?;
+    Ok(Distribution {
+        buyer_principal_refund: 0,
+        seller_principal,
+        buyer_bond_refund: deal.buyer_bond,
+        seller_bond_refund: deal.seller_bond,
+        buyer_bond_to_seller: 0,
+        buyer_bond_to_treasury: 0,
+        seller_bond_to_buyer: 0,
+        seller_bond_to_treasury: 0,
+        success_fee_to_treasury: success_fee,
+    })
+}
+
+fn seller_breach_distribution(deal: &Deal) -> Result<Distribution, ContractError> {
+    let treasury_share = bps_share(deal.seller_bond, deal.seller_breach_treasury_bps)?;
+    let harmed_share = checked_sub(deal.seller_bond, treasury_share)?;
+    Ok(Distribution {
+        buyer_principal_refund: deal.principal,
+        seller_principal: 0,
+        buyer_bond_refund: deal.buyer_bond,
+        seller_bond_refund: 0,
+        buyer_bond_to_seller: 0,
+        buyer_bond_to_treasury: 0,
+        seller_bond_to_buyer: harmed_share,
+        seller_bond_to_treasury: treasury_share,
+        success_fee_to_treasury: 0,
+    })
+}
+
+fn buyer_breach_distribution(deal: &Deal) -> Result<Distribution, ContractError> {
+    let treasury_share = bps_share(deal.buyer_bond, deal.buyer_breach_treasury_bps)?;
+    let harmed_share = checked_sub(deal.buyer_bond, treasury_share)?;
+    Ok(Distribution {
+        buyer_principal_refund: 0,
+        seller_principal: deal.principal,
+        buyer_bond_refund: 0,
+        seller_bond_refund: deal.seller_bond,
+        buyer_bond_to_seller: harmed_share,
+        buyer_bond_to_treasury: treasury_share,
+        seller_bond_to_buyer: 0,
+        seller_bond_to_treasury: 0,
+        success_fee_to_treasury: 0,
+    })
+}
+
+fn mutual_cancellation_distribution(deal: &Deal) -> Distribution {
+    Distribution {
+        buyer_principal_refund: deal.principal,
+        seller_principal: 0,
+        buyer_bond_refund: deal.buyer_bond,
+        seller_bond_refund: deal.seller_bond,
+        buyer_bond_to_seller: 0,
+        buyer_bond_to_treasury: 0,
+        seller_bond_to_buyer: 0,
+        seller_bond_to_treasury: 0,
+        success_fee_to_treasury: 0,
+    }
+}
+
+fn settle_success(env: &Env, deal_id: &BytesN<32>, deal: &mut Deal) -> Result<(), ContractError> {
+    let distribution = success_distribution(deal)?;
+    apply_terminal_distribution(
+        env,
+        deal_id,
+        deal,
+        distribution,
+        DealState::SettledSuccess,
+        TerminalOutcome::SettledSuccess,
+    )
+}
+
+fn settle_seller_breach(
+    env: &Env,
+    deal_id: &BytesN<32>,
+    deal: &mut Deal,
+) -> Result<(), ContractError> {
+    let distribution = seller_breach_distribution(deal)?;
+    apply_terminal_distribution(
+        env,
+        deal_id,
+        deal,
+        distribution,
+        DealState::SellerBreach,
+        TerminalOutcome::SellerBreach,
+    )
+}
+
+fn settle_buyer_breach(
+    env: &Env,
+    deal_id: &BytesN<32>,
+    deal: &mut Deal,
+) -> Result<(), ContractError> {
+    let distribution = buyer_breach_distribution(deal)?;
+    apply_terminal_distribution(
+        env,
+        deal_id,
+        deal,
+        distribution,
+        DealState::BuyerBreach,
+        TerminalOutcome::BuyerBreach,
+    )
+}
+
+fn settle_mutual_cancellation(
+    env: &Env,
+    deal_id: &BytesN<32>,
+    deal: &mut Deal,
+) -> Result<(), ContractError> {
+    let distribution = mutual_cancellation_distribution(deal);
+    apply_terminal_distribution(
+        env,
+        deal_id,
+        deal,
+        distribution,
+        DealState::MutualCancellation,
+        TerminalOutcome::MutualCancellation,
+    )
+}
+
+fn apply_terminal_distribution(
+    env: &Env,
+    deal_id: &BytesN<32>,
+    deal: &mut Deal,
+    distribution: Distribution,
+    terminal_state: DealState,
+    terminal_outcome: TerminalOutcome,
+) -> Result<(), ContractError> {
+    let expected_locked = checked_sum(&[deal.principal, deal.buyer_bond, deal.seller_bond])?;
+    let total_out = checked_sum(&[
+        distribution.buyer_principal_refund,
+        distribution.seller_principal,
+        distribution.buyer_bond_refund,
+        distribution.seller_bond_refund,
+        distribution.buyer_bond_to_seller,
+        distribution.buyer_bond_to_treasury,
+        distribution.seller_bond_to_buyer,
+        distribution.seller_bond_to_treasury,
+        distribution.success_fee_to_treasury,
+    ])?;
+    if expected_locked != total_out {
+        return Err(ContractError::AmountOverflow);
+    }
+
+    transfer_if_positive(
+        env,
+        &deal.buyer,
+        distribution.buyer_principal_refund,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.seller,
+        distribution.seller_principal,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.buyer,
+        distribution.buyer_bond_refund,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.seller,
+        distribution.seller_bond_refund,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.seller,
+        distribution.buyer_bond_to_seller,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.treasury,
+        distribution.buyer_bond_to_treasury,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.buyer,
+        distribution.seller_bond_to_buyer,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.treasury,
+        distribution.seller_bond_to_treasury,
+        &deal.accepted_asset,
+    )?;
+    transfer_if_positive(
+        env,
+        &deal.treasury,
+        distribution.success_fee_to_treasury,
+        &deal.accepted_asset,
+    )?;
+
+    let previous_state = deal.state.clone();
+    deal.state = terminal_state.clone();
+    deal.terminal_outcome = terminal_outcome.clone();
+    deal.last_updated_ledger_timestamp = env.ledger().timestamp();
+    write_deal(env, deal)?;
+    SettlementDistributionEvent {
+        deal_id: deal_id.clone(),
+        outcome: terminal_outcome,
+        buyer_principal_refund: distribution.buyer_principal_refund,
+        seller_principal: distribution.seller_principal,
+        buyer_bond_refund: distribution.buyer_bond_refund,
+        seller_bond_refund: distribution.seller_bond_refund,
+        buyer_bond_to_seller: distribution.buyer_bond_to_seller,
+        buyer_bond_to_treasury: distribution.buyer_bond_to_treasury,
+        seller_bond_to_buyer: distribution.seller_bond_to_buyer,
+        seller_bond_to_treasury: distribution.seller_bond_to_treasury,
+        success_fee_to_treasury: distribution.success_fee_to_treasury,
+    }
+    .publish(env);
+    publish_state_change(env, deal_id, previous_state, terminal_state);
+    Ok(())
+}
+
+fn transfer_if_positive(
+    env: &Env,
+    to: &Address,
+    amount: i128,
+    asset: &Address,
+) -> Result<(), ContractError> {
+    if amount > 0 {
+        transfer_from_contract(env, to, amount, asset)?;
+    }
+    Ok(())
+}
+
+fn transfer_to_contract(
+    env: &Env,
+    from: &Address,
+    amount: i128,
+    asset: &Address,
+) -> Result<(), ContractError> {
+    let token_client = token::TokenClient::new(env, asset);
     token_client.transfer(from, env.current_contract_address(), &amount);
     Ok(())
 }
 
-fn transfer_from_contract(env: &Env, to: &Address, amount: i128) -> Result<(), ContractError> {
-    let config = read_config(env)?;
-    let token_client = token::TokenClient::new(env, &config.accepted_asset);
+fn transfer_from_contract(
+    env: &Env,
+    to: &Address,
+    amount: i128,
+    asset: &Address,
+) -> Result<(), ContractError> {
+    let token_client = token::TokenClient::new(env, asset);
     token_client.transfer(&env.current_contract_address(), to, &amount);
     Ok(())
 }
