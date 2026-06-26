@@ -1,0 +1,17 @@
+
+/(auth)/login
+/buyer-requests
+/buyer-requests/[requestId]
+/deals/new
+/deals/[dealId]
+/demo
+/dev/custody-v2-browser-setup
+/dev/deal-state-gallery
+/dev/design-lab
+/marketplace
+/marketplace/[listingId]
+/notifications
+/offers/new
+/offers/[offerId]
+/profiles/[userId]
+/profiles/[userId]/reputation

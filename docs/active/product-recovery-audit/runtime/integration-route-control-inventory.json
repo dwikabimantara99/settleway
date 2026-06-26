@@ -1,0 +1,6019 @@
+[
+  {
+    "branch": "integration",
+    "route": "/",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Marketplace How It Works Trust & Settlement Login Bilateral trade assurance on Stellar Testnet Trade with commitment on both sides. Discover supply and demand, negotiate commercial terms, secure buyer principal and bilateral bonds, verify delivery, and preserve settlement proof on Stellar. Explore Marketplace See How It Works BUYER ASSURANCE Pre-lock intent Principal + commitment bond The buyer prepares purchase value and a seriousness bond before escrow can lock. Buyer principal Buyer bond SELLER ASSURANCE Performance bond The seller commits delivery seriousness before protected execution begins. Mutual terms gate Commercial terms locked by both sides Evidence verification Stellar-backed settlement ONE CONNECTED TRADE WORKSPACE Every serious step belongs to the same transaction story. Discover Supply Compare agricultural lots, origin, quantity, price, and seller confidence. Post Buyer Demand Signal verified purchasing intent before a protected room opens. Negotiate Terms Keep price, quantity, delivery, and evidence expectations in one recorded thread. Secure Commitments Buyer principal and bilateral bonds create visible seriousness on both sides. Verify Delivery Evidence hashes and room milestones preserve the execution story. Settle on Stellar Testnet references support inspectable funding, lock, refund, and settlement proof. THE PRODUCT MECHANISM A corridor designed to slow down the risky moments. Discovery stays open. Commercial terms become explicit. Funding begins only after mutual commitment. Evidence and settlement remain part of the same room. 1 Discover 2 Negotiate 3 Both Commit 4 Verify 5 Settle BILATERAL ASSURANCE Capital, commitment, evidence, and outcome remain legible. Buyer principal 100% protected deal value Buyer commitment bond 5% seriousness signal Seller performance bond 5% delivery commitment Platform fee 0.5% per party where applicable Deterministic settlement Successful completion returns both bonds, routes principal to the seller, ",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "10",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Marketplace",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 272,
+          "y": 14,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 419,
+          "y": 14,
+          "w": 118,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 542,
+          "y": 14,
+          "w": 150,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Login",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#settleway-login",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 921,
+          "y": 14,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Explore Marketplace",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 647,
+          "w": 206,
+          "h": 52
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "See How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 234,
+          "y": 647,
+          "w": 162,
+          "h": 52
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 3216,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3216,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3216,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3248,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3248,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3280,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3280,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/marketplace",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/marketplace",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS BUY MARKETPLACE Find supply worth committing to. Review origin, quantity, price, and outcome-backed seller confidence before a recorded negotiation begins. 3 listings available Filters FEATURED SUPPLY Red Chili (Bird's Eye Chili) Ready stock Bird's Eye Chili Grade A Origin Probolinggo Available volume 700 kg available Price per kg Rp 28.500 Estimated value Rp 19.950.000 Reputation 92/100 Verified seller 15 completed deals Probolinggo Farmer Group Review opportunity MORE ACTIVE SUPPLY Compare the commercial baseline Pre-harvest Arabica Green Beans Gayo Semi-Washed Rp 95.000 per kg Aceh Tengah 2.000 kg available Estimated value Rp 190.000.000 95/100 reputation Verified seller 30 completed deals Gayo Highland Cooperative Ready stock White Rice (Premium Milling) IR64 Premium Rp 13.800 per kg Pasuruan 5.000 kg available Estimated value Rp 69.000.000 92/100 reputation Verified seller 15 completed deals Probolinggo Farmer Group Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 29,
+          "y": 314,
+          "w": 832,
+          "h": 44
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Filters",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 314,
+          "w": 99,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace/listing-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 810,
+          "y": 857,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity: Arabica Green Beans",
+        "ariaLabel": "Review opportunity: Arabica Green Beans",
+        "href": "http://127.0.0.1:3101/marketplace/listing-coffee-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 932,
+          "y": 1303,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity: White Rice (Premium Milling)",
+        "ariaLabel": "Review opportunity: White Rice (Premium Milling)",
+        "href": "http://127.0.0.1:3101/marketplace/listing-rice-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 932,
+          "y": 1646,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1823,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1823,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1823,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1855,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1855,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1887,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1887,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/marketplace/listing-cabai-001",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/marketplace/listing-cabai-001",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Back to Buy marketplace SELLER LISTING Red Chili (Bird's Eye Chili) Fresh harvest from Probolinggo group. Sorted and ready for pickup or delivery. Ready stock Offer before escrow Bird's Eye Chili Grade A Submit Offer starts recorded negotiation. The active room opens only after accepted terms and mutual commitment. Listing Snapshot Available volume 700 kg Price per kg Rp 28.500 /kg Origin Probolinggo Availability Available now Seller Description Probolinggo Farmer Group is offering 700 kg of Bird's Eye Chili Grade A from Probolinggo. This lot is already sorted and ready for buyer review, pickup coordination, or delivery scheduling. Buyers should use the recorded negotiation to confirm final quantity, price, grading expectations, packaging, delivery handoff, and the product photos or documents that should be attached before the protected Deal Room opens. Seller notes are part of pre-deal context. Final commercial terms must still be confirmed through Submit Offer and the recorded negotiation thread. What to clarify next Quality grade and sorting tolerance Delivery timing and handoff location Photos, receipts, or quality documents Recorded negotiation is the first gate Buyers and sellers discuss price, quantity, delivery, quality, and evidence before any deposit or escrow action begins. Commercial Baseline Volume 700 kg Price Rp 28.500 /kg Indicative value Rp 19.950.000 Submit Offer Seller Assurance Probolinggo Farmer Group Aggregator & Farmer Group Probolinggo, East Java Reputation 92/100 15 completed deals Verified seller Evidence expected after escrow activation Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to Buy marketplace",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 113,
+          "w": 178,
+          "h": 20
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Submit Offer",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/offers/new?listingId=listing-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 638,
+          "y": 506,
+          "w": 334,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1804,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1804,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1804,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1836,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1836,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1868,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1868,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/buyer-requests",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/buyer-requests",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS SELL MARKETPLACE Sell Browse active agricultural purchase requests posted by buyers. Review demand, target prices, delivery needs, and reputation before responding with a supply offer. 2 requests active Filters Immediate need Red Chili (Bird's Eye Chili) Bird's Eye Chili Grade A Rp 28.000 per kg Surabaya 500 kg needed Estimated value Rp 14.000.000 98/100 reputation Verified buyer 42 completed purchases Surabaya Spice Co. Review opportunity Recurring demand White Rice (Medium Grade) IR64 Medium Rp 12.000 per kg Jakarta 10.000 kg needed Estimated value Rp 120.000.000 88/100 reputation Verified buyer 110 completed purchases Java Foods Manufacturing Review opportunity Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 33,
+          "y": 286,
+          "w": 824,
+          "h": 44
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Filters",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 869,
+          "y": 286,
+          "w": 99,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity",
+        "ariaLabel": "Review opportunity: Red Chili (Bird's Eye Chili)",
+        "href": "http://127.0.0.1:3101/buyer-requests/req-spice-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 794,
+          "y": 636,
+          "w": 182,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity",
+        "ariaLabel": "Review opportunity: White Rice (Medium Grade)",
+        "href": "http://127.0.0.1:3101/buyer-requests/req-rice-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 794,
+          "y": 982,
+          "w": 182,
+          "h": 44
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1136,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1136,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1136,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1168,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1168,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1200,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1200,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/buyer-requests/req-spice-001",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/buyer-requests/req-spice-001",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Back to Sell marketplace BUYER REQUEST Red Chili (Bird's Eye Chili) Looking for reliable supplier of grade A red chilies for continuous restaurant supply. Open request Demand before escrow Bird's Eye Chili Grade A This request starts with a submitted offer and recorded negotiation before the Deal Room can open. Request Requirements Required volume 500 kg Target price Rp 28.000 /kg Delivery destination Surabaya Required date 20 Jun 2026 Offer first, Deal Room later Submit Offer creates the commercial baseline and starts the recorded negotiation. The active escrow room opens only after the offer is accepted and both parties commit. Commercial Baseline Volume 500 kg Target price Rp 28.000 /kg Indicative value Rp 14.000.000 Submit Offer Buyer Assurance Surabaya Spice Co. Wholesale Buyer Surabaya, East Java Reputation 98/100 42 completed purchases Verified buyer Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to Sell marketplace",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 113,
+          "w": 177,
+          "h": 20
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Submit Offer",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/offers/new?buyerRequestId=req-spice-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 638,
+          "y": 506,
+          "w": 334,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1154,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1154,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1154,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1186,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1186,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1218,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1218,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/offers/offer-demo-cabai-001",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/offers/offer-demo-cabai-001",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Back to notifications | Back to source listing Offer Agreed Red Chili (Bird's Eye Chili) Commercial terms are aligned. Review the agreement summary below. The Deal Room becomes active only after both parties confirm Open Deal Room. Indicative baseline: 700 kg at Rp 28.500 /kg, with indicative value Rp 19.950.000. Both parties confirmed Open Deal Room. The active escrow room is ready. Negotiation Summary Conversation Locked Both parties have aligned on the commercial terms for 700 kg of Red Chili (Bird's Eye Chili) at Rp 28.500 /kg, with an indicative value of Rp 19.950.000. Delivery expectations and evidence requirements are now preserved before activation. Same-week shipment, proof visible inside the protected room, and buyer pickup coordination after escrow lock. Agreed Points Quantity 700 kg Delivery deadline Pending agreement Price per kg Rp 28.500 /kg Product quality Grade A, minimum size 3 cm Indicative value Rp 19.950.000 Evidence expectation Recent product photos and delivery proof Recorded Conversation History Locked The negotiation is locked because the commercial terms have been agreed. You can review the latest conversation below for reference. You Wed 17 Jun, 15:45 We need 700 kg this week and want proof visibility inside the room. Probolinggo Farmer Group Wed 17 Jun, 15:53 We can prepare the lot and upload shipment evidence after both deposits clear. You Wed 17 Jun, 16:02 Understood. I am ready to open the Deal Room once you confirm the same terms. View Full Conversation Agreed Deal Terms Volume 700 kg Price Rp 28.500 /kg Delivery deadline Pending agreement Indicative value Rp 19.950.000 Offer status Accepted Enter Active Escrow Room Commitment Gate SS Surabaya Spice Co. Buyer commitment Opened PF Probolinggo Farmer Group Seller commitment Opened One commitment click is only a signal. The second confirmation activates the escrow room and opens the deposit window. Activation Reminder After the room activates, buyer deposits p",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to notifications",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 32,
+          "y": 117,
+          "w": 145,
+          "h": 20
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to source listing",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace/listing-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 212,
+          "y": 117,
+          "w": 151,
+          "h": 20
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Full Conversation",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/offers/offer-demo-cabai-001#conversation-history",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 133,
+          "y": 1738,
+          "w": 210,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Enter Active Escrow Room",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 574,
+          "y": 788,
+          "w": 382,
+          "h": 56
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1896,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1896,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1896,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1928,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1928,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1960,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1960,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/deals/demo-cabai-001",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/deals/demo-cabai-001",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Back to recorded negotiation Red Chili (Bird's Eye Chili) Awaiting deposits Surabaya Spice Co. Probolinggo Farmer Group 700 kg Rp 28.500/kg Protected value Rp 19.950.000 Buyer and seller have both committed to open this room. Funding is now the only gate before escrow locks. FUNDING DEADLINE 23h 59m remaining 27 Jun 2026, 21.06 COMPLETE Terms Agreed CURRENT Funding 3 UPCOMING Escrow Locked 4 UPCOMING Delivery & Proof 5 UPCOMING Buyer Review 6 UPCOMING Settled FUNDING GATE Bilateral commitments 0 of 2 funded BUYER Pending Surabaya Spice Co. Principal Rp 19.950.000 + buyer bond Rp 997.500 + fee Rp 99.750 Commitment Rp 21.047.250 SELLER Pending Probolinggo Farmer Group Performance bond Rp 997.500 + fee Rp 99.750 Commitment Rp 1.097.250 CONNECTED WALLET No wallet linked Funding requires the active Testnet wallet to match the wallet linked to this profile. The existing signed transaction flow remains unchanged. If only one side funds before the deadline, that funded side is refunded in full. The non-funding side receives the reputation consequence. No bond slashing occurs before lock. Record the first funding event to start the escrow lock gate. Fund Buyer Commitment RECORDED NEGOTIATION Commercial context Understood. I am ready to open the Deal Room once you confirm the same terms. We can prepare the lot and upload shipment evidence after both deposits clear. EVIDENCE EXPECTED Delivery proof after lock Recent product photos Delivery proof Signed receipt Evidence collection remains inactive until both commitments clear and escrow lock is recorded. Recent room activity Room activated Both parties agreed to open the protected Deal Room. Current Waiting for buyer and seller commitments. AURORA ASSURANCE RAIL Funding truth Buyer principal Rp 19.950.000 Buyer commitment bond Rp 997.500 Seller performance bond Rp 997.500 Platform fees Rp 199.500 Total expected Rp 22.144.500 Next responsible actor Buyer Custody / lock state No funds locked Settlement",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to recorded negotiation",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/offers/offer-demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 101,
+          "w": 205,
+          "h": 44
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Fund Buyer Commitment",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 620,
+          "y": 1031,
+          "w": 210,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Open recorded negotiation",
+        "ariaLabel": "Open recorded negotiation",
+        "href": "http://127.0.0.1:3101/offers/offer-demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 426,
+          "y": 1267,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 2638,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2638,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2638,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2670,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2670,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2702,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2702,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/notifications",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/notifications",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Notifications Incoming offers, negotiation updates, and Deal Room signals. All clear Start from Marketplace or Buyer Requests, then use Submit Offer to create the first negotiation thread. Browse Marketplace Browse Requests Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Browse Marketplace",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 342,
+          "y": 458,
+          "w": 168,
+          "h": 42
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Browse Requests",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 522,
+          "y": 458,
+          "w": 148,
+          "h": 42
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 677,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 677,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 677,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 709,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 709,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 741,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 741,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/profiles/buyer-surabaya-restaurant",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/profiles/buyer-surabaya-restaurant",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS SS Member since Jun 2026 Surabaya Spice Co. Wholesale Buyer Surabaya, East Java Managed Profile Wallet Testnet GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX Managed by Settleway for protected Testnet transaction activity. Connected Wallet No external wallet linked Link your personal Stellar Testnet wallet for the next funding phase. Connect Stellar Wallet Settleway turns this profile into a transaction passport: counterparties can see completed deals, protected volume, and funding discipline before they commit to a protected Deal Room. Verified Profile Outcome-backed reputation Edit Profile Total Volume Rp 1.200.000.000 Buyer + seller Completed Deals 42 Verified outcomes Reputation Score 98 / 100 Outcome-backed Transaction Volume Overview of verified activity across buyer and seller roles. Seller Rp 0 Buyer Rp 1.200.000.000 Jan Feb Mar Apr May Jun Rp 100.000.000 Rp0 Sell (My Listings) Buy (My Requests) Open Red Chili (Bird's Eye Chili) Buyer request Surabaya 500 kg requested Rp 28.000 /kg Est. total: Rp 14.000.000 Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar wallet address",
+        "ariaLabel": "Copy Stellar wallet address",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 777,
+          "y": 315,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Connect Stellar Wallet",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 326,
+          "y": 500,
+          "w": 487,
+          "h": 40
+        }
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Edit Profile",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 845,
+          "y": 146,
+          "w": 103,
+          "h": 70
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Reputation Score 98 / 100 Outcome-backed",
+        "ariaLabel": "Open Reputation Score",
+        "href": "http://127.0.0.1:3101/profiles/buyer-surabaya-restaurant/reputation",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 681,
+          "y": 758,
+          "w": 300,
+          "h": 162
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1861,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1861,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1861,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1893,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1893,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1925,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1925,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/profiles/buyer-surabaya-restaurant/reputation",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/profiles/buyer-surabaya-restaurant/reputation",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Back to profile Reputation Review transaction outcomes, funding discipline, and Stellar Testnet proof references connected to this account. Reputation is presented as an outcome ledger. Testnet references are inspectable proof surfaces where available; they are not production custody or bank-settlement claims. Successful Deals 3 Completed verified outcomes Failed Deals 1 Recorded failed outcomes Success Rate 75% Outcome-backed performance Total Verified Tx 4 Buyer + seller history All Successful Failed All Roles Buyer Seller Buyer Red Chili (Bird's Eye Chili) | 700 kg Counterparty: Probolinggo Farmer Group Est. Value: Rp 19.950.000 Date: 18 Jun 2026 Successful Testnet proof reference 889ae826fcb97b51ce165161987247dca6ab6e48acfb1b013de45874d3bda058 View Testnet reference Seller Arabica Green Beans | 2.000 kg Counterparty: Java Roastery Supply Co. Est. Value: Rp 190.000.000 Date: 04 Jun 2026 Successful Testnet proof reference 776c40338ef075a28049956f2f1a972586082f78ec48e454144534984757b095 View Testnet reference Buyer White Rice (Premium Milling) | 5.000 kg Counterparty: Bandung Retail Foods Est. Value: Rp 69.000.000 Date: 28 May 2026 Reason: Missed funding deadline Failed Testnet proof reference 4579db52fe3009f6044cf28caa326b54e56742f39e8aed80d1bbce057bf7088c View Testnet reference Seller Red Chili Supply | 500 kg Counterparty: Surabaya Spice Co. Est. Value: Rp 14.000.000 Date: 17 May 2026 Successful Testnet proof reference 9b9f68e9c0726d507037898dd1fb6fce86159df4b67679c079829a96b28bcea4 View Testnet reference Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Back to profile",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/profiles/buyer-surabaya-restaurant",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 32,
+          "y": 108,
+          "w": 92,
+          "h": 18
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "All",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 49,
+          "y": 687,
+          "w": 60,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Successful",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 120,
+          "y": 687,
+          "w": 114,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Failed",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 246,
+          "y": 687,
+          "w": 83,
+          "h": 44
+        }
+      },
+      {
+        "index": 10,
+        "tag": "select",
+        "type": null,
+        "role": null,
+        "label": "All Roles Buyer Seller",
+        "ariaLabel": "Filter by role",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 341,
+          "y": 687,
+          "w": 114,
+          "h": 44
+        }
+      },
+      {
+        "index": 11,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 49,
+          "y": 747,
+          "w": 915,
+          "h": 44
+        }
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar transaction hash",
+        "ariaLabel": "Copy Stellar transaction hash",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 919,
+          "y": 966,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Testnet reference",
+        "ariaLabel": null,
+        "href": "https://stellar.expert/explorer/testnet/tx/889ae826fcb97b51ce165161987247dca6ab6e48acfb1b013de45874d3bda058",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 53,
+          "y": 1018,
+          "w": 907,
+          "h": 40
+        }
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar transaction hash",
+        "ariaLabel": "Copy Stellar transaction hash",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 919,
+          "y": 1233,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Testnet reference",
+        "ariaLabel": null,
+        "href": "https://stellar.expert/explorer/testnet/tx/776c40338ef075a28049956f2f1a972586082f78ec48e454144534984757b095",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 53,
+          "y": 1286,
+          "w": 907,
+          "h": 40
+        }
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar transaction hash",
+        "ariaLabel": "Copy Stellar transaction hash",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 919,
+          "y": 1532,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "index": 17,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Testnet reference",
+        "ariaLabel": null,
+        "href": "https://stellar.expert/explorer/testnet/tx/4579db52fe3009f6044cf28caa326b54e56742f39e8aed80d1bbce057bf7088c",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 53,
+          "y": 1585,
+          "w": 907,
+          "h": 40
+        }
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar transaction hash",
+        "ariaLabel": "Copy Stellar transaction hash",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 919,
+          "y": 1799,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "index": 19,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Testnet reference",
+        "ariaLabel": null,
+        "href": "https://stellar.expert/explorer/testnet/tx/9b9f68e9c0726d507037898dd1fb6fce86159df4b67679c079829a96b28bcea4",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 53,
+          "y": 1852,
+          "w": 907,
+          "h": 40
+        }
+      },
+      {
+        "index": 20,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1994,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 21,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1994,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 22,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1994,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 23,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2026,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 24,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2026,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 25,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2058,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 26,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2058,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 27,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/profiles/seller-probolinggo-cabai",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/profiles/seller-probolinggo-cabai",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS PF Member since Jun 2026 Probolinggo Farmer Group Aggregator & Farmer Group Probolinggo, East Java Managed Profile Wallet Testnet GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU Managed by Settleway for protected Testnet transaction activity. Connected Wallet No external wallet linked Link your personal Stellar Testnet wallet for the next funding phase. Settleway turns this profile into a transaction passport: counterparties can see completed deals, protected volume, and funding discipline before they commit to a protected Deal Room. Verified Profile Outcome-backed reputation Total Volume Rp 450.000.000 Buyer + seller Completed Deals 15 Verified outcomes Reputation Score 92 / 100 Outcome-backed Transaction Volume Overview of verified activity across buyer and seller roles. Seller Rp 450.000.000 Buyer Rp 0 Jan Feb Mar Apr May Jun Rp 46.500.000 Rp0 Sell (My Listings) Buy (My Requests) RC Ready Stock Red Chili (Bird's Eye Chili) Bird's Eye Chili Grade A Probolinggo 700 kg available Rp 28.500 /kg Est. value: Rp 19.950.000 View Details WR Ready Stock White Rice (Premium Milling) IR64 Premium Pasuruan 5.000 kg available Rp 13.800 /kg Est. value: Rp 69.000.000 View Details Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Copy Stellar wallet address",
+        "ariaLabel": "Copy Stellar wallet address",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 840,
+          "y": 315,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Reputation Score 92 / 100 Outcome-backed",
+        "ariaLabel": "Open Reputation Score",
+        "href": "http://127.0.0.1:3101/profiles/seller-probolinggo-cabai/reputation",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 681,
+          "y": 682,
+          "w": 300,
+          "h": 130
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Details",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 218,
+          "y": 1631,
+          "w": 111,
+          "h": 38
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "View Details",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 677,
+          "y": 1631,
+          "w": 111,
+          "h": 38
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1791,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1791,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1791,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1823,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1823,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1855,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1855,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/demo",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/demo",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Guided founder demo corridor Run the Settleway story from trade discovery to verified reputation. This is the operator cockpit for the hackathon presentation. It keeps the narrative disciplined: show the trade problem, show negotiation before money, show mutual commitment, show protected settlement, then close with reputation. Recorded negotiation first Two user-facing rails Stellar-backed trust references Demo Controls Reset Demo State QUICK JUMPS Landing Page Marketplace (Buy) Chili Listing Detail Notifications Negotiation Thread Active Deal Room Seller Profile Start From Landing Page SCENARIO Commodity: Red chili / bird's eye chili Seller: Probolinggo Chili Supplier Buyer: Surabaya Restaurant Group IDR 20,000,000 deal value MVP PROVES Product does not jump from listing to escrow. Negotiation and mutual commitment happen before deposits. Settlement references and reputation belong to one trust story. HONESTY BOUNDARIES Local-bank funding remains simulated in this MVP. Stellar is used as a trust layer and proof surface, not as a user-hostile crypto interface. Dispute judgment is not fully automated; the product preserves evidence and chronology for review. Presentation Route 01 Frame the trust problem Start on the landing page and explain why agricultural trade needs more than listings and chat screenshots. 02 Prove discovery is real Open the marketplace, choose the chili listing, and show that counterparties can inspect credibility before they commit. 03 Show negotiation before money Use Submit Offer to explain that negotiation becomes part of the evidence trail before the protected room opens. 04 Activate the room together Switch roles and show that Open Deal Room is mutual commitment, not a one-sided shortcut into escrow. 05 Walk through funding and lock Show the buyer and seller obligations, the dual-rail story, and how the lock becomes part of the Stellar-backed trail. 06 Close with proof and reputation Finish with delivery evidence",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Reset Demo State",
+        "ariaLabel": "Reset Demo State",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 186,
+          "w": 290,
+          "h": 44
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Landing Page",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 298,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Marketplace (Buy)",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 350,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 9,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Chili Listing Detail",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 402,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 10,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 453,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Negotiation Thread",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 505,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 12,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Active Deal Room",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 556,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 13,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Seller Profile",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 608,
+          "w": 290,
+          "h": 46
+        }
+      },
+      {
+        "index": 14,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Start From Landing Page",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 666,
+          "y": 694,
+          "w": 290,
+          "h": 48
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 2021,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2021,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 17,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2021,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 18,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2053,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 19,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2053,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 20,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 2085,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 21,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 2085,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 22,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 622,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/dev/deal-state-gallery",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/dev/deal-state-gallery",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Settleway Buy Sell Deals SS Development visual fixtures Aurora Deal Room State Gallery Deterministic, development-only Deal Room fixtures for final visual acceptance. These links render through the normal production Deal Room route and are not live Testnet transactions. Awaiting deposits Waiting Deposits Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-waiting-deposits Buyer funded Buyer Funded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-buyer-funded Seller funded Seller Funded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-seller-funded Confirming custody Custody Pending Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-custody-pending Escrow protected Locked Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-locked Evidence submitted Proof Submitted Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-proof-submitted Buyer review Delivered Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-delivered Settled Completed Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-completed Expired Expired Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-expired Refunded Refunded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-refunded Cancelled Cancelled Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-cancelled Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 91,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 7,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 87,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 87,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 87,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 87,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 11,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 87,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Awaiting deposits Waiting Deposits Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-waiting-deposits",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-waiting-deposits",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 441,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buyer funded Buyer Funded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-buyer-funded",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-buyer-funded",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 514,
+          "y": 441,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Seller funded Seller Funded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-seller-funded",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-seller-funded",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 650,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Confirming custody Custody Pending Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-custody-pending",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-custody-pending",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 514,
+          "y": 650,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 16,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Escrow protected Locked Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-locked",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-locked",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 860,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 17,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Evidence submitted Proof Submitted Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-proof-submitted",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-proof-submitted",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 514,
+          "y": 860,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 18,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buyer review Delivered Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-delivered",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-delivered",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1070,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 19,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settled Completed Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-completed",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-completed",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 514,
+          "y": 1070,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 20,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Expired Expired Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-expired",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-expired",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1279,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 21,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Refunded Refunded Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-refunded",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-refunded",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 514,
+          "y": 1279,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 22,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Cancelled Cancelled Opens the deterministic fixture route for this exact Deal Room state. dev-aurora-state-cancelled",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/dev-aurora-state-cancelled",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1489,
+          "w": 482,
+          "h": 194
+        }
+      },
+      {
+        "index": 23,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1795,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 24,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1795,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 25,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1795,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 26,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1827,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 27,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1827,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 28,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1859,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 29,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1859,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 30,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/dev/design-lab",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/dev/design-lab",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Settleway Marketplace How It Works Trust & Settlement Login Settleway Buy Sell Deals SS DEVELOPMENT ONLY Settleway Aurora Design Lab Production components and state treatments for public entry, discovery, bilateral funding, evidence, verification, and resilient interface states. Color and material Deep navy Settleway green Verification azure Restrained cyan Premium canvas Warm white surface Warning Danger Controls and command surface Primary action Navy action Outline Ghost Danger Commodity Role Buyer Seller Terms note Bilateral commitment rows BUYER Pending Surabaya Spice Co. Principal + buyer commitment bond + platform fee Commitment Rp 21.047.250 SELLER Funded Probolinggo Farmer Group Seller performance bond + platform fee Commitment Rp 1.097.250 FEATURED SUPPLY Red Chili (Bird's Eye Chili) Ready stock Bird's Eye Chili Grade A Origin Probolinggo Available volume 700 kg available Price per kg Rp 28.500 Estimated value Rp 19.950.000 Reputation 92/100 Verified seller 15 completed deals Probolinggo Farmer Group Review opportunity AURORA ASSURANCE RAIL Funding truth Buyer principal Buyer principal Buyer commitment bond Buyer commitment bond Seller performance bond Seller performance bond Platform fees Platform fee policy Total expected Bilateral commitments Next responsible actor Buyer Custody / lock state One commitment held; escrow not locked Settlement policy Before lock, a funded side receives a full refund if the counterparty misses the deadline. Successful settlement returns both bonds and routes principal to the seller. Stellar verification Awaiting verified Testnet reference Technical verification Delivery deadline 24 May 2025 Status and evidence Pending Confirmed on Testnet Protected Failed delivery-receipt.pdf Evidence hash pending Recorded Transaction reference 9fd2ab784a0f9ce12bd781ab67fc21a9de8d33bc71e3f19ad12ce8712e Verification Awaiting verification No local or pending value is presented as confirmed on-chain. Funding deadlin",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "10",
+        "rect": {
+          "x": 16,
+          "y": 91,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 7,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Marketplace",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 272,
+          "y": 87,
+          "w": 143,
+          "h": 44
+        }
+      },
+      {
+        "index": 8,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/dev/design-lab#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 419,
+          "y": 87,
+          "w": 118,
+          "h": 44
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/dev/design-lab#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 542,
+          "y": 87,
+          "w": 150,
+          "h": 44
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Login",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/dev/design-lab#settleway-login",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 921,
+          "y": 87,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 164,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 160,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 160,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 160,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 160,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 160,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 17,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Primary action",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 841,
+          "w": 135,
+          "h": 44
+        }
+      },
+      {
+        "index": 18,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Navy action",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 188,
+          "y": 841,
+          "w": 117,
+          "h": 44
+        }
+      },
+      {
+        "index": 19,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Outline",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 316,
+          "y": 841,
+          "w": 85,
+          "h": 44
+        }
+      },
+      {
+        "index": 20,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Ghost",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 897,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "index": 21,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Danger",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 128,
+          "y": 897,
+          "w": 85,
+          "h": 44
+        }
+      },
+      {
+        "index": 22,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 54,
+          "y": 978,
+          "w": 403,
+          "h": 44
+        }
+      },
+      {
+        "index": 23,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 1086,
+          "w": 429,
+          "h": 44
+        }
+      },
+      {
+        "index": 24,
+        "tag": "select",
+        "type": null,
+        "role": null,
+        "label": "Buyer Seller",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 1174,
+          "w": 429,
+          "h": 44
+        }
+      },
+      {
+        "index": 25,
+        "tag": "textarea",
+        "type": null,
+        "role": null,
+        "label": "Grade A, delivery before 24 May.",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 1262,
+          "w": 429,
+          "h": 112
+        }
+      },
+      {
+        "index": 26,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Review opportunity",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace/listing-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 810,
+          "y": 1907,
+          "w": 154,
+          "h": 44
+        }
+      },
+      {
+        "index": 27,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "9fd2ab784a0f9ce12bd781ab67fc21a9de8d33bc71e3f19ad12ce8712e",
+        "ariaLabel": null,
+        "href": "https://stellar.expert/explorer/testnet",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 41,
+          "y": 3131,
+          "w": 429,
+          "h": 44
+        }
+      },
+      {
+        "index": 28,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Review requirements",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 71,
+          "y": 3516,
+          "w": 205,
+          "h": 44
+        }
+      },
+      {
+        "index": 29,
+        "tag": "button",
+        "type": null,
+        "role": null,
+        "label": "Retry",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 708,
+          "y": 3528,
+          "w": 70,
+          "h": 44
+        }
+      },
+      {
+        "index": 30,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 3737,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 31,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3737,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 32,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3737,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 33,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3769,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 34,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3769,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 35,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 3801,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 36,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 3801,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 37,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  },
+  {
+    "branch": "integration",
+    "route": "/dev/custody-v2-browser-setup",
+    "status": "loaded",
+    "url": "http://127.0.0.1:3101/dev/custody-v2-browser-setup",
+    "title": "Settleway - The Safer Way to Settle Real-World Trade",
+    "bodyTextSample": "Settleway Buy Sell Deals SS Development-only browser acceptance gate Custody V2 browser corridor setup This page creates a fresh Deal Room explicitly assigned to the Custody V2 Testnet rail. It is only available outside production and does not mutate existing legacy demo deals. Contract: CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4 Native XLM SAC: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC Runtime diagnostics Custody V2 Testnet configuration is present. The founder setup form is enabled. NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE is not set; the default Testnet explorer will be used. Create Custody V2 browser-test deal Paste the public Testnet addresses from the buyer and seller Freighter profiles. The setup creates a new shared Deal Room; it never reuses the legacy demo room. Buyer public Stellar address Seller public Stellar address Create Custody V2 Deal RUNTIME TARGET Custody V2 · Stellar Testnet CONTRACT CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4 ASSET XLM native SAC on Stellar Testnet Settleway A bilateral trade-assurance workspace for agricultural commodity discovery, commitment, evidence, and verifiable settlement. Buy Sell How It Works Trust & Settlement Product status GitHub Testnet proof infrastructure. No production bank rail or production custody claim. © 2026 Settleway.",
+    "controls": [
+      {
+        "index": 0,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 18,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 1,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 336,
+          "y": 14,
+          "w": 56,
+          "h": 44
+        }
+      },
+      {
+        "index": 2,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 396,
+          "y": 14,
+          "w": 54,
+          "h": 44
+        }
+      },
+      {
+        "index": 3,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Deals",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/deals/demo-cabai-001",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 454,
+          "y": 14,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "index": 4,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Notifications",
+        "ariaLabel": "Notifications",
+        "href": "http://127.0.0.1:3101/notifications",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 873,
+          "y": 14,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "index": 5,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "SS",
+        "ariaLabel": "Open account menu",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 925,
+          "y": 14,
+          "w": 72,
+          "h": 44
+        }
+      },
+      {
+        "index": 6,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 49,
+          "y": 784,
+          "w": 507,
+          "h": 48
+        }
+      },
+      {
+        "index": 7,
+        "tag": "input",
+        "type": null,
+        "role": null,
+        "label": "",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 49,
+          "y": 880,
+          "w": 507,
+          "h": 48
+        }
+      },
+      {
+        "index": 8,
+        "tag": "button",
+        "type": "submit",
+        "role": null,
+        "label": "Create Custody V2 Deal",
+        "ariaLabel": null,
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 49,
+          "y": 956,
+          "w": 240,
+          "h": 48
+        }
+      },
+      {
+        "index": 9,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Settleway",
+        "ariaLabel": "Settleway home",
+        "href": "http://127.0.0.1:3101/",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 16,
+          "y": 1150,
+          "w": 134,
+          "h": 36
+        }
+      },
+      {
+        "index": 10,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Buy",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/marketplace",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1150,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 11,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Sell",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/buyer-requests",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1150,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 12,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "How It Works",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#how-it-works",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1182,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 13,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Trust & Settlement",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/#trust-settlement",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1182,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 14,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "Product status",
+        "ariaLabel": null,
+        "href": "http://127.0.0.1:3101/demo",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 734,
+          "y": 1214,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 15,
+        "tag": "a",
+        "type": null,
+        "role": null,
+        "label": "GitHub",
+        "ariaLabel": null,
+        "href": "https://github.com/dwikabimantara99/settleway",
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 881,
+          "y": 1214,
+          "w": 115,
+          "h": 20
+        }
+      },
+      {
+        "index": 16,
+        "tag": "button",
+        "type": "button",
+        "role": null,
+        "label": "Open demo role switcher",
+        "ariaLabel": "Open demo role switcher",
+        "href": null,
+        "disabled": false,
+        "ariaDisabled": null,
+        "pointerEvents": "auto",
+        "zIndex": "auto",
+        "rect": {
+          "x": 20,
+          "y": 638,
+          "w": 48,
+          "h": 48
+        }
+      }
+    ],
+    "cookie": "mock_actor=buyer-surabaya-restaurant"
+  }
+]
