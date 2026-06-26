@@ -2,25 +2,38 @@
 
 ## Current Milestone
 
-Custody V2.1 is the active milestone. It promotes an isolated Soroban custody proof into `main` after final security acceptance, reproducible artifact verification, Testnet evidence review, full gates, remote CI, and release tagging.
+Custody V2.1 has been accepted, promoted to `main`, and tagged as `v0.3.0-soroban-custody-v2.1`.
 
-## Custody V2.1 Promotion Boundary
+Current canonical `main` before application integration is:
 
-- Promote only by fast-forward after green local and remote gates.
-- Keep the Aurora frontend, backend route handlers, current Testnet helper rail, and legacy contract behavior unchanged.
-- Tag the accepted milestone as `v0.3.0-soroban-custody-v2.1`.
-- Stop before application integration.
+```text
+2654530d3a5fd2c195d5c68c6e0f324fc9a51f55
+```
+
+The active milestone is now Custody V2 application integration on:
+
+```text
+work/custody-v2-app-integration
+```
+
+## Custody V2 Application Integration Boundary
+
+- Preserve the accepted `contracts/trade_assurance_v2` contract and ABI.
+- Preserve the completed Aurora frontend direction.
+- Preserve the legacy demo/Testnet rail.
+- Connect only the wallet-signed Custody V2 success and funding-expiry vertical slice.
+- Do not redesign the contract in this batch.
+- Do not merge into `main` in this batch.
 
 ## Product Engineering Roadmap
 
-1. Complete Custody V2.1 security acceptance and promotion.
-2. Review V2.1 architecture and security risks before integration.
-3. Define backend integration plan for contract invocation and event indexing.
-4. Define reputation projection from V2.1 events.
-5. Replace demo-managed custody bridges with contract-enforced token custody only after integration acceptance.
-6. Add production persistence deployment.
-7. Add real authentication hardening.
-8. Explore anchor/bank integration only after custody and compliance assumptions are explicit.
+1. Implement the wallet-signed Custody V2 success and funding-expiry application vertical slice.
+2. Review the integration architecture, security posture, and Testnet evidence.
+3. Define the next app integration phase for breach, cancellation, dispute, and reputation projection.
+4. Replace demo-managed custody bridges with contract-enforced token custody only after integration acceptance.
+5. Add production persistence deployment.
+6. Add real authentication hardening.
+7. Explore anchor/bank integration only after custody and compliance assumptions are explicit.
 
 ## Branch Policy
 

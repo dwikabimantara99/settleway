@@ -160,7 +160,10 @@ Artifact facts:
 
 The clean-built V2.1 Wasm hash reproduces the accepted Testnet report hash exactly.
 
-GitHub Actions artifact archive digest is intentionally recorded separately from the Wasm file SHA-256. It must be filled from the final remote CI run after candidate and main verification.
+GitHub Actions artifact archive digest is intentionally recorded separately from the Wasm file SHA-256.
+
+- Candidate Soroban artifact archive digest: `sha256:768e0f2859569e248f0c152687e4c3f662c6442c81300c8ad5c84f243fb3b15e`
+- Main Soroban artifact archive digest: `sha256:0fc267adf1a6bf5c9b479bff8f20ec8a96aa0d75a0714db7e99e02534ea415e7`
 
 ## Toolchain Versions
 
@@ -250,11 +253,25 @@ The final V2.1 Wasm hash after full validation remained `76808FB80BDDF432F771FA3
 
 ## Remote Candidate Verification
 
-Candidate CI run IDs, conclusions, and artifact archive digest are recorded in the final operator evidence after pushing the final candidate SHA.
+Final candidate SHA: `2654530d3a5fd2c195d5c68c6e0f324fc9a51f55`.
+
+| Workflow | Run | Result |
+|---|---:|---|
+| Web CI | `28183647642` | PASS |
+| Soroban Contract CI | `28183647713` | PASS |
 
 ## Main Promotion, Tag, And Cleanup
 
-Final main SHA, main CI run IDs, release tag, branch deletion, final branch list, and clean working tree are recorded in the final operator evidence after successful fast-forward promotion.
+Final `main` SHA: `2654530d3a5fd2c195d5c68c6e0f324fc9a51f55`.
+
+| Workflow | Run | Result |
+|---|---:|---|
+| Web CI | `28184119843` | PASS |
+| Soroban Contract CI | `28184119853` | PASS |
+
+Release tag: `v0.3.0-soroban-custody-v2.1`.
+
+The completed `work/soroban-custody-v2` branch was deleted after tag and green `main` verification.
 
 ## Deferred Risks
 
