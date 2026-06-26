@@ -456,6 +456,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
       custodyV2State: custodyV2Link?.latest_contract_state ?? null,
       custodyV2ConfirmedActions,
       custodyV2EvidenceHash: latestEvidenceHash,
+      custodyV2Link,
     });
   }
 

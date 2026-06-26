@@ -52,7 +52,7 @@ function toApiFundingAction(action: 'buyer-deposit' | 'seller-deposit') {
   return action === 'buyer-deposit' ? 'buyer_deposit' : 'seller_deposit';
 }
 
-function getCustodyV2Action(input: {
+export function getCustodyV2Action(input: {
   state: CustodyV2ContractState | null | undefined;
   viewerRole: 'buyer' | 'seller' | null | undefined;
   confirmedActions: CustodyV2ActionType[];

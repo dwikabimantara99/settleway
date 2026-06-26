@@ -17,6 +17,7 @@ import { StatusPill } from '@/components/ui/StatusPill';
 import { Stepper, type Step } from '@/components/ui/Stepper';
 import type {
   DbDeal,
+  DbCustodyDealLink,
   DbEscrowEvent,
   DbNegotiationMessage,
   CustodyV2ActionType,
@@ -27,6 +28,21 @@ type ViewerRole = 'buyer' | 'seller' | null;
 
 function formatCurrency(amount: number): string {
   return `Rp ${amount.toLocaleString('id-ID')}`;
+}
+
+function formatXlmBaseUnits(value: string): string {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return `${value} base units`;
+  return `${(amount / 10_000_000).toLocaleString('en-US', {
+    minimumFractionDigits: 7,
+    maximumFractionDigits: 7,
+  })} XLM`;
+}
+
+function shortenAddress(address: string | null | undefined): string {
+  if (!address) return 'Not linked';
+  if (address.length <= 16) return address;
+  return `${address.slice(0, 8)}...${address.slice(-8)}`;
 }
 
 function formatDateTime(value: string): string {
@@ -101,6 +117,7 @@ export function AuroraFundingDealRoom({
   custodyV2State,
   custodyV2ConfirmedActions,
   custodyV2EvidenceHash,
+  custodyV2Link,
 }: {
   deal: DbDeal;
   buyerDisplayName: string;
@@ -123,6 +140,7 @@ export function AuroraFundingDealRoom({
   custodyV2State?: CustodyV2ContractState | null;
   custodyV2ConfirmedActions?: CustodyV2ActionType[];
   custodyV2EvidenceHash?: string | null;
+  custodyV2Link?: DbCustodyDealLink | null;
 }) {
   const platformFees = deal.buyer_fee_idr + deal.seller_fee_idr;
   const totalExpected = deal.buyer_total_idr + deal.seller_total_idr;
@@ -252,6 +270,96 @@ export function AuroraFundingDealRoom({
                 icon={UserRound}
               />
             </section>
+
+            {custodyV2Link ? (
+              <section className="aurora-surface p-5 sm:p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--green-200)] bg-[var(--green-50)] px-3 py-1.5 text-xs font-semibold text-[var(--green-700)]">
+                      Custody V2 · Stellar Testnet
+                    </div>
+                    <h2 className="mt-3 text-xl font-semibold text-[var(--navy-900)]">
+                      Contract-backed room facts
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">
+                      This Deal Room is assigned directly to the Custody V2 Testnet rail. No
+                      legacy demo fallback is available after this link is frozen.
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--surface-subtle)] px-4 py-3 text-sm">
+                    <div className="text-xs font-semibold uppercase text-[var(--text-muted)]">
+                      Connected wallet role
+                    </div>
+                    <div className="mt-1 font-semibold capitalize text-[var(--navy-900)]">
+                      {viewerRole ?? 'No participant role'}
+                    </div>
+                    <div className="mt-1 font-mono text-xs text-[var(--text-secondary)]">
+                      {shortenAddress(connectedWallet)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  {[
+                    ['Contract ID', custodyV2Link.contract_id],
+                    ['XLM settlement asset', `${custodyV2Link.settlement_asset_label} native SAC on Stellar Testnet`],
+                    ['Native XLM SAC contract', custodyV2Link.asset_contract_id],
+                    ['Buyer wallet', custodyV2Link.buyer_address],
+                    ['Seller wallet', custodyV2Link.seller_address],
+                    ['Canonical terms hash', custodyV2Link.terms_hash],
+                    ['Contract deal ID', custodyV2Link.contract_deal_id],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="rounded-2xl border border-[var(--border-subtle)] bg-white px-4 py-3"
+                    >
+                      <div className="text-xs font-semibold uppercase text-[var(--text-muted)]">
+                        {label}
+                      </div>
+                      <div className="mt-1 break-all font-mono text-xs text-[var(--navy-900)]">
+                        {value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-[var(--green-100)] bg-[var(--green-50)] px-4 py-4">
+                    <div className="text-xs font-semibold uppercase text-[var(--green-700)]">
+                      Principal
+                    </div>
+                    <div className="mt-1 font-semibold financial-figures text-[var(--navy-900)]">
+                      {formatXlmBaseUnits(custodyV2Link.principal_base_units)}
+                    </div>
+                    <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                      Display reference {formatCurrency(deal.principal_idr)}
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-[var(--azure-100)] bg-[var(--azure-50)] px-4 py-4">
+                    <div className="text-xs font-semibold uppercase text-[var(--azure-700)]">
+                      Buyer commitment bond
+                    </div>
+                    <div className="mt-1 font-semibold financial-figures text-[var(--navy-900)]">
+                      {formatXlmBaseUnits(custodyV2Link.buyer_bond_base_units)}
+                    </div>
+                    <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                      Display reference {formatCurrency(deal.buyer_bond_idr)}
+                    </div>
+                  </div>
+                  <div className="rounded-2xl border border-[var(--navy-100)] bg-[var(--navy-50)] px-4 py-4">
+                    <div className="text-xs font-semibold uppercase text-[var(--navy-700)]">
+                      Seller performance bond
+                    </div>
+                    <div className="mt-1 font-semibold financial-figures text-[var(--navy-900)]">
+                      {formatXlmBaseUnits(custodyV2Link.seller_bond_base_units)}
+                    </div>
+                    <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                      Display reference {formatCurrency(deal.seller_bond_idr)}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            ) : null}
 
             <section className="aurora-feature-surface p-5 sm:p-6">
               <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
