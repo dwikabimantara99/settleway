@@ -21,6 +21,7 @@
 - Soroban event-contract baseline.
 - Isolated Soroban Custody V2.1 contract and Testnet proof.
 - Custody V2 application-integration vertical slice on `work/custody-v2-app-integration`: canonical terms, rail flag, persistence records, prepare/submit/confirm routes, wallet-signed action wiring, direct contract reads, raw RPC event ingestion, chain-driven projection, and real Testnet success/funding-expiry proofs.
+- Custody V2 event-ingestion hardening on `work/custody-v2-app-integration`: exact opaque RPC cursor persistence, bounded pagination, same-ledger page safety, persistent retention-gap metadata, contract-scoped init events, strict event decoding, and forced-pagination Testnet proof.
 - Cross-platform CI fixtures for Testnet configuration validation.
 - Strict Soroban Clippy validation with narrow documented ABI/event exceptions.
 
@@ -43,6 +44,7 @@ These remain because they prove the product story without pretending that the ap
 - Bank rail is visual/product intent only.
 - Legacy `settleway_escrow` is not final token custody escrow.
 - Custody V2.1 is integrated on the dedicated application branch for the first success and funding-expiry vertical slice. The branch has not been promoted to `main`, and browser Freighter proof remains a manual founder acceptance gate.
+- Local Docker and Supabase CLI are unavailable in the current execution environment, so migration validation is static plus repository tests rather than a live local Supabase reset/apply.
 - Custody V2.1 is not externally audited or mainnet-ready.
 - The V2.1 Testnet proof uses native XLM SAC and proof-only treasury/mediator governance.
 - The app-integration Testnet deployment manifest contains verified public deployment and proof data. No secret material is stored in the repository.

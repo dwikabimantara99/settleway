@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "proof:custody-v2-app": "node scripts/custody-v2-app-integration-proof.mjs",
+    "proof:custody-v2-events": "node scripts/custody-v2-event-pagination-proof.mjs",
+    "validate:custody-v2-migrations": "node scripts/validate-custody-v2-migrations.mjs",
     "smoke:testnet": "vitest run --config vitest.testnet-smoke.config.ts",
     "smoke:testnet:preflight": "vitest run --config vitest.testnet-smoke.config.ts",
     "smoke:testnet:signer-preflight": "node --input-type=module -e \"import { createServer } from 'vite'; import { fileURLToPath } from 'node:url'; const server = await createServer({ root: process.cwd(), server: { middlewareMode: true }, resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } } }); try { const mod = await server.ssrLoadModule('/src/lib/stellar/server/smoke/operator-env.ts'); const reader = (name) => name === 'SETTLEWAY_SMOKE_COMMAND' ? 'signer_preflight' : process.env[name]; const loaded = mod.loadTestnetSmokeOperatorInput(reader); const result = loaded.ok ? await mod.runTestnetSmokeOperator(loaded.input) : { ok: false, command: null, errors: loaded.errors, summary: null }; const output = mod.buildOperatorJsonOutput(result); process.stdout.write(output.json + '\\n'); if (!output.ok || !result.ok) { process.exitCode = 1; } } finally { await server.close(); }\""

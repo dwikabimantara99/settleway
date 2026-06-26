@@ -9,7 +9,7 @@
 
 ## Current Task Boundary
 
-Custody V2.1 is accepted as an isolated Testnet contract milestone. The first application integration vertical slice is implemented on the active branch: wallet-signed Custody V2 success and funding-expiry corridors from the Deal Room, backed by direct contract reads and raw RPC event ingestion.
+Custody V2.1 is accepted as an isolated Testnet contract milestone. The first application integration vertical slice is implemented on the active branch: wallet-signed Custody V2 success and funding-expiry corridors from the Deal Room, backed by direct contract reads and hardened raw RPC event ingestion.
 
 ## No-Touch Areas
 
@@ -24,4 +24,4 @@ Custody V2.1 is accepted as an isolated Testnet contract milestone. The first ap
 
 ## Current Operator Focus
 
-Continue review on `work/custody-v2-app-integration`. Current code adds canonical terms, `custody_v2_testnet` rail, repository persistence, Supabase migration, wallet-signed prepare/submit/confirm API routes, Deal Room action wiring, direct contract-state reads, raw RPC event polling/reconciliation, dedicated app Testnet deployment, and real application-layer success/funding-expiry proofs. Remaining acceptance items are full local gates, remote CI, branch push, and manual browser Freighter proof. Stop for architecture, security, and product review before any `main` promotion.
+Continue review on `work/custody-v2-app-integration`. Current code adds canonical terms, `custody_v2_testnet` rail, repository persistence, Supabase migrations, wallet-signed prepare/submit/confirm API routes, Deal Room action wiring, direct contract-state reads, raw RPC event polling/reconciliation, exact opaque cursor pagination, contract-scoped init-event handling, retention-gap audit metadata, dedicated app Testnet deployment, real application-layer success/funding-expiry proofs, and forced-pagination Testnet event proof. Remaining acceptance items are full local gates, remote CI, branch push, and manual browser Freighter proof. Stop for architecture, security, and product review before any `main` promotion.

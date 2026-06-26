@@ -276,12 +276,22 @@ export class StellarCustodyV2ContractReader implements CustodyV2ContractReadPort
   private readonly server: rpc.Server;
 
   constructor(private readonly config: CustodyV2ServerConfig) {
-    assertContractId(config.contractId, config.contractId);
+    if (!StrKey.isValidContract(config.contractId)) {
+      throw new Error('Custody V2 reader contract ID must be a valid contract ID.');
+    }
     this.server = new rpc.Server(config.rpcUrl, { allowHttp: false });
   }
 
   async getConfig(sourceAddress: string) {
-    return this.callAndDecode('get_config', [], decodeCustodyV2Config, sourceAddress);
+    return this.callAndDecode('get_config', [], decodeCustodyV2Config, sourceAddress, (value) => {
+      if (
+        value.accepted_asset !== this.config.assetContractId ||
+        String(value.interface_version) !== this.config.interfaceVersion ||
+        String(value.policy_version) !== this.config.policyVersion
+      ) {
+        throw new ContractMismatchError('Custody V2 contract config does not match the configured application target.');
+      }
+    });
   }
 
   async getDeal(sourceAddress: string, contractDealId: string) {
@@ -297,7 +307,15 @@ export class StellarCustodyV2ContractReader implements CustodyV2ContractReadPort
   }
 
   async contractInfo(sourceAddress: string) {
-    return this.callAndDecode('contract_info', [], decodeCustodyV2ContractInfo, sourceAddress);
+    return this.callAndDecode('contract_info', [], decodeCustodyV2ContractInfo, sourceAddress, (value) => {
+      if (
+        value.name !== 'settleway_trade_assurance_v2_1' ||
+        String(value.interface_version) !== this.config.interfaceVersion ||
+        String(value.policy_version) !== this.config.policyVersion
+      ) {
+        throw new ContractMismatchError('Custody V2 contract info does not match the expected V2.1 interface.');
+      }
+    });
   }
 
   private async callAndDecode<T>(
@@ -305,12 +323,16 @@ export class StellarCustodyV2ContractReader implements CustodyV2ContractReadPort
     args: readonly xdr.ScVal[],
     decode: (value: unknown) => T,
     sourceAddress: string,
+    validate?: (value: T) => void,
   ): Promise<CustodyV2ReadResult<T>> {
+    if (!StrKey.isValidEd25519PublicKey(sourceAddress)) {
+      return { ok: false, error_code: 'decode_error', message: 'Read source address is not a Stellar public key.' };
+    }
+
+    let retval: xdr.ScVal | undefined;
+    let latestLedger: number | null = null;
     try {
       assertContractId(this.config.contractId, this.config.contractId);
-      if (!StrKey.isValidEd25519PublicKey(sourceAddress)) {
-        return { ok: false, error_code: 'decode_error', message: 'Read source address is not a Stellar public key.' };
-      }
       const source = await this.server.getAccount(sourceAddress);
       const contract = new Contract(this.config.contractId);
       const tx = new TransactionBuilder(new Account(sourceAddress, source.sequenceNumber()), {
@@ -329,15 +351,11 @@ export class StellarCustodyV2ContractReader implements CustodyV2ContractReadPort
           message,
         };
       }
-      const retval = simulated.result?.retval;
+      retval = simulated.result?.retval;
+      latestLedger = typeof simulated.latestLedger === 'number' ? simulated.latestLedger : null;
       if (!retval) {
         return { ok: false, error_code: 'decode_error', message: 'Custody V2 read returned no value.' };
       }
-      return {
-        ok: true,
-        value: decode(scValToNative(retval)),
-        latestLedger: typeof simulated.latestLedger === 'number' ? simulated.latestLedger : null,
-      };
     } catch (error) {
       return {
         ok: false,
@@ -345,5 +363,30 @@ export class StellarCustodyV2ContractReader implements CustodyV2ContractReadPort
         message: error instanceof Error ? error.message : String(error),
       };
     }
+
+    try {
+      const value = decode(scValToNative(retval));
+      validate?.(value);
+      return {
+        ok: true,
+        value,
+        latestLedger,
+      };
+    } catch (error) {
+      if (error instanceof ContractMismatchError) {
+        return {
+          ok: false,
+          error_code: 'contract_mismatch',
+          message: error.message,
+        };
+      }
+      return {
+        ok: false,
+        error_code: 'decode_error',
+        message: error instanceof Error ? error.message : String(error),
+      };
+    }
   }
 }
+
+class ContractMismatchError extends Error {}

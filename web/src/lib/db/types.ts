@@ -235,7 +235,7 @@ export interface DbCustodyOperation {
 export interface DbCustodyEvent {
   event_id: string;
   contract_id: string;
-  contract_deal_id: string;
+  contract_deal_id: string | null;
   event_type: string;
   ledger: number;
   transaction_hash: string;
@@ -251,6 +251,11 @@ export interface DbCustodyEventCursor {
   cursor: string | null;
   last_successful_ingestion_at: string | null;
   detected_gap_status: 'none' | 'gap_detected' | 'stale';
+  requested_start_ledger: number | null;
+  oldest_available_ledger: number | null;
+  latest_available_ledger: number | null;
+  first_returned_event_id: string | null;
+  gap_detected_at: string | null;
 }
 
 export interface DbEscrowEvent {

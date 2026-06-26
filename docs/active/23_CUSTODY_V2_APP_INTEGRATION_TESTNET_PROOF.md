@@ -130,6 +130,22 @@ These balances include network fees and prior Testnet proof activity. The author
 - The harness used the application `prepareCustodyV2Operation`, signed via secure-store Stellar CLI aliases, verified signed transaction body fingerprints, submitted through `StellarSdkRpc`, confirmed with `getTransaction`, reconciled with direct `get_deal`, and ingested raw RPC events.
 - The harness did not call direct CLI contract functions as a substitute for the application flow.
 
+## Event Pagination Hardening
+
+The accepted proof events were replayed through the hardened event ingester with forced pagination.
+
+- Command: `npm run proof:custody-v2-events`
+- Forced page limit: `2`
+- First pass: `31` events over `16` pages.
+- Replay pass: `0` appended events.
+- Success scenario events: `11`
+- Funding-expiry scenario events: `6`
+- Contract-scoped init event: stored without a fabricated deal ID.
+
+Detailed hardening evidence is recorded in:
+
+`docs/active/25_CUSTODY_V2_EVENT_HARDENING_REPORT.md`
+
 ## Manual Browser Wallet Gate
 
 Freighter remains the browser-user signing path. Manual browser proof remains a founder acceptance gate because this execution environment cannot provide a browser extension wallet session.

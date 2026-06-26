@@ -74,9 +74,13 @@ Financial projection is chain-driven. Operation records may describe local prepa
 
 ## Event Ingestion Boundary
 
-The event ingester now supports raw Stellar RPC `getEvents` polling filtered by configured contract ID. It decodes event topics and values through the Stellar SDK/XDR types, normalizes public facts, deduplicates by RPC event ID, stores ledger/transaction/event-index data, and persists a durable cursor.
+The event ingester supports raw Stellar RPC `getEvents` polling filtered by configured contract ID. It decodes event topics and values through the Stellar SDK/XDR types, normalizes public facts, deduplicates by the opaque RPC event ID, stores ledger/transaction/event-index data, and persists the exact opaque RPC cursor returned by Stellar RPC.
 
-Cursor gaps are explicit. When event history is unavailable, the application must reconcile active deals through direct `get_deal` reads rather than invent historical events.
+Cursor resume is cursor-first. Once a cursor exists, follow-up polling uses the cursor and omits `startLedger`. Pagination continues across same-ledger pages through the opaque cursor, not through synthetic ledger/event-index cursors.
+
+Contract-scoped `init` events are stored with a null `contract_deal_id`. Deal-scoped events must carry a valid bytes32 deal ID. Cursor gaps are explicit and persistent. When event history is unavailable, the application records requested start ledger, oldest/latest available ledger, first returned event ID, and gap detection time, then reconciles active deals through direct `get_deal` reads rather than inventing historical events.
+
+Cursor advancement happens only after decoded events are appended. If persistence fails, replay is allowed through idempotent event IDs, but the cursor is not advanced past unpersisted events.
 
 ## Persistence
 

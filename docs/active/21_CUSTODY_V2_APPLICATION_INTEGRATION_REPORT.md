@@ -13,6 +13,7 @@ Status: application integration vertical slice completed on `work/custody-v2-app
 - Added direct Custody V2 contract reads for `get_config`, `get_deal`, `deal_exists`, `get_state`, and `contract_info`.
 - Refactored financial projection so confirmed operations reconcile through direct `get_deal`; projection no longer advances from operation type alone.
 - Added raw Stellar RPC event polling, SDK/XDR decoding, deduplication, cursor persistence, and gap reporting.
+- Hardened raw RPC event ingestion to preserve exact opaque cursors, page safely through same-ledger events, persist retention-gap audit metadata, store contract-scoped `init` events without fake deal IDs, and avoid cursor advancement after persistence failure.
 - Added a production-guarded automated Testnet proof harness using Stellar CLI secure-store aliases.
 - Added Deal Room action wiring for the Custody V2 rail.
 - Deployed a dedicated application-integration Custody V2.1 Testnet contract.
@@ -48,6 +49,20 @@ Completed through the application service pipeline.
 - Direct `get_deal` reads: performed after confirmed transactions.
 - Financial projection source: direct contract state.
 
+## Event Hardening Proof
+
+Forced-pagination Testnet replay completed against the existing application-integration contract without creating new deals.
+
+- Command: `npm run proof:custody-v2-events`
+- Forced event page limit: `2`
+- Start ledger: `3288466`
+- First pass: `31` events seen and appended over `16` pages.
+- Replay pass: `0` events appended.
+- Cursor persisted: `0014135738098515967-4294967295`
+- Contract-scoped init events persisted with null deal ID: `1`
+- Success proof deal events: `11`, direct state `SettledSuccess`
+- Funding-expiry proof deal events: `6`, direct state `FundingExpired`
+
 ## Browser Wallet Proof
 
 Not completed in this execution environment. Freighter remains the browser-user signing path. Manual founder verification is documented in:
@@ -57,7 +72,7 @@ Not completed in this execution environment. Freighter remains the browser-user 
 ## Known Limitations
 
 - Browser Freighter proof remains a manual acceptance gate.
-- External Supabase provisioning was not performed because no external credentials were accessed.
+- External Supabase provisioning was not performed because no external credentials were accessed. Local Docker and Supabase CLI were unavailable in this environment; the added migration passed static validation via `npm run validate:custody-v2-migrations`.
 - Breach, dispute, mutual-cancellation, mediator-console, and reputation projection from Custody V2.1 events remain deferred.
 - Bank/QRIS/anchor integration, stablecoin/IDR asset integration, KYC/KYB, mainnet, and production custody remain out of scope.
 

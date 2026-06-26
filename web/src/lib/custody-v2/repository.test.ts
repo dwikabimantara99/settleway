@@ -75,6 +75,11 @@ const cursor: DbCustodyEventCursor = {
   cursor: '123-0',
   last_successful_ingestion_at: '2026-06-26T00:01:00.000Z',
   detected_gap_status: 'none',
+  requested_start_ledger: null,
+  oldest_available_ledger: null,
+  latest_available_ledger: null,
+  first_returned_event_id: null,
+  gap_detected_at: null,
 };
 
 describe('Custody V2 repository boundary', () => {

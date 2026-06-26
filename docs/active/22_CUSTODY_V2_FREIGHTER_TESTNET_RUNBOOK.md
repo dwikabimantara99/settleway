@@ -67,3 +67,12 @@ Status: manual verification guide for `work/custody-v2-app-integration`.
 
 Do not capture or publish seed phrases, secret keys, signed XDR, secure-store
 internals, or private browser extension data.
+
+## Current Manual Gate Status
+
+Manual browser acceptance remains pending. The automated secure-store proof and
+forced-pagination event proof are complete, but they do not replace founder
+verification in a real browser wallet session.
+
+Use `docs/active/24_CUSTODY_V2_BROWSER_ACCEPTANCE_GATE.md` as the current
+evidence checklist before approving the branch for any future `main` promotion.
