@@ -1,17 +1,23 @@
 {
-  "status": "blocked-awaiting-integration-testnet-identities",
+  "status": "verified-application-integration-testnet-proof",
   "boundary": "Testnet application integration only; not production custody and not mainnet",
   "network": "testnet",
   "rpc_url": "https://soroban-testnet.stellar.org",
   "network_passphrase": "Test SDF Network ; September 2015",
   "accepted_contract": "contracts/trade_assurance_v2",
   "accepted_checkpoint_tag": "v0.3.0-soroban-custody-v2.1",
+  "accepted_wasm_size_bytes": 61234,
   "accepted_wasm_sha256": "76808FB80BDDF432F771FA3106648B47B1E57DBC09FF6847D38719ECD702723C",
   "source_branch": "work/custody-v2-app-integration",
-  "contract_id": null,
-  "native_xlm_sac_contract_id": null,
-  "treasury_public_address": null,
-  "mediator_public_address": null,
+  "source_commit_before_batch": "4e6871d2ed8ba061b3dda6cab85a673d7c3a739a",
+  "contract_id": "CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4",
+  "native_xlm_sac_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "deployer_public_address": "GAMMNRJFNKHKOPVHYENJWYLFV64DCO6YAIWJGAFCBGNLULYRKBSULWRA",
+  "buyer_public_address": "GBKDCPZYIKBDVJDBXBURZCAV2N3QS6HDSFLAQ6O37P2ONEMEMTBFWDBA",
+  "seller_public_address": "GA4JCPSQOPPKUMKYY2RQK5WFIWTWPBUWCBJ2EHTHNREUEB6ASDX4Q4IU",
+  "mediator_public_address": "GD5DEAIORQAKYJVN6DVQBYR7I2T3HFRV6U3OQEMZ3T4WHL274Y4BVXJ3",
+  "treasury_public_address": "GDSOYRJWEFYJPLTOLOG775LQJI7S66UYNQ3IJSXWYYZON27HT7EOVLO2",
+  "keeper_public_address": "GCZVVYK2KVRX4GMM6AQETMOMDXTFW37MYNN5MZZWKXFA27FTLWLZCRAI",
   "policy": {
     "policy_version": 2,
     "interface_version": 2,
@@ -20,14 +26,86 @@
     "buyer_breach_treasury_bps": 2000
   },
   "deployment_transactions": {
-    "deploy_wasm_tx_hash": null,
-    "deploy_contract_tx_hash": null,
-    "initialize_tx_hash": null
+    "deploy_contract_tx_hash": "5ebd96d0b02e8761b9d8ea6e46540ee0e4c0617bfb2e1e8c46f856a174d84166",
+    "deploy_contract_ledger": 3288466,
+    "deploy_contract_timestamp": "2026-06-26T06:47:34.000Z",
+    "initialize_tx_hash": "ae2340072955200dd0262e50c21e69c99e26dcfbd5068dba5ce81a185d7de4c5",
+    "initialize_ledger": 3288484,
+    "initialize_timestamp": "2026-06-26T06:49:04.000Z"
   },
   "proof_transactions": {
-    "success_scenario": [],
-    "funding_expiry_scenario": []
+    "success_scenario": [
+      {
+        "action": "CREATE_DEAL",
+        "tx_hash": "9f8f96c4253007fdeff95a4a79781068ceb117696de0897caf5c951a38391c18",
+        "ledger": 3289382
+      },
+      {
+        "action": "ACCEPT_TERMS",
+        "tx_hash": "8a8ba250e105baff69d1d1eaaff1f6bbd3668b3100bb05592a44bb4a1de003de",
+        "ledger": 3289384
+      },
+      {
+        "action": "FUND_BUYER",
+        "tx_hash": "cff823976ef1b473830d4c93264ebf9e574c0397b58e7ff7072f8f76138d7832",
+        "ledger": 3289387
+      },
+      {
+        "action": "FUND_SELLER",
+        "tx_hash": "3f7651c17b72f225a7ec104b4d124235ec10febfe6808c3daf13c6d37792d72a",
+        "ledger": 3289390
+      },
+      {
+        "action": "SUBMIT_EVIDENCE",
+        "tx_hash": "053065c48bb4b7705c0a2529f444c7e3dd846a7f540a3afe5984a8779644a301",
+        "ledger": 3289392
+      },
+      {
+        "action": "ACCEPT_DELIVERY",
+        "tx_hash": "4b272e66a5587b6c924c47acf22d4412b4ebcc7e7be41a176d2e79308a996030",
+        "ledger": 3289393
+      }
+    ],
+    "funding_expiry_scenario": [
+      {
+        "action": "CREATE_DEAL",
+        "tx_hash": "78f0e1d6b80c5826db6f90c457067ff6d2baa4e165e9a223b82016fe57768006",
+        "ledger": 3289396
+      },
+      {
+        "action": "ACCEPT_TERMS",
+        "tx_hash": "f3735ba2d22e8f9ca76eb80dda1fb2e5db5f231ce121166173ff6e2868659b62",
+        "ledger": 3289398
+      },
+      {
+        "action": "FUND_BUYER",
+        "tx_hash": "ca366276995e0b5f28087fed9650014d2e62de6351f04e7df074474db2710d5e",
+        "ledger": 3289399
+      },
+      {
+        "action": "EXPIRE_FUNDING",
+        "tx_hash": "5dc58b68d17c30a1b76dd58b8abfef21859e7ac35413719bf5808b9990f90a57",
+        "ledger": 3289406
+      }
+    ]
   },
-  "blocker": "No local Stellar CLI secure-store aliases were available in this execution environment, so no dedicated app-integration Testnet contract was deployed in this batch run.",
+  "scenario_a": {
+    "application_deal_id": "custody-v2-app-success-1782461033826",
+    "contract_deal_id": "54c6741ef8c941c4aec25b673db0306f5c635680f1a22a3bb4a673df5e1ebf39",
+    "terms_hash": "2b460ef9b416716e66468c7af416963625f83009b4c0c36cbc91b95a850b1619",
+    "evidence_hash": "e61582ba137a24375c68507ac83e67d3ac7002510d9b013e273f790739fe6bd3",
+    "final_state": "SettledSuccess",
+    "event_ingestion_appended": 11,
+    "locked_obligation_after_terminal": "0"
+  },
+  "scenario_b": {
+    "application_deal_id": "custody-v2-app-expiry-1782461104282",
+    "contract_deal_id": "d0307b1c65779ea8656735f67d1243e94a6936050dbf387fb6fd503a5fa077d1",
+    "terms_hash": "d45e9b1fbe9312d15210edf09fc0194a73caf25788333297631e92e98b85b091",
+    "final_state": "FundingExpired",
+    "event_ingestion_appended": 6,
+    "locked_obligation_after_terminal": "0"
+  },
+  "browser_freighter_proof": "manual-founder-gate",
   "secret_policy": "No secret key, seed phrase, signed transaction XDR, or secure-store material belongs in this manifest."
 }

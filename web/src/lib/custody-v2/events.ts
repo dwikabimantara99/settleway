@@ -1,5 +1,6 @@
 import type { DbCustodyEvent } from '@/lib/db/types';
 import type { IRepository } from '@/lib/repositories';
+import { rpc, scValToNative, StrKey, xdr } from '@stellar/stellar-sdk';
 
 const SUPPORTED_EVENT_TYPES = new Set([
   'init',
@@ -15,11 +16,13 @@ const SUPPORTED_EVENT_TYPES = new Set([
   'dispute',
   'resolve',
   'settlement',
+  'settled',
 ]);
 
 const HEX_64 = /^[0-9a-f]{64}$/;
 
 export interface NormalizedCustodyV2EventInput {
+  rpc_event_id?: string;
   contract_id: string;
   contract_deal_id: string;
   event_type: string;
@@ -57,7 +60,7 @@ export function normalizeCustodyV2Event(
 ): DbCustodyEvent {
   assertNormalizedEvent(input, expectedContractId);
   return {
-    event_id: [
+    event_id: input.rpc_event_id ?? [
       input.contract_id,
       input.ledger,
       input.transaction_hash,
@@ -71,6 +74,134 @@ export function normalizeCustodyV2Event(
     event_index: input.event_index,
     decoded_public_facts: input.decoded_public_facts,
     ingested_at: now.toISOString(),
+  };
+}
+
+export interface RawCustodyV2RpcEvent {
+  id?: string;
+  contractId?: string;
+  contract_id?: string;
+  ledger: number;
+  txHash?: string;
+  transaction_hash?: string;
+  topic: readonly xdr.ScVal[];
+  value: xdr.ScVal;
+}
+
+function decodedToBytes32(value: unknown): string | null {
+  if (Buffer.isBuffer(value)) return value.toString('hex');
+  if (value instanceof Uint8Array) return Buffer.from(value).toString('hex');
+  if (typeof value === 'string' && /^[0-9a-fA-F]{64}$/.test(value)) return value.toLowerCase();
+  return null;
+}
+
+function assertRawEventContract(raw: RawCustodyV2RpcEvent, expectedContractId: string) {
+  const contractId = raw.contractId ?? raw.contract_id ?? expectedContractId;
+  if (contractId !== expectedContractId || !StrKey.isValidContract(contractId)) {
+    throw new Error('Custody V2 raw event contract ID mismatch.');
+  }
+}
+
+function toJsonSafePublicFact(value: unknown): unknown {
+  if (typeof value === 'bigint') return value.toString();
+  if (Buffer.isBuffer(value) || value instanceof Uint8Array) return Buffer.from(value).toString('hex');
+  if (Array.isArray(value)) return value.map(toJsonSafePublicFact);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .map(([key, nested]) => [key, toJsonSafePublicFact(nested)]),
+    );
+  }
+  return value;
+}
+
+export function decodeRawCustodyV2Event(
+  raw: RawCustodyV2RpcEvent,
+  expectedContractId: string,
+): NormalizedCustodyV2EventInput {
+  assertRawEventContract(raw, expectedContractId);
+  if (!Array.isArray(raw.topic) || raw.topic.length < 1) {
+    throw new Error('Custody V2 raw event has no topics.');
+  }
+  const decodedTopics = raw.topic.map((topic) => scValToNative(topic));
+  const eventType = decodedTopics[0];
+  if (typeof eventType !== 'string') {
+    throw new Error('Custody V2 raw event type topic is not a symbol.');
+  }
+  if (!SUPPORTED_EVENT_TYPES.has(eventType)) {
+    throw new Error(`Unsupported Custody V2 event type: ${eventType}`);
+  }
+  const decodedValue = scValToNative(raw.value) as Record<string, unknown>;
+  const topicDealId = decodedTopics.slice(1).map(decodedToBytes32).find(Boolean);
+  const valueDealId = decodedValue && typeof decodedValue === 'object'
+    ? decodedToBytes32(decodedValue.deal_id)
+    : null;
+  const contractDealId = topicDealId ?? valueDealId ?? '0'.repeat(64);
+  const txHash = raw.txHash ?? raw.transaction_hash;
+  if (!txHash) throw new Error('Custody V2 raw event has no transaction hash.');
+  return {
+    rpc_event_id: raw.id,
+    contract_id: expectedContractId,
+    contract_deal_id: contractDealId,
+    event_type: eventType,
+    ledger: raw.ledger,
+    transaction_hash: txHash,
+    event_index: raw.id ? Number(raw.id.split('-').at(-1) ?? 0) : 0,
+    decoded_public_facts: {
+      topics: toJsonSafePublicFact(decodedTopics),
+      value: toJsonSafePublicFact(decodedValue),
+    },
+  };
+}
+
+export async function pollAndIngestCustodyV2Events(input: {
+  repository: IRepository;
+  rpcUrl: string;
+  contractId: string;
+  startLedger?: number;
+  limit?: number;
+  now?: Date;
+}) {
+  const server = new rpc.Server(input.rpcUrl, { allowHttp: false });
+  const existingCursor = await input.repository.getCustodyEventCursor('testnet', input.contractId);
+  const latest = await server.getLatestLedger();
+  const startLedger = input.startLedger
+    ?? (existingCursor?.last_processed_ledger ? existingCursor.last_processed_ledger + 1 : Math.max(1, latest.sequence - 1000));
+  const response = await server.getEvents({
+    startLedger,
+    filters: [{ type: 'contract', contractIds: [input.contractId] }],
+    limit: input.limit ?? 200,
+  });
+  const normalized = response.events.map((event) => decodeRawCustodyV2Event({
+    id: event.id,
+    contractId: input.contractId,
+    ledger: event.ledger,
+    txHash: event.txHash,
+    topic: event.topic,
+    value: event.value,
+  }, input.contractId));
+  const result = await ingestCustodyV2Events({
+    repository: input.repository,
+    contractId: input.contractId,
+    events: normalized,
+    now: input.now,
+  });
+  if (normalized.length === 0) {
+    await input.repository.upsertCustodyEventCursor({
+      network: 'testnet',
+      contract_id: input.contractId,
+      last_processed_ledger: startLedger,
+      cursor: response.cursor ?? existingCursor?.cursor ?? null,
+      last_successful_ingestion_at: (input.now ?? new Date()).toISOString(),
+      detected_gap_status: response.oldestLedger > startLedger ? 'gap_detected' : 'none',
+    });
+  }
+  return {
+    ...result,
+    latestLedger: response.latestLedger,
+    oldestLedger: response.oldestLedger,
+    cursor: response.cursor,
+    gapDetected: response.oldestLedger > startLedger,
   };
 }
 

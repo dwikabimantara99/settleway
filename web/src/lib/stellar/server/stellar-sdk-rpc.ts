@@ -84,7 +84,10 @@ export class StellarSdkRpc implements StellarRpcPort {
       if (status === "TRY_AGAIN_LATER") {
         return { ok: false, status: "retry_later" };
       }
-      return { ok: false, status: "rejected", error_code: status };
+      const errorResult = "errorResult" in response && response.errorResult
+        ? `:${typeof response.errorResult.toXDR === "function" ? response.errorResult.toXDR("base64") : String(response.errorResult)}`
+        : "";
+      return { ok: false, status: "rejected", error_code: `${status}${errorResult}` };
     } catch {
       return { ok: false, status: "error", error_code: "ERR_NETWORK_FAILURE" };
     }
@@ -103,6 +106,7 @@ export class StellarSdkRpc implements StellarRpcPort {
           outcome: "confirmed",
           transaction_hash: transactionHash,
           result_value: resultValue as ConfirmTransactionResult extends { outcome: "confirmed" } ? ConfirmTransactionResult["result_value"] : never,
+          ledger: typeof response.ledger === "number" ? response.ledger : null,
         };
       }
       if (status === "FAILED") {

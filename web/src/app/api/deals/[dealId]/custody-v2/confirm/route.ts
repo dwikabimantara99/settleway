@@ -3,7 +3,8 @@ import { requireDealParticipant } from '@/lib/auth/server';
 import { createErrorResponse, createSuccessResponse } from '@/lib/api/validation';
 import { repository } from '@/lib/repositories';
 import { loadCustodyV2ServerConfig } from '@/lib/custody-v2/config';
-import { applyConfirmedCustodyProjection } from '@/lib/custody-v2/projection';
+import { StellarCustodyV2ContractReader } from '@/lib/custody-v2/contract-reader';
+import { applyChainCustodyProjection } from '@/lib/custody-v2/projection';
 import { StellarSdkRpc } from '@/lib/stellar/server/stellar-sdk-rpc';
 
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
@@ -70,18 +71,33 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     const confirmedOperation = await repository.updateCustodyOperation(idempotencyKey, {
       status: 'confirmed',
       rpc_result_category: 'confirmed',
-      confirmed_ledger: null,
+      confirmed_ledger: confirmation.ledger ?? null,
     });
     if (!confirmedOperation) throw new Error('Custody V2 confirmation update failed.');
-    const link = await applyConfirmedCustodyProjection({
+    const reader = new StellarCustodyV2ContractReader(config);
+    const chainDeal = await reader.getDeal(operation.actor_address, operation.contract_deal_id);
+    if (!chainDeal.ok) {
+      await repository.updateCustodyOperation(idempotencyKey, {
+        status: 'failed',
+        failure_code: `CHAIN_RECONCILIATION_${chainDeal.error_code.toUpperCase()}`,
+        rpc_result_category: 'out_of_sync',
+      });
+      return NextResponse.json(
+        createErrorResponse('CUSTODY_V2_CHAIN_RECONCILIATION_FAILED', chainDeal.message),
+        { status: 409 },
+      );
+    }
+    const link = await applyChainCustodyProjection({
       repository,
-      operation: confirmedOperation,
+      applicationDealId: dealId,
+      chainDeal: chainDeal.value,
+      confirmedLedger: confirmation.ledger ?? chainDeal.latestLedger,
     });
 
     return NextResponse.json(createSuccessResponse({ operation: confirmedOperation, link }, {
       source: 'custody-v2-testnet',
       confirmation_status: 'confirmed',
-      projection_source: 'confirmed_transaction_and_contract_action_mapping',
+      projection_source: 'direct_contract_get_deal',
     }));
   } catch (error) {
     return NextResponse.json(

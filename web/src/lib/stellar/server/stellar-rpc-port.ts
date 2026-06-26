@@ -40,6 +40,7 @@ export type ConfirmTransactionResult =
       readonly outcome: "confirmed";
       readonly transaction_hash: string;
       readonly result_value: ConfirmResultValue | null;
+      readonly ledger?: number | null;
     }
   | {
       readonly outcome: "failed";

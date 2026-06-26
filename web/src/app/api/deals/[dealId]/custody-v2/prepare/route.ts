@@ -4,6 +4,7 @@ import { createErrorResponse, createSuccessResponse } from '@/lib/api/validation
 import { repository } from '@/lib/repositories';
 import type { CustodyV2ActionType } from '@/lib/db/types';
 import { loadCustodyV2ServerConfig } from '@/lib/custody-v2/config';
+import { StellarCustodyV2ContractReader } from '@/lib/custody-v2/contract-reader';
 import { prepareCustodyV2Operation } from '@/lib/custody-v2/operations';
 import { StellarSdkRpc } from '@/lib/stellar/server/stellar-sdk-rpc';
 
@@ -35,10 +36,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
 
     const config = loadCustodyV2ServerConfig();
     const rpcPort = new StellarSdkRpc(config.rpcUrl, config.networkPassphrase);
+    const contractReader = new StellarCustodyV2ContractReader(config);
     const prepared = await prepareCustodyV2Operation({
       repository,
       rpcPort,
       config,
+      contractReader,
       applicationDealId: dealId,
       actionType,
       actorAddress,

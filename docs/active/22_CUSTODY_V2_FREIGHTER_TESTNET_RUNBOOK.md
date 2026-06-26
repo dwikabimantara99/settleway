@@ -2,6 +2,14 @@
 
 Status: manual verification guide for `work/custody-v2-app-integration`.
 
+## Current Testnet Target
+
+- Contract ID: `CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4`
+- Native XLM SAC contract ID: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
+- Network passphrase: `Test SDF Network ; September 2015`
+- RPC endpoint: `https://soroban-testnet.stellar.org`
+- Explorer: `https://stellar.expert/explorer/testnet`
+
 ## Preconditions
 
 - Freighter is installed and enabled for `localhost`.

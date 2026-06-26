@@ -11,6 +11,8 @@ import type { StellarContractArgument } from '@/lib/stellar/server/adapter-contr
 import { encodeContractArguments } from '@/lib/stellar/server/stellar-sdk-codec';
 import { constructUnsignedSorobanTransaction } from '@/lib/stellar/server/stellar-transaction-factory';
 import type { CustodyV2ServerConfig } from './config';
+import type { CustodyV2ContractReadPort } from './contract-reader';
+import { assertChainDealMatchesLink } from './projection';
 
 export interface CustodyV2ActionSummary {
   network: 'Stellar Testnet';
@@ -135,7 +137,12 @@ function contractArgumentsForAction(
   }
 }
 
-function assertActionEligibility(link: DbCustodyDealLink, action: CustodyV2ActionType, actorAddress: string) {
+function assertActionEligibility(
+  link: DbCustodyDealLink,
+  action: CustodyV2ActionType,
+  actorAddress: string,
+  effectiveState = link.latest_contract_state,
+) {
   assertPublicKey(actorAddress, 'actorAddress');
   const isBuyer = actorAddress === link.buyer_address;
   const isSeller = actorAddress === link.seller_address;
@@ -151,7 +158,7 @@ function assertActionEligibility(link: DbCustodyDealLink, action: CustodyV2Actio
   if (action === 'SUBMIT_EVIDENCE' && !isSeller) throw new Error('Only the seller may submit evidence.');
   if (action === 'ACCEPT_DELIVERY' && !isBuyer) throw new Error('Only the buyer may accept delivery.');
 
-  const state = link.latest_contract_state;
+  const state = effectiveState;
   const allowed =
     (action === 'CREATE_DEAL' && state === 'TermsPending') ||
     (action === 'ACCEPT_TERMS' && state === 'TermsPending') ||
@@ -171,6 +178,7 @@ export async function prepareCustodyV2Operation(input: {
   actionType: CustodyV2ActionType;
   actorAddress: string;
   evidenceHash?: string;
+  contractReader?: CustodyV2ContractReadPort;
   now?: Date;
 }): Promise<CustodyV2PreparedResponse> {
   const link = await input.repository.getCustodyDealLink(input.applicationDealId);
@@ -178,7 +186,20 @@ export async function prepareCustodyV2Operation(input: {
   if (link.rail_version !== 'custody_v2_testnet') throw new Error('Deal is not on the Custody V2 Testnet rail.');
   if (link.contract_id !== input.config.contractId) throw new Error('Custody V2 contract ID mismatch.');
   if (link.asset_contract_id !== input.config.assetContractId) throw new Error('Custody V2 asset contract ID mismatch.');
-  assertActionEligibility(link, input.actionType, input.actorAddress);
+  let effectiveState = link.latest_contract_state;
+  if (input.contractReader) {
+    if (input.actionType === 'CREATE_DEAL') {
+      const exists = await input.contractReader.dealExists(input.actorAddress, link.contract_deal_id);
+      if (exists.ok && exists.value) throw new Error('Custody V2 on-chain deal already exists.');
+      if (!exists.ok) throw new Error(`Custody V2 direct existence read failed: ${exists.message}`);
+    } else {
+      const chainDeal = await input.contractReader.getDeal(input.actorAddress, link.contract_deal_id);
+      if (!chainDeal.ok) throw new Error(`Custody V2 direct deal read failed: ${chainDeal.message}`);
+      assertChainDealMatchesLink({ link, chainDeal: chainDeal.value });
+      effectiveState = chainDeal.value.state;
+    }
+  }
+  assertActionEligibility(link, input.actionType, input.actorAddress, effectiveState);
 
   const networkOk = await input.rpcPort.verifyNetworkIdentity(input.config.networkPassphrase);
   if (!networkOk) throw new Error('Stellar RPC network identity did not match Testnet.');
@@ -189,6 +210,7 @@ export async function prepareCustodyV2Operation(input: {
   const now = input.now ?? new Date();
   const nowUnix = Math.floor(now.getTime() / 1000);
   const expiresAt = new Date((nowUnix + MAX_TIME_SECONDS) * 1000).toISOString();
+  const minTimeUnix = Math.max(0, nowUnix - 60);
   const call = contractArgumentsForAction(link, input.actionType, input.actorAddress, input.evidenceHash);
   const encoded = encodeContractArguments(call.args);
   if (!encoded.ok) {
@@ -203,7 +225,7 @@ export async function prepareCustodyV2Operation(input: {
     method: call.method,
     encoded_arguments: encoded.values,
     base_fee_stroops: BASE_FEE_STROOPS,
-    min_time_unix: nowUnix,
+    min_time_unix: minTimeUnix,
     max_time_unix: nowUnix + MAX_TIME_SECONDS,
   });
   if (!unsigned.ok) throw new Error(`Could not construct Custody V2 transaction: ${unsigned.error_code}`);

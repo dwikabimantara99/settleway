@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+import { nativeToScVal } from '@stellar/stellar-sdk';
 import { MockRepositoryAdapter } from '@/lib/repositories/mock-adapter';
 import { mockStore } from '@/lib/db/mock-store';
-import { ingestCustodyV2Events, normalizeCustodyV2Event } from './events';
+import { decodeRawCustodyV2Event, ingestCustodyV2Events, normalizeCustodyV2Event } from './events';
 
-const contractId = 'C'.repeat(56);
+const contractId = 'CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4';
 const baseEvent = {
   contract_id: contractId,
   contract_deal_id: 'a'.repeat(64),
@@ -55,5 +56,35 @@ describe('Custody V2 event ingestion', () => {
       .toThrow('contract ID mismatch');
     expect(() => normalizeCustodyV2Event({ ...baseEvent, transaction_hash: 'not-a-hash' }, contractId))
       .toThrow('transaction hash');
+  });
+
+  it('decodes raw Stellar RPC event topics and values into normalized public facts', () => {
+    const decoded = decodeRawCustodyV2Event({
+      id: '001-0000000002',
+      contractId,
+      ledger: 123,
+      txHash: 'b'.repeat(64),
+      topic: [
+        nativeToScVal('bfund', { type: 'symbol' }),
+        nativeToScVal(Buffer.from('a'.repeat(64), 'hex')),
+      ],
+      value: nativeToScVal({
+        amount: 10500000n,
+        buyer_funded: true,
+        seller_funded: false,
+      }),
+    }, contractId);
+
+    expect(decoded).toMatchObject({
+      rpc_event_id: '001-0000000002',
+      contract_deal_id: 'a'.repeat(64),
+      event_type: 'bfund',
+      event_index: 2,
+    });
+    expect(decoded.decoded_public_facts.value).toMatchObject({
+      amount: '10500000',
+      buyer_funded: true,
+      seller_funded: false,
+    });
   });
 });

@@ -1,31 +1,21 @@
 # 20 - Custody V2 Application Integration Architecture
 
-Status: in progress on `work/custody-v2-app-integration`.
+Status: implemented for the first success and funding-expiry vertical slice on `work/custody-v2-app-integration`; not merged to `main`.
 
 ## Boundary
 
-This milestone connects the first application vertical slice to the accepted
-`contracts/trade_assurance_v2` Custody V2.1 contract without replacing the
-legacy demo rail. It is Testnet-only and does not claim production custody,
-bank settlement, QRIS, anchors, stablecoins, KYC/KYB, passkeys, mainnet, or
-external audit readiness.
+This milestone connects the first application vertical slice to the accepted `contracts/trade_assurance_v2` Custody V2.1 contract without replacing the legacy demo rail. It is Testnet-only and does not claim production custody, bank settlement, QRIS, anchors, stablecoins, KYC/KYB, passkeys, mainnet, or external audit readiness.
 
-Deferred V2.1 outcomes remain out of scope for application UI in this batch:
-seller breach, buyer breach, mutual cancellation, dispute opening, mediator
-console, and reputation projection from breach events.
+Deferred V2.1 outcomes remain out of scope for application UI in this batch: seller breach, buyer breach, mutual cancellation, dispute opening, mediator console, and reputation projection from breach events.
 
 ## Rail Selection
 
-Deals now support an immutable rail label:
+Deals support an immutable rail label:
 
 - `legacy_demo`
 - `custody_v2_testnet`
 
-The legacy rail remains the default for existing demo behavior. A Custody V2
-deal stores a dedicated link record with contract ID, contract deal ID, terms
-hash, participant addresses, XLM base-unit obligations, latest contract
-projection, and operation/event history. Once a V2 link exists, the application
-must not silently fall back to legacy behavior.
+The legacy rail remains available for existing demo behavior. A Custody V2 deal stores a dedicated link record with contract ID, contract deal ID, terms hash, participant addresses, XLM base-unit obligations, latest contract projection, and operation/event history. Once a V2 link exists, the application must not silently fall back to legacy behavior.
 
 ## Canonical Terms
 
@@ -46,7 +36,7 @@ The application calculates:
 
 ## Wallet-Signed Operation Pipeline
 
-The first supported operation list is:
+The supported operation list for this batch is:
 
 - `CREATE_DEAL`
 - `ACCEPT_TERMS`
@@ -56,45 +46,60 @@ The first supported operation list is:
 - `ACCEPT_DELIVERY`
 - `EXPIRE_FUNDING`
 
-The server prepares only allowlisted contract calls, simulates the transaction
-with Stellar RPC, stores the prepared transaction body fingerprint, and returns
-unsigned XDR plus a human-readable summary. The browser asks Freighter to sign
-the exact prepared XDR. The submit endpoint verifies that the signed transaction
-body matches the prepared fingerprint and includes the expected participant
-signature before submitting to RPC.
+The server prepares only allowlisted contract calls, simulates the transaction with Stellar RPC, stores the prepared transaction body fingerprint, and returns unsigned XDR plus a human-readable summary. The browser asks Freighter to sign the exact prepared XDR. The submit endpoint verifies that the signed transaction body matches the prepared fingerprint and includes the expected participant signature before submitting to RPC.
 
-Submitted does not mean confirmed. Projection advances only after confirmation.
-The current foundation updates projection from confirmed operation type plus the
-stored V2 link. Direct contract-state reads and full RPC event polling remain
-required before this can be accepted as complete financial source-of-truth
-integration.
+Submitted does not mean confirmed. The confirm endpoint waits for `getTransaction` success, then performs a direct `get_deal` read before updating financial projection.
+
+## Direct Contract Reads
+
+The application includes a dedicated Custody V2 reader using the Stellar JavaScript SDK. It supports:
+
+- `get_config`;
+- `get_deal`;
+- `deal_exists`;
+- `get_state`;
+- `contract_info`.
+
+The reader queries the configured Testnet contract only, decodes V2.1 state and outcome discriminants, decodes participant addresses, base-unit amounts, funding flags, evidence commitment, dispute fields, and deadlines, and maps not-found separately from RPC/decode failures.
+
+Financial projection is chain-driven. Operation records may describe local prepared/submitted/pending metadata, but confirmed financial states come from decoded contract state.
+
+## Projection Rules
+
+- Confirmed transaction plus matching direct `get_deal` updates the local link state.
+- Confirmed transaction plus unreadable or mismatched contract state returns an out-of-sync error and does not advance projection.
+- Chain deal participant, terms, asset, amount, and deadline facts must match the application link.
+- Terminal outcomes are derived from the decoded contract state.
+- No V2 projection advances from operation type alone.
+
+## Event Ingestion Boundary
+
+The event ingester now supports raw Stellar RPC `getEvents` polling filtered by configured contract ID. It decodes event topics and values through the Stellar SDK/XDR types, normalizes public facts, deduplicates by RPC event ID, stores ledger/transaction/event-index data, and persists a durable cursor.
+
+Cursor gaps are explicit. When event history is unavailable, the application must reconcile active deals through direct `get_deal` reads rather than invent historical events.
 
 ## Persistence
 
-The repository boundary now includes:
+The repository boundary includes:
 
 - Custody deal links;
 - Custody operations;
 - Custody events;
 - Custody event cursors.
 
-MockStore and Supabase adapters expose equivalent methods. The Supabase
-migration adds unique constraints for deal links, operation idempotency keys,
-event IDs, and event cursors.
+MockStore and Supabase adapters expose equivalent methods. The Supabase migration adds unique constraints for deal links, operation idempotency keys, event IDs, and event cursors.
 
-## Event Ingestion Boundary
+## Testnet Deployment
 
-The current ingester accepts normalized public V2.1 events, filters by contract
-ID, rejects unsupported event names and malformed hashes, persists events
-idempotently, and advances a durable cursor. It does not yet perform full raw
-Soroban event XDR decoding or automatic on-demand RPC polling.
+Application integration uses a dedicated Testnet deployment of the accepted V2.1 Wasm:
 
-## Testnet Deployment Boundary
+- Contract ID: `CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4`
+- Native XLM SAC contract ID: `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC`
 
-Application integration must use a dedicated Testnet deployment of the accepted
-V2.1 Wasm with distinct treasury and mediator addresses. The manifest lives at:
+The manifest lives at:
 
 `contracts/trade_assurance_v2/testnet/manifest.app-integration-v1.json`
 
-In this run the manifest is intentionally marked blocked because no local
-Stellar CLI secure-store aliases were available for deployment.
+Detailed proof is recorded in:
+
+`docs/active/23_CUSTODY_V2_APP_INTEGRATION_TESTNET_PROOF.md`

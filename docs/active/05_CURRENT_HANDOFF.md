@@ -9,7 +9,7 @@
 
 ## Current Task Boundary
 
-Custody V2.1 is accepted as an isolated Testnet contract milestone. The active task is now the first application integration vertical slice: wallet-signed Custody V2 success and funding-expiry corridors from the Deal Room.
+Custody V2.1 is accepted as an isolated Testnet contract milestone. The first application integration vertical slice is implemented on the active branch: wallet-signed Custody V2 success and funding-expiry corridors from the Deal Room, backed by direct contract reads and raw RPC event ingestion.
 
 ## No-Touch Areas
 
@@ -24,4 +24,4 @@ Custody V2.1 is accepted as an isolated Testnet contract milestone. The active t
 
 ## Current Operator Focus
 
-Continue the application vertical slice on `work/custody-v2-app-integration`. Current code adds the canonical terms, `custody_v2_testnet` rail, repository persistence, Supabase migration, wallet-signed prepare/submit/confirm API routes, Deal Room action wiring, and normalized event ingestion. Remaining acceptance blockers are dedicated app Testnet deployment, direct contract-state reads, full RPC event polling/reconciliation, real success proof, real funding-expiry proof, browser Freighter proof, full local gates, remote CI, and branch push. Stop for architecture, security, and product review before any `main` promotion.
+Continue review on `work/custody-v2-app-integration`. Current code adds canonical terms, `custody_v2_testnet` rail, repository persistence, Supabase migration, wallet-signed prepare/submit/confirm API routes, Deal Room action wiring, direct contract-state reads, raw RPC event polling/reconciliation, dedicated app Testnet deployment, and real application-layer success/funding-expiry proofs. Remaining acceptance items are full local gates, remote CI, branch push, and manual browser Freighter proof. Stop for architecture, security, and product review before any `main` promotion.

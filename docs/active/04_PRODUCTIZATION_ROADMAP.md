@@ -10,7 +10,7 @@ Current canonical `main` before application integration is:
 2654530d3a5fd2c195d5c68c6e0f324fc9a51f55
 ```
 
-The active milestone is now Custody V2 application integration on:
+The active milestone is Custody V2 application integration on:
 
 ```text
 work/custody-v2-app-integration
@@ -25,11 +25,14 @@ work/custody-v2-app-integration
 - Do not redesign the contract in this batch.
 - Do not merge into `main` in this batch.
 
+Current branch status: the first success and funding-expiry vertical slice is implemented and proven on Testnet. The branch remains pending full gate review, remote CI, manual browser Freighter proof, and architecture/security review before any promotion.
+
 ## Product Engineering Roadmap
 
-1. Implement the wallet-signed Custody V2 success and funding-expiry application vertical slice.
-2. Review the integration architecture, security posture, and Testnet evidence.
-3. Define the next app integration phase for breach, cancellation, dispute, and reputation projection.
+1. Complete gate review and remote CI for the wallet-signed Custody V2 success and funding-expiry application vertical slice.
+2. Complete manual Freighter browser proof.
+3. Review the integration architecture, security posture, and Testnet evidence.
+4. Define the next app integration phase for breach, cancellation, dispute, and reputation projection.
 4. Replace demo-managed custody bridges with contract-enforced token custody only after integration acceptance.
 5. Add production persistence deployment.
 6. Add real authentication hardening.
