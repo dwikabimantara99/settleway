@@ -1,7 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { demoProfiles, demoListings, demoBuyerRequests, demoDeals } from '../demo/demo-data';
 import { transition, EscrowAction } from '../escrow/state-machine';
-import { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from './types';
+import {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+  DbCustodyEventCursor,
+} from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
 import { buildActiveRoomDealTerms } from '../deals/terms';
@@ -160,6 +175,10 @@ export class MockStore {
   deals: Map<string, DbDeal> = new Map();
   events: Map<string, DbEscrowEvent[]> = new Map(); // Keyed by dealId
   operations: Map<string, StellarOperation> = new Map();
+  custodyDealLinks: Map<string, DbCustodyDealLink> = new Map();
+  custodyOperations: Map<string, DbCustodyOperation> = new Map();
+  custodyEvents: Map<string, DbCustodyEvent> = new Map();
+  custodyEventCursors: Map<string, DbCustodyEventCursor> = new Map();
   evidenceFiles: Map<string, DbEvidenceFile> = new Map();
   reputationEvents: Map<string, DbReputationEvent> = new Map();
   reputationIdempotencyKeys: Set<string> = new Set();
@@ -178,6 +197,10 @@ export class MockStore {
     this.deals.clear();
     this.events.clear();
     this.operations.clear();
+    this.custodyDealLinks.clear();
+    this.custodyOperations.clear();
+    this.custodyEvents.clear();
+    this.custodyEventCursors.clear();
     this.evidenceFiles.clear();
     this.reputationEvents.clear();
     this.reputationIdempotencyKeys.clear();
@@ -505,6 +528,116 @@ export class MockStore {
 
   resetStellarOperations(): void {
     this.operations.clear();
+  }
+
+  getCustodyDealLink(applicationDealId: string): DbCustodyDealLink | null {
+    const link = this.custodyDealLinks.get(applicationDealId);
+    return link ? JSON.parse(JSON.stringify(link)) : null;
+  }
+
+  createCustodyDealLink(link: DbCustodyDealLink): { created: boolean; link: DbCustodyDealLink } {
+    const existing = this.custodyDealLinks.get(link.application_deal_id);
+    if (existing) {
+      return { created: false, link: JSON.parse(JSON.stringify(existing)) };
+    }
+    const copy = JSON.parse(JSON.stringify(link));
+    this.custodyDealLinks.set(link.application_deal_id, copy);
+    return { created: true, link: JSON.parse(JSON.stringify(copy)) };
+  }
+
+  updateCustodyDealLink(
+    applicationDealId: string,
+    patch: Partial<DbCustodyDealLink>,
+  ): DbCustodyDealLink | null {
+    const existing = this.custodyDealLinks.get(applicationDealId);
+    if (!existing) return null;
+    const updated = {
+      ...existing,
+      ...patch,
+      application_deal_id: existing.application_deal_id,
+      rail_version: existing.rail_version,
+      contract_id: existing.contract_id,
+      contract_deal_id: existing.contract_deal_id,
+      terms_hash: existing.terms_hash,
+      updated_at: patch.updated_at ?? new Date().toISOString(),
+    };
+    this.custodyDealLinks.set(applicationDealId, JSON.parse(JSON.stringify(updated)));
+    return JSON.parse(JSON.stringify(updated));
+  }
+
+  getCustodyOperation(idempotencyKey: string): DbCustodyOperation | null {
+    const operation = this.custodyOperations.get(idempotencyKey);
+    return operation ? JSON.parse(JSON.stringify(operation)) : null;
+  }
+
+  createCustodyOperation(
+    operation: DbCustodyOperation,
+  ): { created: boolean; operation: DbCustodyOperation } {
+    const existing = this.custodyOperations.get(operation.idempotency_key);
+    if (existing) {
+      return { created: false, operation: JSON.parse(JSON.stringify(existing)) };
+    }
+    const copy = JSON.parse(JSON.stringify(operation));
+    this.custodyOperations.set(operation.idempotency_key, copy);
+    return { created: true, operation: JSON.parse(JSON.stringify(copy)) };
+  }
+
+  updateCustodyOperation(
+    idempotencyKey: string,
+    patch: Partial<DbCustodyOperation>,
+  ): DbCustodyOperation | null {
+    const existing = this.custodyOperations.get(idempotencyKey);
+    if (!existing) return null;
+    const updated = {
+      ...existing,
+      ...patch,
+      operation_id: existing.operation_id,
+      application_deal_id: existing.application_deal_id,
+      contract_deal_id: existing.contract_deal_id,
+      action_type: existing.action_type,
+      actor_address: existing.actor_address,
+      idempotency_key: existing.idempotency_key,
+      prepared_transaction_body_fingerprint: existing.prepared_transaction_body_fingerprint,
+      created_at: existing.created_at,
+      updated_at: patch.updated_at ?? new Date().toISOString(),
+    };
+    this.custodyOperations.set(idempotencyKey, JSON.parse(JSON.stringify(updated)));
+    return JSON.parse(JSON.stringify(updated));
+  }
+
+  listCustodyOperations(applicationDealId: string): DbCustodyOperation[] {
+    return Array.from(this.custodyOperations.values())
+      .filter((operation) => operation.application_deal_id === applicationDealId)
+      .sort((a, b) => a.created_at.localeCompare(b.created_at))
+      .map((operation) => JSON.parse(JSON.stringify(operation)));
+  }
+
+  appendCustodyEvent(event: DbCustodyEvent): { appended: boolean; event: DbCustodyEvent } {
+    const existing = this.custodyEvents.get(event.event_id);
+    if (existing) {
+      return { appended: false, event: JSON.parse(JSON.stringify(existing)) };
+    }
+    const copy = JSON.parse(JSON.stringify(event));
+    this.custodyEvents.set(event.event_id, copy);
+    return { appended: true, event: JSON.parse(JSON.stringify(copy)) };
+  }
+
+  listCustodyEvents(contractDealId: string): DbCustodyEvent[] {
+    return Array.from(this.custodyEvents.values())
+      .filter((event) => event.contract_deal_id === contractDealId)
+      .sort((a, b) => a.ledger - b.ledger || a.event_index - b.event_index)
+      .map((event) => JSON.parse(JSON.stringify(event)));
+  }
+
+  getCustodyEventCursor(network: 'testnet', contractId: string): DbCustodyEventCursor | null {
+    const cursor = this.custodyEventCursors.get(`${network}:${contractId}`);
+    return cursor ? JSON.parse(JSON.stringify(cursor)) : null;
+  }
+
+  upsertCustodyEventCursor(cursor: DbCustodyEventCursor): DbCustodyEventCursor {
+    const copy = JSON.parse(JSON.stringify(cursor));
+    this.custodyEventCursors.set(`${cursor.network}:${cursor.contract_id}`, copy);
+    return JSON.parse(JSON.stringify(copy));
   }
 
   // Evidence

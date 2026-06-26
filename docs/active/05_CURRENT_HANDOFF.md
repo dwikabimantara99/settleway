@@ -24,4 +24,4 @@ Custody V2.1 is accepted as an isolated Testnet contract milestone. The active t
 
 ## Current Operator Focus
 
-Implement the application vertical slice on `work/custody-v2-app-integration`, verify local and remote gates, push the branch, and stop for architecture, security, and product review before any `main` promotion.
+Continue the application vertical slice on `work/custody-v2-app-integration`. Current code adds the canonical terms, `custody_v2_testnet` rail, repository persistence, Supabase migration, wallet-signed prepare/submit/confirm API routes, Deal Room action wiring, and normalized event ingestion. Remaining acceptance blockers are dedicated app Testnet deployment, direct contract-state reads, full RPC event polling/reconciliation, real success proof, real funding-expiry proof, browser Freighter proof, full local gates, remote CI, and branch push. Stop for architecture, security, and product review before any `main` promotion.

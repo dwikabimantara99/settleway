@@ -18,7 +18,7 @@
 
 ## Repository Boundary
 
-The repository layer is the application source of truth for product state. Stellar references support proof and verification but do not replace app state in the current MVP.
+The repository layer remains the application source of truth for product context. For deals assigned to the new `custody_v2_testnet` rail, the Custody V2.1 contract must become the financial source of truth after confirmed Testnet transactions and contract/event reconciliation. The current integration branch contains the first prepare/sign/submit/confirm foundation, but final direct contract reads and full RPC event polling are still not complete.
 
 ## Current Stellar Boundary
 
@@ -32,8 +32,9 @@ Current Stellar modules support:
 - secure-store/operator smoke tooling;
 - Soroban event-contract interaction.
 - isolated Custody V2.1 Testnet proof contract.
+- Custody V2 application-integration foundation on `work/custody-v2-app-integration`.
 
-The application still uses the existing repository and Testnet helper rail. Custody V2.1 exists as an isolated proof and is not yet wired into backend route handlers, the Aurora UI, event indexing, database records, or reputation projection.
+The default application still preserves the existing repository and legacy Testnet helper rail. The active integration branch adds a separate `custody_v2_testnet` rail, canonical terms hashing, operation persistence, wallet-signed V2 API routes, and normalized event ingestion. This does not remove the legacy rail and does not yet complete full contract-state reconciliation or reputation projection.
 
 ## Soroban Contracts
 
@@ -45,7 +46,7 @@ Custody V2.1 is not externally audited, not mainnet-ready, and not production go
 
 ## Production Custody Integration Target
 
-Future application integration must connect app state to the accepted V2.1 custody contract without weakening product boundaries. It must support:
+Application integration must connect app state to the accepted V2.1 custody contract without weakening product boundaries. It must support:
 
 - token asset model;
 - contract-held funds;

@@ -19,6 +19,8 @@ import type {
   DbDeal,
   DbEscrowEvent,
   DbNegotiationMessage,
+  CustodyV2ActionType,
+  CustodyV2ContractState,
 } from '@/lib/db/types';
 
 type ViewerRole = 'buyer' | 'seller' | null;
@@ -96,6 +98,9 @@ export function AuroraFundingDealRoom({
   buyerFundingStatus,
   sellerFundingStatus,
   steps,
+  custodyV2State,
+  custodyV2ConfirmedActions,
+  custodyV2EvidenceHash,
 }: {
   deal: DbDeal;
   buyerDisplayName: string;
@@ -115,6 +120,9 @@ export function AuroraFundingDealRoom({
   buyerFundingStatus: { label: string; className: string };
   sellerFundingStatus: { label: string; className: string };
   steps: Step[];
+  custodyV2State?: CustodyV2ContractState | null;
+  custodyV2ConfirmedActions?: CustodyV2ActionType[];
+  custodyV2EvidenceHash?: string | null;
 }) {
   const platformFees = deal.buyer_fee_idr + deal.seller_fee_idr;
   const totalExpected = deal.buyer_total_idr + deal.seller_total_idr;
@@ -274,6 +282,10 @@ export function AuroraFundingDealRoom({
                   status={deal.status}
                   viewerRole={viewerRole}
                   connectedWalletAddress={connectedWallet}
+                  railVersion={deal.rail_version ?? 'legacy_demo'}
+                  custodyV2State={custodyV2State}
+                  custodyV2ConfirmedActions={custodyV2ConfirmedActions}
+                  custodyV2EvidenceHash={custodyV2EvidenceHash}
                 />
               </div>
             </section>

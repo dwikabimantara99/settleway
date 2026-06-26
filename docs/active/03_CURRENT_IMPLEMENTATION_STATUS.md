@@ -20,6 +20,7 @@
 - Stellar Testnet proof modules and secure-store smoke tooling.
 - Soroban event-contract baseline.
 - Isolated Soroban Custody V2.1 contract and Testnet proof.
+- Custody V2 application-integration foundation on `work/custody-v2-app-integration`: canonical terms, rail flag, persistence records, prepare/submit/confirm routes, wallet-signed action wiring, and normalized event ingestion.
 - Cross-platform CI fixtures for Testnet configuration validation.
 - Strict Soroban Clippy validation with narrow documented ABI/event exceptions.
 
@@ -41,7 +42,8 @@ These remain because they prove the product story without pretending that the ap
 - Next.js demo production build still emits a transitive `Buffer()` deprecation warning through Stellar SDK validation code; no first-party `Buffer()` constructor use is known.
 - Bank rail is visual/product intent only.
 - Legacy `settleway_escrow` is not final token custody escrow.
-- Custody V2.1 is isolated and not yet integrated into the application backend, Aurora frontend, event indexing, database records, or reputation projection.
+- Custody V2.1 is partially integrated on the dedicated application branch. The branch has not been promoted to `main`, has not completed dedicated app Testnet deployment, and has not completed direct contract-state reads, full RPC event ingestion, browser proof, success proof, or funding-expiry proof.
 - Custody V2.1 is not externally audited or mainnet-ready.
 - The V2.1 Testnet proof uses native XLM SAC and proof-only treasury/mediator governance.
+- The app-integration Testnet deployment manifest is blocked until distinct local Testnet identities are provisioned outside Git.
 - Arbitrary user wallet payout is not final production architecture.

@@ -1,0 +1,33 @@
+{
+  "status": "blocked-awaiting-integration-testnet-identities",
+  "boundary": "Testnet application integration only; not production custody and not mainnet",
+  "network": "testnet",
+  "rpc_url": "https://soroban-testnet.stellar.org",
+  "network_passphrase": "Test SDF Network ; September 2015",
+  "accepted_contract": "contracts/trade_assurance_v2",
+  "accepted_checkpoint_tag": "v0.3.0-soroban-custody-v2.1",
+  "accepted_wasm_sha256": "76808FB80BDDF432F771FA3106648B47B1E57DBC09FF6847D38719ECD702723C",
+  "source_branch": "work/custody-v2-app-integration",
+  "contract_id": null,
+  "native_xlm_sac_contract_id": null,
+  "treasury_public_address": null,
+  "mediator_public_address": null,
+  "policy": {
+    "policy_version": 2,
+    "interface_version": 2,
+    "success_fee_bps": 0,
+    "seller_breach_treasury_bps": 2000,
+    "buyer_breach_treasury_bps": 2000
+  },
+  "deployment_transactions": {
+    "deploy_wasm_tx_hash": null,
+    "deploy_contract_tx_hash": null,
+    "initialize_tx_hash": null
+  },
+  "proof_transactions": {
+    "success_scenario": [],
+    "funding_expiry_scenario": []
+  },
+  "blocker": "No local Stellar CLI secure-store aliases were available in this execution environment, so no dedicated app-integration Testnet contract was deployed in this batch run.",
+  "secret_policy": "No secret key, seed phrase, signed transaction XDR, or secure-store material belongs in this manifest."
+}

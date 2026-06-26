@@ -286,6 +286,15 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   const offerId = getDealOfferId(deal.terms);
   const sourceOffer = offerId ? await repository.getOffer(offerId) : null;
   const negotiationMessages = offerId ? await repository.getOfferMessages(offerId) : [];
+  const custodyV2Link = deal.rail_version === 'custody_v2_testnet'
+    ? await repository.getCustodyDealLink(deal.id)
+    : null;
+  const custodyV2Operations = custodyV2Link
+    ? await repository.listCustodyOperations(deal.id)
+    : [];
+  const custodyV2ConfirmedActions = custodyV2Operations
+    .filter((operation) => operation.status === 'confirmed')
+    .map((operation) => operation.action_type);
   const latestNegotiationMessages = negotiationMessages.slice(-2).reverse();
   const deliveryDeadline = parseDeliveryDeadline(sourceOffer?.terms_note ?? null);
 
@@ -303,6 +312,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   const latestBuyerFundingEvent = getLatestEvent(dealEvents, ['buyer_deposit']);
   const latestSellerFundingEvent = getLatestEvent(dealEvents, ['seller_deposit']);
   const latestCompletionEvent = getLatestEvent(dealEvents, ['accept_delivery']);
+  const latestEvidenceHash =
+    deal.proof_hash ?? latestProofEvent?.proof_hash ?? evidenceList.at(-1)?.sha256_hash ?? null;
   const recentRoomEvents = dealEvents.slice(-5).reverse();
   const sortedDealReputationEvents = [...dealReputationEvents].sort((a, b) =>
     b.created_at.localeCompare(a.created_at),
@@ -442,6 +453,9 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
       buyerFundingStatus,
       sellerFundingStatus,
       steps,
+      custodyV2State: custodyV2Link?.latest_contract_state ?? null,
+      custodyV2ConfirmedActions,
+      custodyV2EvidenceHash: latestEvidenceHash,
     });
   }
 
@@ -721,6 +735,10 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
                   status={status}
                   viewerRole={viewerRole}
                   connectedWalletAddress={connectedWallet}
+                  railVersion={deal.rail_version ?? 'legacy_demo'}
+                  custodyV2State={custodyV2Link?.latest_contract_state ?? null}
+                  custodyV2ConfirmedActions={custodyV2ConfirmedActions}
+                  custodyV2EvidenceHash={latestEvidenceHash}
                 />
                 <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-6 text-slate-600">
                   <div className="flex gap-3">
