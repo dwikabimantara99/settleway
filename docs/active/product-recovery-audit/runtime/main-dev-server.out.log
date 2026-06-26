@@ -1,0 +1,33 @@
+
+> web@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3100
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://127.0.0.1:3100
+- Network:       http://127.0.0.1:3100
+✓ Ready in 655ms
+
+ GET / 200 in 2.2s (next.js: 1829ms, application-code: 332ms)
+ GET / 200 in 443ms (next.js: 14ms, application-code: 429ms)
+ GET /marketplace 200 in 915ms (next.js: 633ms, application-code: 282ms)
+ GET /marketplace/listing-cabai-001 200 in 1478ms (next.js: 1222ms, application-code: 256ms)
+ GET /buyer-requests 200 in 512ms (next.js: 410ms, application-code: 102ms)
+ GET /buyer-requests/req-spice-001 200 in 1015ms (next.js: 827ms, application-code: 187ms)
+ GET /offers/offer-demo-cabai-001 200 in 2.4s (next.js: 1421ms, application-code: 1004ms)
+ GET /deals/demo-cabai-001 200 in 2.9s (next.js: 1094ms, application-code: 1774ms)
+ GET /notifications 200 in 999ms (next.js: 772ms, application-code: 227ms)
+ GET /profiles/buyer-surabaya-restaurant 200 in 1906ms (next.js: 1186ms, application-code: 720ms)
+ GET /profiles/buyer-surabaya-restaurant/reputation 200 in 914ms (next.js: 764ms, application-code: 150ms)
+ GET /profiles/seller-probolinggo-cabai 200 in 266ms (next.js: 15ms, application-code: 251ms)
+ GET /demo 200 in 372ms (next.js: 285ms, application-code: 87ms)
+ GET /dev/deal-state-gallery 200 in 536ms (next.js: 344ms, application-code: 192ms)
+ GET /dev/design-lab 200 in 692ms (next.js: 303ms, application-code: 390ms)
+ GET /dev/custody-v2-browser-setup 404 in 353ms (next.js: 289ms, application-code: 63ms)
+ GET / 200 in 177ms (next.js: 8ms, application-code: 169ms)
+ GET / 200 in 276ms (next.js: 13ms, application-code: 264ms)
+ GET /marketplace 200 in 73ms (next.js: 12ms, application-code: 62ms)
+ GET /marketplace 200 in 182ms (next.js: 8ms, application-code: 174ms)
+ GET /marketplace/listing-cabai-001 200 in 207ms (next.js: 18ms, application-code: 189ms)
+ GET /offers/new?listingId=listing-cabai-001 200 in 843ms (next.js: 770ms, application-code: 73ms)
+ GET /marketplace 200 in 324ms (next.js: 8ms, application-code: 316ms)
+ GET /deals/demo-cabai-001 200 in 278ms (next.js: 13ms, application-code: 265ms)

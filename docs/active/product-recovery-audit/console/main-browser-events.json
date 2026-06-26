@@ -1,0 +1,3717 @@
+[
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/favicon.ico?favicon.2vob68tjqpejf.ico",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/favicon.ico?favicon.2vob68tjqpejf.ico",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/marketplace",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 887ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/marketplace",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_19ajt3m._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_lucide-react_dist_esm_icons_1e38h8p._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_marketplace_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "intervention",
+        "level": "info",
+        "text": "Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113",
+        "timestamp": 1782482772717.478,
+        "url": "http://127.0.0.1:3100/marketplace",
+        "lineNumber": 1
+      }
+    }
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_marketplace_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_lucide-react_dist_esm_icons_1e38h8p._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_19ajt3m._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fgreen-coffee.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fgreen-coffee.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/marketplace/listing-cabai-001",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 618ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/marketplace/listing-cabai-001",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "intervention",
+        "level": "info",
+        "text": "Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113",
+        "timestamp": 1782482775616.522,
+        "url": "http://127.0.0.1:3100/marketplace/listing-cabai-001",
+        "lineNumber": 1
+      }
+    }
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "warning",
+    "text": "Image with src \"/commodities/red-chili.png\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "requestId": "6124.167",
+    "errorText": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/buyer-requests",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 501ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/buyer-requests",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_03hxzaz._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_lucide-react_dist_esm_icons_0p43m75._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_buyer-requests_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "intervention",
+        "level": "info",
+        "text": "Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113",
+        "timestamp": 1782482776820.02,
+        "url": "http://127.0.0.1:3100/buyer-requests",
+        "lineNumber": 1
+      }
+    }
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_buyer-requests_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_lucide-react_dist_esm_icons_0p43m75._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_03hxzaz._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=256&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=256&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "requestId": "6124.229",
+    "errorText": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "requestId": "6124.230",
+    "errorText": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fwhite-rice.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/buyer-requests/req-spice-001",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 330ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/buyer-requests/req-spice-001",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "intervention",
+        "level": "info",
+        "text": "Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113",
+        "timestamp": 1782482778516.081,
+        "url": "http://127.0.0.1:3100/buyer-requests/req-spice-001",
+        "lineNumber": 1
+      }
+    }
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=640&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=1080&q=75",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "warning",
+    "text": "Image with src \"/commodities/red-chili.png\" was detected as the Largest Contentful Paint (LCP). Please add the `loading=\"eager\"` property if this image is above the fold.\nRead more: https://nextjs.org/docs/app/api-reference/components/image#loading"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/offers/offer-demo-cabai-001",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 839ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/offers/offer-demo-cabai-001",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_08w1q6e._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_offers_%5BofferId%5D_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_offers_%5BofferId%5D_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_08w1q6e._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/deals/demo-cabai-001",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 531ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/deals/demo-cabai-001",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1-9j9oz._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_deals_%5BdealId%5D_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_deals_%5BdealId%5D_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1-9j9oz._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/notifications",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 886ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/notifications",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_195gyk0._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_notifications_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_notifications_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_195gyk0._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/profiles/buyer-surabaya-restaurant",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 611ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/profiles/buyer-surabaya-restaurant",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_198gi8q._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_198gi8q._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/profiles/buyer-surabaya-restaurant/reputation",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 356ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/profiles/buyer-surabaya-restaurant/reputation",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_02f2gjb._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_reputation_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_reputation_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_02f2gjb._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/profiles/seller-probolinggo-cabai",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/profiles/seller-probolinggo-cabai",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_198gi8q._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_profiles_%5BuserId%5D_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_198gi8q._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/demo",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 362ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/demo",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_0u26a95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_demo_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_demo_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_0u26a95._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/dev/deal-state-gallery",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 508ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/dev/deal-state-gallery",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_dev_deal-state-gallery_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_dev_deal-state-gallery_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/dev/design-lab",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/__nextjs_font/geist-latin.woff2",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 626ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/dev/design-lab",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1xfa8rd._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_dev_design-lab_page_tsx_0dlbni-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_dev_design-lab_page_tsx_0dlbni-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1xfa8rd._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=384&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "requestId": "6124.767",
+    "errorText": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fcommodities%2Fred-chili.png&w=750&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/dev/custody-v2-browser-setup",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] rebuilding"
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[Fast Refresh] done in 344ms"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/dev/custody-v2-browser-setup",
+    "status": 404
+  },
+  {
+    "method": "Log.entryAdded",
+    "params": {
+      "entry": {
+        "source": "network",
+        "level": "error",
+        "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "timestamp": 1782482797344.114,
+        "url": "http://127.0.0.1:3100/dev/custody-v2-browser-setup",
+        "networkRequestId": "F7BEE3827CF3D8FBDEFADAE339AD27F2"
+      }
+    }
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_globals_162hn9o.css",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/image?url=%2Fbrand%2Fsettleway-mark.png&w=96&q=75",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-6._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_1amofcm._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xx01vv._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jm.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_compiled_react-dom_096_9a-._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/turbopack-_01_ro95._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/_1anvha4._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_1ybzpk2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_1xfgquf._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_0r5nbpw._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/src_app_layout_tsx_007e4b2._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_0b2q7vx._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_0dlbni-.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.requestWillBeSent",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "requestMethod": "GET"
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1mojsay._.js",
+    "status": 200
+  },
+  {
+    "method": "Network.responseReceived",
+    "url": "http://127.0.0.1:3100/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_1xch-cm._.js",
+    "status": 200
+  },
+  {
+    "method": "Runtime.consoleAPICalled",
+    "type": "log",
+    "text": "[HMR] connected"
+  }
+]

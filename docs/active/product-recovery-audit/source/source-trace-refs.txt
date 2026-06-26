@@ -1,0 +1,1381 @@
+﻿D:\Settleway-audit-integration\web\src\app\api\dev\custody-v2-browser-setup\route.ts:4:  createFounderBrowserCustodyDeal,
+D:\Settleway-audit-integration\web\src\app\api\dev\custody-v2-browser-setup\route.ts:33:    const { deal, link } = await createFounderBrowserCustodyDeal({
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:12:    mockStore.updateDeal('demo-cabai-001', { status: 'COMPLETED' });
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:13:    expect(mockStore.deals.get('demo-cabai-001')?.status).toBe('COMPLETED');
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:14:    mockStore.updateOffer('offer-demo-cabai-001', {
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:20:    expect(mockStore.offers.get('offer-demo-cabai-001')?.status).toBe(
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:32:    expect(mockStore.deals.get('demo-cabai-001')?.status).toBe('WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:33:    expect(mockStore.deals.get('demo-cabai-001')?.terms.offer_id).toBe('offer-demo-cabai-001');
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:34:    expect(mockStore.deals.get('demo-cabai-001')?.terms.activation_source).toBe(
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:37:    expect(mockStore.offers.get('offer-demo-cabai-001')?.active_deal_id).toBe('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\app\api\demo\reset\route.test.ts:38:    expect(mockStore.getOfferMessages('offer-demo-cabai-001')).toHaveLength(3);
+D:\Settleway-audit-integration\web\src\app\api\notifications\route.ts:9:    const notifications = await repository.getNotifications(user.id);
+D:\Settleway-audit-integration\web\src\app\buyer-requests\[requestId]\page.test.tsx:14:    expect(html).toContain('Offer first, Deal Room later');
+D:\Settleway-audit-integration\web\src\app\buyer-requests\[requestId]\page.tsx:93:                    Deal Room can open.
+D:\Settleway-audit-integration\web\src\app\buyer-requests\[requestId]\page.tsx:129:          <Notice title="Offer first, Deal Room later" tone="info">
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:33:  it('mock_actor in demo: accepted as simulation', async () => {
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:38:      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:45:  it('mock_actor in test: accepted only where test behavior requires it', async () => {
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:50:      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:57:  it('mock_actor in persistent: ignored', async () => {
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:65:      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:68:    // Because there's no sb-access-token, it should return null, ignoring the mock_actor cookie
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:104:      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:107:    const { deal, role } = await requireDealParticipant('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:108:    expect(deal.id).toBe('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:115:      get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:118:    const { deal, role } = await requireDealParticipant('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:119:    expect(deal.id).toBe('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:126:      get: (name: string) => name === 'mock_actor' ? { value: 'some-other-dude' } : undefined,
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:129:    await expect(requireDealParticipant('demo-cabai-001')).rejects.toThrow('Forbidden');
+D:\Settleway-audit-integration\web\src\lib\auth\server.test.ts:138:    await expect(requireDealParticipant('demo-cabai-001')).rejects.toThrow('Unauthorized');
+D:\Settleway-audit-integration\web\src\app\dev\design-lab\page.tsx:164:              dealId="demo-cabai-001"
+D:\Settleway-audit-integration\web\src\app\api\notifications\[notificationId]\route.ts:19:    await repository.markNotificationRead(notificationId);
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:24:import { getDeal } from '@/lib/db/deals';
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:244:      return 'Deal-only';
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:256:  const deal = await getDeal(resolvedParams.dealId);
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:289:  const custodyV2Link = deal.rail_version === 'custody_v2_testnet'
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:637:                  Deal ID
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:739:                  railVersion={deal.rail_version ?? 'legacy_demo'}
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:824:                        Both parties agreed to open the Deal Room.
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.tsx:1154:              <h2 className="text-xl font-semibold text-slate-950">Deal Summary</h2>
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.test.tsx:39:describe('Deal Room state gallery fixtures', () => {
+D:\Settleway-audit-integration\web\src\app\deals\[dealId]\page.test.tsx:40:  it('renders every deterministic Deal Room state through the production route', async () => {
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\messages\route.ts:5:import { buildNotification, buildOpeningMessage, getCounterpartyId } from '@/lib/offers/helpers';
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\messages\route.ts:32:    await repository.addNotification(
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\messages\route.ts:33:      buildNotification({
+D:\Settleway-audit-integration\web\src\app\api\offers\route.ts:6:  buildNotification,
+D:\Settleway-audit-integration\web\src\app\api\offers\route.ts:131:      await repository.addNotification(
+D:\Settleway-audit-integration\web\src\app\api\offers\route.ts:132:        buildNotification({
+D:\Settleway-audit-integration\web\src\app\api\offers\route.ts:212:    await repository.addNotification(
+D:\Settleway-audit-integration\web\src\app\api\offers\route.ts:213:      buildNotification({
+D:\Settleway-audit-integration\web\src\lib\db\deals.ts:3:import { DbDeal } from './types';
+D:\Settleway-audit-integration\web\src\lib\db\deals.ts:5:export async function getDeal(id: string): Promise<DbDeal | null> {
+D:\Settleway-audit-integration\web\src\app\layout.tsx:7:  description: "A high-value agricultural trade marketplace with recorded negotiation, mutual Deal Room commitment, escrow protection, and Stellar-backed trust signals.",
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:4:import type { DbDeal, DbOffer } from '../db/types';
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:15:    // Mock / Demo mode: trust the client cookie 'mock_actor'
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:17:    const mockActor = cookieStore.get('mock_actor')?.value;
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:49:export async function requireDealParticipant(dealId: string): Promise<{ deal: DbDeal; role: 'buyer' | 'seller'; user: UserSession }> {
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:52:  const deal = await repository.getDeal(dealId);
+D:\Settleway-audit-integration\web\src\lib\auth\server.ts:53:  if (!deal) throw new Error("Deal not found");
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\route.ts:5:import { buildNotification, getCounterpartyId } from '@/lib/offers/helpers';
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\route.ts:61:    await repository.addNotification(
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\route.ts:62:      buildNotification({
+D:\Settleway-audit-integration\web\src\app\api\offers\[offerId]\route.ts:67:        message: 'Your counterparty accepted the proposed deal terms. Open Deal Room is now available.',
+D:\Settleway-audit-integration\web\src\lib\deal-state-gallery.test.ts:16:  it('defines one deterministic fixture for every Deal Room state', () => {
+D:\Settleway-audit-integration\web\src\lib\deal-state-gallery.ts:2:  DbDeal,
+D:\Settleway-audit-integration\web\src\lib\deal-state-gallery.ts:92:function buildDeal(status: DealStateGalleryStatus): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\deal-state-gallery.ts:139:      message: 'Development visual fixture: both parties opened the Deal Room.',
+D:\Settleway-audit-integration\web\src\lib\deal-state-gallery.ts:407:    const deal = buildDeal(status);
+D:\Settleway-audit-integration\web\src\app\dev\deal-state-gallery\page.tsx:35:            Aurora Deal Room State Gallery
+D:\Settleway-audit-integration\web\src\app\dev\deal-state-gallery\page.tsx:38:            Deterministic, development-only Deal Room fixtures for final visual acceptance. These
+D:\Settleway-audit-integration\web\src\app\dev\deal-state-gallery\page.tsx:39:            links render through the normal production Deal Room route and are not live Testnet
+D:\Settleway-audit-integration\web\src\app\dev\deal-state-gallery\page.tsx:61:                  Opens the deterministic fixture route for this exact Deal Room state.
+D:\Settleway-audit-integration\web\src\app\demo\page.test.tsx:46:    expect(html).toContain('Open Deal Room is mutual commitment');
+D:\Settleway-audit-integration\web\src\app\demo\page.test.tsx:49:    expect(html).toContain('Notifications');
+D:\Settleway-audit-integration\web\src\app\demo\page.test.tsx:51:    expect(html).toContain('Active Deal Room');
+D:\Settleway-audit-integration\web\src\components\demo\RoleSwitcher.tsx:21:    // Check current mock_actor cookie
+D:\Settleway-audit-integration\web\src\components\demo\RoleSwitcher.tsx:22:    const match = document.cookie.match(/(?:(?:^|.*;\s*)mock_actor\s*\=\s*([^;]*).*$)|^.*$/);
+D:\Settleway-audit-integration\web\src\components\demo\RoleSwitcher.tsx:28:      document.cookie = 'mock_actor=buyer-surabaya-restaurant; path=/; max-age=86400';
+D:\Settleway-audit-integration\web\src\components\demo\RoleSwitcher.tsx:36:    document.cookie = `mock_actor=${newRole}; path=/; max-age=86400`;
+D:\Settleway-audit-integration\web\src\components\demo\RoleSwitcher.tsx:79:        aria-label="Open demo role switcher"
+D:\Settleway-audit-integration\web\src\app\demo\page.tsx:48:      'Switch roles and show that Open Deal Room is mutual commitment, not a one-sided shortcut into escrow.',
+D:\Settleway-audit-integration\web\src\app\demo\page.tsx:85:  { label: 'Notifications', href: '/notifications', icon: CheckCircle2 },
+D:\Settleway-audit-integration\web\src\app\demo\page.tsx:86:  { label: 'Negotiation Thread', href: '/offers/offer-demo-cabai-001', icon: FileText },
+D:\Settleway-audit-integration\web\src\app\demo\page.tsx:87:  { label: 'Active Deal Room', href: '/deals/demo-cabai-001', icon: ShieldCheck },
+D:\Settleway-audit-integration\web\src\components\ui\StatusPill.test.tsx:6:  it('renders deliberate labels for every Deal Room status', () => {
+D:\Settleway-audit-integration\web\src\lib\demo\demo-data.ts:1:import { Profile, Listing, Deal, BuyerRequest } from '../types';
+D:\Settleway-audit-integration\web\src\lib\demo\demo-data.ts:147:export const demoDeals: Record<string, Deal> = {
+D:\Settleway-audit-integration\web\src\lib\demo\demo-data.ts:148:  'demo-cabai-001': {
+D:\Settleway-audit-integration\web\src\lib\demo\demo-data.ts:149:    id: 'demo-cabai-001',
+D:\Settleway-audit-integration\web\src\lib\db\mock-store-custody-transition.test.ts:3:import type { DbDeal } from './types';
+D:\Settleway-audit-integration\web\src\lib\db\mock-store-custody-transition.test.ts:6:function makeDeal(status: DealStatus): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store-custody-transition.test.ts:38:    const current = makeDeal('BUYER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\db\mock-store-custody-transition.test.ts:58:    const current = makeDeal('SELLER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\db\mock-store-custody-transition.test.ts:78:    const current = makeDeal('CUSTODY_PENDING');
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\page.tsx:27:            Custody V2 browser corridor setup
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\page.tsx:30:            This page creates a fresh Deal Room explicitly assigned to the Custody V2 Testnet rail.
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\page.tsx:58:                  Custody V2 Testnet configuration is present. The founder setup form is enabled.
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:35:      const response = await fetch('/api/dev/custody-v2-browser-setup', {
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:67:              Create Custody V2 browser-test deal
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:71:              setup creates a new shared Deal Room; it never reuses the legacy demo room.
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:116:            {isSubmitting ? 'Creating...' : 'Create Custody V2 Deal'}
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:127:          Custody V2 · Stellar Testnet
+D:\Settleway-audit-integration\web\src\app\dev\custody-v2-browser-setup\FounderBrowserSetupForm.tsx:151:                Open this same Deal Room URL in both Edge profiles
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:3:import type { DbCustodyDealLink, DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:9:import { freezeCustodyV2Deal } from './links';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:44:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:80:  if (env.NEXT_PUBLIC_CUSTODY_V2_ENABLED !== 'true') {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:81:    errors.push('NEXT_PUBLIC_CUSTODY_V2_ENABLED must be true.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:87:      errors.push('Custody V2 public configuration is disabled.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:90:      errors.push('Custody V2 must use the Stellar Testnet network passphrase.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:93:      errors.push(`NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID must be ${FOUNDER_BROWSER_CONTRACT_ID}.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:97:        `NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID must be native XLM SAC ${NATIVE_XLM_SAC_TESTNET_CONTRACT_ID}.`,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:111:  if (!env.NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE) {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:112:    warnings.push('NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE is not set; the default Testnet explorer will be used.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:135:export async function createFounderBrowserCustodyDeal(
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:144:    throw new Error(`Custody V2 runtime is not ready: ${diagnostics.errors.join(' ')}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:166:  const deal: DbDeal = {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:182:    rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:202:  await input.repository.createDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:221:    message: 'Founder browser corridor created for Custody V2 Testnet acceptance.',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:225:      rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:235:  const link = await freezeCustodyV2Deal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:254:  const persistedDeal = await input.repository.getDeal(deal.id);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.ts:256:    deal: persistedDeal ?? { ...deal, stellar_escrow_id: link.contract_deal_id },
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:6:  createFounderBrowserCustodyDeal,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:18:    NEXT_PUBLIC_CUSTODY_V2_ENABLED: 'true',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:19:    NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE: Networks.TESTNET,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:20:    NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID: FOUNDER_BROWSER_CONTRACT_ID,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:21:    NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID: NATIVE_XLM_SAC_TESTNET_CONTRACT_ID,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:22:    NEXT_PUBLIC_CUSTODY_V2_INTERFACE_VERSION: '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:23:    NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION: '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:24:    NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE: 'https://stellar.expert/explorer/testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:30:describe('Custody V2 founder browser corridor', () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:49:        NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID: undefined,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:57:    expect(diagnostics.errors.join('\n')).toContain('NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID is required');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:61:  it('creates a fresh shared Custody V2 Testnet deal and freezes canonical terms', async () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:66:    const result = await createFounderBrowserCustodyDeal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:78:    expect(result.deal.rail_version).toBe('custody_v2_testnet');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:88:    await expect(repository.getDeal('custody-v2-browser-test-001')).resolves.toMatchObject({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:89:      rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:102:    const { link } = await createFounderBrowserCustodyDeal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:129:    const legacyBefore = await repository.getDeal('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:133:    await createFounderBrowserCustodyDeal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:143:    const legacyAfter = await repository.getDeal('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\browser-corridor.test.ts:146:    expect(await repository.getCustodyDealLink('demo-cabai-001')).toBeNull();
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:10:    NEXT_PUBLIC_CUSTODY_V2_ENABLED: 'true',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:11:    NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE: Networks.TESTNET,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:12:    NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID: contractId,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:13:    NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID: assetContractId,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:14:    NEXT_PUBLIC_CUSTODY_V2_INTERFACE_VERSION: '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:15:    NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION: '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:16:    NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE: 'https://stellar.expert/explorer/testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:22:describe('Custody V2 config', () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:45:    expect(() => loadCustodyV2PublicConfig(env({ NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID: undefined }), 'demo'))
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:46:      .toThrow('NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID is required');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:47:    expect(() => loadCustodyV2PublicConfig(env({ NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE: 'Public Global Stellar Network ; September 2015' }), 'demo'))
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.test.ts:49:    expect(() => loadCustodyV2PublicConfig(env({ NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION: '1' }), 'demo'))
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:5:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:18:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:30:  const updatedDeal = transition(existingDeal, 'submit_proof');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:32:    updatedDeal.proof_hash = proofHash;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:34:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:43:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:50:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:55:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:70:  const nextDeal = {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:71:    ...transition(input.existingDeal, 'submit_proof'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:78:    current: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:79:    next: nextDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:82:  let updatedDeal = replaced.deal ?? nextDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:84:    const currentDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:86:      currentDeal?.status === 'PROOF_SUBMITTED' &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:87:      currentDeal.proof_hash === input.proofHash &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:88:      currentDeal.latest_stellar_tx_hash === input.transactionHash
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:90:      updatedDeal = currentDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:93:      currentDeal &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:94:      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:96:      await repository.updateDeal(input.existingDeal.id, {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:97:        status: nextDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:98:        proof_hash: nextDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:99:        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:100:        stellar_sync_status: nextDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:101:        updated_at: nextDeal.updated_at,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:103:      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:104:      if (!recoveredDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:107:      updatedDeal = recoveredDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:128:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:132:        lock_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:141:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:146:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:159:  if (input.existingDeal.status !== 'LOCKED' || !input.existingDeal.latest_stellar_tx_hash) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:180:      existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:193:      deal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:212:    existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:227:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:232:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:299:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:300:      return runLegacyLocalProofSubmission(dealId, existingDeal, actorId, proofHash, evidenceMetadata);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:314:    if (existingDeal.stellar_escrow_id === null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:317:        existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:328:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:339:    let updatedDeal = executionResult.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:340:    if (updatedDeal.proof_hash !== proofHash) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:341:      const nextDeal = {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:342:        ...updatedDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:347:        current: updatedDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:348:        next: nextDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:353:      updatedDeal = nextDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:362:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.ts:372:    return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.test.ts:66:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.test.ts:98:    setupDeal("deal-proof-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\submit-proof\route.test.ts:129:    setupDeal("deal-proof-custody-testnet", {
+D:\Settleway-audit-integration\web\src\lib\types.ts:64:export interface Deal {
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:4:import { NotificationsClient } from './NotificationsClient';
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:6:export default async function NotificationsPage() {
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:8:  const notifications = user ? await repository.getNotifications(user.id) : [];
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:18:          <h1 className="text-3xl font-extrabold tracking-tight text-slate-950">Notifications</h1>
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:20:            Incoming offers, negotiation updates, and Deal Room signals.
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:25:      <NotificationsClient
+D:\Settleway-audit-integration\web\src\app\notifications\page.tsx:26:        initialNotifications={notifications}
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.tsx:23:  const match = document.cookie.match(/(?:^|;\s*)mock_actor=([^;]*)/);
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.tsx:48:    document.cookie = 'mock_actor=; path=/; max-age=0';
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.tsx:55:    { href: '/deals/demo-cabai-001', label: 'Deals' },
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.tsx:87:            aria-label="Notifications"
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.tsx:134:                  href="/deals/demo-cabai-001"
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:3:import NotificationsPage from './page';
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:11:    getNotifications: vi.fn(),
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:18:describe('Notifications Page', () => {
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:25:    vi.mocked(repository.getNotifications).mockResolvedValue([]);
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:27:    const html = renderToString(await NotificationsPage());
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:36:    vi.mocked(repository.getNotifications).mockResolvedValue([
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:42:        message: 'Buyer requested Open Deal Room.',
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:48:    const html = renderToString(await NotificationsPage());
+D:\Settleway-audit-integration\web\src\app\notifications\page.test.tsx:51:    expect(html).toContain('Open Deal Room Requested');
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:22:  railVersion?: 'legacy_demo' | 'custody_v2_testnet';
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:63:      return { actionType: 'CREATE_DEAL', label: 'Create on Stellar' };
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:66:      return { actionType: 'ACCEPT_TERMS', label: 'Accept terms on Stellar' };
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:93:  railVersion = 'legacy_demo',
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:105:  const custodyV2Action = railVersion === 'custody_v2_testnet'
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:119:      setError('Connect a Stellar Testnet wallet on your profile before using the Custody V2 rail.');
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:124:      setError('A Stellar wallet with transaction signing is required for Custody V2.');
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:144:      setError('Switch your Stellar wallet to Testnet before using Custody V2.');
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:158:      setError(`Error: ${prepared.error?.message || 'Custody V2 preparation failed'}`);
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:183:      setError(`Error: ${submitted.error?.message || 'Custody V2 submission failed'}`);
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:384:      {railVersion === 'custody_v2_testnet' && (
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:386:          Custody V2 rail is active. Financial status is confirmed on Stellar Testnet before the
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:403:      {railVersion === 'custody_v2_testnet' && !custodyV2Action ? (
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:405:          Waiting for the next confirmed Custody V2 state before another wallet action is available.
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.tsx:408:      {railVersion === 'custody_v2_testnet' ? null : (
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.test.tsx:16:    expect(html).toContain('aria-label="Notifications"');
+D:\Settleway-audit-integration\web\src\components\layout\AuthenticatedHeader.test.tsx:17:    expect(html).not.toContain('>Notifications</a>');
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:6:import type { DbNotification } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:8:function formatNotificationType(type: string): string {
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:25:function NotificationCard({
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:29:  notification: DbNotification;
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:80:              {formatNotificationType(notification.type)}
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:110:export function NotificationsClient({
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:111:  initialNotifications,
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:114:  initialNotifications: DbNotification[];
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:117:  const [notifications, setNotifications] = useState(initialNotifications);
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:121:    setNotifications((prev) =>
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:131:    setNotifications((prev) =>
+D:\Settleway-audit-integration\web\src\app\notifications\NotificationsClient.tsx:199:          <NotificationCard
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.test.ts:4:describe('Custody V2 DealActions sequencing', () => {
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.test.ts:5:  it('starts with buyer Create on Stellar and then seller Accept terms on Stellar', () => {
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.test.ts:12:    ).toEqual({ actionType: 'CREATE_DEAL', label: 'Create on Stellar' });
+D:\Settleway-audit-integration\web\src\components\deal\DealActions.test.ts:28:    ).toEqual({ actionType: 'ACCEPT_TERMS', label: 'Accept terms on Stellar' });
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:19:  DbDeal,
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:122:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:279:                      Custody V2 · Stellar Testnet
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:285:                      This Deal Room is assigned directly to the Custody V2 Testnet rail. No
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:393:                  railVersion={deal.rail_version ?? 'legacy_demo'}
+D:\Settleway-audit-integration\web\src\components\deal\AuroraFundingDealRoom.tsx:490:                        Both parties agreed to open the protected Deal Room.
+D:\Settleway-audit-integration\web\src\components\deal\AuroraAssuranceRail.tsx:134:            <div className="text-slate-400">Deal ID</div>
+D:\Settleway-audit-integration\web\src\app\profiles\[userId]\page.tsx:281:                  a protected Deal Room.
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:7:  buildNotification,
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:45:          'Both parties must agree the deal terms before Open Deal Room becomes available.',
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:74:      const existingDeal = await repository.getDeal(dealId);
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:76:      if (!existingDeal) {
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:77:        await repository.createDeal(
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:93:      await repository.addNotification(
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:94:        buildNotification({
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:128:    await repository.addNotification(
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:129:      buildNotification({
+D:\Settleway-audit-integration\web\src\lib\offers\open-deal-room.ts:134:        message: 'Your counterpart already clicked Open Deal Room. Your confirmation will activate the escrow room.',
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:6:  DbNotification,
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:7:  DbNotificationType,
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:10:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:120:export function buildNotification(input: {
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:124:  type: DbNotificationType;
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:127:}): DbNotification {
+D:\Settleway-audit-integration\web\src\lib\offers\helpers.ts:143:}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:102:export type DbNotificationType =
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:109:export interface DbNotification {
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:113:  type: DbNotificationType;
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:120:export type DealRailVersion = 'legacy_demo' | 'custody_v2_testnet';
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:131:export interface DbDeal {
+D:\Settleway-audit-integration\web\src\lib\db\types.ts:189:  rail_version: 'custody_v2_testnet';
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:10:  DbNotification,
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:11:  DbDeal,
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:78:const toDbDeal = (d: any): DbDeal => ({
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:104:const DEMO_LINKED_OFFER_ID = 'offer-demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:105:const DEMO_LINKED_DEAL_ID = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:145:      id: 'offer-demo-cabai-001-msg-1',
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:152:      id: 'offer-demo-cabai-001-msg-2',
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:159:      id: 'offer-demo-cabai-001-msg-3',
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:162:      body: 'Understood. I am ready to open the Deal Room once you confirm the same terms.',
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:174:  notifications: Map<string, DbNotification> = new Map();
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:175:  deals: Map<string, DbDeal> = new Map();
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:212:      this.deals.set(d.id, toDbDeal(d));
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:220:    const seededDeal = this.deals.get(DEMO_LINKED_DEAL_ID);
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:221:    if (seededDeal) {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:223:        ...seededDeal,
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:245:  updateDeal(dealId: string, partialDeal: Partial<DbDeal>) {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:247:    if (!existing) throw new Error('Deal not found');
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:248:    this.deals.set(dealId, { ...existing, ...partialDeal, updated_at: new Date().toISOString() });
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:274:  addNotification(notification: DbNotification) {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:278:  getNotifications(recipientId: string): DbNotification[] {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:285:  markNotificationRead(notificationId: string) {
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:295:    current: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:296:    next: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:299:    deal: DbDeal | null;
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:306:    const currentKeys = Object.keys(input.current) as (keyof DbDeal)[];
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:307:    const storedKeys = Object.keys(stored) as (keyof DbDeal)[];
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:317:    const nextKeys = Object.keys(input.next) as (keyof DbDeal)[];
+D:\Settleway-audit-integration\web\src\lib\db\mock-store.ts:455:  findStellarOperationsByDeal(dealId: string): StellarOperation[] {
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:32:  const setupDeal = (dealId: string, status: DealStatus) => {
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:63:    setupDeal(dealId, 'DELIVERED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:94:    setupDeal(dealId, 'BUYER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:113:    setupDeal(dealId, 'SELLER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:127:    setupDeal(dealId, 'WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:140:    setupDeal(dealId, 'LOCKED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:153:    setupDeal(dealId, 'BUYER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:172:    setupDeal(dealId, 'LOCKED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:185:    setupDeal(dealId, 'LOCKED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:186:    const existingDeal = mockStore.deals.get(dealId)!;
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:189:    formData.append('actor_id', existingDeal.seller_id);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:197:    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: existingDeal.seller_id }) } as any);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:206:    const updatedDeal = mockStore.deals.get(dealId)!;
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:207:    expect(updatedDeal.proof_hash).toBe(dealEvidence[0].sha256_hash);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:218:    setupDeal(dealId, 'LOCKED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:219:    const existingDeal = mockStore.deals.get(dealId)!;
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:229:        actor_id: existingDeal.seller_id,
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:233:    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: existingDeal.seller_id }) } as any);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:241:    const updatedDeal = mockStore.deals.get(dealId)!;
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:242:    expect(updatedDeal.proof_hash).toBe(simulatedProofHash);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:251:    setupDeal(dealId, 'PROOF_SUBMITTED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:267:    setupDeal(dealId, 'DELIVERED');
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:273:    mockStore.updateDeal(dealId, deal);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:281:        mockStore.updateDeal(dealId, next);
+D:\Settleway-audit-integration\web\src\lib\integration\integration.test.ts:369:    setupDeal(dealId, 'LOCKED');
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:132:      )} kg of ${offer.commodity} are waiting for counterparty acceptance. The Deal Room stays closed until the terms are accepted and both parties confirm Open Deal Room.`;
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:136:      ? 'Both parties confirmed Open Deal Room. The active escrow room is ready.'
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:138:        ? 'Your counterparty already clicked Open Deal Room. Your confirmation will activate the escrow room.'
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:140:          ? 'You already clicked Open Deal Room. Waiting for your counterparty confirmation.'
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:141:          : 'Commercial terms are aligned. Both parties must still confirm Open Deal Room before deposits begin.';
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:170:            ? 'Commercial terms are aligned. Review the agreement summary below. The Deal Room becomes active only after both parties confirm Open Deal Room.'
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.tsx:336:                  {termsAccepted ? 'Agreed Deal Terms' : 'Submitted Deal Terms'}
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.test.tsx:35:        name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.test.tsx:42:        params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.test.tsx:49:    expect(html).toContain('Agreed Deal Terms');
+D:\Settleway-audit-integration\web\src\app\offers\[offerId]\page.test.tsx:59:        params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.test.ts:6:  decodeCustodyV2Deal,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.test.ts:16:describe('Custody V2 contract reader decoders', () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.test.ts:41:    expect(decodeCustodyV2Deal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.test.ts:83:    expect(() => decodeCustodyV2Deal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:24:  const enabled = env.NEXT_PUBLIC_CUSTODY_V2_ENABLED === 'true';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:43:    networkPassphrase: required(env.NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE, 'NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE'),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:44:    contractId: required(env.NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID, 'NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID'),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:45:    assetContractId: required(env.NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID, 'NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID'),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:47:    explorerBaseUrl: env.NEXT_PUBLIC_CUSTODY_V2_EXPLORER_BASE || 'https://stellar.expert/explorer/testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:48:    interfaceVersion: required(env.NEXT_PUBLIC_CUSTODY_V2_INTERFACE_VERSION, 'NEXT_PUBLIC_CUSTODY_V2_INTERFACE_VERSION') as '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:49:    policyVersion: required(env.NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION, 'NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION') as '2',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:62:    throw new Error('Custody V2 integration is disabled.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:78:    throw new Error(`${name} is required when Custody V2 is enabled.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:85:    throw new Error('Custody V2 Testnet integration cannot be silently enabled in production.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:88:    throw new Error('Custody V2 integration must use Stellar Testnet passphrase.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:91:    throw new Error('NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID must be a valid Stellar contract ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:94:    throw new Error('NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID must be a valid Stellar asset contract ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:97:    throw new Error('Custody V2 expected interface version is 2.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\config.ts:100:    throw new Error('Custody V2 expected policy version is 2.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:32:export interface CustodyV2ChainDeal {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:79:  getDeal(sourceAddress: string, contractDealId: string): Promise<CustodyV2ReadResult<CustodyV2ChainDeal>>;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:131:    throw new Error('Custody V2 reader contract ID mismatch.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:193:  throw new Error(`Unknown Custody V2 state: ${String(value)}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:203:  throw new Error(`Unknown Custody V2 terminal outcome: ${String(value)}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:227:export function decodeCustodyV2Deal(value: unknown): CustodyV2ChainDeal {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:280:      throw new Error('Custody V2 reader contract ID must be a valid contract ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:292:        throw new ContractMismatchError('Custody V2 contract config does not match the configured application target.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:297:  async getDeal(sourceAddress: string, contractDealId: string) {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:298:    return this.callAndDecode('get_deal', [bytes32ScVal(contractDealId)], decodeCustodyV2Deal, sourceAddress);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:316:        throw new ContractMismatchError('Custody V2 contract info does not match the expected V2.1 interface.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:347:        const message = simulated.error ?? 'Custody V2 read simulation failed.';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\contract-reader.ts:357:        return { ok: false, error_code: 'decode_error', message: 'Custody V2 read returned no value.' };
+D:\Settleway-audit-integration\web\src\components\offers\CreateOfferComposer.test.tsx:30:    expect(html).toContain('Deal Terms');
+D:\Settleway-audit-integration\web\src\app\marketplace\[listingId]\page.tsx:59:  return `${input.sellerName ?? 'The seller'} is offering ${input.volumeKg.toLocaleString('id-ID')} kg of ${input.variety} from ${input.location}. ${readiness} Buyers should use the recorded negotiation to confirm final quantity, price, grading expectations, packaging, delivery handoff, and the product photos or documents that should be attached before the protected Deal Room opens.`;
+D:\Settleway-audit-integration\web\src\app\offers\new\page.test.tsx:29:    expect(html).toContain('Pre-Deal Negotiation');
+D:\Settleway-audit-integration\web\src\app\offers\new\page.test.tsx:32:    expect(html).toContain('Deal Terms');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:13:import type { DbDeal } from '../db/types';
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:15:function makeDeal(status: DealStatus): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:60:    expect(lockAfterCustody(makeDeal('CUSTODY_PENDING')).status).toBe('LOCKED');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:61:    expect(() => lockAfterCustody(makeDeal('BUYER_FUNDED'))).toThrow('custody lock');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:89:    expect(transition(makeDeal('WAITING_DEPOSITS'), 'buyer_deposit').status).toBe('BUYER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:90:    expect(transition(makeDeal('BUYER_FUNDED'), 'seller_deposit').status).toBe('LOCKED');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:91:    expect(transition(makeDeal('LOCKED'), 'submit_proof').status).toBe('PROOF_SUBMITTED');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:92:    expect(transition(makeDeal('PROOF_SUBMITTED'), 'mark_delivered').status).toBe('DELIVERED');
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.test.ts:93:    expect(transition(makeDeal('DELIVERED'), 'accept_delivery').status).toBe('COMPLETED');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:68:    expect(mockStore.getNotifications('seller-probolinggo-cabai')).toHaveLength(1);
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:155:  it('accepts submitted deal terms before Open Deal Room can begin', async () => {
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:193:  it('activates an escrow deal only after both parties open the Deal Room', async () => {
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:239:    const activeDeal = mockStore.deals.get(`deal-${offerId}`);
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:240:    expect(activeDeal?.status).toBe('WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:241:    expect(activeDeal?.terms.activation_source).toBe('mutual_open_deal_room');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:242:    expect(activeDeal?.terms.offer_id).toBe(offerId);
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:243:    expect(activeDeal?.terms.deposit_window_hours).toBe(24);
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:244:    expect(typeof activeDeal?.terms.deposit_deadline_at).toBe('string');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:245:    expect(typeof activeDeal?.terms.activated_at).toBe('string');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:246:    expect(activeDeal?.stellar_mode).toBe('mock_only');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:250:  it('supports Open Deal Room through the parent offer POST route for UI stability', async () => {
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:343:    const activeDeal = mockStore.deals.get(`deal-${offerId}`);
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:344:    expect(activeDeal?.stellar_mode).toBe('testnet');
+D:\Settleway-audit-integration\web\src\lib\integration\offer-routes.test.ts:345:    expect(activeDeal?.stellar_contract_id).toBe('CCONTRACT123');
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:7:  DbNotification,
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:8:  DbDeal,
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:39:  getNotifications(recipientId: string): Promise<DbNotification[]>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:40:  addNotification(notification: DbNotification): Promise<void>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:41:  markNotificationRead(id: string): Promise<void>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:44:  getDeal(id: string): Promise<DbDeal | null>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:45:  createDeal(deal: DbDeal): Promise<void>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:46:  updateDeal(id: string, partial: Partial<DbDeal>): Promise<void>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:47:  replaceDealIfCurrent(input: { current: DbDeal; next: DbDeal }): Promise<{ replaced: boolean; deal: DbDeal | null }>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:57:  findStellarOperationsByDeal(dealId: string): Promise<StellarOperation[]>;
+D:\Settleway-audit-integration\web\src\lib\repositories\interfaces.ts:60:  // Custody V2 application integration
+D:\Settleway-audit-integration\web\src\components\offers\CreateOfferComposer.tsx:397:                  here before either side opens the protected Deal Room.
+D:\Settleway-audit-integration\web\src\components\offers\CreateOfferComposer.tsx:586:              You can attach photos, videos, and PDFs before the protected Deal Room opens.
+D:\Settleway-audit-integration\web\src\components\offers\CreateOfferComposer.tsx:597:              <h2 className="text-2xl font-semibold text-emerald-900">Deal Terms</h2>
+D:\Settleway-audit-integration\web\src\components\offers\CreateOfferComposer.tsx:599:                Adjust the commercial terms here before both parties move toward Open Deal Room.
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.test.ts:56:describe('Custody V2 event ingestion', () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.test.ts:108:      .toThrow('Unsupported Custody V2 event type');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:6:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:43:      return { status: 409, code: 'CONFLICT', message: 'Deal execution is out of sync. Please retry.' };
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:57:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:60:  const updatedDeal = transition(existingDeal, 'seller_deposit');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:61:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:73:      deposit_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:74:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:79:  if (updatedDeal.status === 'LOCKED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:81:      updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:89:        buyer_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:90:        seller_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:91:        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:92:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:98:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:101:function deriveDealHash(existingDeal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:102:  if (existingDeal.volume_kg === null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:103:    throw new Error('Deal volume is required before Testnet escrow preparation.');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:108:    deal_id: existingDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:109:    buyer_id: existingDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:110:    seller_id: existingDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:111:    commodity: existingDeal.commodity,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:112:    volume_kg: String(existingDeal.volume_kg),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:113:    principal_idr: String(existingDeal.principal_idr),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:119:function deriveExpiryUnixSeconds(existingDeal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:120:  const deadline = existingDeal.terms.deposit_deadline_at;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:134:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:141:  let currentDeal = input.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:150:      deal: currentDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:152:      deal_hash: deriveDealHash(currentDeal),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:153:      expires_at: deriveExpiryUnixSeconds(currentDeal),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:170:    const refreshedDeal = await repository.getDeal(input.deal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:171:    if (refreshedDeal && refreshedDeal.stellar_escrow_id !== null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:172:      return { ok: true as const, deal: refreshedDeal };
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:187:    currentDeal = refreshedDeal ?? result.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:206:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:211:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:219:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:220:      return runLegacyLocalSellerDeposit(dealId, existingDeal, authUser);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:234:    const preparedDeal = await ensureTestnetEscrowPrepared({
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:235:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:238:    if (!preparedDeal.ok) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:239:      const failure = mapCoordinatorFailure(preparedDeal.result);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:244:      deal: preparedDeal.deal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:259:      createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'seller_deposit'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:261:    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'seller_deposit');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:262:    let currentDeal = preparedDeal.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:271:        operation_id: `route:${preparedDeal.deal.id}:seller_deposit:${timestamp}`,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:272:        deal: currentDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:304:      currentDeal = (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:333:    const updatedDeal =
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:334:      (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:342:        deposit_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:343:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:352:    if (updatedDeal.status === 'LOCKED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:354:        updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:362:          buyer_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:363:          seller_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:364:          platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:365:          next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.ts:374:      createSuccessResponse(updatedDeal, {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:58:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:91:    setupDeal("deal-seller-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:105:    const updatedDeal = mockStore.deals.get("deal-seller-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:106:    expect(updatedDeal?.status).toBe("SELLER_FUNDED");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:107:    expect(updatedDeal?.stellar_contract_id).toBe("CCONTRACT123");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:108:    expect(updatedDeal?.stellar_escrow_id).toBe("123");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:109:    expect(updatedDeal?.latest_stellar_tx_hash).toBe("d".repeat(64));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:117:    setupDeal("deal-seller-lock", {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:136:    const updatedDeal = mockStore.deals.get("deal-seller-lock");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:137:    expect(updatedDeal?.status).toBe("LOCKED");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:138:    expect(updatedDeal?.latest_stellar_tx_hash).toBe("d".repeat(64));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:147:    setupDeal("deal-seller-reconcile", {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\seller-deposit\route.test.ts:196:    setupDeal("deal-seller-mock", { stellar_mode: "mock_only" });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\route.ts:9:    const deal = await repository.getDeal(dealId);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\route.ts:11:      return NextResponse.json(createErrorResponse('NOT_FOUND', 'Deal not found'), { status: 404 });
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.ts:1:import { DbDeal } from '../db/types';
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.ts:82:export function lockAfterCustody(deal: DbDeal): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\escrow\state-machine.ts:94:export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\helpers.test.ts:28:    expect(() => createStellarIdempotencyKey("", "LOCKED", "submit_proof")).toThrowError("Deal ID cannot be empty");
+D:\Settleway-audit-integration\web\src\lib\stellar\helpers.test.ts:32:    expect(() => createStellarIdempotencyKey("   ", "LOCKED", "submit_proof")).toThrowError("Deal ID cannot be empty");
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:22:          'Direct deal creation is disabled. Use Submit Offer and mutual Open Deal Room first.',
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:35:          'Both parties must click Open Deal Room before an active escrow deal can be created.',
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:43:    const existingDeal = await repository.getDeal(dealId);
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:44:    if (existingDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:45:      return NextResponse.json(createSuccessResponse(existingDeal, { source: 'repository', reused: true }));
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:48:    const newDeal = buildDealFromOffer({
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:54:    await repository.createDeal(newDeal);
+D:\Settleway-audit-integration\web\src\app\api\deals\route.ts:61:    return NextResponse.json(createSuccessResponse(newDeal, { source: 'repository' }));
+D:\Settleway-audit-integration\web\src\app\offers\new\page.tsx:59:          Pre-Deal Negotiation
+D:\Settleway-audit-integration\web\src\app\offers\new\page.tsx:66:          This is the recorded negotiation area. The Deal Room opens only after the offer is
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:4:import type { DbDeal } from '../db/types';
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:41:    const newDeal: DbDeal = {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:68:    await repo.createDeal(newDeal);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:69:    const retrieved = await repo.getDeal('test-deal-123');
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:75:    const deal = await repo.getDeal('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:78:    const nextDeal = { ...deal!, status: 'BUYER_FUNDED' as const, updated_at: new Date().toISOString() };
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:79:    const { replaced, deal: updated } = await repo.replaceDealIfCurrent({ current: deal!, next: nextDeal });
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:86:    const deal = await repo.getDeal('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:89:    const nextDeal = { ...deal!, status: 'BUYER_FUNDED' as const, updated_at: new Date().toISOString() };
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:92:    await repo.updateDeal('demo-cabai-001', { status: 'SELLER_FUNDED' });
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.test.ts:94:    const { replaced } = await repo.replaceDealIfCurrent({ current: deal!, next: nextDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.test.ts:55:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.test.ts:133:    setupDeal("deal-expire-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:5:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:14:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:19:  const updatedDeal = transition(existingDeal, 'refund');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:20:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:29:      previous_status: existingDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:30:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:40:    const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:42:      deal_id: updatedDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:43:      buyer_id: updatedDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:44:      seller_id: updatedDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:46:      principal_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:49:      sync_status: updatedDeal.stellar_sync_status
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:53:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:61:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:65:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:71:    const isPreLocked = isPreLockDealStatus(existingDeal.status);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:73:      existingDeal.status === 'BUYER_FUNDED'
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:75:        : existingDeal.status === 'SELLER_FUNDED'
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:79:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:80:      return await runLegacyLocalRefund(dealId, existingDeal, authUser, isPreLocked, refundToParty);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:97:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:107:    const updatedDeal = executionResult.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:114:        previous_status: existingDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:115:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.ts:127:    return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.test.ts:55:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\refund\route.test.ts:133:    setupDeal("deal-refund-testnet");
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:94:    throw new Error('Custody V2 event contract ID mismatch.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:99:    throw new Error(`Unsupported Custody V2 event type: ${input.event_type}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:103:      throw new Error('Custody V2 event deal ID must be a lowercase bytes32 hex string.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:106:    throw new Error('Custody V2 init event must not fabricate a contract deal ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:109:    throw new Error('Custody V2 event ledger must be a positive integer.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:112:    throw new Error('Custody V2 event transaction hash must be a lowercase SHA-256 hex string.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:115:    throw new Error('Custody V2 event index must be a non-negative integer.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:118:    throw new Error('Custody V2 event must preserve the opaque Stellar RPC event ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:151:    throw new Error('Custody V2 raw event contract ID mismatch.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:180:      throw new Error(`Custody V2 event ${eventType} has invalid non-negative field: ${field}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:188:    throw new Error('Custody V2 raw event has an invalid opaque event ID index.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:199:    throw new Error('Custody V2 raw event has no topics.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:202:    throw new Error('Custody V2 raw event has no opaque Stellar RPC event ID.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:208:    throw new Error(`Unsupported Custody V2 event type: ${String(eventType)}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:212:    throw new Error(`Custody V2 ${eventType} event has invalid topic count.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:224:    throw new Error(`Custody V2 ${eventType} event is missing a deal ID.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:227:    throw new Error(`Custody V2 ${eventType} event must be contract-scoped.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\events.ts:232:  if (!txHash) throw new Error('Custody V2 raw event has no transaction hash.');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:5:import type { DbDeal, ReputationOutcome } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:14:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:21:  const updatedDeal = transition(existingDeal, 'expire');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:22:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:28:    previous_status: existingDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:29:    next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:37:    const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:39:      deal_id: updatedDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:40:      buyer_id: updatedDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:41:      seller_id: updatedDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:43:      principal_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:46:      sync_status: updatedDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:50:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:58:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:62:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:73:    if (existingDeal.status === 'BUYER_FUNDED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:79:    } else if (existingDeal.status === 'SELLER_FUNDED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:87:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:90:        existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:113:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:123:    const updatedDeal = executionResult.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:125:      previous_status: existingDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:126:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\expire\route.ts:136:    return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\submit\route.ts:27:        createErrorResponse('NOT_FOUND', 'Prepared Custody V2 operation was not found.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\submit\route.ts:43:        createErrorResponse('CUSTODY_V2_OPERATION_EXPIRED', 'Prepared Custody V2 transaction expired before submission.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\submit\route.ts:77:      createErrorResponse('CUSTODY_V2_SUBMIT_FAILED', failed?.failure_code ?? 'Custody V2 submission failed.'),
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:22:  const setupDeal = (dealId: string, status: string) => {
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:51:  it('POST /api/deals rejects direct deal creation without mutual Open Deal Room', async () => {
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:62:    setupDeal('deal-get', 'WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:70:    setupDeal('deal-bd', 'WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:78:    setupDeal('deal-sd', 'WAITING_DEPOSITS');
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:86:    setupDeal('deal-lock', 'BUYER_FUNDED');
+D:\Settleway-audit-integration\web\src\lib\integration\route-evidence.test.ts:97:    setupDeal('deal-md', 'PROOF_SUBMITTED');
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:9:  DbNotification,
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:10:  DbDeal,
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:81:  async getNotifications(recipientId: string): Promise<DbNotification[]> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:82:    return mockStore.getNotifications(recipientId);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:85:  async addNotification(notification: DbNotification): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:86:    mockStore.addNotification(notification);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:89:  async markNotificationRead(id: string): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:90:    mockStore.markNotificationRead(id);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:93:  async getDeal(id: string): Promise<DbDeal | null> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:98:  async createDeal(deal: DbDeal): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:100:      throw new Error(`Deal ${deal.id} already exists`);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:105:  async updateDeal(id: string, partial: Partial<DbDeal>): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:106:    mockStore.updateDeal(id, partial);
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:109:  async replaceDealIfCurrent(input: { current: DbDeal; next: DbDeal }): Promise<{ replaced: boolean; deal: DbDeal | null }> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:133:  async findStellarOperationsByDeal(dealId: string): Promise<StellarOperation[]> {
+D:\Settleway-audit-integration\web\src\lib\repositories\mock-adapter.ts:134:    return mockStore.findStellarOperationsByDeal(dealId);
+D:\Settleway-audit-integration\web\src\lib\stellar\helpers.ts:14:    throw new Error("Deal ID cannot be empty");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:58:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:91:    setupDeal("deal-buyer-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:102:    const afterRouteDeal = mockStore.deals.get("deal-buyer-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:106:    const updatedDeal = afterRouteDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:107:    expect(updatedDeal?.status).toBe("BUYER_FUNDED");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:108:    expect(updatedDeal?.stellar_contract_id).toBe("CCONTRACT123");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:109:    expect(updatedDeal?.stellar_escrow_id).toBe("123");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:110:    expect(updatedDeal?.latest_stellar_tx_hash).toBe("b".repeat(64));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:119:    setupDeal("deal-buyer-reconcile", {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.test.ts:166:    setupDeal("deal-buyer-mock", { stellar_mode: "mock_only" });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\freeze-terms\route.ts:6:import { freezeCustodyV2Deal } from '@/lib/custody-v2/links';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\freeze-terms\route.ts:30:        createErrorResponse('UNAUTHORIZED', 'Only the buyer may freeze the initial Custody V2 application corridor.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\freeze-terms\route.ts:38:    const link = await freezeCustodyV2Deal({
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:2:import type { DbCustodyDealLink, DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:13:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:41:export async function freezeCustodyV2Deal(input: FreezeCustodyV2DealInput): Promise<DbCustodyDealLink> {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:42:  if (!input.config.enabled) throw new Error('Custody V2 integration is not enabled.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:45:  if (input.deal.rail_version && input.deal.rail_version !== 'custody_v2_testnet') {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:89:    rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:116:  await input.repository.updateDeal(input.deal.id, {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\links.ts:117:    rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.test.ts:86:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.test.ts:164:    setupDeal("deal-accept-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.test.ts:208:    setupDeal("deal-accept-reconcile");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.test.ts:252:    setupDeal("deal-accept-custody", {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:6:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:43:      return { status: 409, code: 'CONFLICT', message: 'Deal execution is out of sync. Please retry.' };
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:57:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:60:  const updatedDeal = transition(existingDeal, 'buyer_deposit');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:61:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:73:      deposit_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:74:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:79:  if (updatedDeal.status === 'LOCKED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:81:      updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:89:        buyer_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:90:        seller_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:91:        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:92:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:98:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:101:function deriveDealHash(existingDeal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:102:  if (existingDeal.volume_kg === null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:103:    throw new Error('Deal volume is required before Testnet escrow preparation.');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:108:    deal_id: existingDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:109:    buyer_id: existingDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:110:    seller_id: existingDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:111:    commodity: existingDeal.commodity,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:112:    volume_kg: String(existingDeal.volume_kg),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:113:    principal_idr: String(existingDeal.principal_idr),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:119:function deriveExpiryUnixSeconds(existingDeal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:120:  const deadline = existingDeal.terms.deposit_deadline_at;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:134:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:141:  let currentDeal = input.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:150:      deal: currentDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:152:      deal_hash: deriveDealHash(currentDeal),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:153:      expires_at: deriveExpiryUnixSeconds(currentDeal),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:170:    const refreshedDeal = await repository.getDeal(input.deal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:171:    if (refreshedDeal && refreshedDeal.stellar_escrow_id !== null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:172:      return { ok: true as const, deal: refreshedDeal };
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:187:    currentDeal = refreshedDeal ?? result.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:206:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:211:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:219:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:220:      return runLegacyLocalBuyerDeposit(dealId, existingDeal, authUser);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:234:    const preparedDeal = await ensureTestnetEscrowPrepared({
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:235:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:238:    if (!preparedDeal.ok) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:239:      const failure = mapCoordinatorFailure(preparedDeal.result);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:244:      deal: preparedDeal.deal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:259:      createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'buyer_deposit'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:261:    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'buyer_deposit');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:262:    let currentDeal = preparedDeal.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:271:        operation_id: `route:${preparedDeal.deal.id}:buyer_deposit:${timestamp}`,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:272:        deal: currentDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:304:      currentDeal = (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:333:    const updatedDeal =
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:334:      (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:342:        deposit_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:343:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:352:    if (updatedDeal.status === 'LOCKED') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:354:        updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:362:          buyer_total_idr: updatedDeal.buyer_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:363:          seller_total_idr: updatedDeal.seller_total_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:364:          platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:365:          next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\buyer-deposit\route.ts:374:      createSuccessResponse(updatedDeal, {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.test.ts:65:  function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.test.ts:96:    setupDeal("deal-delivered-testnet");
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.test.ts:118:    setupDeal("deal-delivered-custody", {
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:127:      expect(html).toContain('Pre-Deal Negotiation');
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:130:      expect(html).toContain('Deal Terms');
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:134:  describe('Evidence UI (Deal Room)', () => {
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:136:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:163:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:206:      mockStore.updateDeal(dealId, {
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:225:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:226:      mockStore.updateDeal(dealId, {
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:264:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:265:      mockStore.updateDeal(dealId, { status: 'COMPLETED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:291:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:292:      mockStore.updateDeal(dealId, { status: 'REFUNDED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:310:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:311:      mockStore.updateDeal(dealId, { status: 'EXPIRED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:329:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:330:      mockStore.updateDeal(dealId, { status: 'REFUNDED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:399:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:400:      mockStore.updateDeal(dealId, { status: 'LOCKED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:408:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:409:      mockStore.updateDeal(dealId, { status: 'PROOF_SUBMITTED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:438:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:439:      mockStore.updateDeal(dealId, { status: 'DELIVERED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:462:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:463:      mockStore.updateDeal(dealId, { status: 'LOCKED' });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:476:      const dealId = 'demo-cabai-001';
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:478:      mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: null });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:483:      mockStore.updateDeal(dealId, { stellar_mode: 'testnet', stellar_contract_id: null });
+D:\Settleway-audit-integration\web\src\lib\integration\ui-acceptance.test.ts:489:      mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: 'C-MOCK-123', latest_stellar_tx_hash: 'tx-123' });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\prepare\route.ts:32:        createErrorResponse('BAD_REQUEST', 'action_type is not supported for Custody V2.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:26:        createErrorResponse('NOT_FOUND', 'Custody V2 operation was not found.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:32:        createErrorResponse('BAD_REQUEST', 'Custody V2 operation has not been submitted yet.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:66:        createErrorResponse('CUSTODY_V2_TRANSACTION_FAILED', failed?.failure_code ?? 'Custody V2 transaction failed on Stellar.'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:76:    if (!confirmedOperation) throw new Error('Custody V2 confirmation update failed.');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:78:    const chainDeal = await reader.getDeal(operation.actor_address, operation.contract_deal_id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:79:    if (!chainDeal.ok) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:82:        failure_code: `CHAIN_RECONCILIATION_${chainDeal.error_code.toUpperCase()}`,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:86:        createErrorResponse('CUSTODY_V2_CHAIN_RECONCILIATION_FAILED', chainDeal.message),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:93:      chainDeal: chainDeal.value,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\custody-v2\confirm\route.ts:94:      confirmedLedger: confirmation.ledger ?? chainDeal.latestLedger,
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:7:import type { DbDeal } from '../db/types';
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:105:      const newDeal: DbDeal = {
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:132:      await repo.createDeal(newDeal);
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:133:      const retrieved = await repo.getDeal('test-deal-123');
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:139:      const deal = await repo.getDeal('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:142:      const nextDeal = { ...deal!, status: 'BUYER_FUNDED' as const, updated_at: new Date().toISOString() };
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:143:      const { replaced, deal: updated } = await repo.replaceDealIfCurrent({ current: deal!, next: nextDeal });
+D:\Settleway-audit-integration\web\src\lib\repositories\shared-contract.test.ts:172:    { id: 'demo-cabai-001', status: 'WAITING_DEPOSITS', updated_at: '2026-06-15T00:00:00.000Z' }
+D:\Settleway-audit-integration\web\src\components\offers\OpenDealRoomButton.tsx:32:        setError('Open Deal Room is temporarily unavailable. Refresh the page and try again.');
+D:\Settleway-audit-integration\web\src\components\offers\OpenDealRoomButton.tsx:39:        setError(payload.error?.message || 'Failed to update the Deal Room commitment.');
+D:\Settleway-audit-integration\web\src\components\offers\OpenDealRoomButton.tsx:85:            : 'Open Deal Room'}
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:5:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:17:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:20:  const updatedDeal = transition(existingDeal, 'mark_delivered');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:21:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:30:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:31:      proof_hash: updatedDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:36:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:41:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:47:  const nextDeal = {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:48:    ...transition(input.existingDeal, 'mark_delivered'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:54:    current: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:55:    next: nextDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:58:  let updatedDeal = replaced.deal ?? nextDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:60:    const currentDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:62:      currentDeal?.status === 'DELIVERED' &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:63:      currentDeal.latest_stellar_tx_hash === input.transactionHash
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:65:      updatedDeal = currentDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:68:      currentDeal &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:69:      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:71:      await repository.updateDeal(input.existingDeal.id, {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:72:        status: nextDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:73:        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:74:        stellar_sync_status: nextDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:75:        updated_at: nextDeal.updated_at,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:77:      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:78:      if (!recoveredDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:81:      updatedDeal = recoveredDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:101:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:102:        proof_hash: updatedDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:106:        proof_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:109:    event.proof_hash = updatedDeal.proof_hash;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:114:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:119:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:124:    input.existingDeal.status !== 'PROOF_SUBMITTED' ||
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:125:    !input.existingDeal.proof_hash ||
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:126:    !input.existingDeal.latest_stellar_tx_hash
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:145:      existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:156:      deal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:174:    existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:187:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:192:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:202:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:203:      return runLegacyLocalDeliveryMilestone(dealId, existingDeal, authUser.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:217:    if (existingDeal.stellar_escrow_id === null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:220:        existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:229:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:239:    const updatedDeal = executionResult.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:246:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:247:        proof_hash: updatedDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\mark-delivered\route.ts:255:    return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:55:  function setupCompletedDeal() {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:68:    mockStore.updateDeal('demo-cabai-001', {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:77:    setupCompletedDeal();
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:83:      new Request('http://localhost/api/deals/demo-cabai-001/external-payout', {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:86:      { params: Promise.resolve({ dealId: 'demo-cabai-001' }) },
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\external-payout\route.test.ts:92:    const events = mockStore.getDealEvents('demo-cabai-001');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:5:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:22:async function buildCompletionPayoutMetadata(deal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:42:async function resolveConnectedWalletDestinations(deal: DbDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:69:  existingDeal: DbDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:72:  const updatedDeal = transition(existingDeal, 'accept_delivery');
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:73:  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:76:    updatedDeal.latest_stellar_tx_hash ??
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:77:    (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:79:  const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:87:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:88:      principal_to_seller_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:89:      buyer_bond_return_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:90:      seller_bond_return_idr: updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:91:      platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:92:      buyer_wallet_credit_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:93:      seller_wallet_credit_idr: updatedDeal.principal_idr + updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:94:      platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:102:  const operationStatus = updatedDeal.stellar_mode === 'mock_only' ? 'confirmed' : 'unknown';
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:105:    deal_id: updatedDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:106:    buyer_id: updatedDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:107:    seller_id: updatedDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:109:    principal_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:110:    transaction_hash: updatedDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:111:    proof_hash: updatedDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:116:    sync_status: updatedDeal.stellar_sync_status
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:119:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:124:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:140:  const nextDeal = {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:141:    ...transition(input.existingDeal, 'accept_delivery'),
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:147:    current: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:148:    next: nextDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:151:  let updatedDeal = replaced.deal ?? nextDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:153:    const currentDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:155:      currentDeal?.status === 'COMPLETED' &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:156:      currentDeal.latest_stellar_tx_hash === input.transactionHash
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:158:      updatedDeal = currentDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:161:      currentDeal &&
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:162:      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:164:      await repository.updateDeal(input.existingDeal.id, {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:165:        status: nextDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:166:        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:167:        stellar_sync_status: nextDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:168:        updated_at: nextDeal.updated_at,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:170:      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:171:      if (!recoveredDeal) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:174:      updatedDeal = recoveredDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:182:  const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:197:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:198:        principal_to_seller_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:199:        buyer_bond_return_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:200:        seller_bond_return_idr: updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:201:        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:202:        buyer_wallet_credit_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:203:        seller_wallet_credit_idr: updatedDeal.principal_idr + updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:204:        platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:220:        delivery_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:229:    deal_id: updatedDeal.id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:230:    buyer_id: updatedDeal.buyer_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:231:    seller_id: updatedDeal.seller_id,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:233:    principal_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:235:    proof_hash: updatedDeal.proof_hash,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:240:    sync_status: updatedDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:243:  return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:248:  existingDeal: DbDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:253:    input.existingDeal.status !== 'DELIVERED' ||
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:254:    !input.existingDeal.proof_hash ||
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:255:    !input.existingDeal.latest_stellar_tx_hash
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:274:      existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:305:      deal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:325:    const destinations = await resolveConnectedWalletDestinations(input.existingDeal);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:328:        ...input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:353:    existingDeal: input.existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:376:    let existingDeal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:381:      existingDeal = auth.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:389:    if (existingDeal.stellar_mode !== 'testnet') {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:390:      return runLegacyLocalAcceptance(dealId, existingDeal, authUser.id);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:404:    if (existingDeal.stellar_escrow_id === null) {
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:407:        existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:416:      deal: existingDeal,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:426:    const updatedDeal = executionResult.deal;
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:428:      updatedDeal.latest_stellar_tx_hash ??
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:429:      (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:431:    const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:439:        next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:440:        principal_to_seller_idr: updatedDeal.principal_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:441:        buyer_bond_return_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:442:        seller_bond_return_idr: updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:443:        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:444:        buyer_wallet_credit_idr: updatedDeal.buyer_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:445:        seller_wallet_credit_idr: updatedDeal.principal_idr + updatedDeal.seller_bond_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:446:        platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+D:\Settleway-audit-integration\web\src\app\api\deals\[dealId]\accept-delivery\route.ts:457:    return NextResponse.json(createSuccessResponse(updatedDeal));
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.test.ts:34:    rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.test.ts:74:describe('Custody V2 operation pipeline', () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:168:  it("findStellarOperationsByDeal filters, preserves order, and returns shallow copies", () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:173:    const results = store.findStellarOperationsByDeal("deal1");
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:184:    expect(store.findStellarOperationsByDeal("deal1").length).toBe(1);
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:189:    expect(store.findStellarOperationsByDeal("deal1").length).toBe(0);
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:196:    expect(store.findStellarOperationsByDeal("deal1").length).toBe(0);
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:414:    function makeDeal(overrides: Partial<import('../db/types').DbDeal> = {}): import('../db/types').DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:443:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:445:      const next = makeDeal({ stellar_sync_status: "pending", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:452:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:454:      const next = makeDeal({ stellar_contract_id: "c1", stellar_escrow_id: "e1", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:476:        const current = makeDeal({ id: `d-${from}-${to}`, status: from as import('../db/types').DealStatus });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:478:        const next = makeDeal({ id: current.id, status: to as import('../db/types').DealStatus, updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:485:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:486:      store.deals.set(current.id, makeDeal({ status: "BUYER_FUNDED" }));
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:487:      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:493:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:494:      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:500:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:502:      const next = makeDeal({ buyer_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:507:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:509:      const next = makeDeal({ seller_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:514:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:516:      const next = makeDeal({ listing_id: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:521:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:523:      const next = makeDeal({ principal_idr: 9999, updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:528:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:530:      const next = makeDeal({ stellar_mode: "testnet", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:535:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:537:      const next = makeDeal({ created_at: "2025-01-01T01:00:00Z", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:542:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:544:      const next = makeDeal({ commodity: "hacked", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:549:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:551:      const next = makeDeal({ status: "COMPLETED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:556:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:558:      const next = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:563:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:565:      const next = makeDeal({ status: "COMPLETED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:571:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:573:      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:582:      const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\mock-store.test.ts:584:      const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:9:  DbNotification,
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:10:  DbDeal,
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:103:  async getNotifications(recipientId: string): Promise<DbNotification[]> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:113:  async addNotification(notification: DbNotification): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:118:  async markNotificationRead(id: string): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:126:  async getDeal(id: string): Promise<DbDeal | null> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:132:  async createDeal(deal: DbDeal): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:137:  async updateDeal(id: string, partial: Partial<DbDeal>): Promise<void> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:144:  async replaceDealIfCurrent(input: { current: DbDeal; next: DbDeal }): Promise<{ replaced: boolean; deal: DbDeal | null }> {
+D:\Settleway-audit-integration\web\src\lib\repositories\supabase-adapter.ts:195:  async findStellarOperationsByDeal(dealId: string): Promise<StellarOperation[]> {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.test.ts:8:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.test.ts:19:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.test.ts:108:      deal: makeDeal(),
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.test.ts:123:        deal: makeDeal({ status: 'BUYER_FUNDED' }),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:151:    throw new Error('Only the buyer may create this Custody V2 deal in the application corridor.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:169:    throw new Error(`Custody V2 action ${action} is not allowed from ${state}.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:185:  if (!link) throw new Error('Custody V2 deal link was not found.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:186:  if (link.rail_version !== 'custody_v2_testnet') throw new Error('Deal is not on the Custody V2 Testnet rail.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:187:  if (link.contract_id !== input.config.contractId) throw new Error('Custody V2 contract ID mismatch.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:188:  if (link.asset_contract_id !== input.config.assetContractId) throw new Error('Custody V2 asset contract ID mismatch.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:193:      if (exists.ok && exists.value) throw new Error('Custody V2 on-chain deal already exists.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:194:      if (!exists.ok) throw new Error(`Custody V2 direct existence read failed: ${exists.message}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:196:      const chainDeal = await input.contractReader.getDeal(input.actorAddress, link.contract_deal_id);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:197:      if (!chainDeal.ok) throw new Error(`Custody V2 direct deal read failed: ${chainDeal.message}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:198:      assertChainDealMatchesLink({ link, chainDeal: chainDeal.value });
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:199:      effectiveState = chainDeal.value.state;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:217:    throw new Error(`Could not encode Custody V2 contract arguments: ${encoded.error_code}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:231:  if (!unsigned.ok) throw new Error(`Could not construct Custody V2 transaction: ${unsigned.error_code}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:235:    throw new Error('Constructed Custody V2 transaction was not a normal transaction.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:238:  if (!simulated.ok) throw new Error(`Custody V2 simulation failed: ${simulated.error_code}`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:240:    throw new Error('Custody V2 prepared transaction must be a normal transaction.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:300:    throw new Error('Signed transaction body does not match the prepared Custody V2 operation.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:304:    throw new Error('Signed Custody V2 envelope must be a normal transaction.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\operations.ts:316:    throw new Error('Signed Custody V2 transaction is missing the expected wallet signature.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:3:import type { CustodyV2ChainDeal } from './contract-reader';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:4:import { assertChainDealMatchesLink, terminalOutcomeFromChainDeal } from './projection';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:8:  rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:35:const chainDeal: CustodyV2ChainDeal = {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:70:describe('Custody V2 chain projection guard', () => {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:72:    expect(() => assertChainDealMatchesLink({ link, chainDeal })).not.toThrow();
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:73:    expect(terminalOutcomeFromChainDeal(chainDeal)).toBe('SettledSuccess');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.test.ts:79:      chainDeal: { ...chainDeal, principal: '101' },
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.ts:13:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-custody.ts:91:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:6:import type { CustodyV2ChainDeal } from './contract-reader';
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:18:  chainDeal: CustodyV2ChainDeal;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:20:  const { link, chainDeal } = input;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:22:  if (chainDeal.deal_id !== link.contract_deal_id) mismatches.push('contract_deal_id');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:23:  if (chainDeal.buyer !== link.buyer_address) mismatches.push('buyer_address');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:24:  if (chainDeal.seller !== link.seller_address) mismatches.push('seller_address');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:25:  if (chainDeal.mediator !== link.mediator_address) mismatches.push('mediator_address');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:26:  if (chainDeal.accepted_asset !== link.asset_contract_id) mismatches.push('asset_contract_id');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:27:  if (chainDeal.terms_hash !== link.terms_hash) mismatches.push('terms_hash');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:28:  if (chainDeal.principal !== link.principal_base_units) mismatches.push('principal_base_units');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:29:  if (chainDeal.buyer_bond !== link.buyer_bond_base_units) mismatches.push('buyer_bond_base_units');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:30:  if (chainDeal.seller_bond !== link.seller_bond_base_units) mismatches.push('seller_bond_base_units');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:31:  if (chainDeal.funding_deadline !== link.funding_deadline_unix) mismatches.push('funding_deadline_unix');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:32:  if (chainDeal.delivery_deadline !== link.delivery_deadline_unix) mismatches.push('delivery_deadline_unix');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:33:  if (chainDeal.inspection_deadline !== link.inspection_deadline_unix) mismatches.push('inspection_deadline_unix');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:35:    throw new Error(`Custody V2 chain deal does not match application link: ${mismatches.join(', ')}.`);
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:39:export function terminalOutcomeFromChainDeal(chainDeal: CustodyV2ChainDeal): CustodyV2ContractState | null {
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:40:  return TERMINAL_STATES.has(chainDeal.state) ? chainDeal.state : null;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:46:  chainDeal: CustodyV2ChainDeal;
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:51:  if (!link) throw new Error('Custody V2 deal link was not found for chain projection.');
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:52:  assertChainDealMatchesLink({ link, chainDeal: input.chainDeal });
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:55:    latest_contract_state: input.chainDeal.state,
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:56:    latest_terminal_outcome: terminalOutcomeFromChainDeal(input.chainDeal),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\projection.ts:60:  if (!updated) throw new Error('Custody V2 chain projection update failed.');
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.test.ts:8:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.test.ts:19:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.test.ts:85:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.test.ts:140:        deal: makeDeal({ status: 'DELIVERED' }),
+D:\Settleway-audit-integration\web\src\lib\custody-v2\repository.test.ts:13:  rail_version: 'custody_v2_testnet',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\repository.test.ts:85:describe('Custody V2 repository boundary', () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:2:import type { DbDeal, DbEscrowEvent } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:8:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:63:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:91:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:125:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.test.ts:147:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\custody-v2\terms.test.ts:31:  agreement_reference: 'offer-demo-cabai-001',
+D:\Settleway-audit-integration\web\src\lib\custody-v2\terms.test.ts:35:describe('Custody V2 canonical terms', () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.ts:14:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-external-payout.ts:84:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:13:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:23:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:86:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:107:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:128:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:158:    const deal = makeDeal({
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:159:      id: 'demo-cabai-001',
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:172:            memo: 'SW:s:demo-cabai-001',
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.test.ts:202:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:1:import type { DbDeal, DbEscrowEvent } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:20:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:26:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:39:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:44:  const lockedDeal: DbDeal = {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:51:    next: lockedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:55:    const current = await input.repository.getDeal(input.deal.id);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:64:      await input.repository.updateDeal(input.deal.id, {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:65:        status: lockedDeal.status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:66:        latest_stellar_tx_hash: lockedDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:67:        stellar_sync_status: lockedDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:68:        updated_at: lockedDeal.updated_at,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:70:      const recovered = await input.repository.getDeal(input.deal.id);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:95:  return lockedDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:100:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:104:    deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:121:    const lockedDeal = await persistLockedState({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:128:    if (!lockedDeal) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:133:        message: 'Custody was confirmed, but the Deal Room state needs reconciliation.',
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:138:      deal: lockedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:185:  const lockedDeal = await persistLockedState({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:192:  if (!lockedDeal) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:197:      message: 'Custody was confirmed, but the Deal Room state needs reconciliation.',
+D:\Settleway-audit-integration\web\src\lib\stellar\server\custody-sweep-service.ts:203:    deal: lockedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:3:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:6:describe("Deal Execution Coordinator", () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:30:  function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:80:      deal: makeDeal({ stellar_contract_id: null, stellar_escrow_id: null }),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:112:      deal: makeDeal(),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:134:      deal: makeDeal({ stellar_escrow_id: "not-a-number" }), // triggers assembly failure
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:152:      deal: makeDeal({ status: "SELLER_FUNDED" }), // invalid transition
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:172:    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {  action: "buyer_deposit", operation_id: "k1", deal: makeDeal(), metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: mockOpPersistence, deal_persistence: mockDealPersistence, execution_adapter: mockAdapter };
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:188:    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {  action: "buyer_deposit", operation_id: "k1", deal: makeDeal(), metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: mockOpPersistence, deal_persistence: mockDealPersistence, execution_adapter: mockAdapter };
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:205:    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {  action: "buyer_deposit", operation_id: "k1", deal: makeDeal(), metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: mockOpPersistence, deal_persistence: mockDealPersistence, execution_adapter: mockAdapter };
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:219:    const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = {  action: "buyer_deposit", operation_id: "k1", deal: makeDeal(), metadata: makeMeta(), existing_operation: null, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: mockOpPersistence, deal_persistence: mockDealPersistence, execution_adapter: mockAdapter };
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.test.ts:235:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:13:import type { DbDeal, DbProfile } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:51:export function resolveFundingTotalIdr(deal: DbDeal, role: FundingParticipantRole): number {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:61:export function resolveFundingProofAmountXlm(deal: DbDeal, role: FundingParticipantRole): string {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:68:  currentStatus: DbDeal['status'],
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:70:): DbDeal['status'] {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:118:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:155:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-funding.ts:227:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.ts:1:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.ts:30:  | { ok: true; current_deal: DbDeal; next_deal: DbDeal }
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.ts:40:  | { ok: false; reason: "ERR_DEAL_PERSISTENCE_CONFLICT"; operation: StellarOperation; candidate_next_deal: DbDeal }
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.ts:42:  | { ok: false; reason: "ERR_OUT_OF_SYNC"; operation: StellarOperation; candidate_next_deal: DbDeal }
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-coordinator.ts:95:  let next_deal: DbDeal | null = null;
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.test.ts:8:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.test.ts:19:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.test.ts:85:      deal: makeDeal(),
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.test.ts:104:        deal: makeDeal({ status: 'CUSTODY_PENDING', latest_stellar_tx_hash: null }),
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.test.ts:152:      deal: makeDeal({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:6:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:11:describe("Deal Execution Integration (Offline E2E)", () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:31:  function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:85:      const deal = makeDeal({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:152:      const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:184:      const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:200:      const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:214:      const deal = makeDeal({ principal_idr: NaN, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:222:       const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-execution-integration.test.ts:240:      const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.ts:13:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.ts:55:function buildDeliveryReferenceBytes(deal: DbDeal): Buffer {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.ts:78:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-proof.ts:139:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:3:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:7:describe("Deal Local Commit", () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:8:  function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:76:      const deal = makeDeal({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:118:    const deal = makeDeal({ status: "WAITING_DEPOSITS", stellar_contract_id: null, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:137:    const deal = makeDeal({ status: "WAITING_DEPOSITS" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:156:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp(), local_commit: { kind: "none" }, contract_id: "  ", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:161:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp(), local_commit: { kind: "none" }, contract_id: "c1", committed_at: "  " });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:166:      const result = planDealLocalCommit({ deal: makeDeal({ id: "deal-2" }), operation: makeOp(), local_commit: { kind: "none" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:171:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp({ operation_status: "submitted" }), local_commit: { kind: "none" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:176:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp({ transaction_hash: null }), local_commit: { kind: "none" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:181:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp(), local_commit: { kind: "sync_create_deal", transaction_hash: "tx2", result_escrow_id: "e1" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:186:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp({ target_local_status: "COMPLETED" }), local_commit: { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "e1" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:191:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp(), local_commit: { kind: "advance_status", target_status: "WAITING_DEPOSITS", transaction_hash: "tx1" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:196:      const result = planDealLocalCommit({ deal: makeDeal({ status: "BUYER_FUNDED" }), operation: makeOp(), local_commit: { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "e1" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:201:      const result = planDealLocalCommit({ deal: makeDeal({ stellar_contract_id: "c2" }), operation: makeOp(), local_commit: { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "e1" }, contract_id: "c1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:206:      const result = planDealLocalCommit({ deal: makeDeal(), operation: makeOp({ result_escrow_id: "e2" }), local_commit: { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "e1" }, contract_id: "contract-1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:211:      const result = planDealLocalCommit({ deal: makeDeal({ status: "SELLER_FUNDED" }), operation: makeOp({ requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", result_escrow_id: null }), local_commit: { kind: "advance_status", target_status: "BUYER_FUNDED", transaction_hash: "tx1" }, contract_id: "contract-1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:216:      const result = planDealLocalCommit({ deal: makeDeal({ status: "WAITING_DEPOSITS" }), operation: makeOp({ requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", result_escrow_id: "e1" }), local_commit: { kind: "advance_status", target_status: "BUYER_FUNDED", transaction_hash: "tx1" }, contract_id: "contract-1", committed_at: "t1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.test.ts:222:    const deal = makeDeal({ status: "WAITING_DEPOSITS", stellar_contract_id: null, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.test.ts:8:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.test.ts:19:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.test.ts:54:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.test.ts:123:        deal: makeDeal({ status: 'PROOF_SUBMITTED' }),
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.ts:13:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.ts:61:export function resolveSuccessSettlementProofAmounts(deal: DbDeal) {
+D:\Settleway-audit-integration\web\src\lib\stellar\testnet-settlement.ts:70:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.ts:1:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.ts:7:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.ts:27:  | { ok: true; current_deal: DbDeal; next_deal: DbDeal }
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-local-commit.ts:89:  const next_deal: DbDeal = JSON.parse(JSON.stringify(deal));
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:2:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:9:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:42:      deal: makeDeal({ status: "WAITING_DEPOSITS" }),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:70:      deal: makeDeal({ status: "BUYER_FUNDED" }),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:94:      deal: makeDeal(),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:108:      deal: makeDeal({ stellar_contract_id: "C_EXISTING_1" }),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.test.ts:121:      deal: makeDeal({ status: "LOCKED" }),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.ts:1:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.ts:113:  deal: DbDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-funding-runtime.ts:131:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:1:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:28:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:72:        message: "Deal execution is out of sync. Please retry.",
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:101:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:111:  let currentDeal = input.deal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:129:            deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:148:            deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:189:    currentDeal =
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:190:      (await repository.getDeal(input.deal.id)) ?? coordinatorResult.next_deal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:210:  const updatedDeal =
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:211:    (await repository.getDeal(input.deal.id)) ?? coordinatorResult!.next_deal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-room-route-execution.ts:215:    deal: updatedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\deal-sync-policy.test.ts:4:describe("Deal Sync Policy", () => {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:7:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:22:function baseDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:58:  isCreateDeal?: boolean;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:62:  { label: "create_deal (null)", action: "create_deal", status: null, expectedSigner: "admin", isCreateDeal: true },
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:82:        const deal = baseDeal({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:84:          stellar_escrow_id: plan.isCreateDeal ? null : "1",
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:87:        if (plan.isCreateDeal) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:122:          if (plan.isCreateDeal && res.build_input.action === "create_deal") {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:132:          if (!plan.isCreateDeal && "escrow_id" in res.build_input) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:151:      const deal = baseDeal({ stellar_mode: "mock_only", stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:166:      const deal = baseDeal({ status: "COMPLETED" as DealStatus });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:179:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:190:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:203:      const deal = baseDeal({ status: "LOCKED" as DealStatus });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:215:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:230:      const deal = baseDeal({ stellar_contract_id: "C_OTHER" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:241:      const deal = baseDeal({ stellar_contract_id: "C_CONTRACT" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:254:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:268:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:283:      const deal = baseDeal({ principal_idr: 0, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:296:      const deal = baseDeal({ principal_idr: -1, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:309:      const deal = baseDeal({ principal_idr: 1000.5, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:322:      const deal = baseDeal({ principal_idr: NaN, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:335:      const deal = baseDeal({ principal_idr: Infinity, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:348:      const deal = baseDeal({ principal_idr: Number.MAX_SAFE_INTEGER + 1, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:361:      const deal = baseDeal({ buyer_bond_idr: -1, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:374:      const deal = baseDeal({ seller_fee_idr: -1, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:387:      const deal = baseDeal({ principal_idr: Number.MAX_SAFE_INTEGER, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:403:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:423:      const deal = baseDeal({ buyer_bond_idr: 0, stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:441:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.test.ts:456:      const deal = baseDeal({ stellar_escrow_id: null });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.ts:1:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.ts:24:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.ts:32:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-input-assembler.ts:39:      deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:16:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:32:function baseDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:152:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:204:    const deal = baseDeal({ stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:236:    const deal = baseDeal({ status: "SELLER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:249:    const deal = baseDeal({ status: "WAITING_DEPOSITS", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:262:    const deal = baseDeal({ status: "BUYER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:275:    const deal = baseDeal({ status: "LOCKED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:288:    const deal = baseDeal({ status: "PROOF_SUBMITTED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:301:    const deal = baseDeal({ status: "DELIVERED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:314:    const deal = baseDeal({ status: "WAITING_DEPOSITS", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:327:    const deal = baseDeal({ status: "BUYER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:340:    const deal = baseDeal({ status: "SELLER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:353:    const deal = baseDeal({ status: "BUYER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:366:    const deal = baseDeal({ status: "SELLER_FUNDED", stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:380:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:418:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:449:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:485:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:519:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:570:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:619:    const deal = baseDeal({ stellar_mode: "mock_only" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:635:    const deal = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:657:    const ops = store.findStellarOperationsByDeal("deal-1");
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:666:    const deal1 = baseDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:689:    const deal2 = baseDeal({ stellar_escrow_id: "1" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\execution-integration.test.ts:709:    const ops = store.findStellarOperationsByDeal("deal-1");
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:4:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:15:  function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:46:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:58:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:70:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:71:    store.deals.set("deal-1", makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" }));
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:72:    const next = makeDeal({ status: "SELLER_FUNDED", updated_at: "2023-01-01T02:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:78:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:80:    const next = makeDeal({ principal_idr: 9999, updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:86:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:87:    const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:93:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:95:    const next = makeDeal({ status: "DELIVERED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:101:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:103:    const next = makeDeal({ status: "BUYER_FUNDED", updated_at: "2023-01-01T01:00:00Z" });
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.test.ts:112:    const current = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.ts:1:import type { DbDeal } from "../../db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.ts:17:    current: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.ts:18:    next: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.ts:26:    current: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\mock-store-deal-persistence.ts:27:    next: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\repository-execution-persistence.ts:11:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\repository-execution-persistence.ts:50:    current: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\repository-execution-persistence.ts:51:    next: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:2:import type { DbDeal } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:7:function makeDeal(): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:39:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:43:    const completeSweep = vi.fn(async ({ deal: pendingDeal }: { deal: DbDeal }) => ({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:45:      deal: pendingDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:84:    const deal = makeDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:92:    const completeSweep = vi.fn(async ({ deal: pendingDeal }: { deal: DbDeal }) => ({
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.test.ts:94:      deal: pendingDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:1:import type { DbDeal, DbEscrowEvent } from '@/lib/db/types';
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:15:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:33:  deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:90:  const current = await input.repository.getDeal(input.dealId);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:91:  if (!current) throw new Error('Deal not found');
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:110:  let updatedDeal = current;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:120:    const nextDeal: DbDeal = {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:129:      next: nextDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:133:      const refreshedDeal = await input.repository.getDeal(input.dealId);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:139:      if (refreshedDeal && wasRecordedConcurrently) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:142:          deal: refreshedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:153:        refreshedDeal &&
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:154:        JSON.stringify(refreshedDeal) === JSON.stringify(current)
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:156:        await input.repository.updateDeal(input.dealId, {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:157:          status: nextDeal.status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:158:          latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:159:          stellar_sync_status: nextDeal.stellar_sync_status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:160:          updated_at: nextDeal.updated_at,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:162:        const recoveredDeal = await input.repository.getDeal(input.dealId);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:164:          recoveredDeal?.status === nextDeal.status &&
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:165:          recoveredDeal.latest_stellar_tx_hash === input.transactionHash
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:167:          updatedDeal = recoveredDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:176:      updatedDeal = replacement.deal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:188:      deposit_total_idr: resolveFundingTotalIdr(updatedDeal, role),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:189:      next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:198:  if (updatedDeal.status === 'CUSTODY_PENDING') {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:207:          next_status: updatedDeal.status,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\signed-funding-service.ts:218:    deal: updatedDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:1:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:38:  readonly deal_status: DbDeal["status"];
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:48:    readonly status: DbDeal["status"];
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:98:  readonly deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:116:export function smokeFinalDealEvidence(deal: DbDeal): SmokeScenarioEvidence["final_deal"] {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\evidence.ts:159:  readonly final_deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\stellar-testnet-adapter-integration.test.ts:20:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\stellar-testnet-adapter-integration.test.ts:63:function makeDeal(overrides: Partial<DbDeal> = {}): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\stellar-testnet-adapter-integration.test.ts:97:    deal_overrides: Partial<DbDeal>;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\stellar-testnet-adapter-integration.test.ts:118:      const deal = makeDeal(plan.deal_overrides);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:2:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:22:      readonly final_deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:42:      readonly final_deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:69:function baseDealFromRuntime(runtime: SmokeRuntime): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:121:function operationKey(deal: DbDeal, action: StellarAction): string {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:129:function readCurrentDeal(runtime: SmokeRuntime): DbDeal | null {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:130:  return runtime.persistence.readDeal();
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:135:  dealBeforeAction: DbDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:150:      readonly next_deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:161:  const currentDeal = readCurrentDeal(input.runtime);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:162:  if (currentDeal === null) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:170:    deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:194:    ? readOperationAfterAction(input.runtime, currentDeal, input.action)
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:218:  input.runtime.persistence.seedDeal(baseDealFromRuntime(input.runtime));
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:241:      const currentDeal = readCurrentDeal(input.runtime);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:242:      const evidence = currentDeal === null
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:248:            final_deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:262:  const finalDeal = readCurrentDeal(input.runtime);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:263:  if (finalDeal === null) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:272:  const operations = input.runtime.persistence.listOperationsByDeal(finalDeal.id);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:277:    final_deal: finalDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:283:    final_deal: finalDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:328:  readonly deal?: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:331:    input.runtime.persistence.seedDeal(input.deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:342:  const currentDeal = readCurrentDeal(input.runtime);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:344:    const evidence = currentDeal === null
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:350:          final_deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:401:  const currentDeal = readCurrentDeal(input.runtime);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:402:  if (currentDeal === null) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:419:        deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:422:    final_deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\orchestrator.ts:428:    final_deal: currentDeal,
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:3:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:18:  seedDeal(deal: DbDeal): void;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:20:  readDeal(): DbDeal | null;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:22:  listOperationsByDeal(dealId: string): readonly StellarOperation[];
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:37:function cloneDeal(deal: DbDeal): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:101:function sameDeal(left: DbDeal, right: DbDeal): boolean {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:130:function preservesDealIdentity(current: DbDeal, next: DbDeal): boolean {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:189:  listByDeal(dealId: string): readonly StellarOperation[] {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:238:  private deal: DbDeal | null;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:241:  constructor(initialDeal: DbDeal | null) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:242:    this.deal = initialDeal === null ? null : cloneDeal(initialDeal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:249:  seed(deal: DbDeal): void {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:250:    this.deal = cloneDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:253:  read(): DbDeal | null {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:254:    return this.deal === null ? null : cloneDeal(this.deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:258:    current: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:259:    next: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:267:    if (this.deal === null || !sameDeal(this.deal, input.current)) {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:278:    this.deal = cloneDeal(input.next);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:284:  readonly initial_deal?: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:295:    seedDeal: (deal) => dealPersistence.seed(deal),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:297:    readDeal: () => dealPersistence.read(),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\persistence.ts:299:    listOperationsByDeal: (dealId) => operationPersistence.listByDeal(dealId),
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:15:import type { DbDeal } from "@/lib/db/types";
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:315:): DbDeal {
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:349:  readonly deal: DbDeal;
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:744:    persistence.seedDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:765:    persistence.seedDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:792:    persistence.seedDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:819:    persistence.seedDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:844:    persistence.seedDeal(deal);
+D:\Settleway-audit-integration\web\src\lib\stellar\server\smoke\smoke-tooling.test.ts:866:    persistence.seedDeal(deal);
