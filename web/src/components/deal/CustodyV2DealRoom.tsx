@@ -18,6 +18,11 @@ import type { UserSession } from '@/lib/auth/server';
 import { Stepper, type Step } from '@/components/ui/Stepper';
 import { resolveCustodyV2WalletRole } from '@/lib/custody-v2/roles';
 import { CustodyV2ActionPanel } from './CustodyV2ActionPanel';
+import {
+  custodyV2StateFacts,
+  custodyV2StatusCopy,
+  resolveCustodyV2ScreenState,
+} from './custody-v2-state-screen';
 
 interface CustodyV2DealRoomProps {
   deal: DbDeal;
@@ -42,17 +47,6 @@ function formatXlm(baseUnits: string): string {
 function shortAddress(address: string | null | undefined): string {
   if (!address) return 'Not connected';
   return `${address.slice(0, 7)}...${address.slice(-5)}`;
-}
-
-function latestOperation(
-  operations: DbCustodyOperation[],
-  actionType: DbCustodyOperation['action_type'],
-  status?: DbCustodyOperation['status'],
-): DbCustodyOperation | null {
-  return operations
-    .filter((operation) => operation.action_type === actionType)
-    .filter((operation) => (status ? operation.status === status : true))
-    .sort((a, b) => b.updated_at.localeCompare(a.updated_at))[0] ?? null;
 }
 
 function buildSteps(state: 'not_created' | 'create_pending' | 'awaiting_acceptance' | 'accept_pending' | 'awaiting_funding'): Step[] {
@@ -83,57 +77,6 @@ function buildSteps(state: 'not_created' | 'create_pending' | 'awaiting_acceptan
       status: state === 'awaiting_funding' ? 'current' : 'upcoming',
     },
   ];
-}
-
-function resolveScreenState(link: DbCustodyDealLink, operations: DbCustodyOperation[]) {
-  const createConfirmed = latestOperation(operations, 'CREATE_DEAL', 'confirmed');
-  const createSubmitted = latestOperation(operations, 'CREATE_DEAL', 'submitted');
-  const acceptConfirmed = latestOperation(operations, 'ACCEPT_TERMS', 'confirmed');
-  const acceptSubmitted = latestOperation(operations, 'ACCEPT_TERMS', 'submitted');
-
-  if (link.latest_contract_state === 'AwaitingFunding' || acceptConfirmed) {
-    return { key: 'awaiting_funding' as const, createConfirmed, createSubmitted, acceptConfirmed, acceptSubmitted };
-  }
-  if (acceptSubmitted) {
-    return { key: 'accept_pending' as const, createConfirmed, createSubmitted, acceptConfirmed, acceptSubmitted };
-  }
-  if (createConfirmed) {
-    return { key: 'awaiting_acceptance' as const, createConfirmed, createSubmitted, acceptConfirmed, acceptSubmitted };
-  }
-  if (createSubmitted) {
-    return { key: 'create_pending' as const, createConfirmed, createSubmitted, acceptConfirmed, acceptSubmitted };
-  }
-  return { key: 'not_created' as const, createConfirmed, createSubmitted, acceptConfirmed, acceptSubmitted };
-}
-
-function statusCopy(state: ReturnType<typeof resolveScreenState>['key']) {
-  switch (state) {
-    case 'not_created':
-      return {
-        title: 'Ready for buyer creation',
-        body: 'The agreed commercial terms are frozen. The buyer must create the Custody V2 deal on Stellar before the seller can accept.',
-      };
-    case 'create_pending':
-      return {
-        title: 'Creation submitted',
-        body: 'Buyer creation has been submitted to Stellar and is waiting for confirmation.',
-      };
-    case 'awaiting_acceptance':
-      return {
-        title: 'Waiting for seller acceptance',
-        body: 'The buyer created the deal on Stellar. The seller must now accept the exact same immutable terms.',
-      };
-    case 'accept_pending':
-      return {
-        title: 'Seller acceptance submitted',
-        body: 'Seller acceptance has been submitted to Stellar and is waiting for confirmation.',
-      };
-    case 'awaiting_funding':
-      return {
-        title: 'Awaiting funding',
-        body: 'Buyer creation and seller acceptance are confirmed. Funding actions will be enabled in Recovery Milestone 2.',
-      };
-  }
 }
 
 export function CustodyV2DealRoom({
@@ -171,8 +114,9 @@ export function CustodyV2DealRoom({
     buyerAddress: custodyLink.buyer_address,
     sellerAddress: custodyLink.seller_address,
   });
-  const state = resolveScreenState(custodyLink, operations);
-  const copy = statusCopy(state.key);
+  const state = resolveCustodyV2ScreenState(custodyLink, operations);
+  const stateFacts = custodyV2StateFacts(state.key);
+  const copy = custodyV2StatusCopy(state.key, roleResolution.role);
   const steps = buildSteps(state.key);
   const buyerDisplayName = buyerProfile?.display_name ?? 'Buyer';
   const sellerDisplayName = sellerProfile?.display_name ?? 'Seller';
@@ -239,6 +183,17 @@ export function CustodyV2DealRoom({
                     <p className="mt-1 text-sm text-[var(--text-secondary)]">{roleResolution.explanation}</p>
                   </div>
                   <div>
+                    <div className="text-xs font-semibold uppercase text-[var(--text-muted)]">
+                      Network
+                    </div>
+                    <div className="mt-1 text-lg font-semibold text-[var(--green-800)]">
+                      Stellar Testnet
+                    </div>
+                    <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                      Custody V2 actions must be signed on Stellar Testnet.
+                    </p>
+                  </div>
+                  <div className="md:col-span-2">
                     <div className="text-xs font-semibold uppercase text-[var(--text-muted)]">
                       Connected wallet
                     </div>
@@ -345,9 +300,25 @@ export function CustodyV2DealRoom({
             <section className="rounded-3xl border border-[var(--green-200)] bg-[var(--green-50)] p-6 shadow-sm">
               <div className="mb-5 flex items-center gap-3">
                 <WalletCards className="h-6 w-6 text-[var(--green-700)]" />
-                <h2 className="text-xl font-semibold text-[var(--navy-950)]">Aurora Assurance Rail</h2>
+                <div>
+                  <h2 className="text-xl font-semibold text-[var(--navy-950)]">Testnet XLM Obligations</h2>
+                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                    These XLM amounts are native SAC obligations for this Testnet acceptance deal.
+                  </p>
+                </div>
               </div>
               <div className="space-y-4 text-sm">
+                <div className="rounded-2xl border border-[var(--green-200)] bg-white/70 p-4">
+                  <div className="text-xs font-semibold uppercase text-[var(--text-muted)]">
+                    Commercial IDR reference only
+                  </div>
+                  <div className="mt-1 text-lg font-semibold text-[var(--navy-950)]">
+                    {formatIdr(deal.principal_idr)}
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-[var(--text-secondary)]">
+                    This value describes the negotiated trade, not an automatic conversion into the small Testnet XLM proof amounts.
+                  </p>
+                </div>
                 <div className="flex justify-between gap-4">
                   <span className="text-[var(--text-secondary)]">Principal</span>
                   <span className="font-semibold">{formatXlm(custodyLink.principal_base_units)}</span>
@@ -361,9 +332,23 @@ export function CustodyV2DealRoom({
                   <span className="font-semibold">{formatXlm(custodyLink.seller_bond_base_units)}</span>
                 </div>
                 <div className="border-t border-[var(--green-200)] pt-4">
-                  <div className="flex justify-between gap-4">
-                    <span className="text-[var(--text-secondary)]">Contract state</span>
-                    <span className="font-semibold">{custodyLink.latest_contract_state}</span>
+                  <div className="space-y-3">
+                    <div className="flex justify-between gap-4">
+                      <span className="text-[var(--text-secondary)]">Application state</span>
+                      <span className="text-right font-semibold">{stateFacts.applicationState}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="text-[var(--text-secondary)]">Confirmed contract state</span>
+                      <span className="text-right font-semibold">{stateFacts.confirmedContractState}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="text-[var(--text-secondary)]">Next successful contract state</span>
+                      <span className="text-right font-semibold">{stateFacts.nextSuccessfulContractState}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="text-[var(--text-secondary)]">Next responsible actor</span>
+                      <span className="text-right font-semibold">{stateFacts.nextResponsibleActor}</span>
+                    </div>
                   </div>
                 </div>
               </div>
