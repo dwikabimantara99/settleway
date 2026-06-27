@@ -2,25 +2,40 @@
 
 ## Current Candidate
 
-- Candidate branch: `work/soroban-custody-v2`
-- Candidate contract commit before final acceptance docs: `442eb0b2817fe40d2d07b7db8f969d54ed771ad9`
-- Canonical `origin/main` before promotion: `693da68289c17b8b97eaeeea707d0ebd877175d6`
+- Candidate branch: `recovery/custody-v2-product-corridor-1`
+- Baseline: `main` at `2654530d3a5fd2c195d5c68c6e0f324fc9a51f55`
+- Quarantined parts branch: `work/custody-v2-app-integration`
+- Accepted application-integration contract: `CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4`
 
 ## Current Task Boundary
 
-Custody V2.1 final acceptance may review the isolated contract, verify reproducible Wasm and interface coherence, verify Testnet proof evidence, update active documentation, run full local and remote gates, fast-forward promote to `main`, tag `v0.3.0-soroban-custody-v2.1`, and delete the completed milestone branch.
+Recovery Milestone 1 rebuilds the normal marketplace/offer/open-room path so it creates a `custody_v2_testnet` Deal Room without a development setup route.
+
+Implemented slice:
+
+- accepted offer;
+- wallet binding requirement;
+- mutual Open Deal Room;
+- explicit Custody V2 rail assignment;
+- canonical terms freeze;
+- real `/deals` discovery;
+- buyer `Create on Stellar` readiness;
+- seller waiting state before buyer creation.
 
 ## No-Touch Areas
 
-- No frontend redesign.
-- No application integration.
-- No backend contract invocation work.
-- No event indexer or reputation projection work.
-- No bank/QRIS/anchor/KYC/KYB implementation.
-- No live secret exposure.
-- No force-push or history rewrite.
-- No `main` promotion while candidate CI is red, incomplete, or ancestry is not fast-forward.
+- Do not merge into `main` in this milestone.
+- Do not continue work on `work/custody-v2-app-integration`.
+- Do not implement funding, evidence, settlement, breach, dispute, cancellation, or reputation actions yet.
+- Do not claim production custody, real bank/QRIS/anchor, KYC/KYB, or mainnet readiness.
+- Do not expose secrets or private keys.
+- Do not force-push or rewrite public history.
 
 ## Current Operator Focus
 
-Finish Custody V2.1 final acceptance. If any local or GitHub-hosted gate fails, fix forward on `work/soroban-custody-v2` before touching `main`.
+Complete founder browser acceptance in two Edge profiles:
+
+1. buyer Freighter wallet signs `Create on Stellar`;
+2. seller Freighter wallet signs `Accept terms on Stellar`;
+3. final shared Deal Room state reaches `Awaiting funding`;
+4. stop before funding implementation.

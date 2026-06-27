@@ -2,21 +2,24 @@
 
 ## Current Milestone
 
-Custody V2.1 is the active milestone. It promotes an isolated Soroban custody proof into `main` after final security acceptance, reproducible artifact verification, Testnet evidence review, full gates, remote CI, and release tagging.
+Recovery Milestone 1 rebuilds the normal product corridor for Custody V2 from clean `main` on `recovery/custody-v2-product-corridor-1`.
 
-## Custody V2.1 Promotion Boundary
+The milestone creates one real `custody_v2_testnet` Deal Room through normal offer acceptance and mutual Open Deal Room commitment, then exposes only the first wallet-signed vertical slice: buyer `Create on Stellar` readiness and seller acceptance readiness.
 
-- Promote only by fast-forward after green local and remote gates.
-- Keep the Aurora frontend, backend route handlers, current Testnet helper rail, and legacy contract behavior unchanged.
-- Tag the accepted milestone as `v0.3.0-soroban-custody-v2.1`.
-- Stop before application integration.
+## Recovery Milestone 1 Boundary
+
+- Do not continue development on `work/custody-v2-app-integration`; it remains quarantined.
+- Do not merge the quarantined branch.
+- Do not use a development setup route as product flow.
+- Do not implement funding, evidence, settlement, breach, dispute, cancellation, or reputation projection in this milestone.
+- Stop before merging to `main`.
 
 ## Product Engineering Roadmap
 
-1. Complete Custody V2.1 security acceptance and promotion.
-2. Review V2.1 architecture and security risks before integration.
-3. Define backend integration plan for contract invocation and event indexing.
-4. Define reputation projection from V2.1 events.
+1. Complete founder browser acceptance for buyer `Create on Stellar` and seller `Accept terms on Stellar`.
+2. Recovery Milestone 2: implement buyer/seller funding, escrow lock, and funding expiry on the normal Custody V2 corridor.
+3. Recovery Milestone 3: implement delivery evidence, buyer review, and success settlement.
+4. Define event-driven reputation projection from V2.1 events.
 5. Replace demo-managed custody bridges with contract-enforced token custody only after integration acceptance.
 6. Add production persistence deployment.
 7. Add real authentication hardening.

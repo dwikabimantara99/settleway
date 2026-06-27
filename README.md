@@ -40,6 +40,7 @@ Marketplace or Buyer Request
 - Stellar Testnet-oriented proof infrastructure for funding, custody sweep, proof, settlement, and external payout experiments.
 - Soroban event-contract baseline for escrow state and proof events.
 - Isolated Soroban Custody V2.1 contract proof for real Testnet token custody, deterministic success settlement, funding expiry, seller breach, buyer breach, mutual cancellation, and constrained mediated resolution.
+- Recovery-branch Custody V2 application corridor that creates a `custody_v2_testnet` Deal Room from the normal accepted-offer and mutual Open Deal Room flow, then exposes buyer `Create on Stellar` and seller acceptance readiness.
 
 ## Honest Implementation Boundary
 
@@ -64,7 +65,8 @@ Not production-ready yet:
 - real fiat anchor payout;
 - real KYC/KYB;
 - production custody;
-- app-integrated production custody;
+- complete app-integrated production custody;
+- Custody V2 funding/evidence/settlement/reputation projection in the normal application corridor;
 - externally audited or mainnet-ready token escrow;
 - automated dispute adjudication;
 - production key-management operations.
@@ -183,6 +185,10 @@ Start here:
 - `docs/active/17_SOROBAN_CUSTODY_V2_1_POLICY_AND_LIVENESS_SPEC.md`
 - `docs/active/18_SOROBAN_CUSTODY_V2_1_IMPLEMENTATION_REPORT.md`
 - `docs/active/19_SOROBAN_CUSTODY_V2_1_FINAL_ACCEPTANCE_REPORT.md`
+- `docs/active/30_CUSTODY_V2_STATE_TO_SCREEN_CONTRACT.md`
+- `docs/active/31_CUSTODY_V2_SELECTIVE_SALVAGE_MANIFEST.md`
+- `docs/active/32_RECOVERY_MILESTONE_1_IMPLEMENTATION_REPORT.md`
+- `docs/active/33_RECOVERY_MILESTONE_1_BROWSER_ACCEPTANCE.md`
 
 Historical documents remain available in `docs/archive/` but are not active source of truth when they conflict with `docs/active/`.
 

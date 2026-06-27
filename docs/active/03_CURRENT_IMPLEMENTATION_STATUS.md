@@ -20,6 +20,11 @@
 - Stellar Testnet proof modules and secure-store smoke tooling.
 - Soroban event-contract baseline.
 - Isolated Soroban Custody V2.1 contract and Testnet proof.
+- Recovery Milestone 1 state-to-screen contract for Custody V2 application integration.
+- Selective salvage manifest for quarantined Custody V2 application modules.
+- Normal accepted-offer to `custody_v2_testnet` Deal Room creation path in the recovery branch.
+- Real `/deals` discovery route replacing hard-coded authenticated demo-deal navigation.
+- Custody V2 Deal Room state surface through buyer `Create on Stellar` readiness and seller waiting state.
 - Cross-platform CI fixtures for Testnet configuration validation.
 - Strict Soroban Clippy validation with narrow documented ABI/event exceptions.
 
@@ -41,7 +46,8 @@ These remain because they prove the product story without pretending that the ap
 - Next.js demo production build still emits a transitive `Buffer()` deprecation warning through Stellar SDK validation code; no first-party `Buffer()` constructor use is known.
 - Bank rail is visual/product intent only.
 - Legacy `settleway_escrow` is not final token custody escrow.
-- Custody V2.1 is isolated and not yet integrated into the application backend, Aurora frontend, event indexing, database records, or reputation projection.
+- Custody V2.1 has a first recovery-branch application corridor through normal Deal Room creation and role-specific Create/Accept readiness, but funding, evidence, settlement, breach, dispute, cancellation, event-driven reputation, and production persistence are not integrated.
 - Custody V2.1 is not externally audited or mainnet-ready.
 - The V2.1 Testnet proof uses native XLM SAC and proof-only treasury/mediator governance.
 - Arbitrary user wallet payout is not final production architecture.
+- Real Freighter popup approval for buyer creation and seller acceptance still requires founder browser acceptance in two Edge profiles.
