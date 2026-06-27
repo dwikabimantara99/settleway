@@ -19,6 +19,7 @@ import { Stepper, Step } from '@/components/ui/Stepper';
 import { DealActions } from '@/components/deal/DealActions';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 import { AuroraFundingDealRoom } from '@/components/deal/AuroraFundingDealRoom';
+import { CustodyV2DealRoom } from '@/components/deal/CustodyV2DealRoom';
 import { getCurrentUser } from '@/lib/auth/server';
 import { demoProfiles } from '@/lib/demo/demo-data';
 import { getDeal } from '@/lib/db/deals';
@@ -264,6 +265,26 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
       : currentUser?.id === deal.seller_id
         ? 'seller'
         : null;
+
+  if (deal.rail_version === 'custody_v2_testnet') {
+    const [buyerProfile, sellerProfile, custodyLink, operations] = await Promise.all([
+      repository.getProfile(deal.buyer_id),
+      repository.getProfile(deal.seller_id),
+      repository.getCustodyDealLink(deal.id),
+      repository.listCustodyOperations(deal.id),
+    ]);
+
+    return (
+      <CustodyV2DealRoom
+        deal={deal}
+        custodyLink={custodyLink}
+        operations={operations}
+        buyerProfile={buyerProfile}
+        sellerProfile={sellerProfile}
+        currentUser={currentUser}
+      />
+    );
+  }
 
   const buyer = demoProfiles[deal.buyer_id];
   const seller = demoProfiles[deal.seller_id];

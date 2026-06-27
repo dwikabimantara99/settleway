@@ -1,6 +1,21 @@
 import { IRepository } from './interfaces';
 import { mockStore } from '../db/mock-store';
-import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+  DbCustodyEventCursor,
+} from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class MockRepositoryAdapter implements IRepository {
@@ -80,6 +95,13 @@ export class MockRepositoryAdapter implements IRepository {
     return d ? { ...d } : null;
   }
 
+  async listDealsForParticipant(participantId: string): Promise<DbDeal[]> {
+    return Array.from(mockStore.deals.values())
+      .filter((deal) => deal.buyer_id === participantId || deal.seller_id === participantId)
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .map((deal) => ({ ...deal }));
+  }
+
   async createDeal(deal: DbDeal): Promise<void> {
     if (mockStore.deals.has(deal.id)) {
       throw new Error(`Deal ${deal.id} already exists`);
@@ -121,6 +143,50 @@ export class MockRepositoryAdapter implements IRepository {
 
   async replaceStellarOperationIfCurrent(input: { current: StellarOperation; next: StellarOperation }): Promise<{ replaced: boolean; operation: StellarOperation | null }> {
     return mockStore.replaceStellarOperationIfCurrent(input);
+  }
+
+  async getCustodyDealLink(applicationDealId: string): Promise<DbCustodyDealLink | null> {
+    return mockStore.getCustodyDealLink(applicationDealId);
+  }
+
+  async createCustodyDealLink(link: DbCustodyDealLink): Promise<{ created: boolean; link: DbCustodyDealLink }> {
+    return mockStore.createCustodyDealLink(link);
+  }
+
+  async updateCustodyDealLink(applicationDealId: string, patch: Partial<DbCustodyDealLink>): Promise<DbCustodyDealLink | null> {
+    return mockStore.updateCustodyDealLink(applicationDealId, patch);
+  }
+
+  async getCustodyOperation(idempotencyKey: string): Promise<DbCustodyOperation | null> {
+    return mockStore.getCustodyOperation(idempotencyKey);
+  }
+
+  async createCustodyOperation(operation: DbCustodyOperation): Promise<{ created: boolean; operation: DbCustodyOperation }> {
+    return mockStore.createCustodyOperation(operation);
+  }
+
+  async updateCustodyOperation(idempotencyKey: string, patch: Partial<DbCustodyOperation>): Promise<DbCustodyOperation | null> {
+    return mockStore.updateCustodyOperation(idempotencyKey, patch);
+  }
+
+  async listCustodyOperations(applicationDealId: string): Promise<DbCustodyOperation[]> {
+    return mockStore.listCustodyOperations(applicationDealId);
+  }
+
+  async appendCustodyEvent(event: DbCustodyEvent): Promise<{ appended: boolean; event: DbCustodyEvent }> {
+    return mockStore.appendCustodyEvent(event);
+  }
+
+  async listCustodyEvents(contractDealId: string): Promise<DbCustodyEvent[]> {
+    return mockStore.listCustodyEvents(contractDealId);
+  }
+
+  async getCustodyEventCursor(network: 'testnet', contractId: string): Promise<DbCustodyEventCursor | null> {
+    return mockStore.getCustodyEventCursor(network, contractId);
+  }
+
+  async upsertCustodyEventCursor(cursor: DbCustodyEventCursor): Promise<DbCustodyEventCursor> {
+    return mockStore.upsertCustodyEventCursor(cursor);
   }
 
   async addEvidence(evidence: DbEvidenceFile): Promise<void> {

@@ -1,6 +1,21 @@
 import { IRepository } from './interfaces';
 import { supabase } from '../db/supabase-client';
-import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+  DbCustodyEventCursor,
+} from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class SupabaseRepositoryAdapter implements IRepository {
@@ -114,6 +129,16 @@ export class SupabaseRepositoryAdapter implements IRepository {
     return data || null;
   }
 
+  async listDealsForParticipant(participantId: string): Promise<DbDeal[]> {
+    const { data, error } = await this.client
+      .from('deals')
+      .select('*')
+      .or(`buyer_id.eq.${participantId},seller_id.eq.${participantId}`)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+
   async createDeal(deal: DbDeal): Promise<void> {
     const { error } = await this.client.from('deals').insert(deal);
     if (error) throw error;
@@ -194,6 +219,125 @@ export class SupabaseRepositoryAdapter implements IRepository {
       
     if (error) return { replaced: false, operation: null };
     return { replaced: !!data, operation: data || null };
+  }
+
+  async getCustodyDealLink(applicationDealId: string): Promise<DbCustodyDealLink | null> {
+    const { data, error } = await this.client.from('custody_v2_deal_links').select('*').eq('application_deal_id', applicationDealId).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async createCustodyDealLink(link: DbCustodyDealLink): Promise<{ created: boolean; link: DbCustodyDealLink }> {
+    const { data, error } = await this.client.from('custody_v2_deal_links').insert(link).select().single();
+    if (error) {
+      if (error.code === '23505') {
+        const existing = await this.getCustodyDealLink(link.application_deal_id);
+        if (!existing) throw error;
+        return { created: false, link: existing };
+      }
+      throw error;
+    }
+    return { created: true, link: data };
+  }
+
+  async updateCustodyDealLink(applicationDealId: string, patch: Partial<DbCustodyDealLink>): Promise<DbCustodyDealLink | null> {
+    const { data, error } = await this.client
+      .from('custody_v2_deal_links')
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq('application_deal_id', applicationDealId)
+      .select()
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async getCustodyOperation(idempotencyKey: string): Promise<DbCustodyOperation | null> {
+    const { data, error } = await this.client.from('custody_v2_operations').select('*').eq('idempotency_key', idempotencyKey).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async createCustodyOperation(operation: DbCustodyOperation): Promise<{ created: boolean; operation: DbCustodyOperation }> {
+    const { data, error } = await this.client.from('custody_v2_operations').insert(operation).select().single();
+    if (error) {
+      if (error.code === '23505') {
+        const existing = await this.getCustodyOperation(operation.idempotency_key);
+        if (!existing) throw error;
+        return { created: false, operation: existing };
+      }
+      throw error;
+    }
+    return { created: true, operation: data };
+  }
+
+  async updateCustodyOperation(idempotencyKey: string, patch: Partial<DbCustodyOperation>): Promise<DbCustodyOperation | null> {
+    const { data, error } = await this.client
+      .from('custody_v2_operations')
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq('idempotency_key', idempotencyKey)
+      .select()
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async listCustodyOperations(applicationDealId: string): Promise<DbCustodyOperation[]> {
+    const { data, error } = await this.client
+      .from('custody_v2_operations')
+      .select('*')
+      .eq('application_deal_id', applicationDealId)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async appendCustodyEvent(event: DbCustodyEvent): Promise<{ appended: boolean; event: DbCustodyEvent }> {
+    const { data, error } = await this.client.from('custody_v2_events').insert(event).select().single();
+    if (error) {
+      if (error.code === '23505') {
+        const { data: existing, error: selectError } = await this.client
+          .from('custody_v2_events')
+          .select('*')
+          .eq('event_id', event.event_id)
+          .single();
+        if (selectError) throw selectError;
+        return { appended: false, event: existing };
+      }
+      throw error;
+    }
+    return { appended: true, event: data };
+  }
+
+  async listCustodyEvents(contractDealId: string): Promise<DbCustodyEvent[]> {
+    const { data, error } = await this.client
+      .from('custody_v2_events')
+      .select('*')
+      .eq('contract_deal_id', contractDealId)
+      .order('ledger', { ascending: true })
+      .order('event_index', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getCustodyEventCursor(network: 'testnet', contractId: string): Promise<DbCustodyEventCursor | null> {
+    const { data, error } = await this.client
+      .from('custody_v2_event_cursors')
+      .select('*')
+      .eq('network', network)
+      .eq('contract_id', contractId)
+      .single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async upsertCustodyEventCursor(cursor: DbCustodyEventCursor): Promise<DbCustodyEventCursor> {
+    const { data, error } = await this.client
+      .from('custody_v2_event_cursors')
+      .upsert(cursor, { onConflict: 'network,contract_id' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
 
   async addEvidence(evidence: DbEvidenceFile): Promise<void> {

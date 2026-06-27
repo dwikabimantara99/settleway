@@ -102,6 +102,7 @@ export class StellarSdkRpc implements StellarRpcPort {
         return {
           outcome: "confirmed",
           transaction_hash: transactionHash,
+          ledger: typeof response.ledger === "number" ? response.ledger : null,
           result_value: resultValue as ConfirmTransactionResult extends { outcome: "confirmed" } ? ConfirmTransactionResult["result_value"] : never,
         };
       }

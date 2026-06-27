@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/Badge';
 import { NegotiationComposer } from '@/components/offers/NegotiationComposer';
 import { DealTermsActionButton } from '@/components/offers/DealTermsActionButton';
+import { ConnectExternalWalletButton } from '@/components/profile/ConnectExternalWalletButton';
 import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
 import { demoProfiles } from '@/lib/demo/demo-data';
@@ -82,6 +83,11 @@ function statusBadgeClass(active: boolean) {
     : 'border-amber-200 bg-amber-50 text-amber-700';
 }
 
+function shortAddress(address: string | null | undefined) {
+  if (!address) return 'Not connected';
+  return `${address.slice(0, 7)}...${address.slice(-5)}`;
+}
+
 export default async function OfferDetailPage({
   params,
 }: {
@@ -99,7 +105,11 @@ export default async function OfferDetailPage({
   const isParticipant = actorId === offer.buyer_id || actorId === offer.seller_id;
   const buyer = demoProfiles[offer.buyer_id];
   const seller = demoProfiles[offer.seller_id];
-  const messages = await repository.getOfferMessages(offer.id);
+  const [messages, buyerProfile, sellerProfile] = await Promise.all([
+    repository.getOfferMessages(offer.id),
+    repository.getProfile(offer.buyer_id),
+    repository.getProfile(offer.seller_id),
+  ]);
   const recentMessages = messages.slice(-3);
 
   const buyerOpened = Boolean(offer.buyer_open_room_at);
@@ -425,11 +435,73 @@ export default async function OfferDetailPage({
                 </Badge>
               </div>
               <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-900">
-                One commitment click is only a signal. The second confirmation activates the escrow
-                room and opens the deposit window.
+                One commitment click is only a signal. After both parties confirm, Settleway checks
+                the buyer and seller Testnet wallets before creating the Custody V2 Deal Room.
               </div>
             </div>
           </section>
+
+          {termsAccepted ? (
+            <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+              <header className="border-b border-emerald-100 bg-emerald-50 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="h-6 w-6 text-emerald-700" />
+                  <h2 className="text-2xl font-semibold text-emerald-900">Wallet Binding</h2>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-emerald-900">
+                  Custody V2 uses the wallet addresses confirmed here. The later financial role is
+                  derived from these immutable addresses, not from the Buy/Sell navigation mode.
+                </p>
+              </header>
+              <div className="space-y-4 p-6">
+                <div className="rounded-xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-950">Buyer wallet</div>
+                      <div className="mt-1 font-mono text-xs text-slate-500">
+                        {shortAddress(buyerProfile?.connected_wallet_address)}
+                      </div>
+                    </div>
+                    <Badge className={statusBadgeClass(buyerProfile?.connected_wallet_network === 'testnet')}>
+                      {buyerProfile?.connected_wallet_network === 'testnet' ? 'Confirmed' : 'Required'}
+                    </Badge>
+                  </div>
+                  {actorId === offer.buyer_id ? (
+                    <ConnectExternalWalletButton
+                      profileId={offer.buyer_id}
+                      initialAddress={buyerProfile?.connected_wallet_address ?? null}
+                      initialProvider={buyerProfile?.connected_wallet_provider ?? null}
+                      initialNetwork={buyerProfile?.connected_wallet_network ?? null}
+                      canConnect
+                    />
+                  ) : null}
+                </div>
+
+                <div className="rounded-xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold text-slate-950">Seller wallet</div>
+                      <div className="mt-1 font-mono text-xs text-slate-500">
+                        {shortAddress(sellerProfile?.connected_wallet_address)}
+                      </div>
+                    </div>
+                    <Badge className={statusBadgeClass(sellerProfile?.connected_wallet_network === 'testnet')}>
+                      {sellerProfile?.connected_wallet_network === 'testnet' ? 'Confirmed' : 'Required'}
+                    </Badge>
+                  </div>
+                  {actorId === offer.seller_id ? (
+                    <ConnectExternalWalletButton
+                      profileId={offer.seller_id}
+                      initialAddress={sellerProfile?.connected_wallet_address ?? null}
+                      initialProvider={sellerProfile?.connected_wallet_provider ?? null}
+                      initialNetwork={sellerProfile?.connected_wallet_network ?? null}
+                      canConnect
+                    />
+                  ) : null}
+                </div>
+              </div>
+            </section>
+          ) : null}
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
             <div className="mb-5 flex items-center gap-3">

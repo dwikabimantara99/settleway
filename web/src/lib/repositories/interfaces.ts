@@ -1,4 +1,19 @@
-import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+  DbCustodyEventCursor,
+} from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export interface IRepository {
@@ -27,6 +42,7 @@ export interface IRepository {
 
   // Deals
   getDeal(id: string): Promise<DbDeal | null>;
+  listDealsForParticipant(participantId: string): Promise<DbDeal[]>;
   createDeal(deal: DbDeal): Promise<void>;
   updateDeal(id: string, partial: Partial<DbDeal>): Promise<void>;
   replaceDealIfCurrent(input: { current: DbDeal; next: DbDeal }): Promise<{ replaced: boolean; deal: DbDeal | null }>;
@@ -41,6 +57,19 @@ export interface IRepository {
   updateStellarOperation(key: string, patch: Partial<Pick<StellarOperation, "operation_status" | "transaction_hash" | "result_escrow_id" | "public_error_code" | "submitted_at" | "confirmed_at" | "updated_at">>): Promise<StellarOperation | null>;
   findStellarOperationsByDeal(dealId: string): Promise<StellarOperation[]>;
   replaceStellarOperationIfCurrent(input: { current: StellarOperation; next: StellarOperation }): Promise<{ replaced: boolean; operation: StellarOperation | null }>;
+
+  // Custody V2 application integration
+  getCustodyDealLink(applicationDealId: string): Promise<DbCustodyDealLink | null>;
+  createCustodyDealLink(link: DbCustodyDealLink): Promise<{ created: boolean; link: DbCustodyDealLink }>;
+  updateCustodyDealLink(applicationDealId: string, patch: Partial<DbCustodyDealLink>): Promise<DbCustodyDealLink | null>;
+  getCustodyOperation(idempotencyKey: string): Promise<DbCustodyOperation | null>;
+  createCustodyOperation(operation: DbCustodyOperation): Promise<{ created: boolean; operation: DbCustodyOperation }>;
+  updateCustodyOperation(idempotencyKey: string, patch: Partial<DbCustodyOperation>): Promise<DbCustodyOperation | null>;
+  listCustodyOperations(applicationDealId: string): Promise<DbCustodyOperation[]>;
+  appendCustodyEvent(event: DbCustodyEvent): Promise<{ appended: boolean; event: DbCustodyEvent }>;
+  listCustodyEvents(contractDealId: string): Promise<DbCustodyEvent[]>;
+  getCustodyEventCursor(network: 'testnet', contractId: string): Promise<DbCustodyEventCursor | null>;
+  upsertCustodyEventCursor(cursor: DbCustodyEventCursor): Promise<DbCustodyEventCursor>;
 
   // Evidence
   addEvidence(evidence: DbEvidenceFile): Promise<void>;

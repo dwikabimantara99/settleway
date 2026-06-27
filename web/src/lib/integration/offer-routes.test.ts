@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as nextHeaders from 'next/headers';
+import { Networks, StrKey } from '@stellar/stellar-sdk';
 
 vi.mock('next/headers', () => ({
   cookies: vi.fn(),
@@ -30,8 +31,40 @@ vi.mock('../stellar/server/deal-room-testnet-runtime', async () => {
 
 import { resolveDealRoomDefaultStellarState } from '../stellar/server/deal-room-testnet-runtime';
 
+const custodyContractId = StrKey.encodeContract(Buffer.alloc(32, 31));
+const custodyAssetContractId = StrKey.encodeContract(Buffer.alloc(32, 32));
+const buyerWalletAddress = StrKey.encodeEd25519PublicKey(Buffer.alloc(32, 33));
+const sellerWalletAddress = StrKey.encodeEd25519PublicKey(Buffer.alloc(32, 34));
+const mediatorWalletAddress = StrKey.encodeEd25519PublicKey(Buffer.alloc(32, 35));
+
+function enableCustodyV2Config() {
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_ENABLED', 'true');
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE', Networks.TESTNET);
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID', custodyContractId);
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID', custodyAssetContractId);
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_MEDIATOR_ADDRESS', mediatorWalletAddress);
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_INTERFACE_VERSION', '2');
+  vi.stubEnv('NEXT_PUBLIC_CUSTODY_V2_POLICY_VERSION', '2');
+}
+
+function bindParticipantWallets() {
+  mockStore.updateProfile('buyer-surabaya-restaurant', {
+    connected_wallet_address: buyerWalletAddress,
+    connected_wallet_network: 'testnet',
+    connected_wallet_provider: 'Freighter',
+    connected_wallet_linked_at: '2026-06-27T00:00:00.000Z',
+  });
+  mockStore.updateProfile('seller-probolinggo-cabai', {
+    connected_wallet_address: sellerWalletAddress,
+    connected_wallet_network: 'testnet',
+    connected_wallet_provider: 'Freighter',
+    connected_wallet_linked_at: '2026-06-27T00:00:00.000Z',
+  });
+}
+
 describe('Phase B offer routes', () => {
   beforeEach(() => {
+    vi.unstubAllEnvs();
     mockStore.seed();
     vi.mocked(resolveDealRoomDefaultStellarState).mockReturnValue({
       stellar_mode: 'mock_only',
@@ -190,7 +223,9 @@ describe('Phase B offer routes', () => {
     expect(payload.data.offer.terms_accepted_by_id).toBe('seller-probolinggo-cabai');
   });
 
-  it('activates an escrow deal only after both parties open the Deal Room', async () => {
+  it('creates an explicit Custody V2 deal only after both parties open the Deal Room', async () => {
+    enableCustodyV2Config();
+    bindParticipantWallets();
     const offerId = 'offer-open-1';
     const now = new Date().toISOString();
     mockStore.offers.set(offerId, {
@@ -238,16 +273,29 @@ describe('Phase B offer routes', () => {
     expect(sellerPayload.data.deal_id).toBe(`deal-${offerId}`);
     const activeDeal = mockStore.deals.get(`deal-${offerId}`);
     expect(activeDeal?.status).toBe('WAITING_DEPOSITS');
+    expect(activeDeal?.rail_version).toBe('custody_v2_testnet');
     expect(activeDeal?.terms.activation_source).toBe('mutual_open_deal_room');
     expect(activeDeal?.terms.offer_id).toBe(offerId);
     expect(activeDeal?.terms.deposit_window_hours).toBe(24);
     expect(typeof activeDeal?.terms.deposit_deadline_at).toBe('string');
     expect(typeof activeDeal?.terms.activated_at).toBe('string');
-    expect(activeDeal?.stellar_mode).toBe('mock_only');
+    expect(activeDeal?.stellar_mode).toBe('testnet');
+    expect(activeDeal?.stellar_contract_id).toBe(custodyContractId);
     expect(mockStore.offers.get(offerId)?.active_deal_id).toBe(`deal-${offerId}`);
+    const custodyLink = mockStore.getCustodyDealLink(`deal-${offerId}`);
+    expect(custodyLink).toMatchObject({
+      rail_version: 'custody_v2_testnet',
+      buyer_address: buyerWalletAddress,
+      seller_address: sellerWalletAddress,
+      asset_contract_id: custodyAssetContractId,
+      settlement_asset_label: 'XLM',
+      latest_contract_state: 'TermsPending',
+    });
   });
 
   it('supports Open Deal Room through the parent offer POST route for UI stability', async () => {
+    enableCustodyV2Config();
+    bindParticipantWallets();
     const offerId = 'offer-open-parent-1';
     const now = new Date().toISOString();
     mockStore.offers.set(offerId, {
@@ -302,8 +350,9 @@ describe('Phase B offer routes', () => {
     expect(mockStore.offers.get(offerId)?.active_deal_id).toBe(`deal-${offerId}`);
   });
 
-  it('creates a testnet-backed active room when Phase W runtime config is available', async () => {
-    const offerId = 'offer-open-testnet-1';
+  it('blocks Custody V2 Deal Room creation until both participant wallets are bound', async () => {
+    enableCustodyV2Config();
+    const offerId = 'offer-open-wallet-required-1';
     const now = new Date().toISOString();
     mockStore.offers.set(offerId, {
       id: offerId,
@@ -329,19 +378,16 @@ describe('Phase B offer routes', () => {
       updated_at: now,
     });
     mockStore.offerMessages.set(offerId, []);
-    vi.mocked(resolveDealRoomDefaultStellarState).mockReturnValue({
-      stellar_mode: 'testnet',
-      stellar_contract_id: 'CCONTRACT123',
-    });
 
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-probolinggo-cabai' }) } as any);
     const sellerResponse = await openDealRoomRoute(new Request(`http://localhost/api/offers/${offerId}/open-deal-room`, { method: 'POST' }), {
       params: Promise.resolve({ offerId }),
     });
+    const sellerPayload = await sellerResponse.json();
 
-    expect(sellerResponse.status).toBe(200);
-    const activeDeal = mockStore.deals.get(`deal-${offerId}`);
-    expect(activeDeal?.stellar_mode).toBe('testnet');
-    expect(activeDeal?.stellar_contract_id).toBe('CCONTRACT123');
+    expect(sellerResponse.status).toBe(409);
+    expect(sellerPayload.error.code).toBe('WALLET_BINDING_REQUIRED');
+    expect(mockStore.deals.get(`deal-${offerId}`)).toBeUndefined();
+    expect(mockStore.getCustodyDealLink(`deal-${offerId}`)).toBeNull();
   });
 });
