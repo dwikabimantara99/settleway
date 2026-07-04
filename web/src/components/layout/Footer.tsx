@@ -27,8 +27,8 @@ export function Footer() {
             <Link href="/#trust-settlement" className="text-slate-300 hover:text-white">
               Trust &amp; Settlement
             </Link>
-            <Link href="/demo" className="text-slate-300 hover:text-white">
-              Product status
+            <Link href="/deals" className="text-slate-300 hover:text-white">
+              Deals
             </Link>
             <a
               href="https://github.com/dwikabimantara99/settleway"

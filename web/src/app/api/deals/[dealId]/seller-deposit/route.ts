@@ -13,6 +13,7 @@ import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testn
 import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
 import type { StellarOperation } from '@/lib/stellar/types';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 function currentTimestamp(): string {
   return new Date().toISOString();
@@ -215,6 +216,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
     if (userRole !== 'seller') return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only seller can perform this action'), { status: 403 });
+
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(existingDeal, 'Seller deposit');
+    if (custodyV2Rejection) return custodyV2Rejection;
 
     if (existingDeal.stellar_mode !== 'testnet') {
       return runLegacyLocalSellerDeposit(dealId, existingDeal, authUser);

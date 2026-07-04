@@ -19,7 +19,7 @@
 - Outcome-backed reputation engine.
 - Stellar Testnet proof modules and secure-store smoke tooling.
 - Soroban event-contract baseline.
-- Isolated Soroban Custody V2.1 contract and Testnet proof.
+- Soroban Custody V2.1 contract integrated into the Testnet proof corridor.
 - Cross-platform CI fixtures for Testnet configuration validation.
 - Strict Soroban Clippy validation with narrow documented ABI/event exceptions.
 
@@ -30,7 +30,7 @@
 - External payout helper.
 - Testnet proof modules.
 - Event-contract Soroban baseline.
-- Isolated Custody V2.1 Testnet proof contract.
+- Custody V2.1 Testnet proof contract integrated as the main product corridor.
 
 These remain because they prove the product story without pretending that the application has completed production custody integration.
 
@@ -41,7 +41,8 @@ These remain because they prove the product story without pretending that the ap
 - Next.js demo production build still emits a transitive `Buffer()` deprecation warning through Stellar SDK validation code; no first-party `Buffer()` constructor use is known.
 - Bank rail is visual/product intent only.
 - Legacy `settleway_escrow` is not final token custody escrow.
-- Custody V2.1 is isolated and not yet integrated into the application backend, Aurora frontend, event indexing, database records, or reputation projection.
+- Custody V2.1 is integrated into the Settleway Deal Room frontend, application backend, database records, and event projection, providing an end-to-end Testnet product corridor.
+- Active Testnet contract `CAFNVE...` exists and read-only ABI/event compatibility was verified, recorded in a verification manifest. However, the original deployment receipt and Wasm hash remain unavailable. This is acceptable for testnet demo readiness but remains a provenance limitation.
 - Custody V2.1 is not externally audited or mainnet-ready.
 - The V2.1 Testnet proof uses native XLM SAC and proof-only treasury/mediator governance.
 - Arbitrary user wallet payout is not final production architecture.

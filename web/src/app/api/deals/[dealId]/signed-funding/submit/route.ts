@@ -10,6 +10,7 @@ import {
   validateSignedFundingXdr,
   type SignedFundingAction,
 } from '@/lib/stellar/testnet-funding';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 function isSignedFundingAction(value: unknown): value is SignedFundingAction {
   return value === 'buyer_deposit' || value === 'seller_deposit';
@@ -48,6 +49,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         { status: 403 },
       );
     }
+
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(auth.deal, 'Signed funding submission');
+    if (custodyV2Rejection) return custodyV2Rejection;
 
     const profile = await repository.getProfile(auth.user.id);
     assertConnectedWalletForFunding({ profile, sourceAddress });

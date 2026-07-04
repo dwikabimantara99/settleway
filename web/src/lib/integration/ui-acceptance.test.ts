@@ -49,6 +49,14 @@ function extractText(element: unknown): string {
     if (props.title) text += String(props.title);
     if (props.value) text += String(props.value);
     if (props.description) text += String(props.description);
+
+    // Add support for custom DealRoomTabs content props
+    if (props.overviewContent) text += extractText(props.overviewContent);
+    if (props.fundingContent) text += extractText(props.fundingContent);
+    if (props.deliveryContent) text += extractText(props.deliveryContent);
+    if (props.activityContent) text += extractText(props.activityContent);
+    if (props.transactionContent) text += extractText(props.transactionContent);
+
     return text;
   }
   if (el.type && typeof el.type === 'function' && el.type.name) {

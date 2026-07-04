@@ -179,4 +179,24 @@ describe("buyer-deposit route", () => {
     expect(mockStore.deals.get("deal-buyer-mock")?.status).toBe("BUYER_FUNDED");
     expect(mockStore.deals.get("deal-buyer-mock")?.stellar_escrow_id).toBeNull();
   });
+
+  it("rejects Custody V2 deals from the legacy buyer-deposit route", async () => {
+    setupDeal("deal-buyer-v2", { rail_version: "custody_v2_testnet" });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({
+      get: () => ({ value: "buyer-1" }),
+    } as any);
+
+    const response = await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-v2/buyer-deposit", {
+        method: "POST",
+      }),
+      { params: Promise.resolve({ dealId: "deal-buyer-v2" }) },
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(payload.error.code).toBe("CUSTODY_V2_ACTION_REQUIRED");
+    expect(mockStore.deals.get("deal-buyer-v2")?.status).toBe("WAITING_DEPOSITS");
+    expect(mockExecutionAdapter.submit).not.toHaveBeenCalled();
+  });
 });

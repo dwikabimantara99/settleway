@@ -30,6 +30,20 @@ describe('OpenDealRoomButton', () => {
     expect(html).toContain('Waiting for Counterparty Commitment');
   });
 
+  it('allows retrying room creation after both parties opened but no active room exists yet', () => {
+    const html = renderToString(
+      OpenDealRoomButton({
+        offerId: 'offer-1',
+        hasOpened: true,
+        bothOpened: true,
+        activeDealId: null,
+      }),
+    );
+
+    expect(html).toContain('Open Deal Room');
+    expect(html).not.toContain('disabled=""');
+  });
+
   it('shows the active-room CTA after activation', () => {
     const html = renderToString(
       OpenDealRoomButton({

@@ -35,7 +35,7 @@ export function RoleSwitcher() {
     // eslint-disable-next-line react-hooks/immutability -- Safe to modify document.cookie directly for demo simulation
     document.cookie = `mock_actor=${newRole}; path=/; max-age=86400`;
     if (pathname.startsWith('/profiles/')) {
-      router.push(newRole === 'operator' ? '/demo' : `/profiles/${newRole}`);
+      router.push(newRole === 'operator' ? '/deals' : `/profiles/${newRole}`);
       return;
     }
     router.refresh();

@@ -10,6 +10,7 @@ interface DealTermsActionButtonProps {
   canAcceptTerms: boolean;
   termsAccepted: boolean;
   hasOpened: boolean;
+  bothOpened?: boolean;
   activeDealId: string | null;
 }
 
@@ -18,6 +19,7 @@ export function DealTermsActionButton({
   canAcceptTerms,
   termsAccepted,
   hasOpened,
+  bothOpened = false,
   activeDealId,
 }: DealTermsActionButtonProps) {
   const router = useRouter();
@@ -68,6 +70,11 @@ export function DealTermsActionButton({
   }
 
   return (
-    <OpenDealRoomButton offerId={offerId} hasOpened={hasOpened} activeDealId={activeDealId} />
+    <OpenDealRoomButton
+      offerId={offerId}
+      hasOpened={hasOpened}
+      bothOpened={bothOpened}
+      activeDealId={activeDealId}
+    />
   );
 }

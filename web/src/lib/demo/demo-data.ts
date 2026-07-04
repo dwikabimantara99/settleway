@@ -161,5 +161,6 @@ export const demoDeals: Record<string, Deal> = {
     sellerTotalIdr: 1097250,
     status: 'WAITING_DEPOSITS',
     stellarMode: 'not_configured',
+    rail_version: 'managed_custody_testnet',
   },
 };

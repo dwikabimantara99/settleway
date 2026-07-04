@@ -39,11 +39,13 @@ export type ConfirmTransactionResult =
   | {
       readonly outcome: "confirmed";
       readonly transaction_hash: string;
+      readonly ledger: number | null;
       readonly result_value: ConfirmResultValue | null;
     }
   | {
       readonly outcome: "failed";
       readonly transaction_hash: string;
+      readonly result_xdr?: string;
     }
   | {
       readonly outcome: "not_found";

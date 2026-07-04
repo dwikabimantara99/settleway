@@ -156,7 +156,17 @@ async function runCustodyWalletProofSubmission(input: {
     | null;
   runtime: DealRoomTestnetRuntime;
 }) {
-  if (input.existingDeal.status !== 'LOCKED' || !input.existingDeal.latest_stellar_tx_hash) {
+  let latestTxHash = input.existingDeal.latest_stellar_tx_hash;
+  if (!latestTxHash) {
+    const custodyLink = await repository.getCustodyDealLink(input.dealId);
+    if (custodyLink && custodyLink.seller_funded_tx) {
+      latestTxHash = custodyLink.seller_funded_tx;
+    } else if (custodyLink && custodyLink.buyer_funded_tx) {
+      latestTxHash = custodyLink.buyer_funded_tx;
+    }
+  }
+
+  if (input.existingDeal.status !== 'LOCKED' || !latestTxHash) {
     return NextResponse.json(
       createErrorResponse(
         'STELLAR_EXECUTION_INVALID',
@@ -190,7 +200,7 @@ async function runCustodyWalletProofSubmission(input: {
   let proofReference;
   try {
     proofReference = await executeCustodyProofReference({
-      deal: input.existingDeal,
+      deal: { ...input.existingDeal, latest_stellar_tx_hash: latestTxHash },
       proofHash: input.proofHash,
       signer: input.runtime.signer_port,
       custodyAddress: input.runtime.metadata.admin_address,

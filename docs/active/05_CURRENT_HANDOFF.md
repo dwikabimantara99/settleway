@@ -2,25 +2,23 @@
 
 ## Current Candidate
 
-- Candidate branch: `work/soroban-custody-v2`
-- Candidate contract commit before final acceptance docs: `442eb0b2817fe40d2d07b7db8f969d54ed771ad9`
-- Canonical `origin/main` before promotion: `693da68289c17b8b97eaeeea707d0ebd877175d6`
+- Candidate branch: `codex/single-corridor-hardening`
+- Focus: Single Corridor Hardening & Custody V2 App Integration
 
 ## Current Task Boundary
 
-Custody V2.1 final acceptance may review the isolated contract, verify reproducible Wasm and interface coherence, verify Testnet proof evidence, update active documentation, run full local and remote gates, fast-forward promote to `main`, tag `v0.3.0-soroban-custody-v2.1`, and delete the completed milestone branch.
+The application is integrating Custody V2.1 as the underlying rail for the Testnet Deal Room, ensuring the product flow remains simple and focused on the core Settleway business logic (Marketplace -> Offer -> Deal Room -> Funding -> Lock -> Evidence -> Settle) without exposing technical smart contract details to the user interface.
 
 ## No-Touch Areas
 
-- No frontend redesign.
-- No application integration.
-- No backend contract invocation work.
-- No event indexer or reputation projection work.
+- No frontend redesign for surfaces outside of the core deal room.
 - No bank/QRIS/anchor/KYC/KYB implementation.
 - No live secret exposure.
 - No force-push or history rewrite.
-- No `main` promotion while candidate CI is red, incomplete, or ancestry is not fast-forward.
+- No `main` promotion until the single corridor is hardened and end-to-end browser validated.
 
 ## Current Operator Focus
 
-Finish Custody V2.1 final acceptance. If any local or GitHub-hosted gate fails, fix forward on `work/soroban-custody-v2` before touching `main`.
+Clean up the working tree, hide technical terminology in the Deal Room UI, and ensure the state projection from Stellar to the application accurately reflects the product journey. Verify the flow end-to-end from the browser.
+
+Note: Active Testnet contract `CAFNVE...` exists and read-only ABI/event compatibility was verified. A verification manifest was added. The original deployment receipt and Wasm hash remain unavailable, which is acceptable for testnet demo readiness but remains a provenance limitation.

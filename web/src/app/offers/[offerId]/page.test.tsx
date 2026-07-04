@@ -48,8 +48,9 @@ describe('Offer Detail Page', () => {
     expect(html).toContain('Commercial terms are aligned. Review the agreement summary below.');
     expect(html).toContain('Agreed Deal Terms');
     expect(html).toContain(
-      'One commitment click is only a signal. The second confirmation activates the escrow',
+      'Settleway checks the buyer and seller Testnet wallets before creating the Custody V2 Deal Room',
     );
+    expect(html).toContain('Wallet Binding');
     expect(html).toContain('Enter Active Escrow Room');
   });
 

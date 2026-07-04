@@ -178,6 +178,7 @@ export function buildDealFromOffer(input: {
     stellar_sync_status: 'idle',
     proof_hash: null,
     terms,
+    rail_version: 'managed_custody_testnet',
     created_at: input.now,
     updated_at: input.now,
   };

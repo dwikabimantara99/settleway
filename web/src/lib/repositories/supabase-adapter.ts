@@ -1,6 +1,20 @@
 import { IRepository } from './interfaces';
 import { supabase } from '../db/supabase-client';
-import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+} from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class SupabaseRepositoryAdapter implements IRepository {
@@ -114,6 +128,16 @@ export class SupabaseRepositoryAdapter implements IRepository {
     return data || null;
   }
 
+  async listDealsForParticipant(participantId: string): Promise<DbDeal[]> {
+    const { data, error } = await this.client
+      .from('deals')
+      .select('*')
+      .or(`buyer_id.eq.${participantId},seller_id.eq.${participantId}`)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+
   async createDeal(deal: DbDeal): Promise<void> {
     const { error } = await this.client.from('deals').insert(deal);
     if (error) throw error;
@@ -195,6 +219,52 @@ export class SupabaseRepositoryAdapter implements IRepository {
     if (error) return { replaced: false, operation: null };
     return { replaced: !!data, operation: data || null };
   }
+
+  async getCustodyDealLink(applicationDealId: string): Promise<DbCustodyDealLink | null> {
+    const { data, error } = await this.client.from('custody_v2_deal_links').select('*').eq('application_deal_id', applicationDealId).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+
+
+
+
+  async getCustodyOperation(idempotencyKey: string): Promise<DbCustodyOperation | null> {
+    const { data, error } = await this.client.from('custody_v2_operations').select('*').eq('idempotency_key', idempotencyKey).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+
+
+
+
+  async listCustodyOperations(applicationDealId: string): Promise<DbCustodyOperation[]> {
+    const { data, error } = await this.client
+      .from('custody_v2_operations')
+      .select('*')
+      .eq('application_deal_id', applicationDealId)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+
+
+  async listCustodyEvents(contractDealId: string): Promise<DbCustodyEvent[]> {
+    const { data, error } = await this.client
+      .from('custody_v2_events')
+      .select('*')
+      .eq('contract_deal_id', contractDealId)
+      .order('ledger', { ascending: true })
+      .order('event_index', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  }
+
+
+
 
   async addEvidence(evidence: DbEvidenceFile): Promise<void> {
     const { error } = await this.client.from('evidence_files').insert(evidence);

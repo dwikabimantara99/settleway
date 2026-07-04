@@ -8,3 +8,7 @@ web/.next/
 /contracts/settleway_escrow/test_snapshots/
 /contracts/trade_assurance_v2/test_snapshots/
 /target/
+
+# Supabase CLI local link metadata
+supabase/.temp/
+web/supabase/.temp/

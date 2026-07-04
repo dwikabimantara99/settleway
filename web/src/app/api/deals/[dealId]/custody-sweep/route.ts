@@ -3,12 +3,16 @@ import { createErrorResponse, createSuccessResponse } from '@/lib/api/validation
 import { requireDealParticipant } from '@/lib/auth/server';
 import { repository, runtimeMode } from '@/lib/repositories';
 import { completeCustodySweep } from '@/lib/stellar/server/custody-sweep-service';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 export async function POST(_request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
 
   try {
     const auth = await requireDealParticipant(dealId);
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(auth.deal, 'Custody sweep');
+    if (custodyV2Rejection) return custodyV2Rejection;
+
     const result = await completeCustodySweep({
       repository,
       deal: auth.deal,

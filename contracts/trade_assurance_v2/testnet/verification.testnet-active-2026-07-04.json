@@ -1,0 +1,62 @@
+{
+  "verification_type": "read_only_active_contract_verification",
+  "created_at_utc": "2026-07-04T01:46:00Z",
+  "verified_by_tool": "stellar contract info",
+  "network": "testnet",
+  "network_passphrase": "Test SDF Network ; September 2015",
+  "active_contract_id": "CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4",
+  "configured_sources": [
+    "web/src/lib/custody-v2/config.ts",
+    "web/.env.example"
+  ],
+  "previous_repo_manifests": [
+    "contracts/trade_assurance_v2/testnet/manifest.testnet-2026-06-25.json (contract CCK4RJT5TGMPFM7V7KY56RS3RYK6OMKM5JW45QZF46XJIE6GDL3FTZFW)",
+    "contracts/trade_assurance_v2/testnet/manifest.testnet-v2.1-2026-06-25.json (contract CA5O4INKF4BVRDOSHWH6GVD6GQRGL7P5NIAQHXA2JPQYLRHI3PRNHSSO)"
+  ],
+  "provenance_status": "active_contract_exists_and_abi_matches_but_original_deployment_receipt_missing",
+  "wasm_hash_status": "unknown_from_available_read_only_metadata",
+  "interface_command": "stellar contract info interface --network testnet --id CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4",
+  "interface_exit_code": 0,
+  "meta_command": "stellar contract info meta --network testnet --id CAFNVEVKN7QN5VHLOB6QPOZ66GHH5XINWM6PXOP7QJW5WUIYEJVQIVM4",
+  "meta_exit_code": 0,
+  "raw_meta_output": "Contract meta:\n • rsver: 1.96.0 (Rust version)\n • rssdkver: 26.1.0#175aa41306f383057a8cdfc84b68d931664fc34e (Soroban SDK version and its commit hash)",
+  "method_compatibility": {
+    "get_config": "VERIFIED",
+    "get_deal": "VERIFIED",
+    "get_state": "VERIFIED",
+    "deal_exists": "VERIFIED",
+    "contract_info": "VERIFIED",
+    "create_deal": "VERIFIED",
+    "accept_terms": "VERIFIED",
+    "fund_buyer": "VERIFIED",
+    "fund_seller": "VERIFIED",
+    "submit_evidence": "VERIFIED",
+    "accept_delivery": "VERIFIED",
+    "expire_funding": "VERIFIED"
+  },
+  "event_compatibility": {
+    "init": "VERIFIED",
+    "deal": "VERIFIED",
+    "accept": "VERIFIED",
+    "state": "VERIFIED",
+    "bfund": "VERIFIED",
+    "sfund": "VERIFIED",
+    "active": "VERIFIED",
+    "evidence": "VERIFIED",
+    "expired": "VERIFIED",
+    "cancel": "VERIFIED",
+    "dispute": "VERIFIED",
+    "resolve": "VERIFIED",
+    "settlement": "VERIFIED"
+  },
+  "typescript_sources_checked": [
+    "web/src/lib/custody-v2/operations.ts",
+    "web/src/lib/custody-v2/contract-reader.ts",
+    "web/src/lib/custody-v2/events.ts"
+  ],
+  "local_rust_sources_checked": [
+    "contracts/trade_assurance_v2/src/lib.rs"
+  ],
+  "limitations": "Original deployment transaction, deployed Wasm hash, and source-to-Wasm reproducibility are UNKNOWN.",
+  "do_not_overstate": "This file does not prove the original deployment transaction, deployed Wasm hash, or source-to-Wasm reproducibility. It only asserts read-only ABI and event compatibility."
+}

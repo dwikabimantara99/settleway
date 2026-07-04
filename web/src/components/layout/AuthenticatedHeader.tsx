@@ -43,7 +43,7 @@ export function AuthenticatedHeader() {
   }, []);
 
   const profileHref =
-    actorId === 'operator' ? '/demo' : `/profiles/${actorId}`;
+    actorId === 'operator' ? '/deals' : `/profiles/${actorId}`;
   const handleLogout = () => {
     document.cookie = 'mock_actor=; path=/; max-age=0';
     window.location.href = '/';
@@ -52,7 +52,7 @@ export function AuthenticatedHeader() {
   const navigation = [
     { href: '/marketplace', label: 'Buy' },
     { href: '/buyer-requests', label: 'Sell' },
-    { href: '/deals/demo-cabai-001', label: 'Deals' },
+    { href: '/deals', label: 'Deals' },
   ];
 
   return (
@@ -63,7 +63,7 @@ export function AuthenticatedHeader() {
         <nav className="mx-auto hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
           {navigation.map((item) => {
             const active =
-              item.href.startsWith('/deals/')
+              item.href === '/deals'
                 ? pathname.startsWith('/deals')
                 : pathname.startsWith(item.href);
             return (
@@ -131,7 +131,7 @@ export function AuthenticatedHeader() {
                   Profile
                 </Link>
                 <Link
-                  href="/deals/demo-cabai-001"
+                  href="/deals"
                   role="menuitem"
                   className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >
@@ -148,14 +148,16 @@ export function AuthenticatedHeader() {
                   <Settings className="h-4 w-4" />
                   Settings
                 </button>
-                <Link
-                  href="/demo"
+                <button
+                  type="button"
                   role="menuitem"
-                  className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
+                  disabled
+                  title="Help center is not available in the current MVP."
+                  className="flex min-h-11 w-full items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-muted)]"
                 >
                   <CircleHelp className="h-4 w-4" />
                   Help
-                </Link>
+                </button>
                 <div className="my-1 border-t border-[var(--border-subtle)]" />
                 <button
                   type="button"

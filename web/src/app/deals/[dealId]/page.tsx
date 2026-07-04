@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/Badge';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { Stepper, Step } from '@/components/ui/Stepper';
 import { DealActions } from '@/components/deal/DealActions';
+import { DealRoomTabs } from '@/components/deal/DealRoomTabs';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 import { AuroraFundingDealRoom } from '@/components/deal/AuroraFundingDealRoom';
 import { getCurrentUser } from '@/lib/auth/server';
@@ -818,16 +819,9 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             </section>
           </div>
 
-          <section className="rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
-            <div className="flex flex-wrap gap-8 text-sm font-semibold">
-              <span className="border-b-2 border-emerald-600 pb-3 text-emerald-700">Overview</span>
-              <span className="pb-3 text-slate-500">Funding</span>
-              <span className="pb-3 text-slate-500">Delivery & Proof</span>
-              <span className="pb-3 text-slate-500">Activity</span>
-              <span className="pb-3 text-slate-500">Technical</span>
-            </div>
-          </section>
-
+          <DealRoomTabs
+            overviewContent={
+              <>
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-slate-950">Negotiation Context</h2>
@@ -862,34 +856,18 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               </div>
             )}
           </section>
-
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-semibold text-slate-950">Role Wallets</h2>
-            <div className="mt-5 grid gap-4 lg:grid-cols-3">
-              {walletCards.map((wallet) => (
-                <div key={wallet.key} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="font-semibold text-slate-950">{wallet.title}</div>
-                      <div className="mt-1 text-xs text-slate-500">{wallet.identity_alias}</div>
-                    </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${walletStateBadgeClassName(
-                        wallet.status_tone,
-                      )}`}
-                    >
-                      {wallet.status_label}
-                    </span>
-                  </div>
-                  <div className="mt-3 break-all font-mono text-xs text-slate-600">
-                    {wallet.public_address}
-                  </div>
-                  <div className="mt-3 text-xs leading-5 text-slate-600">{wallet.movement_value}</div>
+              </>
+            }
+            fundingContent={
+              <>
+                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
+                  <h3 className="text-lg font-semibold text-slate-950 mb-2">Funding Information</h3>
+                  Funding instructions, status, and deadlines are actively displayed at the top of the Deal Room during the funding phase.
                 </div>
-              ))}
-            </div>
-          </section>
-
+              </>
+            }
+            deliveryContent={
+              <>
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-slate-950">Delivery & Proof</h2>
@@ -953,7 +931,10 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               </div>
             ) : null}
           </section>
-
+              </>
+            }
+            activityContent={
+              <>
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-950">Protected Execution Timeline</h2>
             <p className="mt-2 text-sm text-slate-500">Newest entries appear first.</p>
@@ -990,7 +971,36 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               </div>
             </div>
           </section>
-
+              </>
+            }
+            transactionContent={
+              <>
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-950">Role Wallets</h2>
+            <div className="mt-5 grid gap-4 lg:grid-cols-3">
+              {walletCards.map((wallet) => (
+                <div key={wallet.key} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="font-semibold text-slate-950">{wallet.title}</div>
+                      <div className="mt-1 text-xs text-slate-500">{wallet.identity_alias}</div>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${walletStateBadgeClassName(
+                        wallet.status_tone,
+                      )}`}
+                    >
+                      {wallet.status_label}
+                    </span>
+                  </div>
+                  <div className="mt-3 break-all font-mono text-xs text-slate-600">
+                    {wallet.public_address}
+                  </div>
+                  <div className="mt-3 text-xs leading-5 text-slate-600">{wallet.movement_value}</div>
+                </div>
+              ))}
+            </div>
+          </section>
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-slate-950">{outcomeCardTitle}</h2>
             {isClosed ? (
@@ -1126,6 +1136,9 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               </div>
             )}
           </section>
+              </>
+            }
+          />
         </main>
 
         <aside className="min-w-0 space-y-6">

@@ -8,6 +8,7 @@ import { createEvent } from '@/lib/escrow/events';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { processReputationOutcome } from '@/lib/reputation/engine';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 async function runLegacyLocalExpiry(
   dealId: string,
@@ -64,6 +65,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     } catch (e: unknown) {
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
+
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(existingDeal, 'Funding expiry');
+    if (custodyV2Rejection) return custodyV2Rejection;
 
     let outcome: ReputationOutcome | null = null;
     let refundToParty: 'buyer' | 'seller' | null = null;

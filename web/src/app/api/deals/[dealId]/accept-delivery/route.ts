@@ -18,6 +18,7 @@ import {
 import { TESTNET_DEMO_IDENTITIES } from '@/lib/stellar/testnet-demo-identities';
 import { executeSuccessSettlement } from '@/lib/stellar/testnet-settlement';
 import { executeExternalWalletPayouts } from '@/lib/stellar/testnet-external-payout';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 async function buildCompletionPayoutMetadata(deal: DbDeal) {
   const [buyerProfile, sellerProfile] = await Promise.all([
@@ -385,6 +386,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', (e instanceof Error ? e.message : String(e))), { status: 401 });
     }
     if (userRole !== 'buyer') return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only buyer can perform this action'), { status: 403 });
+
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(existingDeal, 'Buyer delivery acceptance');
+    if (custodyV2Rejection) return custodyV2Rejection;
 
     if (existingDeal.stellar_mode !== 'testnet') {
       return runLegacyLocalAcceptance(dealId, existingDeal, authUser.id);

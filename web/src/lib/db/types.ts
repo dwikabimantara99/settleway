@@ -117,6 +117,7 @@ export interface DbNotification {
 }
 
 export type DealActivationSource = 'mutual_open_deal_room';
+export type DealRailVersion = 'legacy_demo' | 'custody_v2_testnet' | 'managed_custody_testnet';
 
 export interface DbDealTerms {
   activation_source?: DealActivationSource;
@@ -143,6 +144,7 @@ export interface DbDeal {
   buyer_total_idr: number;
   seller_total_idr: number;
   status: DealStatus;
+  rail_version?: DealRailVersion;
   stellar_mode: StellarMode;
   stellar_contract_id: string | null;
   stellar_escrow_id: string | null;
@@ -152,6 +154,111 @@ export interface DbDeal {
   terms: DbDealTerms;
   created_at: string;
   updated_at: string;
+}
+
+export type CustodyV2ActionType =
+  | 'CREATE_DEAL'
+  | 'ACCEPT_TERMS'
+  | 'FUND_BUYER'
+  | 'FUND_SELLER'
+  | 'SUBMIT_EVIDENCE'
+  | 'ACCEPT_DELIVERY'
+  | 'EXPIRE_FUNDING';
+
+export type CustodyV2OperationStatus =
+  | 'prepared'
+  | 'submitted'
+  | 'confirmed'
+  | 'failed'
+  | 'expired';
+
+export type CustodyV2ContractState =
+  | 'TermsPending'
+  | 'AwaitingFunding'
+  | 'Active'
+  | 'EvidenceSubmitted'
+  | 'Disputed'
+  | 'SettledSuccess'
+  | 'FundingExpired'
+  | 'SellerBreach'
+  | 'BuyerBreach'
+  | 'MutualCancellation';
+
+export interface DbCustodyDealLink {
+  application_deal_id: string;
+  rail_version: 'custody_v2_testnet' | 'managed_custody_testnet';
+  contract_id: string;
+  contract_deal_id: string;
+  terms_schema_version: 'settleway.terms.v1';
+  terms_hash: string;
+  canonical_terms_json: string;
+  canonical_terms_bytes_base64: string;
+  frozen_at: string;
+  buyer_address: string;
+  seller_address: string;
+  mediator_address: string;
+  asset_contract_id: string;
+  settlement_asset_label: 'XLM';
+  principal_base_units: string;
+  buyer_bond_base_units: string;
+  seller_bond_base_units: string;
+  funding_deadline_unix: number;
+  delivery_deadline_unix: number;
+  inspection_deadline_unix: number;
+  buyer_funded_tx?: string | null;
+  seller_funded_tx?: string | null;
+  settlement_tx?: string | null;
+  latest_contract_state: CustodyV2ContractState;
+  latest_terminal_outcome: CustodyV2ContractState | null;
+  last_confirmed_ledger: number | null;
+  last_reconciled_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbCustodyOperation {
+  operation_id: string;
+  application_deal_id: string;
+  contract_deal_id: string;
+  action_type: CustodyV2ActionType;
+  actor_address: string;
+  idempotency_key: string;
+  prepared_transaction_body_fingerprint: string;
+  unsigned_transaction_xdr: string;
+  prepared_expires_at: string;
+  transaction_hash: string | null;
+  status: CustodyV2OperationStatus;
+  rpc_result_category: string | null;
+  confirmed_ledger: number | null;
+  failure_code: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DbCustodyEvent {
+  event_id: string;
+  contract_id: string;
+  contract_deal_id: string | null;
+  event_type: string;
+  ledger: number;
+  transaction_hash: string;
+  event_index: number;
+  decoded_public_facts: Record<string, unknown>;
+  ingested_at: string;
+}
+
+export interface DbCustodyEventCursor {
+  network: 'testnet';
+  contract_id: string;
+  last_processed_ledger: number | null;
+  cursor: string | null;
+  last_successful_ingestion_at: string | null;
+  detected_gap_status: 'none' | 'gap_detected' | 'stale';
+  requested_start_ledger: number | null;
+  oldest_available_ledger: number | null;
+  latest_available_ledger: number | null;
+  first_returned_event_id: string | null;
+  gap_detected_at: string | null;
 }
 
 export interface DbEscrowEvent {

@@ -5,6 +5,7 @@ import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation
 import { createEvent } from '@/lib/escrow/events';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeExternalWalletPayouts } from '@/lib/stellar/testnet-external-payout';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 async function resolveConnectedWalletDestinations(deal: {
   buyer_id: string;
@@ -49,6 +50,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     }
 
     const deal = auth.deal;
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(deal, 'External wallet payout');
+    if (custodyV2Rejection) return custodyV2Rejection;
+
     if (deal.stellar_mode !== 'testnet') {
       return NextResponse.json(
         createErrorResponse('BAD_REQUEST', 'External wallet payout is only available for Testnet rooms.'),

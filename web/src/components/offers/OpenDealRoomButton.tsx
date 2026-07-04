@@ -7,12 +7,14 @@ import { Button } from '@/components/ui/Button';
 interface OpenDealRoomButtonProps {
   offerId: string;
   hasOpened: boolean;
+  bothOpened?: boolean;
   activeDealId: string | null;
 }
 
 export function OpenDealRoomButton({
   offerId,
   hasOpened,
+  bothOpened = false,
   activeDealId,
 }: OpenDealRoomButtonProps) {
   const router = useRouter();
@@ -76,11 +78,13 @@ export function OpenDealRoomButton({
         size="lg"
         className="h-14 w-full rounded-xl"
         onClick={handleOpen}
-        disabled={loading || hasOpened}
+        disabled={loading || (hasOpened && !bothOpened)}
       >
         {loading
           ? 'Processing...'
-          : hasOpened
+          : bothOpened
+            ? 'Open Deal Room'
+            : hasOpened
             ? 'Waiting for Counterparty Commitment'
             : 'Open Deal Room'}
       </Button>

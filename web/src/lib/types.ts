@@ -81,4 +81,5 @@ export interface Deal {
   contractId?: string;
   latestTxHash?: string;
   proofHash?: string;
+  rail_version?: 'custody_v2_testnet' | 'managed_custody_testnet';
 }

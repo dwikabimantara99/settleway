@@ -1,6 +1,20 @@
 import { IRepository } from './interfaces';
 import { mockStore } from '../db/mock-store';
-import type { DbProfile, DbListing, DbBuyerRequest, DbOffer, DbNegotiationMessage, DbNotification, DbDeal, DbEscrowEvent, DbEvidenceFile, DbReputationEvent } from '../db/types';
+import type {
+  DbProfile,
+  DbListing,
+  DbBuyerRequest,
+  DbOffer,
+  DbNegotiationMessage,
+  DbNotification,
+  DbDeal,
+  DbEscrowEvent,
+  DbEvidenceFile,
+  DbReputationEvent,
+  DbCustodyDealLink,
+  DbCustodyOperation,
+  DbCustodyEvent,
+} from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
 export class MockRepositoryAdapter implements IRepository {
@@ -80,6 +94,13 @@ export class MockRepositoryAdapter implements IRepository {
     return d ? { ...d } : null;
   }
 
+  async listDealsForParticipant(participantId: string): Promise<DbDeal[]> {
+    return Array.from(mockStore.deals.values())
+      .filter((deal) => deal.buyer_id === participantId || deal.seller_id === participantId)
+      .sort((a, b) => b.updated_at.localeCompare(a.updated_at))
+      .map((deal) => ({ ...deal }));
+  }
+
   async createDeal(deal: DbDeal): Promise<void> {
     if (mockStore.deals.has(deal.id)) {
       throw new Error(`Deal ${deal.id} already exists`);
@@ -122,6 +143,35 @@ export class MockRepositoryAdapter implements IRepository {
   async replaceStellarOperationIfCurrent(input: { current: StellarOperation; next: StellarOperation }): Promise<{ replaced: boolean; operation: StellarOperation | null }> {
     return mockStore.replaceStellarOperationIfCurrent(input);
   }
+
+  async getCustodyDealLink(applicationDealId: string): Promise<DbCustodyDealLink | null> {
+    return mockStore.getCustodyDealLink(applicationDealId);
+  }
+
+
+
+
+
+  async getCustodyOperation(idempotencyKey: string): Promise<DbCustodyOperation | null> {
+    return mockStore.getCustodyOperation(idempotencyKey);
+  }
+
+
+
+
+
+  async listCustodyOperations(applicationDealId: string): Promise<DbCustodyOperation[]> {
+    return mockStore.listCustodyOperations(applicationDealId);
+  }
+
+
+
+  async listCustodyEvents(contractDealId: string): Promise<DbCustodyEvent[]> {
+    return mockStore.listCustodyEvents(contractDealId);
+  }
+
+
+
 
   async addEvidence(evidence: DbEvidenceFile): Promise<void> {
     mockStore.addEvidence(evidence);

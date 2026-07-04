@@ -102,11 +102,13 @@ export class StellarSdkRpc implements StellarRpcPort {
         return {
           outcome: "confirmed",
           transaction_hash: transactionHash,
+          ledger: typeof response.ledger === "number" ? response.ledger : null,
           result_value: resultValue as ConfirmTransactionResult extends { outcome: "confirmed" } ? ConfirmTransactionResult["result_value"] : never,
         };
       }
       if (status === "FAILED") {
-        return { outcome: "failed", transaction_hash: transactionHash };
+        const resultXdr = (response as { resultXdr?: { toString(): string }, resultMetaXdr?: { toString(): string } }).resultXdr?.toString() || (response as { resultXdr?: { toString(): string }, resultMetaXdr?: { toString(): string } }).resultMetaXdr?.toString();
+        return { outcome: "failed", transaction_hash: transactionHash, result_xdr: resultXdr };
       }
       if (status === "NOT_FOUND") {
         return { outcome: "not_found" };

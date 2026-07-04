@@ -11,6 +11,7 @@ import {
 } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { executeCustodyDeliveryReference } from '@/lib/stellar/testnet-proof';
+import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
 async function runLegacyLocalDeliveryMilestone(
   dealId: string,
@@ -198,6 +199,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     if (userRole !== 'seller') {
       return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Only seller can perform this action'), { status: 403 });
     }
+
+    const custodyV2Rejection = rejectLegacyActionForCustodyV2(existingDeal, 'Delivery milestone');
+    if (custodyV2Rejection) return custodyV2Rejection;
 
     if (existingDeal.stellar_mode !== 'testnet') {
       return runLegacyLocalDeliveryMilestone(dealId, existingDeal, authUser.id);
