@@ -303,10 +303,11 @@ function makeFeeBumpTransactionEnvelope(): string {
 }
 
 function expectOkScenario(result: Awaited<ReturnType<typeof runHappyPathSmokeScenario>>): asserts result is Extract<typeof result, { readonly ok: true }> {
-  expect(result.ok).toBe(true);
   if (!result.ok) {
+    console.log(JSON.stringify(result, null, 2));
     throw new Error(`Expected successful scenario: ${JSON.stringify(result)}`);
   }
+  expect(result.ok).toBe(true);
 }
 
 function makeDealForReconciliation(
@@ -357,10 +358,15 @@ function makeOperation(input: {
   if (!planResult.ok) {
     throw new Error(`Invalid operation fixture: ${input.action}`);
   }
+  let scope: string | null = input.expected_status;
+  if (input.action === "create_deal") scope = null;
+  if (input.action === "buyer_deposit") scope = input.deal.buyer_id;
+  if (input.action === "seller_deposit") scope = input.deal.seller_id;
+
   return {
     idempotency_key: createStellarIdempotencyKey(
       input.deal.id,
-      input.expected_status,
+      scope,
       input.action,
     ),
     deal_id: input.deal.id,

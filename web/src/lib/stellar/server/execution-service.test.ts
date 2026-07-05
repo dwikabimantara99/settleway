@@ -1,3 +1,4 @@
+import { createStellarIdempotencyKey } from "@/lib/stellar/helpers";
 import { describe, it, expect, beforeEach } from "vitest";
 import { executeStellarOperation, type StellarExecutionServiceInput, type StellarOperationPersistencePort, type StellarPersistenceWriteResult, type StellarExecutionServiceResult } from "./execution-service";
 import type { StellarExecutionAdapter, StellarAdapterSubmitRequest, StellarAdapterConfirmRequest, StellarAdapterSubmitResult, StellarAdapterConfirmationResult } from "./adapter-contracts";
@@ -131,6 +132,7 @@ describe("Stellar Execution Service", () => {
       const input = getBaseInput();
       input.build_input = {
         action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         contract_id: "C123",
         escrow_id: "1",
@@ -258,11 +260,14 @@ describe("Stellar Execution Service", () => {
 
     it("11. existing confirmed transition returns local repair", async () => {
       const input = getBaseInput();
-      input.build_input = { action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", contract_id: "C123", escrow_id: "1", actor_address: "G123" };
+      input.build_input = { action: "buyer_deposit",
+        idempotency_scope: "b1",
+        expected_local_status: "WAITING_DEPOSITS", contract_id: "C123", escrow_id: "1", actor_address: "G123" };
       input.existing_operation = {
         ...BASE_EXISTING,
-        idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
+        idempotency_key: createStellarIdempotencyKey("deal-1", "b1", "buyer_deposit"),
         requested_action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         target_local_status: "BUYER_FUNDED",
         stellar_method: "deposit_buyer",

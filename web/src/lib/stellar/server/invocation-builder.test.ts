@@ -136,6 +136,8 @@ describe("Invocation Builder", () => {
     const res2 = buildStellarInvocation({
       action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
+      idempotency_scope: "buyer-1",
+      idempotency_scope: "buyer-1",
       contract_id: "C123",
       escrow_id: "1",
       actor_address: "GBUY",
@@ -158,6 +160,8 @@ describe("Invocation Builder", () => {
     const res3 = buildStellarInvocation({
       action: "buyer_deposit",
       expected_local_status: "SELLER_FUNDED",
+      idempotency_scope: "buyer-1",
+      idempotency_scope: "buyer-1",
       contract_id: "C123",
       escrow_id: "1",
       actor_address: "GBUY",
@@ -180,6 +184,8 @@ describe("Invocation Builder", () => {
     const res4 = buildStellarInvocation({
       action: "seller_deposit",
       expected_local_status: "WAITING_DEPOSITS",
+      idempotency_scope: "seller-1",
+      idempotency_scope: "seller-1",
       contract_id: "C123",
       escrow_id: "1",
       actor_address: "GSEL",
@@ -202,6 +208,8 @@ describe("Invocation Builder", () => {
     const res5 = buildStellarInvocation({
       action: "seller_deposit",
       expected_local_status: "BUYER_FUNDED",
+      idempotency_scope: "seller-1",
+      idempotency_scope: "seller-1",
       contract_id: "C123",
       escrow_id: "1",
       actor_address: "GSEL",
@@ -393,6 +401,8 @@ describe("Invocation Builder", () => {
     const base = {
       action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
+      idempotency_scope: "buyer-1",
+      idempotency_scope: "buyer-1",
       contract_id: "C123",
       actor_address: "GACTOR",
     } as const;
@@ -536,6 +546,8 @@ describe("Invocation Builder", () => {
     const base = {
       action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
+      idempotency_scope: "buyer-1",
+      idempotency_scope: "buyer-1",
       escrow_id: "1",
     } as const;
 

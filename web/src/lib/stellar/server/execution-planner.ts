@@ -115,8 +115,8 @@ export function planStellarExecution(
   }
   const canonicalPlan = planResult.plan;
 
-  const scope = ("idempotency_scope" in input.build_input && (input.build_input as any).idempotency_scope !== undefined)
-    ? ((input.build_input as any).idempotency_scope as string | null)
+  const scope = ("idempotency_scope" in input.build_input && (input.build_input as { idempotency_scope?: string | null }).idempotency_scope !== undefined)
+    ? ((input.build_input as { idempotency_scope?: string | null }).idempotency_scope ?? null)
     : input.build_input.expected_local_status;
 
   const derivedIdempotencyKey = createStellarIdempotencyKey(

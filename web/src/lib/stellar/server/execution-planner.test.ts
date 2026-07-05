@@ -1,3 +1,4 @@
+import { createStellarIdempotencyKey } from "@/lib/stellar/helpers";
 import { describe, it, expect } from "vitest";
 import { planStellarExecution, type StellarExecutionPlanningInput, type StellarExecutionPlan } from "./execution-planner";
 import type { StellarOperation } from "@/lib/stellar/types";
@@ -46,6 +47,7 @@ describe("Stellar Execution Planner - New operation flows", () => {
       ...BASE_INPUT,
       build_input: {
         action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         contract_id: "C123",
         escrow_id: "1",
@@ -190,9 +192,10 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
   it("14. confirmed transition returns apply_existing_confirmed", () => {
     const existing: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
+      idempotency_key: createStellarIdempotencyKey("deal-1", "b1", "buyer_deposit"),
       requested_action: "buyer_deposit",
-      expected_local_status: "WAITING_DEPOSITS",
+        idempotency_scope: "b1",
+        expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",
       stellar_method: "deposit_buyer",
       operation_status: "confirmed",
@@ -203,6 +206,7 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
       ...BASE_INPUT,
       build_input: {
         action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         contract_id: "C123",
         escrow_id: "1",
@@ -289,9 +293,10 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
   it("26. corrupt confirmed transition rejected", () => {
     const existing: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
+      idempotency_key: createStellarIdempotencyKey("deal-1", "b1", "buyer_deposit"),
       requested_action: "buyer_deposit",
-      expected_local_status: "WAITING_DEPOSITS",
+        idempotency_scope: "b1",
+        expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",
       stellar_method: "deposit_buyer",
       operation_status: "confirmed",
@@ -302,6 +307,7 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
       ...BASE_INPUT,
       build_input: {
         action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         contract_id: "C123",
         escrow_id: "1",
@@ -389,9 +395,10 @@ describe("Stellar Execution Planner - Safety and purity", () => {
     // existing confirmed transition
     const existingTransition: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
+      idempotency_key: createStellarIdempotencyKey("deal-1", "b1", "buyer_deposit"),
       requested_action: "buyer_deposit",
-      expected_local_status: "WAITING_DEPOSITS",
+        idempotency_scope: "b1",
+        expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",
       stellar_method: "deposit_buyer",
       operation_status: "confirmed",
@@ -402,6 +409,7 @@ describe("Stellar Execution Planner - Safety and purity", () => {
       ...BASE_INPUT,
       build_input: {
         action: "buyer_deposit",
+        idempotency_scope: "b1",
         expected_local_status: "WAITING_DEPOSITS",
         contract_id: "C123",
         escrow_id: "1",
