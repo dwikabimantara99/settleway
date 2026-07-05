@@ -20,8 +20,6 @@ export interface IRepository {
   // Profiles
   getProfile(id: string): Promise<DbProfile | null>;
   updateProfile(id: string, partial: Partial<DbProfile>): Promise<void>;
-  getProfileWallet(userId: string): Promise<DbUserWallet | null>;
-  provisionProfileWallet(wallet: DbUserWallet): Promise<void>;
 
   // Listings
   getListings(): Promise<DbListing[]>;

@@ -12,6 +12,7 @@ import {
   UserCircle2,
 } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import { ConnectExternalWalletButton } from '@/components/profile/ConnectExternalWalletButton';
 import { EditProfileButton } from '@/components/profile/EditProfileButton';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent } from '@/components/ui/Card';

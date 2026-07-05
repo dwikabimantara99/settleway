@@ -26,7 +26,9 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
         try {
           const horizonRes = await fetch(`https://horizon-testnet.stellar.org/accounts/${data.publicAddress}`);
           if (horizonRes.ok) {
+            const accountData = await horizonRes.json();
             const xlmBalance = accountData.balances?.find((b: { asset_type: string; balance: string }) => b.asset_type === 'native');
+            if (mounted && xlmBalance) {
               setBalance(`${parseFloat(xlmBalance.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XLM`);
             }
           } else {

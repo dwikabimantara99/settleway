@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/server';
-import { repository } from '@/lib/repositories';
+import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
 import { generateAndEncryptProfileWallet } from '@/lib/stellar/server/provisioning';
 import type { UserWallet } from '@/lib/types';
 
@@ -21,14 +21,15 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    let wallet = await repository.getProfileWallet(userId);
+    const walletRepo = getServerWalletRepository();
+    let wallet = await walletRepo.getProfileWallet(userId);
 
     // Idempotent provisioning if no wallet exists
     if (!wallet) {
       try {
         const newWallet = generateAndEncryptProfileWallet(userId);
-        await repository.provisionProfileWallet(newWallet);
-        wallet = await repository.getProfileWallet(userId);
+        await walletRepo.provisionProfileWallet(newWallet);
+        wallet = await walletRepo.getProfileWallet(userId);
       } catch (err) {
         console.error('Wallet provisioning error:', err);
         return NextResponse.json(

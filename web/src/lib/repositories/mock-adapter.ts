@@ -28,14 +28,6 @@ export class MockRepositoryAdapter implements IRepository {
     mockStore.updateProfile(id, partial);
   }
 
-  async getProfileWallet(userId: string): Promise<DbUserWallet | null> {
-    return mockStore.getProfileWallet(userId);
-  }
-
-  async provisionProfileWallet(wallet: DbUserWallet): Promise<void> {
-    mockStore.provisionProfileWallet(wallet);
-  }
-
   async getListings(): Promise<DbListing[]> {
     return Array.from(mockStore.listings.values()).map(l => ({ ...l }));
   }

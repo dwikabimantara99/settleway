@@ -13,9 +13,5 @@ CREATE TABLE IF NOT EXISTS public.user_wallets (
 -- RLS
 ALTER TABLE public.user_wallets ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their own wallet address"
-    ON public.user_wallets
-    FOR SELECT
-    USING (auth.uid() = user_id);
-
--- Note: No INSERT/UPDATE policies for standard users. Provisioning is handled strictly via Service Role API.
+-- Note: No SELECT/INSERT/UPDATE policies for standard users.
+-- All wallet access and provisioning is handled strictly via Service Role API to protect the encrypted_secret_key.
