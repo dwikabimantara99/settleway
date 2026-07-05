@@ -31,6 +31,97 @@ vi.mock('../stellar/server/deal-room-testnet-runtime', async () => {
 import { resolveDealRoomDefaultStellarState } from '../stellar/server/deal-room-testnet-runtime';
 
 describe('Phase B offer routes', () => {
+  it('rejects opening Deal Room before terms are agreed', async () => {
+    const offerId = 'offer-reject-1';
+    const now = new Date().toISOString();
+    mockStore.offers.set(offerId, {
+      id: offerId,
+      listing_id: 'listing-cabai-001',
+      buyer_request_id: null,
+      buyer_id: 'buyer-surabaya-restaurant',
+      seller_id: 'seller-probolinggo-cabai',
+      initiated_by_id: 'buyer-surabaya-restaurant',
+      commodity: "Red Chili (Bird's Eye Chili)",
+      volume_kg: 700,
+      price_per_kg_idr: 28500,
+      principal_idr: 19950000,
+      terms_note: 'Not accepted yet.',
+      status: 'awaiting_counterparty_acceptance',
+      latest_message_preview: null,
+      terms_submitted_at: now,
+      terms_accepted_at: null,
+      terms_accepted_by_id: null,
+      buyer_open_room_at: null,
+      seller_open_room_at: null,
+      active_deal_id: null,
+      created_at: now,
+      updated_at: now,
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-surabaya-restaurant' }) } as any);
+    const response = await openDealRoomRoute(new Request(`http://localhost/api/offers/${offerId}/open-deal-room`, { method: 'POST' }), {
+      params: Promise.resolve({ offerId }),
+    });
+    expect(response.status).toBe(409);
+    const payload = await response.json();
+    expect(payload.error.code).toBe('PRECONDITION_REQUIRED');
+  });
+
+  it('safely returns existing active deal on repeated Open Deal Room', async () => {
+    const offerId = 'offer-idem-1';
+    const now = new Date().toISOString();
+    mockStore.offers.set(offerId, {
+      id: offerId,
+      listing_id: 'listing-cabai-001',
+      buyer_request_id: null,
+      buyer_id: 'buyer-surabaya-restaurant',
+      seller_id: 'seller-probolinggo-cabai',
+      initiated_by_id: 'buyer-surabaya-restaurant',
+      commodity: "Red Chili (Bird's Eye Chili)",
+      volume_kg: 700,
+      price_per_kg_idr: 28500,
+      principal_idr: 19950000,
+      terms_note: 'Terms accepted.',
+      status: 'active_escrow',
+      latest_message_preview: null,
+      terms_submitted_at: now,
+      terms_accepted_at: now,
+      terms_accepted_by_id: 'seller-probolinggo-cabai',
+      buyer_open_room_at: now,
+      seller_open_room_at: now,
+      active_deal_id: 'deal-existing-123',
+      created_at: now,
+      updated_at: now,
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'buyer-surabaya-restaurant' }) } as any);
+    const response = await openDealRoomRoute(new Request(`http://localhost/api/offers/${offerId}/open-deal-room`, { method: 'POST' }), {
+      params: Promise.resolve({ offerId }),
+    });
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.deal_id).toBe('deal-existing-123');
+    expect(payload.data.redirect_to).toBe('/deals/deal-existing-123');
+  });
+
+  it('creates an offer from a buyer request without creating a deal room', async () => {
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: 'seller-probolinggo-cabai' }) } as any);
+    const request = new Request('http://localhost/api/offers', {
+      method: 'POST',
+      body: JSON.stringify({
+        buyerRequestId: 'req-spice-001',
+        openingMessage: 'We have the volume you need.',
+        volumeKg: 1000,
+        pricePerKgIdr: 28000,
+        termsNote: 'Standard delivery',
+      }),
+    });
+    const response = await createOfferRoute(request);
+    const payload = await response.json();
+    expect(response.status).toBe(200);
+    expect(payload.data.offer.buyer_request_id).toBe('req-spice-001');
+    expect(payload.data.offer.seller_id).toBe('seller-probolinggo-cabai');
+    expect(payload.data.offer.active_deal_id).toBeNull();
+  });
+
   beforeEach(() => {
     mockStore.seed();
     vi.mocked(resolveDealRoomDefaultStellarState).mockReturnValue({
