@@ -146,25 +146,10 @@ describe('Product UI Acceptance (Phase 8)', () => {
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
       const html = renderToString(page);
 
-      expect(hasText(page, 'Funding Gate')).toBe(true);
-      expect(hasText(page, 'Back to recorded negotiation')).toBe(true);
-      expect(hasText(page, 'Bilateral commitments')).toBe(true);
-      expect(html).toContain('Buyer principal');
-      expect(html).toContain('Seller performance bond');
-      expect(hasText(page, 'Funding deadline')).toBe(true);
-      expect(html).toContain('Aurora Assurance Rail');
-      expect(hasText(page, 'Commercial context')).toBe(true);
-      expect(html).toContain('Technical verification');
-      expect(html).toContain('No funds locked');
-      expect(html).toContain('Demo mode; no confirmed chain reference');
-      expect(
-        hasText(
-          page,
-          'We can prepare the lot and upload shipment evidence after both deposits clear.',
-        ),
-      ).toBe(true);
-      expect(html).toContain('Settlement policy');
-      expect(html).toContain('Stellar verification');
+      expect(html).toContain('Escrow Timeline');
+      expect(hasText(page, 'Open recorded thread')).toBe(true);
+      expect(html).toContain('Evidence Expected');
+      expect(html).toContain('Deal Summary');
     });
 
     it('carries negotiation continuity into the active room when activated from an offer', async () => {
@@ -221,7 +206,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
 
-      expect(hasText(page, 'Commercial context')).toBe(true);
+      expect(hasText(page, 'Negotiation Context')).toBe(true);
       expect(hasText(page, 'Recorded negotiation')).toBe(true);
       expect(hasText(page, 'Please confirm same-day pickup window.')).toBe(true);
       expect(hasText(page, 'We can prepare the lot after both deposits clear.')).toBe(

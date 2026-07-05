@@ -16,10 +16,9 @@ import {
 import { Badge } from '@/components/ui/Badge';
 import { StatusPill } from '@/components/ui/StatusPill';
 import { Stepper, Step } from '@/components/ui/Stepper';
-import { DealActions } from '@/components/deal/DealActions';
 import { DealRoomTabs } from '@/components/deal/DealRoomTabs';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
-import { AuroraFundingDealRoom } from '@/components/deal/AuroraFundingDealRoom';
+import { EscrowTimeline } from '@/components/deal/EscrowTimeline';
 import { getCurrentUser } from '@/lib/auth/server';
 import { demoProfiles } from '@/lib/demo/demo-data';
 import { getDeal } from '@/lib/db/deals';
@@ -424,26 +423,7 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   }
 
   if (isFundingWindow) {
-    return AuroraFundingDealRoom({
-      deal,
-      buyerDisplayName,
-      sellerDisplayName,
-      viewerRole,
-      connectedWallet,
-      connectedWalletPreview,
-      sourceOfferId: sourceOffer?.id ?? null,
-      latestNegotiationMessages,
-      recentRoomEvents,
-      depositDeadlineAt,
-      fundingWindowLabel,
-      roomSubline,
-      pricePerKg,
-      deliveryDeadline,
-      fundedCount,
-      buyerFundingStatus,
-      sellerFundingStatus,
-      steps,
-    });
+    // EscrowTimeline handles funding states and actions
   }
 
   let outcomeCardTitle = 'Outcome & Reputation Consequences';
@@ -654,170 +634,18 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
         </div>
       </header>
 
-      <section className="mb-6 rounded-2xl border border-slate-200 bg-white px-6 py-6 shadow-sm">
-        <Stepper steps={steps} />
-      </section>
-
       <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <main className="min-w-0 space-y-6">
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_25rem]">
-              <div>
-                <div className="mb-2 text-sm font-semibold uppercase tracking-wide text-emerald-700">
-                  Funding Gate
-                </div>
-                <h2 className="text-2xl font-semibold text-slate-950">
-                  {viewerRole === 'seller'
-                    ? 'Fund Your Seller Commitment'
-                    : 'Fund Your Buyer Commitment'}
-                </h2>
-                <p className="mt-3 text-base text-slate-600">
-                  Both parties must fund before the escrow can lock.
-                </p>
-                <div className="mt-6 space-y-3 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600">Principal</span>
-                    <span className="font-semibold text-slate-900">{formatCurrency(deal.principal_idr)}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600">Buyer bond (5%)</span>
-                    <span className="font-semibold text-slate-900">{formatCurrency(deal.buyer_bond_idr)}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600">Platform fee (0.5%)</span>
-                    <span className="font-semibold text-slate-900">{formatCurrency(deal.buyer_fee_idr)}</span>
-                  </div>
-                  <div className="flex items-center justify-between border-t border-slate-200 pt-5">
-                    <span className="text-xl font-semibold text-emerald-700">Total due</span>
-                    <span className="text-2xl font-bold text-emerald-700">
-                      {formatCurrency(viewerRole === 'seller' ? deal.seller_total_idr : deal.buyer_total_idr)}
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="font-semibold text-slate-900">Buyer deposit obligation</div>
-                    <div className="mt-1 text-slate-600">{formatCurrency(deal.buyer_total_idr)}</div>
-                  </div>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="font-semibold text-slate-900">Seller deposit obligation</div>
-                    <div className="mt-1 text-slate-600">{formatCurrency(deal.seller_total_idr)}</div>
-                  </div>
-                </div>
-              </div>
+          <EscrowTimeline
+            dealId={deal.id}
+            status={status}
+            viewerRole={viewerRole}
+            userId={currentUser?.id ?? null}
+            requiredAmountIdr={viewerRole === 'buyer' ? deal.buyer_total_idr : deal.seller_total_idr}
+            isFunded={viewerRole === 'buyer' ? buyerFundedHistorically : sellerFundedHistorically}
+            steps={steps}
+          />
 
-              <div className="space-y-4">
-                <div className="rounded-xl border border-slate-200 bg-white px-5 py-4">
-                  <div className="flex items-center gap-4">
-                    <WalletCards className="h-7 w-7 text-slate-500" />
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm text-slate-500">Connected Wallet</div>
-                      <div className="mt-1 font-semibold text-slate-950">{connectedWalletPreview}</div>
-                    </div>
-                    <span className="text-sm font-semibold text-emerald-700">Change</span>
-                  </div>
-                </div>
-                <DealActions
-                  dealId={deal.id}
-                  status={status}
-                  viewerRole={viewerRole}
-                  connectedWalletAddress={connectedWallet}
-                />
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-4 text-sm leading-6 text-slate-600">
-                  <div className="flex gap-3">
-                    <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                    <span>
-                      If the other side does not fund before the deadline, your funded side is
-                      refunded in full.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="mb-4 flex flex-wrap items-center gap-3">
-              <h2 className="text-xl font-semibold text-slate-950">Funding Status</h2>
-              <span className="text-sm font-semibold text-slate-500">{fundedCount} of 2 funded</span>
-              <span className="sr-only">Funding gate</span>
-            </div>
-            <div className="overflow-hidden rounded-xl border border-slate-200">
-              <div className="grid gap-2 border-b border-slate-200 bg-white px-4 py-4 text-sm sm:grid-cols-[1fr_1.2fr_1fr_auto] sm:items-center sm:gap-3">
-                <span className="font-medium text-slate-700">Buyer</span>
-                <span className="text-slate-700">{buyerDisplayName}</span>
-                <span className="font-semibold text-slate-900">{formatCurrency(deal.buyer_total_idr)}</span>
-                <Badge className={`w-fit ${buyerFundingStatus.className}`}>
-                  {buyerFundingStatus.label}
-                </Badge>
-              </div>
-              <div className="grid gap-2 bg-white px-4 py-4 text-sm sm:grid-cols-[1fr_1.2fr_1fr_auto] sm:items-center sm:gap-3">
-                <span className="font-medium text-slate-700">Seller</span>
-                <span className="text-slate-700">{sellerDisplayName}</span>
-                <span className="font-semibold text-slate-900">{formatCurrency(deal.seller_total_idr)}</span>
-                <Badge className={`w-fit ${sellerFundingStatus.className}`}>
-                  {sellerFundingStatus.label}
-                </Badge>
-              </div>
-            </div>
-          </section>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="mb-5 flex items-center justify-between gap-4">
-                <h2 className="text-lg font-semibold text-slate-950">
-                  What happens if the funding deadline is missed?
-                </h2>
-                <ChevronLeft className="h-4 w-4 rotate-90 text-slate-500" />
-              </div>
-              <div className="flex gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                  <ShieldCheck className="h-9 w-9" />
-                </div>
-                <p className="text-sm leading-6 text-slate-600">
-                  If only one side funds before the deadline, that side is refunded in full. The
-                  non-funding side receives a reputation penalty. No bond slashing occurs before
-                  escrow lock.
-                </p>
-              </div>
-            </section>
-
-            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-950">Recent Activity</h2>
-              <div className="mt-5 space-y-4 border-l border-emerald-100 pl-5">
-                {recentRoomEvents.length > 0 ? (
-                  recentRoomEvents.slice(0, 3).map((event) => (
-                    <div key={event.id} className="relative">
-                      <span className="absolute -left-[1.65rem] top-1.5 h-3 w-3 rounded-full bg-emerald-600" />
-                      <div className="text-sm font-semibold text-slate-900">
-                        {formatDateTime(event.created_at)}
-                      </div>
-                      <div className="mt-1 text-sm text-slate-600">
-                        {event.message || formatEventType(event.event_type)}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <>
-                    <div className="relative">
-                      <span className="absolute -left-[1.65rem] top-1.5 h-3 w-3 rounded-full bg-emerald-600" />
-                      <div className="text-sm font-semibold text-slate-900">20 Jun 2026, 21:31</div>
-                      <div className="mt-1 text-sm text-slate-600">
-                        Both parties agreed to open the Deal Room.
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <span className="absolute -left-[1.65rem] top-1.5 h-3 w-3 rounded-full bg-emerald-600" />
-                      <div className="text-sm font-semibold text-slate-900">Now</div>
-                      <div className="mt-1 text-sm text-slate-600">
-                        Waiting for buyer and seller deposits.
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </section>
-          </div>
 
           <DealRoomTabs
             overviewContent={

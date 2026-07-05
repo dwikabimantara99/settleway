@@ -10,7 +10,6 @@ import {
 import { PublicLandingHeader } from '@/components/landing/PublicLandingHeader';
 import { AuthenticatedHeader } from '@/components/layout/AuthenticatedHeader';
 import { AuroraAssuranceRail } from '@/components/deal/AuroraAssuranceRail';
-import { AuroraCommitmentRow } from '@/components/deal/AuroraFundingDealRoom';
 import { TradeSurfaceCard } from '@/components/marketplace/TradeSurfaceCard';
 import { Button } from '@/components/ui/Button';
 import {
@@ -110,25 +109,8 @@ export default function DesignLabPage() {
             <div className="aurora-surface overflow-hidden">
               <div className="border-b border-[var(--border-subtle)] p-6">
                 <h2 className="text-xl font-semibold text-[var(--navy-900)]">Bilateral commitment rows</h2>
+                <p className="mt-4 text-sm text-[var(--text-secondary)] px-6 pb-6">Commitment rows have been removed in favor of EscrowTimeline.</p>
               </div>
-              <AuroraCommitmentRow
-                label="Buyer"
-                name="Surabaya Spice Co."
-                amount={21047250}
-                status="Pending"
-                statusClassName="border-[var(--warning-600)]/25 bg-[var(--warning-50)] text-[var(--warning-600)]"
-                obligation="Principal + buyer commitment bond + platform fee"
-                icon={UserRound}
-              />
-              <AuroraCommitmentRow
-                label="Seller"
-                name="Probolinggo Farmer Group"
-                amount={1097250}
-                status="Funded"
-                statusClassName="border-[var(--green-700)]/25 bg-[var(--green-50)] text-[var(--green-700)]"
-                obligation="Seller performance bond + platform fee"
-                icon={ShieldCheck}
-              />
             </div>
           </section>
 

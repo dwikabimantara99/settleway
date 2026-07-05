@@ -54,7 +54,7 @@ describe('Deal Room state gallery fixtures', () => {
         status === 'SELLER_FUNDED' ||
         status === 'CUSTODY_PENDING'
       ) {
-        expect(html).toContain('Aurora Assurance Rail');
+        expect(html).toContain('Escrow Timeline');
       } else {
         expect(html).toContain('Protected by escrow logic and recorded on Stellar');
       }

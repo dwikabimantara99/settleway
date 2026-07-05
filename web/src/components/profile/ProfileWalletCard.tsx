@@ -9,7 +9,43 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
   const [wallet, setWallet] = useState<UserWallet | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [funding, setFunding] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchBalance = async (publicAddress: string) => {
+    try {
+      const horizonRes = await fetch(`https://horizon-testnet.stellar.org/accounts/${publicAddress}`);
+      if (horizonRes.ok) {
+        const accountData = await horizonRes.json();
+        const xlmBalance = accountData.balances?.find((b: { asset_type: string; balance: string }) => b.asset_type === 'native');
+        if (xlmBalance) {
+          setBalance(`${parseFloat(xlmBalance.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XLM`);
+        }
+      } else {
+        setBalance('0.00 XLM');
+      }
+    } catch (err) {
+      console.error('Failed to fetch balance', err);
+      setBalance('Unavailable');
+    }
+  };
+
+  const fundWithFriendbot = async () => {
+    if (!wallet) return;
+    setFunding(true);
+    try {
+      const res = await fetch(`https://friendbot.stellar.org/?addr=${wallet.publicAddress}`);
+      if (res.ok) {
+        await fetchBalance(wallet.publicAddress);
+      } else {
+        setError('Friendbot funding failed. Please try again later.');
+      }
+    } catch (err) {
+      setError('Friendbot is currently unreachable.');
+    } finally {
+      setFunding(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -22,21 +58,8 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
         const data: UserWallet = await res.json();
         if (mounted) setWallet(data);
 
-        // Fetch balance from testnet horizon
-        try {
-          const horizonRes = await fetch(`https://horizon-testnet.stellar.org/accounts/${data.publicAddress}`);
-          if (horizonRes.ok) {
-            const accountData = await horizonRes.json();
-            const xlmBalance = accountData.balances?.find((b: { asset_type: string; balance: string }) => b.asset_type === 'native');
-            if (mounted && xlmBalance) {
-              setBalance(`${parseFloat(xlmBalance.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} XLM`);
-            }
-          } else {
-            if (mounted) setBalance('0.00 XLM');
-          }
-        } catch (err) {
-          console.error('Failed to fetch balance', err);
-          if (mounted) setBalance('Unavailable');
+        if (mounted) {
+          await fetchBalance(data.publicAddress);
         }
       } catch (err) {
         console.error(err);
@@ -90,10 +113,18 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
         </div>
 
         {balance === '0.00 XLM' && (
-          <div className="text-right max-w-[200px]">
+          <div className="text-right max-w-[220px] flex flex-col items-end gap-2">
              <span className="block text-[11px] text-slate-500 leading-tight">
                No balance detected yet. Send testnet XLM to this address to fund your Settleway Profile Wallet.
              </span>
+             <button
+               onClick={fundWithFriendbot}
+               disabled={funding}
+               className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-md font-medium hover:bg-emerald-100 disabled:opacity-50 flex items-center gap-2 transition-colors"
+             >
+               {funding ? <Loader2 className="h-3 w-3 animate-spin" /> : null}
+               Fund via Friendbot (Testnet)
+             </button>
           </div>
         )}
       </div>
