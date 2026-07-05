@@ -15,7 +15,7 @@ Deployment to Vercel is intentionally deferred until stability is achieved.
 * **Goal**: Replace unverified wallet-connect with an account-first model. Every user automatically gets a Settleway Profile Wallet upon email login.
 * **Likely Files**: `src/app/(auth)/*`, `src/lib/auth/*`, Profile schemas.
 * **Acceptance Criteria**: Users sign up and possess a unique Stellar keypair mapped to their account.
-* **Risks**: Key management security; avoid exposing private keys directly to the frontend.
+* **Risks**: **Managed Custody Liability**. If Settleway provisions the wallet, it holds the keys. Key management security (e.g., via KMS or secure enclaves) must be definitively solved before production, and private keys must never be exposed to the frontend.
 * **Must not touch**: Existing active Escrow state machine.
 * **Exit condition**: Profile dashboard displays the user's Settleway Wallet address and balance.
 

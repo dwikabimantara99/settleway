@@ -14,6 +14,7 @@ It is critical to distinguish between the different wallets/accounts operating i
 - **Owner**: The individual registered user.
 - **Purpose**: The user's internal Stellar address. Acts as the source of funds for Deal Room deposits and the destination for returning bonds/principal upon settlement.
 - **Location of Funds**: User holds custody/balance here *before* deals are locked and *after* deals conclude.
+- **Custody Risk / Unresolved Decision**: Since the user does not bring their own wallet, Settleway must securely manage the private keys for these profile wallets (e.g., via KMS, secure enclaves, or passkeys). This introduces managed-custody compliance and security risks that must be resolved before mainnet production deployment.
 
 ### 2. Soroban Escrow Contract (The Lockbox)
 - **Owner**: The deployed Soroban smart contract.
