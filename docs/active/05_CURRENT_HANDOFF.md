@@ -2,8 +2,8 @@
 
 ## Current Candidate
 
-- Candidate branch: `feature/offer-negotiation-deal-room-lifecycle`
-- Focus: End-to-End Deal Creation Lifecycle (Offer -> Negotiation -> Terms Agreed -> Profile Wallet Deal Room)
+- Candidate branch: `feature/evidence-delivery-proof-corridor`
+- Focus: Evidence Submission & Delivery Proof Corridor
 
 ## What was implemented
 
@@ -19,6 +19,9 @@
 - **Terms Agreement**: Counterparty can accept terms to unblock the Deal Room.
 - **Open Deal Room**: Both parties clicking "Open Deal Room" creates an idempotent Deal and redirects to the active escrow room.
 - **Profile Wallet Corridor**: The Deal Room is instantiated on the Profile Wallet rail, allowing immediate Testnet funding without external Freighter signing.
+- **Delivery Proof Submission**: Sellers can upload delivery evidence (or mock metadata) once the escrow is locked.
+- **Testnet Proof Anchoring**: Submitted proof hashes are recorded as memos in a Testnet custody wallet reference transaction.
+- **Strict Delivery Acceptance Gate**: The API completely prevents buyer acceptance (via `accept-delivery`) until a valid delivery proof has been submitted, enforcing an honest execution corridor.
 
 ## What is mock/demo-only
 
@@ -35,6 +38,9 @@
 - `web/src/app/offers/[offerId]/page.tsx` (Replaced external wallet binding with internal ProfileWalletCard)
 - `web/src/lib/types.ts` (Added `Offer`, `OfferStatus`, `NegotiationMessage`, `Notification` domains)
 - `web/supabase/migrations/20260705_offer_negotiation_schema.sql` (Added tables and RLS)
+- `web/src/app/api/deals/[dealId]/accept-delivery/route.ts` (Enforced `proof_hash` presence for testnet deal acceptance)
+- `web/src/components/deal/EscrowTimeline.tsx` and `DealActions.tsx` (Enhanced buyer UI cues for evidence review)
+- `web/src/lib/integration/evidence-corridor.test.ts` (Added integration tests for proof submission and acceptance gating)
 
 ## How the lifecycle connects to existing Profile Wallet funding flow
 
@@ -47,4 +53,5 @@
 
 ## What next macro-batch should be
 
-- **Evidence Package Pipeline & Automated Settlement Triggers**: Now that a Deal Room can be funded cleanly via Profile Wallets, the focus must shift to standardizing the delivery evidence submission, buyer acceptance (which exists but may need UI polish), and ensuring deterministic execution of the `mark_delivered` and `accept_delivery` endpoints.
+- **Automated Dispute Mediation triggers**: The settlement corridor remains strictly verified, but automated dispute resolution limits have not been fully expanded.
+- **Payout Integration**: The payout destination mapping exists, but automated release of testnet assets back to external wallets requires further integration.

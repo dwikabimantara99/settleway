@@ -150,6 +150,13 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     const custodyV2Rejection = rejectLegacyActionForCustodyV2(existingDeal, 'Buyer delivery acceptance');
     if (custodyV2Rejection) return custodyV2Rejection;
 
+    if (existingDeal.stellar_mode === 'testnet' && !existingDeal.proof_hash) {
+      return NextResponse.json(
+        createErrorResponse('STELLAR_EXECUTION_INVALID', 'Seller proof must be submitted before buyer can accept delivery.'),
+        { status: 400 }
+      );
+    }
+
     if (existingDeal.stellar_mode !== 'testnet') {
       return runLegacyLocalAcceptance(dealId, existingDeal, authUser.id);
     }

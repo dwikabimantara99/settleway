@@ -229,7 +229,7 @@ export function DealActions({
       )}
       {status === 'DELIVERED' && viewerRole === 'seller' && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          Delivery has been marked. Wait for the buyer to confirm receipt and release settlement.
+          Delivery has been marked. Wait for the buyer to review proof and release settlement.
         </div>
       )}
       {status === 'REFUNDED' && (
@@ -368,7 +368,7 @@ export function DealActions({
             onClick={() => handleAction('accept-delivery')}
             disabled={loading !== null}
           >
-            {loading === 'accept-delivery' ? 'Processing...' : getActionLabel('accept-delivery')}
+            {loading === 'accept-delivery' ? 'Processing...' : 'Review Proof & Settle'}
           </Button>
         )}
 

@@ -141,7 +141,7 @@ export function EscrowTimeline({
                 onClick={() => handleAction('accept-delivery')}
                 disabled={loading !== null}
               >
-                {loading === 'accept-delivery' ? 'Processing...' : 'Confirm Receipt And Settle'}
+                {loading === 'accept-delivery' ? 'Processing...' : 'Review Proof & Settle'}
               </Button>
             )}
           </div>

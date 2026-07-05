@@ -72,7 +72,7 @@ describe('Deal Room state gallery fixtures', () => {
       }
 
       if (status === 'DELIVERED') {
-        expect(html).toContain('Confirm Receipt And Settle');
+        expect(html).toContain('Review Proof &amp; Settle');
       }
 
       if (status === 'COMPLETED') {
