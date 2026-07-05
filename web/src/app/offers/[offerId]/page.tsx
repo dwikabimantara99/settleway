@@ -19,7 +19,7 @@ import {
 import { Badge } from '@/components/ui/Badge';
 import { NegotiationComposer } from '@/components/offers/NegotiationComposer';
 import { DealTermsActionButton } from '@/components/offers/DealTermsActionButton';
-import { ConnectExternalWalletButton } from '@/components/profile/ConnectExternalWalletButton';
+import { ProfileWalletCard } from '@/components/profile/ProfileWalletCard';
 import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
 import { demoProfiles } from '@/lib/demo/demo-data';
@@ -455,49 +455,15 @@ export default async function OfferDetailPage({
                 </p>
               </header>
               <div className="space-y-4 p-6">
-                <div className="rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-950">Buyer wallet</div>
-                      <div className="mt-1 font-mono text-xs text-slate-500">
-                        {shortAddress(buyerProfile?.connected_wallet_address)}
-                      </div>
-                    </div>
-                    <Badge className={statusBadgeClass(buyerProfile?.connected_wallet_network === 'testnet')}>
-                      {buyerProfile?.connected_wallet_network === 'testnet' ? 'Confirmed' : 'Required'}
-                    </Badge>
-                  </div>
+                <div className="rounded-xl bg-white">
                   {actorId === offer.buyer_id ? (
-                    <ConnectExternalWalletButton
-                      profileId={offer.buyer_id}
-                      initialAddress={buyerProfile?.connected_wallet_address ?? null}
-                      initialProvider={buyerProfile?.connected_wallet_provider ?? null}
-                      initialNetwork={buyerProfile?.connected_wallet_network ?? null}
-                      canConnect
-                    />
+                    <ProfileWalletCard userId={offer.buyer_id} />
                   ) : null}
                 </div>
 
-                <div className="rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-950">Seller wallet</div>
-                      <div className="mt-1 font-mono text-xs text-slate-500">
-                        {shortAddress(sellerProfile?.connected_wallet_address)}
-                      </div>
-                    </div>
-                    <Badge className={statusBadgeClass(sellerProfile?.connected_wallet_network === 'testnet')}>
-                      {sellerProfile?.connected_wallet_network === 'testnet' ? 'Confirmed' : 'Required'}
-                    </Badge>
-                  </div>
+                <div className="rounded-xl bg-white">
                   {actorId === offer.seller_id ? (
-                    <ConnectExternalWalletButton
-                      profileId={offer.seller_id}
-                      initialAddress={sellerProfile?.connected_wallet_address ?? null}
-                      initialProvider={sellerProfile?.connected_wallet_provider ?? null}
-                      initialNetwork={sellerProfile?.connected_wallet_network ?? null}
-                      canConnect
-                    />
+                    <ProfileWalletCard userId={offer.seller_id} />
                   ) : null}
                 </div>
               </div>

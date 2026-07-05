@@ -90,3 +90,60 @@ export interface Deal {
   proofHash?: string;
   rail_version?: 'custody_v2_testnet' | 'managed_custody_testnet';
 }
+
+export type OfferStatus =
+  | 'negotiating'
+  | 'awaiting_counterparty_acceptance'
+  | 'terms_accepted'
+  | 'awaiting_counterparty_open'
+  | 'active_escrow';
+
+export interface Offer {
+  id: string;
+  listingId?: string | null;
+  buyerRequestId?: string | null;
+  buyerId: string;
+  sellerId: string;
+  initiatedById: string;
+  commodity: string;
+  volumeKg: number | null;
+  pricePerKgIdr: number | null;
+  principalIdr: number;
+  termsNote?: string | null;
+  status: OfferStatus;
+  latestMessagePreview?: string | null;
+  termsSubmittedAt?: string | null;
+  termsAcceptedAt?: string | null;
+  termsAcceptedById?: string | null;
+  buyerOpenRoomAt?: string | null;
+  sellerOpenRoomAt?: string | null;
+  activeDealId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NegotiationMessage {
+  id: string;
+  offerId: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
+}
+
+export type NotificationType =
+  | 'offer_received'
+  | 'offer_accepted'
+  | 'message_received'
+  | 'counterparty_opened_room'
+  | 'deal_room_activated';
+
+export interface Notification {
+  id: string;
+  recipientId: string;
+  offerId: string;
+  type: NotificationType;
+  message: string;
+  readAt?: string | null;
+  createdAt: string;
+}
+
