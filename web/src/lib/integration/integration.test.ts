@@ -301,7 +301,7 @@ describe('Application Integration', () => {
       action: 'accept_delivery',
       operation_id: 'op-123',
       existing_operation: {
-        idempotency_key: `v1:${dealId}:DELIVERED:accept_delivery`,
+        idempotency_key: `v1:${dealId}:buyer-1:accept_delivery`,
         deal_id: dealId,
         requested_action: 'accept_delivery',
         expected_local_status: 'DELIVERED',

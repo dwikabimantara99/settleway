@@ -267,11 +267,11 @@ export function assembleStellarExecutionInput(
         contract_id: contractId,
         escrow_id: escrowId,
       };
-    } else if (input.action === "buyer_deposit" || input.action === "seller_deposit") {
+    } else if (input.action === "buyer_deposit" || input.action === "seller_deposit" || input.action === "accept_delivery") {
       buildInput = {
         action: input.action,
         expected_local_status: expectedLocalStatus,
-        idempotency_scope: input.action === "buyer_deposit" ? input.deal.buyer_id : input.deal.seller_id,
+        idempotency_scope: input.action === "seller_deposit" ? input.deal.seller_id : input.deal.buyer_id,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,

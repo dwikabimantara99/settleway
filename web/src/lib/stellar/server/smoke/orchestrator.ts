@@ -121,7 +121,7 @@ function timestampSet(scenario: SmokeScenarioName, index: number): {
 function operationKey(deal: DbDeal, action: StellarAction): string {
   let scope: string | null = deal.status;
   if (action === "create_deal") scope = null;
-  if (action === "buyer_deposit") scope = deal.buyer_id;
+  if (action === "buyer_deposit" || action === "accept_delivery") scope = deal.buyer_id;
   if (action === "seller_deposit") scope = deal.seller_id;
 
   return createStellarIdempotencyKey(

@@ -725,7 +725,6 @@ export class MockStore {
     const [ev1, ev2] = events;
     if (!ev1 || !ev1.id || !ev1.idempotency_key) throw new Error('Invalid reputation event input');
     if (!ev2 || !ev2.id || !ev2.idempotency_key) throw new Error('Invalid reputation event input');
-
     const existing1 = Array.from(this.reputationEvents.values()).find(e => e.idempotency_key === ev1.idempotency_key);
     const existing2 = Array.from(this.reputationEvents.values()).find(e => e.idempotency_key === ev2.idempotency_key);
 

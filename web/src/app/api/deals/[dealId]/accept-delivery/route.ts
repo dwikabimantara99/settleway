@@ -1,24 +1,58 @@
 import { NextResponse } from 'next/server';
-import { repository, runtimeMode } from '@/lib/repositories';
+import crypto from 'node:crypto';
+import { repository } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
-import { processReputationOutcome } from '@/lib/reputation/engine';
-import {
-  loadDealRoomTestnetRuntime,
-  type DealRoomTestnetRuntime,
-} from '@/lib/stellar/server/deal-room-testnet-runtime';
-import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
-import {
-  createProfilePayoutDestinationSnapshot,
-  createWalletPayoutDestinationSnapshot,
-} from '@/lib/payout-destinations';
-import { TESTNET_DEMO_IDENTITIES } from '@/lib/stellar/testnet-demo-identities';
-import { executeSuccessSettlement } from '@/lib/stellar/testnet-settlement';
-import { executeExternalWalletPayouts } from '@/lib/stellar/testnet-external-payout';
+import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coordinator';
+import { createStellarIdempotencyKey } from '@/lib/stellar/helpers';
+import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
+import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
+import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
+import { processReputationOutcome } from '@/lib/reputation/engine';
+import { createProfilePayoutDestinationSnapshot, createWalletPayoutDestinationSnapshot } from '@/lib/payout-destinations';
+import { TESTNET_DEMO_IDENTITIES } from '@/lib/stellar/testnet-demo-identities';
+
+function currentTimestamp(): string {
+  return new Date().toISOString();
+}
+
+const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_DELAY_MS = 1500;
+
+function isReconciliationPending(operation: StellarOperation | null): boolean {
+  return (
+    operation !== null &&
+    (operation.operation_status === 'submitted' || operation.operation_status === 'unknown')
+  );
+}
+
+async function waitForReconciliationWindow(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ROUTE_RECONCILIATION_DELAY_MS));
+}
+
+function mapCoordinatorFailure(
+  result: Extract<Awaited<ReturnType<typeof coordinateDealExecution>>, { ok: false }>,
+) {
+  switch (result.reason) {
+    case 'ERR_OUT_OF_SYNC':
+    case 'ERR_DEAL_PERSISTENCE_CONFLICT':
+      return { status: 409, code: 'CONFLICT', message: 'Deal execution is out of sync. Please retry.' };
+    case 'ERR_DEAL_PERSISTENCE_UNAVAILABLE':
+    case 'ERR_EXECUTION_PERSISTENCE_FAILURE':
+      return { status: 503, code: 'STELLAR_PERSISTENCE_UNAVAILABLE', message: 'Testnet execution state could not be persisted.' };
+    case 'ERR_ASSEMBLY_FAILURE':
+    case 'ERR_LOCAL_COMMIT_PLANNING_FAILURE':
+      return { status: 400, code: 'STELLAR_EXECUTION_INVALID', message: 'The Testnet settlement input is not valid for this deal state.' };
+    default:
+      return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: 'The Stellar Testnet settlement action could not be confirmed.' };
+  }
+}
 
 async function buildCompletionPayoutMetadata(deal: DbDeal) {
   const [buyerProfile, sellerProfile] = await Promise.all([
@@ -37,31 +71,6 @@ async function buildCompletionPayoutMetadata(deal: DbDeal) {
       'Settleway fee wallet',
       TESTNET_DEMO_IDENTITIES.platform.public_address,
     ),
-  };
-}
-
-async function resolveConnectedWalletDestinations(deal: DbDeal) {
-  const [buyerProfile, sellerProfile] = await Promise.all([
-    repository.getProfile(deal.buyer_id),
-    repository.getProfile(deal.seller_id),
-  ]);
-
-  if (
-    !buyerProfile?.connected_wallet_address ||
-    buyerProfile.connected_wallet_network !== 'testnet'
-  ) {
-    throw new Error('Buyer must connect a Stellar Testnet wallet before external payout.');
-  }
-  if (
-    !sellerProfile?.connected_wallet_address ||
-    sellerProfile.connected_wallet_network !== 'testnet'
-  ) {
-    throw new Error('Seller must connect a Stellar Testnet wallet before external payout.');
-  }
-
-  return {
-    buyerConnectedAddress: buyerProfile.connected_wallet_address,
-    sellerConnectedAddress: sellerProfile.connected_wallet_address,
   };
 }
 
@@ -120,256 +129,7 @@ async function runLegacyLocalAcceptance(
   return NextResponse.json(createSuccessResponse(updatedDeal));
 }
 
-async function persistCustodyWalletAcceptance(input: {
-  dealId: string;
-  existingDeal: DbDeal;
-  actorId: string;
-  transactionHash: string;
-  custodyAddress: string;
-  buyerManagedAddress: string;
-  sellerManagedAddress: string;
-  buyerBondReturnXlm: string;
-  sellerPayoutXlm: string;
-  platformFeeRetainedXlm: string;
-  assetCode: string;
-  externalPayoutTransactionHash?: string;
-  buyerConnectedAddress?: string;
-  sellerConnectedAddress?: string;
-  externalBuyerBondReturnXlm?: string;
-  externalSellerPayoutXlm?: string;
-}) {
-  const nextDeal = {
-    ...transition(input.existingDeal, 'accept_delivery'),
-    latest_stellar_tx_hash: input.transactionHash,
-    stellar_sync_status: 'idle' as const,
-  };
-
-  const replaced = await repository.replaceDealIfCurrent({
-    current: input.existingDeal,
-    next: nextDeal,
-  });
-
-  let updatedDeal = replaced.deal ?? nextDeal;
-  if (!replaced.replaced) {
-    const currentDeal = await repository.getDeal(input.existingDeal.id);
-    if (
-      currentDeal?.status === 'COMPLETED' &&
-      currentDeal.latest_stellar_tx_hash === input.transactionHash
-    ) {
-      updatedDeal = currentDeal;
-    } else if (
-      runtimeMode === 'demo' &&
-      currentDeal &&
-      JSON.stringify(currentDeal) === JSON.stringify(input.existingDeal)
-    ) {
-      await repository.updateDeal(input.existingDeal.id, {
-        status: nextDeal.status,
-        latest_stellar_tx_hash: nextDeal.latest_stellar_tx_hash,
-        stellar_sync_status: nextDeal.stellar_sync_status,
-        updated_at: nextDeal.updated_at,
-      });
-      const recoveredDeal = await repository.getDeal(input.existingDeal.id);
-      if (!recoveredDeal) {
-        return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
-      }
-      updatedDeal = recoveredDeal;
-    } else {
-      return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
-    }
-  }
-
-  const settlementReference = input.transactionHash;
-  const settledAt = new Date().toISOString();
-  const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
-  const existingEvents = await repository.getDealEvents(input.dealId);
-  const hasAcceptanceEvent = existingEvents.some(
-    (event) =>
-      event.event_type === 'accept_delivery' &&
-      event.tx_hash === input.transactionHash,
-  );
-
-  if (!hasAcceptanceEvent) {
-    const event = createEvent(
-      input.dealId,
-      'accept_delivery',
-      input.actorId,
-      'Buyer confirmed receipt. Settleway released the successful settlement from custody to the managed profile wallets on Stellar Testnet.',
-      {
-        next_status: updatedDeal.status,
-        principal_to_seller_idr: updatedDeal.principal_idr,
-        buyer_bond_return_idr: updatedDeal.buyer_bond_idr,
-        seller_bond_return_idr: updatedDeal.seller_bond_idr,
-        platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
-        buyer_wallet_credit_idr: updatedDeal.buyer_bond_idr,
-        seller_wallet_credit_idr: updatedDeal.principal_idr + updatedDeal.seller_bond_idr,
-        platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
-        settlement_reference: settlementReference,
-        settled_at: settledAt,
-        settlement_route: 'settleway_custody_to_managed_profile_wallets',
-        custody_address: input.custodyAddress,
-        buyer_managed_wallet_address: input.buyerManagedAddress,
-        seller_managed_wallet_address: input.sellerManagedAddress,
-        buyer_bond_return_xlm: input.buyerBondReturnXlm,
-        seller_payout_xlm: input.sellerPayoutXlm,
-        platform_fee_retained_xlm: input.platformFeeRetainedXlm,
-        asset_code: input.assetCode,
-        external_payout_transaction_hash: input.externalPayoutTransactionHash,
-        buyer_connected_wallet_address: input.buyerConnectedAddress,
-        seller_connected_wallet_address: input.sellerConnectedAddress,
-        external_buyer_bond_return_xlm: input.externalBuyerBondReturnXlm,
-        external_seller_payout_xlm: input.externalSellerPayoutXlm,
-        delivery_transaction_hash: input.existingDeal.latest_stellar_tx_hash,
-        ...payoutMetadata,
-      },
-    );
-    event.tx_hash = input.transactionHash;
-    await repository.addEvent(event);
-  }
-
-  await processReputationOutcome(repository, {
-    deal_id: updatedDeal.id,
-    buyer_id: updatedDeal.buyer_id,
-    seller_id: updatedDeal.seller_id,
-    reputation_outcome: 'transaction_completed',
-    principal_idr: updatedDeal.principal_idr,
-    transaction_hash: input.transactionHash,
-    proof_hash: updatedDeal.proof_hash,
-    settlement_reference: settlementReference,
-    settled_at: settledAt,
-    local_terminal_outcome_persisted: true,
-    operation_status: 'confirmed',
-    sync_status: updatedDeal.stellar_sync_status,
-  }, () => globalThis.crypto.randomUUID());
-
-  return NextResponse.json(createSuccessResponse(updatedDeal));
-}
-
-async function runCustodyWalletAcceptance(input: {
-  dealId: string;
-  existingDeal: DbDeal;
-  actorId: string;
-  runtime: DealRoomTestnetRuntime;
-}) {
-  if (
-    input.existingDeal.status !== 'DELIVERED' ||
-    !input.existingDeal.proof_hash ||
-    !input.existingDeal.latest_stellar_tx_hash
-  ) {
-    return NextResponse.json(
-      createErrorResponse(
-        'STELLAR_EXECUTION_INVALID',
-        'Buyer acceptance requires a delivered custody room with confirmed delivery proof.',
-      ),
-      { status: 400 },
-    );
-  }
-
-  const existingEvents = await repository.getDealEvents(input.dealId);
-  const existingAcceptanceEvent = existingEvents.find(
-    (event) => event.event_type === 'accept_delivery' && event.tx_hash,
-  );
-
-  if (existingAcceptanceEvent?.tx_hash) {
-    return persistCustodyWalletAcceptance({
-      dealId: input.dealId,
-      existingDeal: input.existingDeal,
-      actorId: input.actorId,
-      transactionHash: existingAcceptanceEvent.tx_hash,
-      custodyAddress: String(existingAcceptanceEvent.metadata?.custody_address ?? input.runtime.metadata.admin_address),
-      buyerManagedAddress: String(existingAcceptanceEvent.metadata?.buyer_managed_wallet_address ?? input.runtime.metadata.buyer_demo_address),
-      sellerManagedAddress: String(existingAcceptanceEvent.metadata?.seller_managed_wallet_address ?? input.runtime.metadata.seller_demo_address),
-      buyerBondReturnXlm: String(existingAcceptanceEvent.metadata?.buyer_bond_return_xlm ?? ''),
-      sellerPayoutXlm: String(existingAcceptanceEvent.metadata?.seller_payout_xlm ?? ''),
-      platformFeeRetainedXlm: String(existingAcceptanceEvent.metadata?.platform_fee_retained_xlm ?? ''),
-      assetCode: String(existingAcceptanceEvent.metadata?.asset_code ?? 'XLM'),
-      externalPayoutTransactionHash: typeof existingAcceptanceEvent.metadata?.external_payout_transaction_hash === 'string'
-        ? existingAcceptanceEvent.metadata.external_payout_transaction_hash
-        : undefined,
-      buyerConnectedAddress: typeof existingAcceptanceEvent.metadata?.buyer_connected_wallet_address === 'string'
-        ? existingAcceptanceEvent.metadata.buyer_connected_wallet_address
-        : undefined,
-      sellerConnectedAddress: typeof existingAcceptanceEvent.metadata?.seller_connected_wallet_address === 'string'
-        ? existingAcceptanceEvent.metadata.seller_connected_wallet_address
-        : undefined,
-      externalBuyerBondReturnXlm: typeof existingAcceptanceEvent.metadata?.external_buyer_bond_return_xlm === 'string'
-        ? existingAcceptanceEvent.metadata.external_buyer_bond_return_xlm
-        : undefined,
-      externalSellerPayoutXlm: typeof existingAcceptanceEvent.metadata?.external_seller_payout_xlm === 'string'
-        ? existingAcceptanceEvent.metadata.external_seller_payout_xlm
-        : undefined,
-    });
-  }
-
-  let settlement;
-  try {
-    settlement = await executeSuccessSettlement({
-      deal: input.existingDeal,
-      signer: input.runtime.signer_port,
-      custodyAddress: input.runtime.metadata.admin_address,
-      buyerManagedAddress: input.runtime.metadata.buyer_demo_address,
-      sellerManagedAddress: input.runtime.metadata.seller_demo_address,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      createErrorResponse(
-        'STELLAR_EXECUTION_FAILED',
-        error instanceof Error
-          ? error.message
-          : 'The Stellar Testnet success settlement could not be confirmed.',
-      ),
-      { status: 502 },
-    );
-  }
-
-  let externalPayout;
-  try {
-    const destinations = await resolveConnectedWalletDestinations(input.existingDeal);
-    externalPayout = await executeExternalWalletPayouts({
-      deal: {
-        ...input.existingDeal,
-        status: 'COMPLETED',
-        latest_stellar_tx_hash: settlement.transactionHash,
-      },
-      buyerConnectedAddress: destinations.buyerConnectedAddress,
-      sellerConnectedAddress: destinations.sellerConnectedAddress,
-      signer: input.runtime.signer_port,
-      custodyAddress: settlement.custodyAddress,
-      buyerManagedAddress: settlement.buyerManagedAddress,
-      sellerManagedAddress: settlement.sellerManagedAddress,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      createErrorResponse(
-        'STELLAR_EXECUTION_FAILED',
-        error instanceof Error
-          ? error.message
-          : 'The Stellar Testnet external wallet payout could not be confirmed.',
-      ),
-      { status: 502 },
-    );
-  }
-
-  return persistCustodyWalletAcceptance({
-    dealId: input.dealId,
-    existingDeal: input.existingDeal,
-    actorId: input.actorId,
-    transactionHash: settlement.transactionHash,
-    custodyAddress: settlement.custodyAddress,
-    buyerManagedAddress: settlement.buyerManagedAddress,
-    sellerManagedAddress: settlement.sellerManagedAddress,
-    buyerBondReturnXlm: settlement.buyerBondReturnXlm,
-    sellerPayoutXlm: settlement.sellerPayoutXlm,
-    platformFeeRetainedXlm: settlement.platformFeeRetainedXlm,
-    assetCode: settlement.assetCode,
-    externalPayoutTransactionHash: externalPayout.transactionHash,
-    buyerConnectedAddress: externalPayout.buyerConnectedAddress,
-    sellerConnectedAddress: externalPayout.sellerConnectedAddress,
-    externalBuyerBondReturnXlm: externalPayout.buyerBondReturnXlm,
-    externalSellerPayoutXlm: externalPayout.sellerPayoutXlm,
-  });
-}
-
-export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
+export async function POST(_request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
   const actionName = 'accept_delivery' as EscrowAction;
 
@@ -394,43 +154,128 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return runLegacyLocalAcceptance(dealId, existingDeal, authUser.id);
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
-    if (!runtimeLoaded.ok) {
+    const walletRepo = getServerWalletRepository();
+    const [buyerWallet, sellerWallet] = await Promise.all([
+      walletRepo.getProfileWallet(existingDeal.buyer_id),
+      walletRepo.getProfileWallet(existingDeal.seller_id),
+    ]);
+
+    if (!buyerWallet || !sellerWallet) {
+      return NextResponse.json(
+        createErrorResponse('STELLAR_EXECUTION_INVALID', 'Both parties must have Profile Wallets to complete settlement.'),
+        { status: 400 }
+      );
+    }
+
+    const userRuntimeLoaded = loadDealRoomTestnetRuntime(
+      {
+        signer_port_factory: () => new ProfileWalletSigner(buyerWallet.encrypted_secret_key),
+      },
+      buyerWallet.public_address,
+      sellerWallet.public_address
+    );
+
+    if (!userRuntimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(
           'STELLAR_RUNTIME_UNAVAILABLE',
-          'Buyer acceptance is configured for Stellar Testnet, but the local runtime is not ready.',
+          'Settlement execution is configured for Stellar Testnet, but the local runtime is not ready.',
         ),
         { status: 503 },
       );
     }
-
+    
+    // In settlement, the escrow should already exist
     if (existingDeal.stellar_escrow_id === null) {
-      return runCustodyWalletAcceptance({
-        dealId,
-        existingDeal,
-        actorId: authUser.id,
-        runtime: runtimeLoaded.runtime,
-      });
+      return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_INVALID', 'Testnet escrow ID is missing.'), { status: 400 });
     }
 
-    const executionResult = await executeConfirmedDealRoomRouteAction({
-      action: 'accept_delivery',
-      action_label: 'buyer acceptance',
-      deal: existingDeal,
-      runtime: runtimeLoaded.runtime,
-    });
-    if (!executionResult.ok) {
+    const operationKey = createStellarIdempotencyKey(existingDeal.id, authUser.id, 'accept_delivery');
+    const existingOperation = await repository.getStellarOperation(operationKey);
+    
+    if (existingOperation?.operation_status === 'confirmed') {
+      const refreshedDeal = await repository.getDeal(existingDeal.id);
+      return NextResponse.json(createSuccessResponse(refreshedDeal ?? existingDeal));
+    }
+    if (existingOperation?.operation_status === 'submitted') {
+      return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_UNCONFIRMED', 'Transaction is still pending on the network.'), { status: 502 });
+    }
+
+    let currentDeal = existingDeal;
+    let currentOperation = existingOperation;
+    let coordinatorResult: Awaited<ReturnType<typeof coordinateDealExecution>> | null = null;
+    let persistedOperation: StellarOperation | null = null;
+
+    for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
+      const timestamp = currentTimestamp();
+      coordinatorResult = await coordinateDealExecution({
+        action: 'accept_delivery',
+        operation_id: operationKey,
+        deal: currentDeal,
+        metadata: userRuntimeLoaded.runtime.metadata,
+        existing_operation: currentOperation,
+        stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
+        operation_timestamps: {
+          created_at: timestamp,
+          updated_at: timestamp,
+        },
+        local_commit_timestamp: timestamp,
+        operation_persistence: new RepositoryStellarOperationPersistence(repository),
+        deal_persistence: new RepositoryDealPersistence(repository),
+        execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
+      });
+
+      if (!coordinatorResult.ok) {
+        const failure = mapCoordinatorFailure(coordinatorResult);
+        return NextResponse.json(createErrorResponse(failure.code, failure.message), { status: failure.status });
+      }
+
+      persistedOperation = await repository.getStellarOperation(operationKey);
+      if (
+        persistedOperation !== null &&
+        persistedOperation.operation_status === 'confirmed' &&
+        persistedOperation.transaction_hash !== null
+      ) {
+        break;
+      }
+
+      if (!isReconciliationPending(persistedOperation) || attempt === ROUTE_RECONCILIATION_ATTEMPTS - 1) {
+        break;
+      }
+
+      currentDeal = (await repository.getDeal(existingDeal.id)) ?? coordinatorResult.next_deal;
+      currentOperation = persistedOperation;
+      await waitForReconciliationWindow();
+    }
+
+    if (
+      persistedOperation === null ||
+      persistedOperation.operation_status !== 'confirmed' ||
+      persistedOperation.transaction_hash === null
+    ) {
       return NextResponse.json(
-        createErrorResponse(executionResult.failure.code, executionResult.failure.message),
-        { status: executionResult.failure.status },
+        createErrorResponse(
+          'STELLAR_EXECUTION_UNCONFIRMED',
+          'Buyer acceptance reached Stellar, but the public confirmation was not finalized yet.',
+        ),
+        { status: 502 },
       );
     }
 
-    const updatedDeal = executionResult.deal;
-    const settlementReference =
-      updatedDeal.latest_stellar_tx_hash ??
-      (updatedDeal.proof_hash ? `proof:${updatedDeal.proof_hash}` : `room-settlement:${updatedDeal.id}`);
+    if (coordinatorResult === null) {
+      return NextResponse.json(
+        createErrorResponse(
+          'STELLAR_EXECUTION_UNCONFIRMED',
+          'Buyer acceptance could not be finalized because the Stellar execution result was unavailable.',
+        ),
+        { status: 502 },
+      );
+    }
+
+    const updatedDeal =
+      (await repository.getDeal(existingDeal.id)) ?? coordinatorResult.next_deal;
+      
+    const settlementReference = persistedOperation.transaction_hash;
     const settledAt = new Date().toISOString();
     const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
 
@@ -438,7 +283,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       dealId,
       actionName,
       authUser.id,
-      'Buyer confirmed receipt through the protected Testnet-backed room path. Completion and reputation closure now share the same trust trail.',
+      'Buyer confirmed receipt. Settlement is complete and final balances are routed to the destination wallets on Stellar Testnet.',
       {
         next_status: updatedDeal.status,
         principal_to_seller_idr: updatedDeal.principal_idr,
@@ -450,15 +295,30 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
         platform_wallet_credit_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
         settlement_reference: settlementReference,
         settled_at: settledAt,
-        contract_id: runtimeLoaded.runtime.contract_id,
-        actor_address: runtimeLoaded.runtime.metadata.buyer_demo_address,
+        contract_id: userRuntimeLoaded.runtime.contract_id,
+        actor_address: buyerWallet.public_address,
         ...payoutMetadata,
       },
     );
-    event.tx_hash = executionResult.operation.transaction_hash;
-    await repository.addEvent(event);
+    event.tx_hash = persistedOperation.transaction_hash;
+    
+    // Avoid creating duplicate events if one already exists for this hash
+    const existingEvents = await repository.getDealEvents(dealId);
+    const hasAcceptanceEvent = existingEvents.some(
+      (e) => e.event_type === 'accept_delivery' && e.tx_hash === persistedOperation?.transaction_hash
+    );
+    
+    if (!hasAcceptanceEvent) {
+      await repository.addEvent(event);
+    }
 
-    return NextResponse.json(createSuccessResponse(updatedDeal));
+
+    return NextResponse.json(
+      createSuccessResponse(updatedDeal, {
+        operation_status: persistedOperation.operation_status,
+        transaction_hash: persistedOperation.transaction_hash,
+      }),
+    );
   } catch (err: unknown) {
     return NextResponse.json(createErrorResponse('BAD_REQUEST', err instanceof Error ? err.message : String(err)), { status: 400 });
   }
