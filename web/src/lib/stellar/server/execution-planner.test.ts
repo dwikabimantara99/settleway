@@ -190,7 +190,7 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
   it("14. confirmed transition returns apply_existing_confirmed", () => {
     const existing: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:WAITING_DEPOSITS:buyer_deposit",
+      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
       requested_action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",
@@ -289,7 +289,7 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
   it("26. corrupt confirmed transition rejected", () => {
     const existing: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:WAITING_DEPOSITS:buyer_deposit",
+      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
       requested_action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",
@@ -389,7 +389,7 @@ describe("Stellar Execution Planner - Safety and purity", () => {
     // existing confirmed transition
     const existingTransition: StellarOperation = {
       ...BASE_EXISTING,
-      idempotency_key: "v1:deal-1:WAITING_DEPOSITS:buyer_deposit",
+      idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
       requested_action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "BUYER_FUNDED",

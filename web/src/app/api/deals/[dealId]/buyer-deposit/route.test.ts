@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import * as nextHeaders from "next/headers";
 
 vi.mock("next/headers", () => ({
@@ -34,7 +34,10 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
 import { mockStore } from "@/lib/db/mock-store";
 import { POST as buyerDepositRoute } from "./route";
 
+const globalFetch = global.fetch;
+
 describe("buyer-deposit route", () => {
+
   beforeEach(() => {
     mockStore.seed();
     vi.clearAllMocks();
@@ -53,6 +56,17 @@ describe("buyer-deposit route", () => {
       transaction_hash: action === "create_deal" ? "a".repeat(64) : "b".repeat(64),
       result_escrow_id: action === "create_deal" ? "123" : null,
     }));
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        balances: [{ asset_type: 'native', balance: '10000.0000000' }]
+      })
+    }) as any;
+  });
+
+  afterEach(() => {
+    global.fetch = globalFetch;
   });
 
   function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
@@ -117,7 +131,11 @@ describe("buyer-deposit route", () => {
     );
     const afterRouteDeal = mockStore.deals.get("deal-buyer-testnet");
 
-    expect(response.status).toBe(200);
+    const payload = await response.clone().json().catch(() => ({}));
+    if (response.status !== 200) {
+      console.log('Test Failed with payload:', payload);
+    }
+    console.log("TEST1", response.status, await response.json().catch(()=>null)); expect(response.status).toBe(200);
 
     const updatedDeal = afterRouteDeal;
     expect(updatedDeal?.status).toBe("BUYER_FUNDED");
@@ -171,6 +189,10 @@ describe("buyer-deposit route", () => {
     await vi.runAllTimersAsync();
     const response = await responsePromise;
 
+    const payload = await response.clone().json().catch(() => ({}));
+    if (response.status !== 200) {
+      console.log('Test Failed with payload:', payload);
+    }
     expect(response.status).toBe(200);
     expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1);
     expect(mockExecutionAdapter.confirm).toHaveBeenCalledTimes(2);
@@ -191,6 +213,10 @@ describe("buyer-deposit route", () => {
       { params: Promise.resolve({ dealId: "deal-buyer-mock" }) },
     );
 
+    const payload = await response.clone().json().catch(() => ({}));
+    if (response.status !== 200) {
+      console.log('Test Failed with payload:', payload);
+    }
     expect(response.status).toBe(200);
     expect(mockStore.deals.get("deal-buyer-mock")?.status).toBe("BUYER_FUNDED");
     expect(mockStore.deals.get("deal-buyer-mock")?.stellar_escrow_id).toBeNull();
@@ -215,4 +241,95 @@ describe("buyer-deposit route", () => {
     expect(mockStore.deals.get("deal-buyer-v2")?.status).toBe("WAITING_DEPOSITS");
     expect(mockExecutionAdapter.submit).not.toHaveBeenCalled();
   });
+
+  it("blocks submission if testnet balance is insufficient", async () => {
+    setupDeal("deal-buyer-low-balance");
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-1" }) } as any);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ balances: [{ asset_type: 'native', balance: '10.0000000' }] })
+    }) as any;
+
+    const response = await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-low-balance/buyer-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "deal-buyer-low-balance" }) }
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(payload.error.code).toBe("INSUFFICIENT_PROFILE_WALLET_BALANCE");
+    expect(mockExecutionAdapter.submit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submission if testnet balance is unavailable (500)", async () => {
+    setupDeal("deal-buyer-no-balance");
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-1" }) } as any);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500
+    }) as any;
+
+    const response = await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-no-balance/buyer-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "deal-buyer-no-balance" }) }
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(payload.error.code).toBe("PROFILE_WALLET_BALANCE_UNAVAILABLE");
+    expect(mockExecutionAdapter.submit).not.toHaveBeenCalled();
+  });
+
+  it("does not duplicate submission when idempotency scope is identical", async () => {
+    setupDeal("deal-buyer-idem", { stellar_contract_id: "CCONTRACT123", stellar_escrow_id: "123" });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-1" }) } as any);
+
+    // Run first time
+    await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-idem/buyer-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "deal-buyer-idem" }) }
+    );
+    expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1);
+
+    // Simulate clicking deposit again while it's BUYER_FUNDED
+    const response2 = await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-idem/buyer-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "deal-buyer-idem" }) }
+    );
+    console.log(response2.status, await response2.json()); expect(response2.status).toBe(200);
+    expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1); // STILL 1
+  });
+
+  it("does not update deal status to funded if transaction remains submitted but unconfirmed", async () => {
+    setupDeal("deal-buyer-unconfirmed", { stellar_contract_id: "CCONTRACT123", stellar_escrow_id: "123" });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-1" }) } as any);
+
+    mockExecutionAdapter.confirm.mockResolvedValue({
+      outcome: "unknown",
+      action: "buyer_deposit",
+      transaction_hash: "e".repeat(64),
+      error_code: "ERR_UNKNOWN",
+      reconciliation_required: true,
+      resubmission_allowed: false,
+    });
+    mockExecutionAdapter.submit.mockResolvedValue({
+      outcome: "submitted",
+      action: "buyer_deposit",
+      transaction_hash: "e".repeat(64),
+    });
+
+    const response = await buyerDepositRoute(
+      new Request("http://localhost/api/deals/deal-buyer-unconfirmed/buyer-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "deal-buyer-unconfirmed" }) }
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(502);
+    expect(payload.error.code).toBe("STELLAR_EXECUTION_UNCONFIRMED");
+    expect(mockStore.deals.get("deal-buyer-unconfirmed")?.status).toBe("WAITING_DEPOSITS"); // Not funded
+  });
+
 });

@@ -7,14 +7,17 @@ import type {
 
 export function createStellarIdempotencyKey(
   dealId: string,
-  expectedStatus: DealStatus | null,
+  scope: string | null,
   action: StellarAction,
 ): string {
   if (!dealId || dealId.trim() === "") {
     throw new Error("Deal ID cannot be empty");
   }
-  const statusMarker = expectedStatus ? expectedStatus : "CREATE";
-  return `v1:${encodeURIComponent(dealId)}:${encodeURIComponent(statusMarker)}:${encodeURIComponent(action)}`;
+  let scopeMarker = scope ? scope : "CREATE";
+  if (action === 'buyer_deposit' || action === 'seller_deposit') {
+    scopeMarker = "DEPOSIT";
+  }
+  return `v1:${encodeURIComponent(dealId)}:${encodeURIComponent(scopeMarker)}:${encodeURIComponent(action)}`;
 }
 
 export function buildCanonicalDealHashInput(

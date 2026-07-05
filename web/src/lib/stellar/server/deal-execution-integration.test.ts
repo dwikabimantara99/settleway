@@ -119,7 +119,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
         expect(res.next_deal.stellar_sync_status).toBe("idle");
 
         // 1. operation persistence occurs
-        const idempotencyKey = `v1:${deal.id}:${initialStatus === "WAITING_DEPOSITS" && plan.action === "create_deal" ? "CREATE" : initialStatus}:${plan.action}`;
+        const idempotencyKey = `v1:${deal.id}:${plan.action.includes("deposit") ? "DEPOSIT" : initialStatus === "WAITING_DEPOSITS" && plan.action === "create_deal" ? "CREATE" : initialStatus}:${plan.action}`;
         const op = store.getStellarOperation(idempotencyKey);
         expect(op).not.toBeNull();
         // 2. operation becomes confirmed
@@ -157,7 +157,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       expect(res.ok).toBe(true);
       expect((res as import('../types').StellarAction).next_deal.stellar_sync_status).toBe("unknown");
 
-      const idempotencyKey = `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`;
+      const idempotencyKey = `v1:${deal.id}:DEPOSIT:buyer_deposit`;
       const op = store.getStellarOperation(idempotencyKey)!;
       expect(op).not.toBeUndefined();
       expect(op.operation_status).toBe("unknown");
@@ -182,7 +182,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
       } as import('./adapter-contracts').StellarExecutionAdapter;
 
       const deal = makeDeal();
-      const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "pending", transaction_hash: null, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: null, confirmed_at: null, updated_at: "t1" };
+      const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:DEPOSIT:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "pending", transaction_hash: null, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: null, confirmed_at: null, updated_at: "t1" };
 
       const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: op, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
 
@@ -199,7 +199,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
 
       const deal = makeDeal();
       store.deals.set(deal.id, deal);
-      const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:WAITING_DEPOSITS:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "confirmed", transaction_hash: validTx, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: "t2", confirmed_at: "t3", updated_at: "t3" };
+      const op: import('../types').StellarOperation = { idempotency_key: `v1:${deal.id}:DEPOSIT:buyer_deposit`, deal_id: "deal-1", requested_action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer", operation_status: "confirmed", transaction_hash: validTx, result_escrow_id: null, public_error_code: null, created_at: "t1", submitted_at: "t2", confirmed_at: "t3", updated_at: "t3" };
 
       const input: import('./deal-execution-coordinator').StellarDealExecutionCoordinatorInput = { action: "buyer_deposit", operation_id: "k1", deal, metadata: makeMeta(), existing_operation: op, stellar_contract_id: "contract-1", operation_timestamps: { created_at: "t1", updated_at: "t2" }, local_commit_timestamp: "t3", operation_persistence: opPersistence, deal_persistence: dealPersistence, execution_adapter: adapter };
 

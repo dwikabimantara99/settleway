@@ -261,7 +261,7 @@ describe("Stellar Execution Service", () => {
       input.build_input = { action: "buyer_deposit", expected_local_status: "WAITING_DEPOSITS", contract_id: "C123", escrow_id: "1", actor_address: "G123" };
       input.existing_operation = {
         ...BASE_EXISTING,
-        idempotency_key: "v1:deal-1:WAITING_DEPOSITS:buyer_deposit",
+        idempotency_key: "v1:deal-1:DEPOSIT:buyer_deposit",
         requested_action: "buyer_deposit",
         expected_local_status: "WAITING_DEPOSITS",
         target_local_status: "BUYER_FUNDED",
