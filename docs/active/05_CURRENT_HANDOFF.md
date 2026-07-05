@@ -2,30 +2,49 @@
 
 ## Current Candidate
 
-- Candidate branch: `codex/single-corridor-hardening`
-- Focus: Single Corridor Hardening & Custody V2 App Integration
+- Candidate branch: `feature/offer-negotiation-deal-room-lifecycle`
+- Focus: End-to-End Deal Creation Lifecycle (Offer -> Negotiation -> Terms Agreed -> Profile Wallet Deal Room)
 
-## Current Task Boundary
+## What was implemented
 
-The application is integrating Custody V2.1 as the underlying rail for the Testnet Deal Room, ensuring the product flow remains simple and focused on the core Settleway business logic (Marketplace -> Offer -> Deal Room -> Funding -> Lock -> Evidence -> Settle) without exposing technical smart contract details to the user interface.
+- A formal Supabase migration (`20260705_offer_negotiation_schema.sql`) for `offers`, `offer_messages`, and `notifications` including strict Row Level Security (RLS) policies.
+- Exported strict TypeScript domain types for the aforementioned entities in `web/src/lib/types.ts`.
+- Removed external WalletConnect (`ConnectExternalWalletButton`) dependencies from the Offer page and correctly injected the `ProfileWalletCard`.
+- Wired the Deal Room creation logic to map into the `managed_custody_testnet` rail (Profile Wallet funding corridor).
 
-## No-Touch Areas
+## What is fully functional
 
-- No frontend redesign for surfaces outside of the core deal room.
-- No bank/QRIS/anchor/KYC/KYB implementation.
-- No live secret exposure.
-- No force-push or history rewrite.
-- No `main` promotion until the single corridor is hardened and end-to-end browser validated.
+- **Submit Offer**: Users can submit an offer from a listing or buyer request.
+- **Negotiation Room**: Secure messaging thread between buyer and seller.
+- **Terms Agreement**: Counterparty can accept terms to unblock the Deal Room.
+- **Open Deal Room**: Both parties clicking "Open Deal Room" creates an idempotent Deal and redirects to the active escrow room.
+- **Profile Wallet Corridor**: The Deal Room is instantiated on the Profile Wallet rail, allowing immediate Testnet funding without external Freighter signing.
 
-## Current Operator Focus
+## What is mock/demo-only
 
-Clean up the working tree, hide technical terminology in the Deal Room UI, and ensure the state projection from Stellar to the application accurately reflects the product journey. Verify the flow end-to-end from the browser.
+- Although Supabase types and adapters are strictly typed and ready, local development defaults to `MockRepositoryAdapter` per `runtimeMode === 'demo'`.
+- Real-time websocket chat subscriptions for negotiation messages are not implemented; it relies on standard fetching/refresh for now.
 
-Note: Active Testnet contract `CAFNVE...` exists and read-only ABI/event compatibility was verified. A verification manifest was added. The original deployment receipt and Wasm hash remain unavailable, which is acceptable for testnet demo readiness but remains a provenance limitation.
+## What is persistent/Supabase-ready
 
-## Post-Cleanup Product Realignment
+- The DB schemas (`offers`, `offer_messages`, `notifications`) are formalized in migrations and match the `supabase-adapter.ts` methods perfectly.
+- All RLS policies for offers, messages, and notifications are implemented securely.
 
-Following the single-corridor hardening and main branch consolidation, the project is entering a product architecture realignment phase. Future work will focus on:
-1. Shifting from a wallet-connect-first model to an **Account-First** Settleway Profile Wallet model.
-2. Unifying the Deal Room UI to hide technical rails (e.g., Custody V2 vs Managed) behind a single, clean B2B Escrow Timeline.
-3. Establishing the robust Evidence Package pipeline and strict on-chain settlement triggers.
+## What routes/components/models changed
+
+- `web/src/app/offers/[offerId]/page.tsx` (Replaced external wallet binding with internal ProfileWalletCard)
+- `web/src/lib/types.ts` (Added `Offer`, `OfferStatus`, `NegotiationMessage`, `Notification` domains)
+- `web/supabase/migrations/20260705_offer_negotiation_schema.sql` (Added tables and RLS)
+
+## How the lifecycle connects to existing Profile Wallet funding flow
+
+- The `performOpenDealRoomCommitment` helper uses `buildDealFromOffer`, which explicitly sets `rail_version: 'managed_custody_testnet'`.
+- The `managed_custody_testnet` mode triggers the Profile Wallet components (`ManagedCustodyActionPanel`) when entering the Deal Room, which securely executes transactions via the server-side Stellar service.
+
+## What remains partial
+
+- Dispute & Mediation triggers remain simplified and do not capture granular evidentiary assertions in the Offer phase.
+
+## What next macro-batch should be
+
+- **Evidence Package Pipeline & Automated Settlement Triggers**: Now that a Deal Room can be funded cleanly via Profile Wallets, the focus must shift to standardizing the delivery evidence submission, buyer acceptance (which exists but may need UI polish), and ensuring deterministic execution of the `mark_delivered` and `accept_delivery` endpoints.
