@@ -356,3 +356,21 @@ export function resolveDealRoomDefaultStellarState(
     stellar_contract_id: result.runtime.contract_id,
   };
 }
+
+export async function checkTestnetBalance(publicKey: string, requiredXlm: number): Promise<{ status: 'ok' | 'insufficient' | 'unavailable' }> {
+  try {
+    const res = await fetch(`https://horizon-testnet.stellar.org/accounts/${publicKey}`);
+    if (!res.ok) {
+      if (res.status === 404) return { status: 'insufficient' };
+      return { status: 'unavailable' };
+    }
+    const data = await res.json();
+    const native = data.balances?.find((b: { asset_type: string, balance: string }) => b.asset_type === 'native');
+    if (!native) return { status: 'insufficient' };
+    const balance = parseFloat(native.balance);
+    if (balance < requiredXlm) return { status: 'insufficient' };
+    return { status: 'ok' };
+  } catch (_e) {
+    return { status: 'unavailable' };
+  }
+}

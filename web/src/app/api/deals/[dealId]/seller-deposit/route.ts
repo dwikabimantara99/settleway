@@ -9,7 +9,7 @@ import { createEvent } from '@/lib/escrow/events';
 import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coordinator';
 import { createStellarIdempotencyKey, buildCanonicalDealHashInput } from '@/lib/stellar/helpers';
 import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
-import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
@@ -239,6 +239,15 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return NextResponse.json(createErrorResponse('BAD_REQUEST', 'You must create a Profile Wallet before funding this deal.'), { status: 400 });
     }
 
+
+    const preflight = await checkTestnetBalance(sellerWallet.public_address, 100);
+    if (preflight.status === 'insufficient') {
+      return NextResponse.json(createErrorResponse('INSUFFICIENT_PROFILE_WALLET_BALANCE', 'The Profile Wallet does not have enough XLM to perform this deposit on Testnet.'), { status: 400 });
+    }
+    if (preflight.status === 'unavailable') {
+      return NextResponse.json(createErrorResponse('PROFILE_WALLET_BALANCE_UNAVAILABLE', 'The Profile Wallet balance could not be verified on Testnet.'), { status: 400 });
+    }
+    
     const adminRuntimeLoaded = loadDealRoomTestnetRuntime(
       {},
       buyerWallet.public_address,
@@ -271,6 +280,15 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return NextResponse.json(createErrorResponse(failure.code, failure.message), { status: failure.status });
     }
 
+    const existingOperation = await repository.getStellarOperation(
+      createStellarIdempotencyKey(preparedDeal.deal.id, authUser.id, 'seller_deposit'),
+    );
+    if (existingOperation?.operation_status === 'confirmed') {
+      return NextResponse.json(createSuccessResponse(preparedDeal.deal));
+    }
+    if (existingOperation?.operation_status === 'submitted') {
+      return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_UNCONFIRMED', 'Transaction is still pending on the network.'), { status: 502 });
+    }
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
       action: 'seller_deposit',
@@ -288,10 +306,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
-    const existingOperation = await repository.getStellarOperation(
-      createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'seller_deposit'),
-    );
-    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, preparedDeal.deal.status, 'seller_deposit');
+    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, authUser.id, 'seller_deposit');
     let currentDeal = preparedDeal.deal;
     let currentOperation = existingOperation;
     let coordinatorResult: Awaited<ReturnType<typeof coordinateDealExecution>> | null = null;
@@ -301,7 +316,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       const timestamp = currentTimestamp();
       coordinatorResult = await coordinateDealExecution({
         action: 'seller_deposit',
-        operation_id: `route:${preparedDeal.deal.id}:seller_deposit:${timestamp}`,
+        operation_id: operationKey,
         deal: currentDeal,
         metadata: userRuntimeLoaded.runtime.metadata,
         existing_operation: currentOperation,

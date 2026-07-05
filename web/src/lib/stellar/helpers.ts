@@ -15,7 +15,7 @@ export function createStellarIdempotencyKey(
   }
   let scopeMarker = scope ? scope : "CREATE";
   if (action === 'buyer_deposit' || action === 'seller_deposit') {
-    scopeMarker = "DEPOSIT";
+    scopeMarker = scope ? `${scope}:DEPOSIT` : "DEPOSIT";
   }
   return `v1:${encodeURIComponent(dealId)}:${encodeURIComponent(scopeMarker)}:${encodeURIComponent(action)}`;
 }

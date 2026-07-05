@@ -267,6 +267,15 @@ export function assembleStellarExecutionInput(
         contract_id: contractId,
         escrow_id: escrowId,
       };
+    } else if (input.action === "buyer_deposit" || input.action === "seller_deposit") {
+      buildInput = {
+        action: input.action,
+        expected_local_status: expectedLocalStatus,
+        idempotency_scope: input.action === "buyer_deposit" ? input.deal.buyer_id : input.deal.seller_id,
+        contract_id: contractId,
+        escrow_id: escrowId,
+        actor_address: actorAddress,
+      };
     } else {
       buildInput = {
         action: input.action,

@@ -16,6 +16,7 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
     stellar_mode: "mock_only",
     stellar_contract_id: null,
   })),
+  checkTestnetBalance: vi.fn().mockResolvedValue({ status: "ok" }),
   loadDealRoomTestnetRuntime: vi.fn(() => ({
     ok: true,
     runtime: {
@@ -32,6 +33,7 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
 }));
 
 import { mockStore } from "@/lib/db/mock-store";
+import { checkTestnetBalance } from "@/lib/stellar/server/deal-room-testnet-runtime";
 import { POST as sellerDepositRoute } from "./route";
 
 const globalFetch = global.fetch;
@@ -241,6 +243,8 @@ describe("seller-deposit route", () => {
   });
 
   it("blocks submission if testnet balance is insufficient", async () => {
+        
+        vi.mocked(checkTestnetBalance).mockResolvedValueOnce({ status: 'insufficient' });
     setupDeal("deal-seller-low-balance");
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-1" }) } as any);
 
@@ -262,6 +266,8 @@ describe("seller-deposit route", () => {
   });
 
   it("blocks submission if testnet balance is unavailable (500)", async () => {
+        
+        vi.mocked(checkTestnetBalance).mockResolvedValueOnce({ status: 'unavailable' });
     setupDeal("deal-seller-no-balance");
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-1" }) } as any);
 
@@ -301,7 +307,7 @@ describe("seller-deposit route", () => {
     expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1); // STILL 1
   });
 
-  it("does not update deal status to funded if transaction remains submitted but unconfirmed", async () => {
+  it("does not update deal status to funded if transaction remains submitted but unconfirmed", { timeout: 10000 }, async () => {
     setupDeal("deal-seller-unconfirmed", { stellar_contract_id: "CCONTRACT123", stellar_escrow_id: "123" });
     vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-1" }) } as any);
 

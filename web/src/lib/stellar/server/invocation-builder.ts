@@ -47,6 +47,7 @@ export type StellarInvocationBuildInput =
   | {
       action: "buyer_deposit";
       expected_local_status: DealStatus | null;
+      idempotency_scope?: string | null;
       contract_id: string;
       escrow_id: string;
       actor_address: string;
@@ -54,6 +55,7 @@ export type StellarInvocationBuildInput =
   | {
       action: "seller_deposit";
       expected_local_status: DealStatus | null;
+      idempotency_scope?: string | null;
       contract_id: string;
       escrow_id: string;
       actor_address: string;

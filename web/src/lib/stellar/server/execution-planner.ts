@@ -115,9 +115,13 @@ export function planStellarExecution(
   }
   const canonicalPlan = planResult.plan;
 
+  const scope = ("idempotency_scope" in input.build_input && (input.build_input as any).idempotency_scope !== undefined)
+    ? ((input.build_input as any).idempotency_scope as string | null)
+    : input.build_input.expected_local_status;
+
   const derivedIdempotencyKey = createStellarIdempotencyKey(
     input.deal_id,
-    input.build_input.expected_local_status,
+    scope,
     input.build_input.action,
   );
 
