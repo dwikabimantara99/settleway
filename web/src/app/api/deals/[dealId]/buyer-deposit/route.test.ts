@@ -56,6 +56,22 @@ describe("buyer-deposit route", () => {
   });
 
   function setupDeal(dealId: string, overrides: Record<string, unknown> = {}) {
+    if (!mockStore.getProfileWallet("buyer-1")) {
+      mockStore.provisionProfileWallet({
+        user_id: "buyer-1",
+        public_address: "GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX",
+        encrypted_secret_key: "ENC_BUYER",
+        created_at: new Date().toISOString(),
+      });
+    }
+    if (!mockStore.getProfileWallet("seller-1")) {
+      mockStore.provisionProfileWallet({
+        user_id: "seller-1",
+        public_address: "GAZGIBWKDTYSKZSXLIOJB4HE65VOLR22ZHTZ3FI6UX7QOGYFZQ6WVHWU",
+        encrypted_secret_key: "ENC_SELLER",
+        created_at: new Date().toISOString(),
+      });
+    }
     mockStore.deals.set(dealId, {
       id: dealId,
       buyer_id: "buyer-1",

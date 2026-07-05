@@ -128,6 +128,8 @@ function nowUnixSeconds(): number {
 
 export function loadDealRoomTestnetRuntime(
   dependencies: DealRoomTestnetRuntimeDependencies = {},
+  buyerAddress?: string,
+  sellerAddress?: string,
 ): DealRoomTestnetRuntimeResult {
   const reader = dependencies.reader ?? ((name: string) => process.env[name]);
   const errors: DealRoomTestnetRuntimeError[] = [];
@@ -255,7 +257,7 @@ export function loadDealRoomTestnetRuntime(
     return { ok: false, errors };
   }
 
-  const metadata = buildDealRoomExecutionMetadata(contractId!);
+  const metadata = buildDealRoomExecutionMetadata(contractId!, buyerAddress, sellerAddress);
   const roleMapping: StellarTestnetRoleMapping = {
     admin_address: metadata.admin_address,
     buyer_demo_address: metadata.buyer_demo_address,

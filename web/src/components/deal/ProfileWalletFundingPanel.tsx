@@ -1,14 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Loader2, ShieldCheck, WalletCards, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import type { UserWallet } from '@/lib/types';
 
 export function ProfileWalletFundingPanel({
+  dealId,
+  viewerRole,
   userId,
   requiredAmountIdr,
   isFunded,
 }: {
+  dealId: string;
+  viewerRole: 'buyer' | 'seller';
   userId: string;
   requiredAmountIdr: number;
   isFunded: boolean;
@@ -18,6 +23,7 @@ export function ProfileWalletFundingPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
@@ -53,12 +59,22 @@ export function ProfileWalletFundingPanel({
   }, [userId]);
 
   const handleSubmitDeposit = async () => {
-    // Faking submission blocked state
     setSubmitting(true);
-    setTimeout(() => {
-      alert("PARTIAL: The actual escrow deposit submission is currently blocked pending the dynamic backend StellarSignerPort architecture to sign directly from your managed Profile Wallet.");
+    setError(null);
+    try {
+      const res = await fetch(`/api/deals/${dealId}/${viewerRole}-deposit`, {
+        method: 'POST',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || 'Deposit failed');
+      }
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
       setSubmitting(false);
-    }, 1000);
+    }
   };
 
   if (loading) {

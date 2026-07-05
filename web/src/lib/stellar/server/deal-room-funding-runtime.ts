@@ -118,12 +118,14 @@ function resolveCommitmentIdr(
 
 export function buildDealRoomExecutionMetadata(
   contractId: string,
+  buyerAddress?: string,
+  sellerAddress?: string,
 ): StellarExecutionPublicMetadata {
   return {
     contract_id: contractId,
     admin_address: ROLE_WALLETS.platform.public_address,
-    buyer_demo_address: ROLE_WALLETS.buyer.public_address,
-    seller_demo_address: ROLE_WALLETS.seller.public_address,
+    buyer_demo_address: buyerAddress ?? ROLE_WALLETS.buyer.public_address,
+    seller_demo_address: sellerAddress ?? ROLE_WALLETS.seller.public_address,
   };
 }
 
@@ -131,6 +133,8 @@ export function composeDealRoomFundingRuntime(input: {
   deal: DbDeal;
   action: DealRoomFundingAction;
   contract_id: string;
+  buyer_address?: string;
+  seller_address?: string;
 }): DealRoomFundingRuntimeResult {
   if (!isValidContractId(input.contract_id)) {
     return {
@@ -160,7 +164,16 @@ export function composeDealRoomFundingRuntime(input: {
 
   const participantRole = resolveParticipantRole(input.action);
   const counterpartyRole = resolveCounterpartyRole(participantRole);
-  const actorWallet = ROLE_WALLETS[participantRole];
+  
+  const roleWallets = { ...ROLE_WALLETS };
+  if (input.buyer_address) {
+    roleWallets.buyer = { ...roleWallets.buyer, public_address: input.buyer_address };
+  }
+  if (input.seller_address) {
+    roleWallets.seller = { ...roleWallets.seller, public_address: input.seller_address };
+  }
+  
+  const actorWallet = roleWallets[participantRole];
 
   if (planResult.plan.signer_role !== actorWallet.signer_role) {
     return {
@@ -170,7 +183,7 @@ export function composeDealRoomFundingRuntime(input: {
   }
 
   const commitmentIdr = resolveCommitmentIdr(input.deal, participantRole);
-  const metadata = buildDealRoomExecutionMetadata(input.contract_id);
+  const metadata = buildDealRoomExecutionMetadata(input.contract_id, input.buyer_address, input.seller_address);
 
   const statusNote =
     planResult.plan.target_local_status === "LOCKED"
@@ -181,7 +194,7 @@ export function composeDealRoomFundingRuntime(input: {
     ok: true,
     context: {
       metadata,
-      role_wallets: ROLE_WALLETS,
+      role_wallets: roleWallets,
       funding_intent: {
         action: input.action,
         participant_role: participantRole,

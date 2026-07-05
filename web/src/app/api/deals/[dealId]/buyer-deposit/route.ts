@@ -12,6 +12,8 @@ import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
+import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
+import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
@@ -224,8 +226,33 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return runLegacyLocalBuyerDeposit(dealId, existingDeal, authUser);
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
-    if (!runtimeLoaded.ok) {
+    const walletRepo = getServerWalletRepository();
+    const [buyerWallet, sellerWallet] = await Promise.all([
+      walletRepo.getProfileWallet(existingDeal.buyer_id),
+      walletRepo.getProfileWallet(existingDeal.seller_id),
+    ]);
+
+    if (!buyerWallet) {
+      return NextResponse.json(createErrorResponse('BAD_REQUEST', 'You must create a Profile Wallet before funding this deal.'), { status: 400 });
+    }
+    if (!sellerWallet) {
+      return NextResponse.json(createErrorResponse('BAD_REQUEST', 'The seller must create a Profile Wallet before you can fund this deal.'), { status: 400 });
+    }
+
+    const adminRuntimeLoaded = loadDealRoomTestnetRuntime(
+      {},
+      buyerWallet.public_address,
+      sellerWallet.public_address
+    );
+    const userRuntimeLoaded = loadDealRoomTestnetRuntime(
+      {
+        signer_port_factory: () => new ProfileWalletSigner(buyerWallet.encrypted_secret_key),
+      },
+      buyerWallet.public_address,
+      sellerWallet.public_address
+    );
+
+    if (!adminRuntimeLoaded.ok || !userRuntimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(
           'STELLAR_RUNTIME_UNAVAILABLE',
@@ -237,7 +264,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
 
     const preparedDeal = await ensureTestnetEscrowPrepared({
       deal: existingDeal,
-      runtime: runtimeLoaded.runtime,
+      runtime: adminRuntimeLoaded.runtime,
     });
     if (!preparedDeal.ok) {
       const failure = mapCoordinatorFailure(preparedDeal.result);
@@ -247,7 +274,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
       action: 'buyer_deposit',
-      contract_id: runtimeLoaded.runtime.contract_id,
+      contract_id: userRuntimeLoaded.runtime.contract_id,
+      buyer_address: buyerWallet.public_address,
+      seller_address: sellerWallet.public_address,
     });
     if (!fundingRuntime.ok) {
       return NextResponse.json(
@@ -274,9 +303,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         action: 'buyer_deposit',
         operation_id: `route:${preparedDeal.deal.id}:buyer_deposit:${timestamp}`,
         deal: currentDeal,
-        metadata: runtimeLoaded.runtime.metadata,
+        metadata: userRuntimeLoaded.runtime.metadata,
         existing_operation: currentOperation,
-        stellar_contract_id: runtimeLoaded.runtime.contract_id,
+        stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
         operation_timestamps: {
           created_at: timestamp,
           updated_at: timestamp,
@@ -284,7 +313,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         local_commit_timestamp: timestamp,
         operation_persistence: new RepositoryStellarOperationPersistence(repository),
         deal_persistence: new RepositoryDealPersistence(repository),
-        execution_adapter: runtimeLoaded.runtime.execution_adapter,
+        execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
       });
 
       if (!coordinatorResult.ok) {
@@ -345,7 +374,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         participant_role: 'buyer',
         deposit_total_idr: updatedDeal.buyer_total_idr,
         next_status: updatedDeal.status,
-        contract_id: runtimeLoaded.runtime.contract_id,
+        contract_id: userRuntimeLoaded.runtime.contract_id,
         actor_address: fundingRuntime.context.funding_intent.actor_address,
         public_proof: fundingRuntime.context.public_proof,
       },
@@ -367,7 +396,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
           seller_total_idr: updatedDeal.seller_total_idr,
           platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
           next_status: updatedDeal.status,
-          contract_id: runtimeLoaded.runtime.contract_id,
+          contract_id: userRuntimeLoaded.runtime.contract_id,
         },
       );
       lockEvent.tx_hash = persistedOperation.transaction_hash;
