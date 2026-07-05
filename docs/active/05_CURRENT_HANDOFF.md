@@ -22,3 +22,10 @@ The application is integrating Custody V2.1 as the underlying rail for the Testn
 Clean up the working tree, hide technical terminology in the Deal Room UI, and ensure the state projection from Stellar to the application accurately reflects the product journey. Verify the flow end-to-end from the browser.
 
 Note: Active Testnet contract `CAFNVE...` exists and read-only ABI/event compatibility was verified. A verification manifest was added. The original deployment receipt and Wasm hash remain unavailable, which is acceptable for testnet demo readiness but remains a provenance limitation.
+
+## Post-Cleanup Product Realignment
+
+Following the single-corridor hardening and main branch consolidation, the project is entering a product architecture realignment phase. Future work will focus on:
+1. Shifting from a wallet-connect-first model to an **Account-First** Settleway Profile Wallet model.
+2. Unifying the Deal Room UI to hide technical rails (e.g., Custody V2 vs Managed) behind a single, clean B2B Escrow Timeline.
+3. Establishing the robust Evidence Package pipeline and strict on-chain settlement triggers.
