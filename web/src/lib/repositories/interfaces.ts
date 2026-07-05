@@ -12,7 +12,6 @@ import type {
   DbCustodyDealLink,
   DbCustodyOperation,
   DbCustodyEvent,
-  DbUserWallet,
 } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 

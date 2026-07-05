@@ -71,8 +71,6 @@ export function EscrowTimeline({
       {isFundingPhase && viewerRole && userId && (
         <ProfileWalletFundingPanel
           userId={userId}
-          dealId={dealId}
-          viewerRole={viewerRole}
           requiredAmountIdr={requiredAmountIdr}
           isFunded={isFunded}
         />

@@ -5,7 +5,6 @@ import {
   FileCheck2,
   Search,
   ShieldCheck,
-  UserRound,
 } from 'lucide-react';
 import { PublicLandingHeader } from '@/components/landing/PublicLandingHeader';
 import { AuthenticatedHeader } from '@/components/layout/AuthenticatedHeader';

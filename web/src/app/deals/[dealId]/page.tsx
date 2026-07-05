@@ -11,11 +11,10 @@ import {
   Flag,
   ReceiptText,
   ShieldCheck,
-  WalletCards,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { StatusPill } from '@/components/ui/StatusPill';
-import { Stepper, Step } from '@/components/ui/Stepper';
+import { Step } from '@/components/ui/Stepper';
 import { DealRoomTabs } from '@/components/deal/DealRoomTabs';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 import { EscrowTimeline } from '@/components/deal/EscrowTimeline';
@@ -27,7 +26,6 @@ import {
   isClosedDealStatus,
   isFundingWindowDealStatus,
   isPostLockDealStatus,
-  type DealStatus,
 } from '@/lib/escrow/state-machine';
 import {
   buildDealRoomWalletCards,
@@ -95,47 +93,6 @@ function parseDeliveryDeadline(note: string | null): string {
   return deliveryLine?.replace(/^delivery deadline:\s*/i, '').trim() || '24 May 2025';
 }
 
-function getPartyFundingStatus(
-  status: DealStatus,
-  party: 'buyer' | 'seller',
-  fundedHistorically: boolean,
-): { label: string; className: string } {
-  const fundedClass = 'border-emerald-200 bg-emerald-100 text-emerald-800';
-  const pendingClass = 'border-amber-200 bg-amber-50 text-amber-700';
-  const closedClass = 'border-slate-200 bg-slate-100 text-slate-700';
-
-  if (status === 'REFUNDED') {
-    return fundedHistorically
-      ? { label: 'Refunded', className: closedClass }
-      : { label: 'Not funded', className: closedClass };
-  }
-
-  if ((status === 'EXPIRED' || status === 'CANCELLED') && !fundedHistorically) {
-    return { label: 'Not funded', className: closedClass };
-  }
-
-  if (isPostLockDealStatus(status)) {
-    return { label: 'Funded', className: fundedClass };
-  }
-
-  if (status === 'BUYER_FUNDED' && party === 'buyer') {
-    return { label: 'Funded', className: fundedClass };
-  }
-
-  if (status === 'SELLER_FUNDED' && party === 'seller') {
-    return { label: 'Funded', className: fundedClass };
-  }
-
-  if (status === 'CUSTODY_PENDING') {
-    return { label: 'Funded', className: fundedClass };
-  }
-
-  if (isClosedDealStatus(status)) {
-    return { label: 'Closed', className: closedClass };
-  }
-
-  return { label: 'Pending', className: pendingClass };
-}
 
 function getLatestEvent(events: DbEscrowEvent[], eventTypes: string[]): DbEscrowEvent | null {
   for (let index = events.length - 1; index >= 0; index -= 1) {
@@ -322,18 +279,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     status === 'SELLER_FUNDED' ||
     status === 'CUSTODY_PENDING' ||
     (isClosed && latestSellerFundingEvent !== null);
-  const fundedCount = Number(buyerFundedHistorically) + Number(sellerFundedHistorically);
-  const buyerFundingStatus = getPartyFundingStatus(status, 'buyer', buyerFundedHistorically);
-  const sellerFundingStatus = getPartyFundingStatus(status, 'seller', sellerFundedHistorically);
   const platformFeeTotalIdr = deal.buyer_fee_idr + deal.seller_fee_idr;
   const pricePerKg = formatPricePerKg(deal.principal_idr, deal.volume_kg);
-  const connectedWallet =
-    viewerRole === 'seller'
-      ? sellerProfile?.connected_wallet_address
-      : buyerProfile?.connected_wallet_address;
-  const connectedWalletPreview = connectedWallet
-    ? `${connectedWallet.slice(0, 6)}...${connectedWallet.slice(-4)}`
-    : 'No wallet linked';
 
   const walletCards = buildDealRoomWalletCards({
     buyer_label: buyerDisplayName,

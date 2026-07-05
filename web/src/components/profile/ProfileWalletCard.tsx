@@ -40,7 +40,7 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
       } else {
         setError('Friendbot funding failed. Please try again later.');
       }
-    } catch (err) {
+    } catch {
       setError('Friendbot is currently unreachable.');
     } finally {
       setFunding(false);

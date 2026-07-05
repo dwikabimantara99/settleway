@@ -6,14 +6,10 @@ import type { UserWallet } from '@/lib/types';
 
 export function ProfileWalletFundingPanel({
   userId,
-  dealId,
-  viewerRole,
   requiredAmountIdr,
   isFunded,
 }: {
   userId: string;
-  dealId: string;
-  viewerRole: 'buyer' | 'seller';
   requiredAmountIdr: number;
   isFunded: boolean;
 }) {
@@ -43,10 +39,10 @@ export function ProfileWalletFundingPanel({
           } else {
             if (mounted) setBalanceStr('0.00');
           }
-        } catch (err) {
+        } catch {
           if (mounted) setBalanceStr('0.00');
         }
-      } catch (err) {
+      } catch {
         if (mounted) setError('Could not load Profile Wallet.');
       } finally {
         if (mounted) setLoading(false);
