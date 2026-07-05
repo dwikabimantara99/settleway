@@ -1,5 +1,5 @@
+import 'server-only';
 import { Keypair, Transaction, TransactionBuilder, FeeBumpTransaction } from '@stellar/stellar-sdk';
-import type { StellarSignerRole } from './action-policy';
 import type { StellarSignerPort, StellarSignRequest, StellarSignResult } from './stellar-signer-port';
 import { decryptStellarSecret } from '@/lib/auth/server-crypto';
 

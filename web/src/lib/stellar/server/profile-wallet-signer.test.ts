@@ -76,7 +76,7 @@ describe('ProfileWalletSigner', () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       const signedTx = TransactionBuilder.fromXDR(result.signed_transaction_xdr, Networks.TESTNET);
-      expect((signedTx as any).signatures.length).toBe(1);
+      expect(signedTx.signatures.length).toBe(1);
     }
   });
 });
