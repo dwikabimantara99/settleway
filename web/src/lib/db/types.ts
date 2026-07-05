@@ -8,6 +8,16 @@ export type ApiResult<T> =
   | { ok: true; data: T; meta?: Record<string, unknown> }
   | { ok: false; error: { code: string; message: string; recoverable: boolean } };
 
+export interface DbUserWallet {
+  user_id: string;
+  public_address: string;
+  encrypted_secret_key: string;
+  encryption_version: string;
+  status: 'active' | 'suspended';
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DbProfile {
   id: string;
   display_name: string;

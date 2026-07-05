@@ -594,12 +594,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
       expect(hasText(page, 'Sell (My Listings)')).toBe(true);
       expect(hasText(page, 'Buy (My Requests)')).toBe(true);
       expect(hasText(page, 'Outcome-backed reputation')).toBe(true);
-      expect(hasText(page, 'Managed Profile Wallet')).toBe(true);
-      expect(hasText(page, 'Testnet')).toBe(true);
-      expect(
-        hasText(page, 'GBKFD4EHOTC64YWBEHSQECOXLRR4WKKUFBAVQ3GF2HQADRBLNVSR5RLX'),
-      ).toBe(true);
-      expect(hasText(page, 'Recent Outcomes')).toBe(false);
+                        expect(hasText(page, 'Recent Outcomes')).toBe(false);
       expect(hasText(page, 'Payout Destination')).toBe(false);
       expect(hasText(page, 'No buyer requests are attached to this profile yet.')).toBe(false);
       expect(hasText(page, 'Public Proof Mode')).toBe(false);

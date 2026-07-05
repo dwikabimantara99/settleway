@@ -14,6 +14,7 @@ import type {
   DbCustodyDealLink,
   DbCustodyOperation,
   DbCustodyEvent,
+  DbUserWallet,
 } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
@@ -31,6 +32,17 @@ export class SupabaseRepositoryAdapter implements IRepository {
 
   async updateProfile(id: string, partial: Partial<DbProfile>): Promise<void> {
     const { error } = await this.client.from('profiles').update(partial).eq('id', id);
+    if (error) throw error;
+  }
+
+  async getProfileWallet(userId: string): Promise<DbUserWallet | null> {
+    const { data, error } = await this.client.from('user_wallets').select('*').eq('user_id', userId).single();
+    if (error && error.code !== 'PGRST116') throw error;
+    return data || null;
+  }
+
+  async provisionProfileWallet(wallet: DbUserWallet): Promise<void> {
+    const { error } = await this.client.from('user_wallets').insert(wallet);
     if (error) throw error;
   }
 

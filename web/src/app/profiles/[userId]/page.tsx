@@ -12,8 +12,6 @@ import {
   UserCircle2,
 } from 'lucide-react';
 import { notFound } from 'next/navigation';
-import { ConnectExternalWalletButton } from '@/components/profile/ConnectExternalWalletButton';
-import { CopyWalletAddressButton } from '@/components/profile/CopyWalletAddressButton';
 import { EditProfileButton } from '@/components/profile/EditProfileButton';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -21,7 +19,7 @@ import { getCurrentUser } from '@/lib/auth/server';
 import type { DbBuyerRequest, DbListing } from '@/lib/db/types';
 import { rebuildReputationAggregate } from '@/lib/reputation/engine';
 import { repository } from '@/lib/repositories';
-import { TESTNET_DEMO_IDENTITIES } from '@/lib/stellar/testnet-demo-identities';
+import { ProfileWalletCard } from '@/components/profile/ProfileWalletCard';
 
 function formatIdr(value: number | null | undefined): string {
   return `Rp ${(value ?? 0).toLocaleString('id-ID')}`;
@@ -205,12 +203,6 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
   const chartMax = Math.max(...sellerMonthly, ...buyerMonthly, 1);
   const sellerPath = buildChartPath(sellerMonthly, 680, 180, chartMax);
   const buyerPath = buildChartPath(buyerMonthly, 680, 180, chartMax);
-  const managedWallet =
-    profile.user_type === 'buyer'
-      ? TESTNET_DEMO_IDENTITIES.buyer
-      : profile.user_type === 'operator'
-        ? TESTNET_DEMO_IDENTITIES.platform
-        : TESTNET_DEMO_IDENTITIES.seller;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -249,23 +241,9 @@ export default async function ProfilePage({ params }: { params: Promise<{ userId
                   <MapPin className="h-4 w-4" />
                   {profile.location}
                 </div>
-                <div className="mt-5 max-w-xl rounded-xl border border-slate-200 bg-white/90 p-3 shadow-sm">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                    Managed Profile Wallet
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">
-                      Testnet
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2 rounded-lg bg-slate-50 pl-3">
-                    <span className="min-w-0 flex-1 truncate font-mono text-xs text-slate-700 sm:text-sm">
-                      {managedWallet.public_address}
-                    </span>
-                    <CopyWalletAddressButton address={managedWallet.public_address} />
-                  </div>
-                  <p className="mt-2 text-xs leading-5 text-slate-500">
-                    Managed by Settleway for protected Testnet transaction activity.
-                  </p>
-                </div>
+                {currentUser?.id === profile.id && (
+                  <ProfileWalletCard userId={profile.id} />
+                )}
                 <div className="max-w-xl">
                   <ConnectExternalWalletButton
                     profileId={profile.id}

@@ -14,6 +14,7 @@ import type {
   DbCustodyDealLink,
   DbCustodyOperation,
   DbCustodyEvent,
+  DbUserWallet,
 } from '../db/types';
 import type { StellarOperation } from '../stellar/types';
 
@@ -25,6 +26,14 @@ export class MockRepositoryAdapter implements IRepository {
 
   async updateProfile(id: string, partial: Partial<DbProfile>): Promise<void> {
     mockStore.updateProfile(id, partial);
+  }
+
+  async getProfileWallet(userId: string): Promise<DbUserWallet | null> {
+    return mockStore.getProfileWallet(userId);
+  }
+
+  async provisionProfileWallet(wallet: DbUserWallet): Promise<void> {
+    mockStore.provisionProfileWallet(wallet);
   }
 
   async getListings(): Promise<DbListing[]> {

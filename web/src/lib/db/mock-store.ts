@@ -16,6 +16,7 @@ import {
   DbCustodyOperation,
   DbCustodyEvent,
   DbCustodyEventCursor,
+  DbUserWallet,
 } from './types';
 import { StellarOperation } from '../stellar/types';
 import { canTransitionStellarOperation } from '../stellar/helpers';
@@ -182,6 +183,7 @@ export class MockStore {
   evidenceFiles: Map<string, DbEvidenceFile> = new Map();
   reputationEvents: Map<string, DbReputationEvent> = new Map();
   reputationIdempotencyKeys: Set<string> = new Set();
+  userWallets: Map<string, DbUserWallet> = new Map();
 
   constructor() {
     this.seed();
@@ -204,6 +206,7 @@ export class MockStore {
     this.evidenceFiles.clear();
     this.reputationEvents.clear();
     this.reputationIdempotencyKeys.clear();
+    this.userWallets.clear();
 
     Object.values(demoProfiles).forEach(p => this.profiles.set(p.id, toDbProfile(p)));
     demoListings.forEach(l => this.listings.set(l.id, toDbListing(l)));
@@ -779,6 +782,19 @@ export class MockStore {
     return Array.from(this.reputationEvents.values())
       .filter(e => e.deal_id === dealId)
       .map(e => JSON.parse(JSON.stringify(e)));
+  }
+
+  // Profile Wallets
+  getProfileWallet(userId: string): DbUserWallet | null {
+    const wallet = this.userWallets.get(userId);
+    return wallet ? JSON.parse(JSON.stringify(wallet)) : null;
+  }
+
+  provisionProfileWallet(wallet: DbUserWallet): void {
+    if (this.userWallets.has(wallet.user_id)) {
+      throw new Error('Wallet already provisioned for user');
+    }
+    this.userWallets.set(wallet.user_id, JSON.parse(JSON.stringify(wallet)));
   }
 }
 

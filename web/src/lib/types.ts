@@ -20,6 +20,13 @@ export interface BuyerRequest {
   description: string;
 }
 
+export interface UserWallet {
+  userId: string;
+  publicAddress: string;
+  status: 'active' | 'suspended';
+  createdAt: string;
+}
+
 export interface Profile {
   id: string;
   displayName: string;
