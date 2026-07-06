@@ -28,7 +28,6 @@ describe('PublicLandingHeader', () => {
 
     expect(html).toContain('role="dialog"');
     expect(html).toContain('Continue with Google');
-    expect(html).toContain('Connect Stellar Wallet');
     expect(html).toContain('Protected by design');
   });
 });

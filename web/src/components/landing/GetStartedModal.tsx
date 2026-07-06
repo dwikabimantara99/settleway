@@ -63,7 +63,6 @@ export function GetStartedModal({
   onClose,
   returnFocusRef,
   onGoogleClick,
-  onStellarClick,
   feedbackMessage,
   feedbackTone = 'info',
   termsHref,
@@ -73,7 +72,6 @@ export function GetStartedModal({
   onClose: () => void;
   returnFocusRef: RefObject<HTMLElement | null>;
   onGoogleClick?: () => void;
-  onStellarClick?: () => void;
   feedbackMessage?: string | null;
   feedbackTone?: 'info' | 'success' | 'error';
   termsHref?: string;
@@ -206,21 +204,6 @@ export function GetStartedModal({
           >
             <GoogleMark />
             <span>Continue with Google</span>
-          </button>
-
-          <div className="flex items-center gap-4 text-sm text-slate-400">
-            <span className="h-px flex-1 bg-slate-200" />
-            <span>or</span>
-            <span className="h-px flex-1 bg-slate-200" />
-          </div>
-
-          <button
-            type="button"
-            onClick={onStellarClick}
-            className="inline-flex min-h-14 w-full items-center justify-center gap-4 rounded-2xl border border-[var(--azure-300)]/60 bg-[var(--azure-50)] px-5 text-base font-semibold text-[var(--navy-900)] transition-colors hover:bg-[var(--azure-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus-ring)]"
-          >
-            <Wallet className="h-6 w-6 text-slate-950" />
-            <span>Connect Stellar Wallet</span>
           </button>
 
           {feedbackMessage ? (

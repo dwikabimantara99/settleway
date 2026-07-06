@@ -6,11 +6,6 @@ import { useRef, useState } from 'react';
 import { SettlewayLogo } from '@/components/brand/SettlewayLogo';
 import { GetStartedModal } from './GetStartedModal';
 import { isEscapeDismissKey, isMarketplaceOpenKey } from './landing-interactions';
-import {
-  getFreighterApi,
-  readStringResult,
-  shortenStellarAddress,
-} from '@/lib/stellar/freighter-client';
 
 const marketplaceItems = [
   {
@@ -53,47 +48,6 @@ export function PublicLandingHeader({
       message:
         'Google sign-in is not connected in this MVP. The marketplace remains available without fabricating an account flow.',
     });
-  };
-
-  const handleStellarClick = async () => {
-    const freighter = await getFreighterApi();
-
-    if (!freighter) {
-      setModalFeedback({
-        tone: 'error',
-        message:
-          'Settleway could not load the Freighter browser bridge. Refresh the page and confirm Freighter is enabled for this site.',
-      });
-      return;
-    }
-
-    try {
-      const accessResult = freighter.requestAccess ? await freighter.requestAccess() : null;
-      const addressResult = freighter.getAddress
-        ? await freighter.getAddress()
-        : freighter.getPublicKey
-          ? await freighter.getPublicKey()
-          : accessResult;
-      const address = readStringResult(addressResult, ['address', 'publicKey', 'public_key']);
-
-      if (!address) {
-        setModalFeedback({
-          tone: 'error',
-          message: 'The wallet opened, but Settleway could not read a public Stellar address.',
-        });
-        return;
-      }
-
-      setModalFeedback({
-        tone: 'success',
-        message: `Wallet detected: ${shortenStellarAddress(address)}. Profile linking remains a signed-in profile action.`,
-      });
-    } catch {
-      setModalFeedback({
-        tone: 'error',
-        message: 'The wallet connection was cancelled or could not be completed.',
-      });
-    }
   };
 
   return (
@@ -243,7 +197,6 @@ export function PublicLandingHeader({
         onClose={() => setIsModalOpen(false)}
         returnFocusRef={loginButtonRef}
         onGoogleClick={handleGoogleClick}
-        onStellarClick={handleStellarClick}
         feedbackMessage={modalFeedback?.message}
         feedbackTone={modalFeedback?.tone}
       />

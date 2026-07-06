@@ -19,6 +19,7 @@
 | Constrained Failure / Refund / Expiry | `LOCAL_FAILURE_CLASSIFICATION_ONLY` |
 | Demo Hardening & Operator Walkthrough | `DEMO_WALKTHROUGH_READY` |
 | Refund Sweep Execution Corridor | `LOCAL_REFUND_SWEEP_PREP_ONLY` |
+| UI Product Alignment | `UI_PRODUCT_ALIGNMENT_ACCEPTED` |
 
 ---
 
