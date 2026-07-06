@@ -32,6 +32,23 @@ export async function GET(
         wallet = await walletRepo.getProfileWallet(userId);
       } catch (err) {
         console.error('Wallet provisioning error:', err);
+        
+        // Demo runtime fallback for missing encryption keys
+        if (process.env.NEXT_PUBLIC_RUNTIME_MODE === 'demo') {
+          const role = userId.includes('buyer') ? 'buyer' : userId.includes('seller') ? 'seller' : null;
+          if (role) {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const { TESTNET_DEMO_IDENTITIES } = require('@/lib/stellar/testnet-demo-identities');
+            const demoIdentity = TESTNET_DEMO_IDENTITIES[role];
+            return NextResponse.json({
+              userId,
+              publicAddress: demoIdentity.public_address,
+              status: 'active',
+              createdAt: new Date().toISOString(),
+            });
+          }
+        }
+        
         return NextResponse.json(
           { error: 'Failed to provision wallet. Configuration may be missing.' },
           { status: 500 }

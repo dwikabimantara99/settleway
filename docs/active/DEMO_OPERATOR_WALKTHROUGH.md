@@ -1,8 +1,8 @@
 # Settleway Demo Operator Walkthrough
 
-**Version:** Demo Hardening milestone — 2026-07-06
+**Version:** Manual Runtime Funnel Repair milestone — 2026-07-06
 **Baseline commit:** `54864f1fcc5beae034b4d9858470920439905149`
-**Checkpoint:** `checkpoint/demo-walkthrough-ready-2026-07-06`
+**Checkpoint:** `checkpoint/manual-runtime-funnel-repair-ready-2026-07-06`
 
 ---
 
@@ -407,5 +407,5 @@ The failure path demonstrates `LOCAL_FAILURE_CLASSIFICATION_ONLY`.
 ---
 
 _Last updated: 2026-07-06_
-_Branch: feature/demo-hardening-operator-walkthrough_
-_Classification: DEMO_WALKTHROUGH_READY_
+_Branch: feature/manual-runtime-funnel-repair_
+_Classification: MANUAL_FUNNEL_REPAIRED_TO_DEAL_ROOM_

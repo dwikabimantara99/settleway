@@ -53,7 +53,9 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
       try {
         const res = await fetch(`/api/profiles/${userId}/wallet`);
         if (!res.ok) {
-          throw new Error('Failed to load wallet');
+          if (mounted) setError('Wallet is not initialized yet or configuration is missing.');
+          if (mounted) setLoading(false);
+          return;
         }
         const data: UserWallet = await res.json();
         if (mounted) setWallet(data);

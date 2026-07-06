@@ -20,7 +20,7 @@ import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 import { EscrowTimeline } from '@/components/deal/EscrowTimeline';
 import { getCurrentUser } from '@/lib/auth/server';
 import { demoProfiles } from '@/lib/demo/demo-data';
-import { getDeal } from '@/lib/db/deals';
+import { repository } from '@/lib/repositories';
 import { getDealDepositDeadlineAt, getDealOfferId } from '@/lib/deals/terms';
 import {
   isClosedDealStatus,
@@ -40,7 +40,6 @@ import {
   formatPayoutDestinationReference,
   isPayoutDestinationSnapshot,
 } from '@/lib/payout-destinations';
-import { repository } from '@/lib/repositories';
 
 type ViewerRole = 'buyer' | 'seller' | null;
 
@@ -210,7 +209,7 @@ function formatEvidenceVisibility(value: string): string {
 
 export default async function DealRoomPage({ params }: { params: Promise<{ dealId: string }> }) {
   const resolvedParams = await params;
-  const deal = await getDeal(resolvedParams.dealId);
+  const deal = await repository.getDeal(resolvedParams.dealId);
 
   if (!deal) return notFound();
 

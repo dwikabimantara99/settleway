@@ -330,7 +330,6 @@ export function CreateOfferComposer({
       }
 
       router.push(payload.data.redirect_to);
-      router.refresh();
     } catch (fetchError) {
       setError(fetchError instanceof Error ? fetchError.message : String(fetchError));
     } finally {
@@ -681,6 +680,12 @@ export function CreateOfferComposer({
             </p>
           </div>
 
+          {!currentActorId ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 mb-4">
+              <strong>Authentication Required:</strong> You must be logged in to submit an offer. In demo mode, select a Demo Persona (Buyer or Seller) from the navigation bar.
+            </div>
+          ) : null}
+
           {error ? (
             <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
               {error}
@@ -692,9 +697,9 @@ export function CreateOfferComposer({
             size="lg"
             className="h-14 w-full rounded-xl text-xl"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !currentActorId}
           >
-            {loading ? 'Submitting...' : 'Submit Offer'}
+            {loading ? 'Submitting...' : !currentActorId ? 'Login to Submit Offer' : 'Submit Offer'}
           </Button>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4">
