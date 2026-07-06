@@ -169,3 +169,50 @@ describe('Demo route ID consistency', () => {
     expect(offer?.seller_id).toBe('seller-probolinggo-cabai');
   });
 });
+
+describe('Account-first UI — no external wallet CTA on public surfaces', () => {
+  it('GetStartedModal does not contain Connect Stellar Wallet', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const { createRef } = await import('react');
+    const { GetStartedModal } = await import('@/components/landing/GetStartedModal');
+    const html = renderToString(
+      <GetStartedModal
+        isOpen={true}
+        onClose={() => {}}
+        returnFocusRef={createRef()}
+      />
+    );
+    expect(html).not.toContain('Connect Stellar Wallet');
+    expect(html).not.toContain('WalletConnect');
+    expect(html).toContain('Continue with Google');
+  });
+
+  it('PublicLandingHeader does not contain Connect Stellar Wallet in open modal state', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const { PublicLandingHeader } = await import('@/components/landing/PublicLandingHeader');
+    const html = renderToString(<PublicLandingHeader initialModalOpen={true} />);
+    expect(html).not.toContain('Connect Stellar Wallet');
+    expect(html).not.toContain('WalletConnect');
+    expect(html).toContain('Continue with Google');
+  });
+
+  it('ConnectExternalWalletButton does not render a Connect Wallet button when no address is provided', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const { ConnectExternalWalletButton } = await import(
+      '@/components/profile/ConnectExternalWalletButton'
+    );
+    const html = renderToString(
+      <ConnectExternalWalletButton
+        profileId="test-user"
+        initialAddress={null}
+        initialProvider={null}
+        initialNetwork={null}
+        canConnect={false}
+      />
+    );
+    expect(html).not.toContain('Connect Stellar Wallet');
+    expect(html).not.toContain('Reconnect Wallet');
+    expect(html).not.toContain('Connect Wallet');
+    expect(html).toContain('managed internally by Settleway');
+  });
+});
