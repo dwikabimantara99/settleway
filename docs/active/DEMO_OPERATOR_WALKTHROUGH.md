@@ -2,7 +2,7 @@
 
 **Version:** Demo Hardening milestone — 2026-07-06
 **Baseline commit:** `54864f1fcc5beae034b4d9858470920439905149`
-**Checkpoint:** `checkpoint/constrained-failure-refund-expiry-2026-07-06`
+**Checkpoint:** `checkpoint/demo-walkthrough-ready-2026-07-06`
 
 ---
 
@@ -41,7 +41,7 @@ Settleway is a B2B agricultural trade-assurance platform. The demo proves that t
 |---|---|
 | Real fiat/bank payment | Bank rails are not live. Profile Wallet uses Testnet XLM only. |
 | Production custody | No mainnet assets, no production Supabase, no live custody. |
-| Confirmed on-chain refund | `REFUND_PENDING` is a local classification. No refund sweep has been executed. |
+| Confirmed on-chain refund | `REFUND_PENDING` is a local classification. Calling `/api/deals/{dealId}/refund-sweep` returns a 501 Blocked response since the architecture does not support sweep execution. |
 | Automated dispute arbitration | `REVIEW_REQUIRED` and `DELIVERY_REJECTED` pause settlement. No AI judge exists. |
 | Automatic seller penalization | Bond penalties are not confirmed unless a deterministic rule is explicitly modeled. |
 | Remote database persistence | Demo uses `MockRepositoryAdapter` (in-memory). Data resets on server restart. |
@@ -310,6 +310,7 @@ The failure path demonstrates `LOCAL_FAILURE_CLASSIFICATION_ONLY`.
 | Submit proof | POST /api/deals/{dealId}/submit-proof | `proof_hash` in deal; Testnet tx memo |
 | Accept delivery | POST /api/deals/{dealId}/accept-delivery | Settlement tx hash on Testnet |
 | Expire funding | POST /api/deals/{dealId}/expire | Local state transition only (no confirmed Testnet refund) |
+| Sweep refund | POST /api/deals/{dealId}/refund-sweep | Returns 501 Not Implemented (LOCAL_REFUND_SWEEP_PREP_ONLY) |
 | Expire proof | POST /api/deals/{dealId}/expire-proof | Local state transition only |
 | Reject delivery | POST /api/deals/{dealId}/reject-delivery | Local state transition only |
 
@@ -328,7 +329,7 @@ The failure path demonstrates `LOCAL_FAILURE_CLASSIFICATION_ONLY`.
 ## 14. Known Demo Limitations
 
 1. **In-memory persistence only.** Demo data resets on server restart. Supabase migration files exist but remote schema has NOT been applied.
-2. **`REFUND_PENDING` is not `REFUNDED`.** The refund sweep execution step does not yet exist. The classification is local and projected.
+2. **`REFUND_PENDING` is not `REFUNDED`.** The refund sweep execution API route exists but is explicitly blocked (returning 501) because the current Soroban bindings lack a method to extract funds from a locked escrow, and the Managed Profile Wallet architecture lacks external withdrawal destination modeling. The classification is `LOCAL_REFUND_SWEEP_PREP_ONLY`.
 3. **No automated dispute arbitration.** `REVIEW_REQUIRED` and `DELIVERY_REJECTED` require human or future rule-based resolution.
 4. **Failure reputation policy is partial.** Only unilateral missed-deposit is deterministically penalized. Proof-expiry and rejection penalties are not yet modeled.
 5. **Role switching is cookie-based.** The `mock_actor` cookie controls the simulated identity. In production, real auth replaces this.

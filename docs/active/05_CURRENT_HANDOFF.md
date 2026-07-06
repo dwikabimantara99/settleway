@@ -2,9 +2,9 @@
 
 ## Current Branch / Baseline
 
-- **Branch:** `feature/demo-hardening-operator-walkthrough`
-- **Baseline commit (main):** `54864f1fcc5beae034b4d9858470920439905149`
-- **Checkpoint:** `checkpoint/constrained-failure-refund-expiry-2026-07-06`
+- **Branch:** `feature/refund-sweep-execution-corridor`
+- **Baseline commit (main):** `034c9205b2f1cdaa507c2e6b3013384baf3bad57`
+- **Checkpoint:** `checkpoint/demo-walkthrough-ready-2026-07-06`
 
 ---
 
@@ -18,6 +18,7 @@
 | Testnet Proof Anchoring | `TESTNET_PROOF_HASH_ANCHORED` |
 | Constrained Failure / Refund / Expiry | `LOCAL_FAILURE_CLASSIFICATION_ONLY` |
 | Demo Hardening & Operator Walkthrough | `DEMO_WALKTHROUGH_READY` |
+| Refund Sweep Execution Corridor | `LOCAL_REFUND_SWEEP_PREP_ONLY` |
 
 ---
 
@@ -117,7 +118,7 @@ Failure C: Buyer rejection (after proof) → DELIVERY_REJECTED (LOCAL_FAILURE_CL
 
 ## What Remains Partial
 
-- Refund sweep execution step (future milestone: convert REFUND_PENDING → REFUNDED with real tx)
+- Refund sweep execution step: Real Testnet confirmation is blocked because the current Soroban bindings lack a method to extract funds from a locked escrow, and the Managed Profile Wallet architecture lacks external withdrawal destination modeling. Classified as `LOCAL_REFUND_SWEEP_PREP_ONLY`.
 - Dispute arbitration / admin review panel for REVIEW_REQUIRED / DELIVERY_REJECTED
 - Failure reputation policy for rejection and proof-expiry paths
 - Remote Supabase schema application (requires explicit human-approved step)
@@ -127,13 +128,13 @@ Failure C: Buyer rejection (after proof) → DELIVERY_REJECTED (LOCAL_FAILURE_CL
 
 ## Next Recommended Milestone
 
-**Refund Sweep Execution Corridor** — implement the actual withdrawal step that:
-1. Takes a deal in `REFUND_PENDING` state
-2. Executes a real Testnet transfer back to the depositing party
-3. Records the tx hash as confirmed evidence
-4. Transitions to `REFUNDED` with a verified on-chain reference
+**Dispute Arbitration / Admin Review Panel** — implement the mechanism to resolve `REVIEW_REQUIRED` or `DELIVERY_REJECTED` states:
+1. Provide an admin-only or mediator-only view
+2. Allow deterministic resolution (e.g., faulting buyer or seller)
+3. Apply reputation outcomes based on the decision
+4. Advance state to `REFUND_PENDING` (if seller fault) or `COMPLETED` (if buyer fault)
 
-This would upgrade the failure classification from `LOCAL_FAILURE_CLASSIFICATION_ONLY` to `REAL_TESTNET_CONFIRMED_REFUND`.
+This would close the loop on the constrained failure paths that currently pause settlement.
 
 ## Explicit Non-Goals
 

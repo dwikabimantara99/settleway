@@ -267,6 +267,23 @@ export function resolveStellarActionPlan(
     };
   }
 
+  if (action === "refund_sweep" && expectedLocalStatus === "REFUND_PENDING") {
+    return {
+      ok: true,
+      plan: {
+        action: "refund_sweep",
+        expected_local_status: "REFUND_PENDING",
+        target_local_status: "REFUNDED",
+        stellar_method: "refund_before_locked",
+        signer_role: "admin",
+        expects_transaction_hash: true,
+        expects_result_escrow_id: false,
+        requires_confirmation: true,
+        local_commit_policy: "advance_status",
+      },
+    };
+  }
+
   return {
     ok: false,
     error_code: "ERR_INVALID_STATE",
