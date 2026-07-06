@@ -40,6 +40,20 @@ async function waitForReconciliationWindow(): Promise<void> {
 function mapCoordinatorFailure(
   result: Extract<Awaited<ReturnType<typeof coordinateDealExecution>>, { ok: false }>,
 ) {
+  if (result.reason === 'ERR_EXECUTION_SERVICE_FAILURE' && 'inner_result' in result && result.inner_result) {
+    const inner = result.inner_result as { ok?: boolean; error_code?: string };
+    if (!inner.ok) {
+      if (inner.error_code === 'ERR_SIGNER_REJECTED') {
+        return { status: 502, code: 'ERR_SIGNER_REJECTED', message: 'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.' };
+      }
+      if (inner.error_code === 'ERR_SIGNER_UNAVAILABLE') {
+        return { status: 503, code: 'STELLAR_RUNTIME_UNAVAILABLE', message: 'Profile Wallet was found, but Stellar Testnet runtime is not configured locally. No deposit was made.' };
+      }
+      if (inner.error_code === 'ERR_EXECUTION_TIMEOUT') {
+        return { status: 504, code: 'ERR_EXECUTION_TIMEOUT', message: 'Funding was submitted but could not be confirmed yet. Do not treat this as funded until a tx hash is confirmed.' };
+      }
+    }
+  }
   switch (result.reason) {
     case 'ERR_OUT_OF_SYNC':
     case 'ERR_DEAL_PERSISTENCE_CONFLICT':

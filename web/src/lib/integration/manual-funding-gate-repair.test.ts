@@ -72,7 +72,7 @@ describe('Manual Deal Room Funding Gate Repair', () => {
     
     expect(json.error?.message).not.toBe('You must create a Profile Wallet before funding this deal.');
     // In CI test mode without network, checking balance fails or runtime unavailable fails, which proves we passed the wallet check!
-    expect(['PROFILE_WALLET_BALANCE_UNAVAILABLE', 'STELLAR_RUNTIME_UNAVAILABLE', 'ERR_SIGNER_REJECTED']).toContain(json.error?.code);
+    const expectedCodes = ['PROFILE_WALLET_BALANCE_UNAVAILABLE', 'STELLAR_RUNTIME_UNAVAILABLE', 'ERR_SIGNER_REJECTED']; expect(expectedCodes).toContain(json.error?.code); if (json.error?.code === 'ERR_SIGNER_REJECTED') { expect(json.error?.message).toBe('Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.'); } if (json.error?.code === 'STELLAR_RUNTIME_UNAVAILABLE') { expect(json.error?.message).toMatch(/runtime is not (ready|configured)/); }
   });
 
   it('2. Demo Seller has a Profile Wallet recognized by the same wallet source used by funding', async () => {
@@ -86,7 +86,7 @@ describe('Manual Deal Room Funding Gate Repair', () => {
     const json = await res.json();
     
     expect(json.error?.message).not.toBe('You must create a Profile Wallet before funding this deal.');
-    expect(['PROFILE_WALLET_BALANCE_UNAVAILABLE', 'STELLAR_RUNTIME_UNAVAILABLE', 'ERR_SIGNER_REJECTED']).toContain(json.error?.code);
+    const expectedCodes = ['PROFILE_WALLET_BALANCE_UNAVAILABLE', 'STELLAR_RUNTIME_UNAVAILABLE', 'ERR_SIGNER_REJECTED']; expect(expectedCodes).toContain(json.error?.code); if (json.error?.code === 'ERR_SIGNER_REJECTED') { expect(json.error?.message).toBe('Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.'); } if (json.error?.code === 'STELLAR_RUNTIME_UNAVAILABLE') { expect(json.error?.message).toMatch(/runtime is not (ready|configured)/); }
   });
 
   it('3. Wrong role or unknown user is still blocked', async () => {
