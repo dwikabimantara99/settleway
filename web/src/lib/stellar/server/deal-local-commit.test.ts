@@ -65,8 +65,8 @@ describe("Deal Local Commit", () => {
     { action: "mark_delivered", expected: "PROOF_SUBMITTED", target: "DELIVERED", method: "mark_delivered" },
     { action: "accept_delivery", expected: "DELIVERED", target: "COMPLETED", method: "accept_and_complete" },
     { action: "expire", expected: "WAITING_DEPOSITS", target: "EXPIRED", method: "expire_if_unfunded" },
-    { action: "expire", expected: "BUYER_FUNDED", target: "REFUNDED", method: "expire_if_unfunded" },
-    { action: "expire", expected: "SELLER_FUNDED", target: "REFUNDED", method: "expire_if_unfunded" },
+    { action: "expire", expected: "BUYER_FUNDED", target: "REFUND_PENDING", method: "expire_if_unfunded" },
+    { action: "expire", expected: "SELLER_FUNDED", target: "REFUND_PENDING", method: "expire_if_unfunded" },
     { action: "refund", expected: "BUYER_FUNDED", target: "REFUNDED", method: "refund_before_locked" },
     { action: "refund", expected: "SELLER_FUNDED", target: "REFUNDED", method: "refund_before_locked" },
   ] as const;

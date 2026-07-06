@@ -34,7 +34,7 @@ export type StellarExecutionAssemblyInput =
       proof_hash: string;
     }
   | {
-      action: Exclude<StellarAction, "create_deal" | "submit_proof">;
+      action: Exclude<StellarAction, "create_deal" | "submit_proof" | "expire_proof" | "reject_delivery">;
       operation_id: string;
       deal: DbDeal;
       metadata: StellarExecutionPublicMetadata;
@@ -116,7 +116,8 @@ export type StellarExecutionAssemblyResult =
   | StellarExecutionAssemblySuccess
   | StellarExecutionAssemblyFailure;
 
-function isValidIdentifier(value: string): boolean {
+function isValidIdentifier(value: string | undefined | null): boolean {
+  if (!value || typeof value !== 'string') return false;
   return value !== "" && value.trim() !== "" && value === value.trim();
 }
 

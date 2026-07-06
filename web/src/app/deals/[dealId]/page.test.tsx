@@ -19,6 +19,9 @@ const statusLabels: Record<DealStateGalleryStatus, string> = {
   EXPIRED: 'Expired',
   REFUNDED: 'Refunded',
   CANCELLED: 'Cancelled',
+  REFUND_PENDING: 'Refund Pending',
+  REVIEW_REQUIRED: 'Manual Review',
+  DELIVERY_REJECTED: 'Delivery Rejected',
 };
 
 vi.mock('next/headers', () => ({

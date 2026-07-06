@@ -80,7 +80,7 @@ export function reduceStellarExecution(
   const { stage, operation, result, occurred_at } = input;
 
   // 1. Action compatibility
-  if (result.action !== operation.requested_action) {
+  if ("action" in result && result.action !== operation.requested_action) {
     return { ok: false, error_code: "ERR_ACTION_MISMATCH" };
   }
 

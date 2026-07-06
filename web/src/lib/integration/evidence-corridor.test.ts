@@ -108,7 +108,7 @@ describe('Evidence Delivery Proof Corridor (Integration)', () => {
     const buyerUser = { id: 'buyer-surabaya-restaurant', phone: '08123456789' };
     vi.spyOn(authServer, 'requireDealParticipant').mockResolvedValueOnce({
       user: buyerUser,
-      deal: await repository.getDeal(dealId) as any,
+      deal: await repository.getDeal(dealId) as unknown,
       role: 'buyer',
     });
 
@@ -127,7 +127,7 @@ describe('Evidence Delivery Proof Corridor (Integration)', () => {
     const sellerUser = { id: 'seller-probolinggo-cabai', phone: '08234567890' };
     vi.spyOn(authServer, 'requireDealParticipant').mockResolvedValueOnce({
       user: sellerUser,
-      deal: await repository.getDeal(dealId) as any,
+      deal: await repository.getDeal(dealId) as unknown,
       role: 'seller',
     });
 

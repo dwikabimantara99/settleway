@@ -463,10 +463,10 @@ describe("MockStore - Stellar Operations", () => {
         ["WAITING_DEPOSITS", "SELLER_FUNDED"],
         ["WAITING_DEPOSITS", "EXPIRED"],
         ["BUYER_FUNDED", "LOCKED"],
-        ["BUYER_FUNDED", "REFUNDED"],
+        ["BUYER_FUNDED", "REFUND_PENDING"],
 
         ["SELLER_FUNDED", "LOCKED"],
-        ["SELLER_FUNDED", "REFUNDED"],
+        ["SELLER_FUNDED", "REFUND_PENDING"],
 
         ["LOCKED", "PROOF_SUBMITTED"],
         ["PROOF_SUBMITTED", "DELIVERED"],

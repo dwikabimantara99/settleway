@@ -1,4 +1,5 @@
 import { createStellarIdempotencyKey } from "@/lib/stellar/helpers";
+export type OrchestratorStellarAction = Exclude<StellarAction, "expire_proof" | "reject_delivery">;
 import type { DbDeal } from "@/lib/db/types";
 import type { StellarAction, StellarOperation } from "@/lib/stellar/types";
 import { coordinateDealExecution } from "../deal-execution-coordinator";
@@ -25,7 +26,7 @@ export type SmokeScenarioResult =
   | {
       readonly ok: false;
       readonly error_code: SmokeScenarioErrorCode;
-      readonly failed_action: StellarAction | null;
+      readonly failed_action: OrchestratorStellarAction | null;
       readonly evidence: SmokeScenarioEvidence | null;
       readonly coordinator_result?: StellarDealExecutionCoordinatorResult;
     };
@@ -60,7 +61,7 @@ export type SmokeReconciliationErrorCode =
   | "ERR_OPERATION_NOT_FOUND";
 
 export type SmokeTransactionHashReconciliationInput = {
-  readonly action: StellarAction;
+  readonly action: OrchestratorStellarAction;
   readonly transaction_hash: string;
 };
 
@@ -118,7 +119,7 @@ function timestampSet(scenario: SmokeScenarioName, index: number): {
   };
 }
 
-function operationKey(deal: DbDeal, action: StellarAction): string {
+function operationKey(deal: DbDeal, action: OrchestratorStellarAction): string {
   let scope: string | null = deal.status;
   if (action === "create_deal") scope = null;
   if (action === "buyer_deposit" || action === "accept_delivery") scope = deal.buyer_id;
@@ -138,7 +139,7 @@ function readCurrentDeal(runtime: SmokeRuntime): DbDeal | null {
 function readOperationAfterAction(
   runtime: SmokeRuntime,
   dealBeforeAction: DbDeal,
-  action: StellarAction,
+  action: OrchestratorStellarAction,
 ): StellarOperation | null {
   return runtime.persistence.readOperation(operationKey(dealBeforeAction, action));
 }
@@ -147,7 +148,7 @@ async function coordinateSmokeAction(input: {
   readonly runtime: SmokeRuntime;
   readonly scenario: SmokeScenarioName;
   readonly index: number;
-  readonly action: StellarAction;
+  readonly action: Exclude<OrchestratorStellarAction, "expire_proof" | "reject_delivery">;
   readonly existing_operation: StellarOperation | null;
 }): Promise<
   | {
@@ -159,18 +160,18 @@ async function coordinateSmokeAction(input: {
   | {
       readonly ok: false;
       readonly error_code: SmokeScenarioErrorCode;
-      readonly action: StellarAction;
+      readonly action: Exclude<OrchestratorStellarAction, "expire_proof" | "reject_delivery">;
       readonly coordinator_result?: StellarDealExecutionCoordinatorResult;
     }
 > {
   const currentDeal = readCurrentDeal(input.runtime);
   if (currentDeal === null) {
-    return { ok: false, error_code: "ERR_MISSING_DEAL", action: input.action };
+    return { ok: false, error_code: "ERR_MISSING_DEAL", action: input.action as OrchestratorStellarAction };
   }
 
   const timestamps = timestampSet(input.scenario, input.index);
   const coordinatorResult = await coordinateDealExecution({
-    action: input.action,
+    action: input.action as OrchestratorStellarAction,
     operation_id: `smoke:${input.scenario}:${input.index}:${input.action}`,
     deal: currentDeal,
     metadata: input.runtime.metadata,
@@ -190,7 +191,7 @@ async function coordinateSmokeAction(input: {
     return {
       ok: false,
       error_code: "ERR_COORDINATOR_FAILURE",
-      action: input.action,
+      action: input.action as OrchestratorStellarAction,
       coordinator_result: coordinatorResult,
     };
   }
@@ -200,7 +201,7 @@ async function coordinateSmokeAction(input: {
     : input.runtime.persistence.readOperation(input.existing_operation.idempotency_key);
 
   if (operation === null) {
-    return { ok: false, error_code: "ERR_OPERATION_NOT_FOUND", action: input.action };
+    return { ok: false, error_code: "ERR_OPERATION_NOT_FOUND", action: input.action as OrchestratorStellarAction };
   }
 
   return {
@@ -208,7 +209,7 @@ async function coordinateSmokeAction(input: {
     next_deal: coordinatorResult.next_deal,
     operation,
     action_evidence: smokeActionEvidence({
-      action: input.action,
+      action: input.action as OrchestratorStellarAction,
       operation,
       deal: coordinatorResult.next_deal,
     }),
@@ -218,7 +219,7 @@ async function coordinateSmokeAction(input: {
 async function runScenario(input: {
   readonly runtime: SmokeRuntime;
   readonly scenario: SmokeScenarioName;
-  readonly actions: readonly StellarAction[];
+  readonly actions: readonly OrchestratorStellarAction[];
 }): Promise<SmokeScenarioResult> {
   input.runtime.persistence.seedDeal(baseDealFromRuntime(input.runtime));
   const actions: SmokeActionEvidence[] = [];
@@ -340,7 +341,7 @@ export async function reconcileSmokeOperation(input: {
     runtime: input.runtime,
     scenario: "reconciliation",
     index: 0,
-    action: input.operation.requested_action,
+    action: input.operation.requested_action as unknown as OrchestratorStellarAction,
     existing_operation: input.operation,
   });
 
@@ -399,7 +400,7 @@ export async function reconcileSmokeTransactionHash(
   }
 
   const confirmation = await input.runtime.execution_adapter.confirm({
-    action: input.action,
+    action: input.action as OrchestratorStellarAction,
     transaction_hash: input.transaction_hash,
   });
 
@@ -419,7 +420,7 @@ export async function reconcileSmokeTransactionHash(
     config: input.runtime.config,
     actions: [
       smokeActionEvidence({
-        action: input.action,
+        action: input.action as OrchestratorStellarAction,
         operation: null,
         deal: currentDeal,
       }),

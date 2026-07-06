@@ -19,8 +19,11 @@ export const DEAL_STATE_GALLERY_STATUSES = [
   'DELIVERED',
   'COMPLETED',
   'EXPIRED',
+  'REFUND_PENDING',
   'REFUNDED',
   'CANCELLED',
+  'DELIVERY_REJECTED',
+  'REVIEW_REQUIRED',
 ] as const satisfies readonly DealStatus[];
 
 export type DealStateGalleryStatus = (typeof DEAL_STATE_GALLERY_STATUSES)[number];
@@ -91,10 +94,10 @@ function buildOffer(status: DealStateGalleryStatus): DbOffer {
 
 function buildDeal(status: DealStateGalleryStatus): DbDeal {
   const dealId = getDealStateGalleryFixtureId(status);
-  const hasLock = ['LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(status);
-  const hasProof = ['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(status);
+  const hasLock = ['LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED', 'REVIEW_REQUIRED'].includes(status);
+  const hasProof = ['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED'].includes(status);
   const hasLatestReference =
-    status === 'CUSTODY_PENDING' || hasLock || status === 'REFUNDED' || status === 'COMPLETED';
+    status === 'CUSTODY_PENDING' || hasLock || status === 'REFUNDED' || status === 'REFUND_PENDING' || status === 'COMPLETED';
 
   return {
     ...resolveDealRoomDefaultStellarState(),
@@ -169,7 +172,7 @@ function buildEvents(status: DealStateGalleryStatus, dealId: string): DbEscrowEv
   }
 
   if (
-    ['SELLER_FUNDED', 'CUSTODY_PENDING', 'LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(
+    ['SELLER_FUNDED', 'CUSTODY_PENDING', 'LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED', 'REVIEW_REQUIRED'].includes(
       status,
     )
   ) {
@@ -186,7 +189,7 @@ function buildEvents(status: DealStateGalleryStatus, dealId: string): DbEscrowEv
     });
   }
 
-  if (['LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(status)) {
+  if (['LOCKED', 'PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED', 'REVIEW_REQUIRED'].includes(status)) {
     events.push({
       id: `${dealId}-event-locked`,
       deal_id: dealId,
@@ -200,7 +203,7 @@ function buildEvents(status: DealStateGalleryStatus, dealId: string): DbEscrowEv
     });
   }
 
-  if (['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(status)) {
+  if (['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED'].includes(status)) {
     events.push({
       id: `${dealId}-event-proof`,
       deal_id: dealId,
@@ -264,7 +267,7 @@ function buildEvents(status: DealStateGalleryStatus, dealId: string): DbEscrowEv
     });
   }
 
-  if (status === 'REFUNDED') {
+  if (status === 'REFUNDED' || status === 'REFUND_PENDING') {
     events.push({
       id: `${dealId}-event-refunded`,
       deal_id: dealId,
@@ -301,7 +304,7 @@ function buildEvents(status: DealStateGalleryStatus, dealId: string): DbEscrowEv
 }
 
 function buildEvidence(status: DealStateGalleryStatus, dealId: string): DbEvidenceFile[] {
-  if (!['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED'].includes(status)) {
+  if (!['PROOF_SUBMITTED', 'DELIVERED', 'COMPLETED', 'DELIVERY_REJECTED'].includes(status)) {
     return [];
   }
 
@@ -362,7 +365,7 @@ function buildReputationEvents(status: DealStateGalleryStatus, dealId: string): 
     ];
   }
 
-  if (status === 'REFUNDED') {
+  if (status === 'REFUNDED' || status === 'REFUND_PENDING') {
     return [
       {
         id: `${dealId}-rep-buyer-refund`,

@@ -238,6 +238,21 @@ export function DealActions({
           summary.
         </div>
       )}
+      {status === 'REFUND_PENDING' && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Funding window closed before full lock. A local refund classification has been recorded, pending future withdrawal execution.
+        </div>
+      )}
+      {status === 'DELIVERY_REJECTED' && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+          The buyer rejected the delivery proof. Settlement is paused pending manual review or deterministic arbitration.
+        </div>
+      )}
+      {status === 'REVIEW_REQUIRED' && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900">
+          An anomaly occurred or a deadline was missed. Settlement is paused for review.
+        </div>
+      )}
       {status === 'EXPIRED' && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
           The funding window ended without a protected lock. No further room action is available.
@@ -350,6 +365,16 @@ export function DealActions({
               </>
             ) : null}
           </>
+        )}
+
+        {status === 'LOCKED' && viewerRole === null && (
+          <Button
+            variant="ghost"
+            onClick={() => handleAction('expire-proof')}
+            disabled={loading !== null}
+          >
+            {loading === 'expire-proof' ? 'Processing...' : 'Trigger Proof Expiry'}
+          </Button>
         )}
 
         {status === 'PROOF_SUBMITTED' && canTriggerProofMilestone && (

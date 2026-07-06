@@ -73,8 +73,8 @@ describe("Deal Execution Integration (Offline E2E)", () => {
     { action: "mark_delivered", expected: "PROOF_SUBMITTED", target: "DELIVERED" },
     { action: "accept_delivery", expected: "DELIVERED", target: "COMPLETED" },
     { action: "expire", expected: "WAITING_DEPOSITS", target: "EXPIRED" },
-    { action: "expire", expected: "BUYER_FUNDED", target: "REFUNDED" },
-    { action: "expire", expected: "SELLER_FUNDED", target: "REFUNDED" },
+    { action: "expire", expected: "BUYER_FUNDED", target: "REFUND_PENDING" },
+    { action: "expire", expected: "SELLER_FUNDED", target: "REFUND_PENDING" },
     { action: "refund", expected: "BUYER_FUNDED", target: "REFUNDED" },
     { action: "refund", expected: "SELLER_FUNDED", target: "REFUNDED" },
   ] as const;

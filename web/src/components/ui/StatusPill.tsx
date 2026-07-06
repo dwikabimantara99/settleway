@@ -19,6 +19,9 @@ export function StatusPill({ status, className, ...props }: StatusPillProps) {
     EXPIRED: { label: 'Expired', classes: 'bg-[var(--danger-50)] text-[var(--danger-600)] border-[var(--danger-600)]/25' },
     REFUNDED: { label: 'Refunded', classes: 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border-default)]' },
     CANCELLED: { label: 'Cancelled', classes: 'bg-[var(--danger-50)] text-[var(--danger-600)] border-[var(--danger-600)]/25' },
+    REFUND_PENDING: { label: 'Refund Pending', classes: 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border-default)]' },
+    REVIEW_REQUIRED: { label: 'Manual Review', classes: 'bg-[var(--warning-50)] text-[var(--warning-600)] border-[var(--warning-600)]/25' },
+    DELIVERY_REJECTED: { label: 'Delivery Rejected', classes: 'bg-[var(--danger-50)] text-[var(--danger-600)] border-[var(--danger-600)]/25' },
   };
 
   const config = statusConfig[status] || { label: status, classes: 'bg-[var(--surface-subtle)] text-[var(--text-secondary)] border-[var(--border-default)]' };

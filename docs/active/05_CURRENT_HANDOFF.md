@@ -42,6 +42,23 @@
 - `web/src/components/deal/EscrowTimeline.tsx` and `DealActions.tsx` (Enhanced buyer UI cues for evidence review)
 - `web/src/lib/integration/evidence-corridor.test.ts` (Added integration tests for proof submission and acceptance gating)
 
+## Current Status (Phase 10 — Handoff)
+
+We have successfully completed the implementation of the Constrained Failure / Refund / Expiry Path.
+
+1.  **Fixed Idempotency Key in Route Execution:** The `deal-room-route-execution.ts` was generating a new `operation_id` string for every route call (e.g. `route:deal-id:expire:timestamp`), which broke the ability for `planDealLocalCommit` to match the confirmation against the original submitted operation. It has been updated to use the idempotent `operationKey` created by `createStellarIdempotencyKey()`.
+2.  **Fixed Execution Reducer Bug:** A bug was identified and fixed in `execution-reducer.ts` where it was unconditionally checking `result.action !== operation.requested_action` even during the `"submit"` phase where `result.action` does not exist (causing it to return `ERR_ACTION_MISMATCH`). We corrected it to only check `result.action` if it exists.
+3.  **Mock Store Expansion:** Expanded the `MockStore` to explicitly whitelist `reject_delivery` and `expire_proof` in the `EscrowAction` list so that `replaceDealIfCurrent` permits these local transitions.
+4.  **Integration Test Validation:** Updated the `failure-corridor.test.ts` to supply correct mock data matching the new `StellarAdapterSubmitResult` and `StellarAdapterConfirmationResult` signatures. The tests now pass with 100% success for all three paths:
+    *   Expiry of one-sided funding to `REFUND_PENDING` (on-chain testnet mock).
+    *   Expiry of `LOCKED` status by buyer moving deal to `REVIEW_REQUIRED` (local-only classification).
+    *   Rejection of delivery proof by buyer moving deal to `DELIVERY_REJECTED` (local-only classification).
+
+## Next Steps
+
+1.  Proceed with UI implementation or any remaining frontend tasks for Phase 10.
+2.  Begin integration into `main` branch if all criteria for Phase 10 are met.
+
 ## How the lifecycle connects to existing Profile Wallet funding flow
 
 - The `performOpenDealRoomCommitment` helper uses `buildDealFromOffer`, which explicitly sets `rail_version: 'managed_custody_testnet'`.

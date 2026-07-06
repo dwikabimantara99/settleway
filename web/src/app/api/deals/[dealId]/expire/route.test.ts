@@ -143,7 +143,7 @@ describe("expire route", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(mockStore.deals.get("deal-expire-testnet")?.status).toBe("REFUNDED");
+    expect(mockStore.deals.get("deal-expire-testnet")?.status).toBe("REFUND_PENDING");
     expect(mockStore.deals.get("deal-expire-testnet")?.latest_stellar_tx_hash).toBe("f".repeat(64));
 
     const roomEvents = mockStore.getDealEvents("deal-expire-testnet");
@@ -156,10 +156,6 @@ describe("expire route", () => {
     );
 
     const reputationEvents = mockStore.getDealReputationEvents("deal-expire-testnet");
-    expect(reputationEvents).toHaveLength(2);
-    expect(reputationEvents.some((event) => event.reputation_outcome === "seller_failed_deposit")).toBe(true);
-    expect(
-      reputationEvents.find((event) => event.reputation_outcome === "seller_failed_deposit")?.transaction_hash,
-    ).toBe("f".repeat(64));
+    expect(reputationEvents).toHaveLength(0);
   });
 });

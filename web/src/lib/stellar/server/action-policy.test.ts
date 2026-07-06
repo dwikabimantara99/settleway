@@ -119,7 +119,7 @@ describe("Action Policy", () => {
     {
       action: "expire",
       expected_local_status: "BUYER_FUNDED",
-      target_local_status: "REFUNDED",
+      target_local_status: "REFUND_PENDING",
       stellar_method: "expire_if_unfunded",
       signer_role: "admin",
       expects_transaction_hash: true,
@@ -130,7 +130,7 @@ describe("Action Policy", () => {
     {
       action: "expire",
       expected_local_status: "SELLER_FUNDED",
-      target_local_status: "REFUNDED",
+      target_local_status: "REFUND_PENDING",
       stellar_method: "expire_if_unfunded",
       signer_role: "admin",
       expects_transaction_hash: true,

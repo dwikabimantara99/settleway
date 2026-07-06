@@ -302,7 +302,8 @@ export type ReputationOutcome =
   | "buyer_failed_deposit"
   | "seller_failed_deposit"
   | "refunded_before_locked"
-  | "verified_harvest_failure";
+  | "verified_harvest_failure"
+  | "seller_breached_delivery";
 
 export interface DbReputationEvent {
   id: string;

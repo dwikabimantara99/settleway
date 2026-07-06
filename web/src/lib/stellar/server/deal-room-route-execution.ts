@@ -84,7 +84,7 @@ function mapCoordinatorFailure(
       return {
         status: 400,
         code: "STELLAR_EXECUTION_INVALID",
-        message: `The Testnet ${actionLabel} input is not valid for this deal state.`,
+        message: `The Testnet ${actionLabel} input is not valid for this deal state. (Reason: ${result.error_code})`,
       };
     default:
       return {
@@ -125,7 +125,7 @@ export async function executeConfirmedDealRoomRouteAction(input: {
       input.action === "submit_proof"
         ? {
             action: "submit_proof",
-            operation_id: `route:${input.deal.id}:${input.action}:${timestamp}`,
+            operation_id: operationKey,
             deal: currentDeal,
             metadata: input.runtime.metadata,
             proof_hash: input.proof_hash ?? "",
@@ -144,7 +144,7 @@ export async function executeConfirmedDealRoomRouteAction(input: {
           }
         : {
             action: input.action,
-            operation_id: `route:${input.deal.id}:${input.action}:${timestamp}`,
+            operation_id: operationKey,
             deal: currentDeal,
             metadata: input.runtime.metadata,
             existing_operation: currentOperation,

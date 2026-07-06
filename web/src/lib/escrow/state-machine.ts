@@ -10,8 +10,11 @@ export type DealStatus =
   | "DELIVERED"
   | "COMPLETED"
   | "EXPIRED"
+  | "REFUND_PENDING"
   | "REFUNDED"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "DELIVERY_REJECTED"
+  | "REVIEW_REQUIRED";
 
 export type EscrowAction = 
   | 'buyer_deposit'
@@ -20,6 +23,8 @@ export type EscrowAction =
   | 'mark_delivered'
   | 'accept_delivery'
   | 'expire'
+  | 'expire_proof'
+  | 'reject_delivery'
   | 'refund';
 
 export const FUNDING_WINDOW_DEAL_STATUSES = [
@@ -34,15 +39,20 @@ export const POST_LOCK_DEAL_STATUSES = [
   'PROOF_SUBMITTED',
   'DELIVERED',
   'COMPLETED',
+  'DELIVERY_REJECTED',
+  'REVIEW_REQUIRED',
 ] as const satisfies readonly DealStatus[];
 
 export const POST_PROOF_DEAL_STATUSES = [
   'PROOF_SUBMITTED',
   'DELIVERED',
   'COMPLETED',
+  'DELIVERY_REJECTED',
+  'REVIEW_REQUIRED',
 ] as const satisfies readonly DealStatus[];
 
 export const CLOSED_DEAL_STATUSES = [
+  'REFUND_PENDING',
   'REFUNDED',
   'EXPIRED',
   'CANCELLED',
@@ -51,6 +61,7 @@ export const CLOSED_DEAL_STATUSES = [
 export const TERMINAL_DEAL_STATUSES = [
   'COMPLETED',
   'EXPIRED',
+  'REFUND_PENDING',
   'REFUNDED',
   'CANCELLED',
 ] as const satisfies readonly DealStatus[];
@@ -105,14 +116,14 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
 
     case 'BUYER_FUNDED':
       if (action === 'seller_deposit') nextStatus = 'LOCKED';
-      else if (action === 'expire') nextStatus = 'REFUNDED';
+      else if (action === 'expire') nextStatus = 'REFUND_PENDING';
       else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'SELLER_FUNDED':
       if (action === 'buyer_deposit') nextStatus = 'LOCKED';
-      else if (action === 'expire') nextStatus = 'REFUNDED';
+      else if (action === 'expire') nextStatus = 'REFUND_PENDING';
       else if (action === 'refund') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
@@ -122,24 +133,32 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
 
     case 'LOCKED':
       if (action === 'submit_proof') nextStatus = 'PROOF_SUBMITTED';
+      else if (action === 'expire_proof') nextStatus = 'REVIEW_REQUIRED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'PROOF_SUBMITTED':
       if (action === 'mark_delivered') nextStatus = 'DELIVERED';
+      else if (action === 'reject_delivery') nextStatus = 'DELIVERY_REJECTED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'DELIVERED':
       if (action === 'accept_delivery') nextStatus = 'COMPLETED';
+      else if (action === 'reject_delivery') nextStatus = 'DELIVERY_REJECTED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'COMPLETED':
     case 'EXPIRED':
+    case 'REFUND_PENDING':
     case 'REFUNDED':
     case 'CANCELLED':
       throw new Error(`Cannot transition from terminal state: ${currentStatus}`);
+
+    case 'DELIVERY_REJECTED':
+    case 'REVIEW_REQUIRED':
+      throw new Error(`Cannot transition directly from manual review state: ${currentStatus}`);
 
     default:
       throw new Error(`Unknown state: ${currentStatus}`);

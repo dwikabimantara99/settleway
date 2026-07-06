@@ -342,6 +342,7 @@ export class MockStore {
     } else {
       const allActions: EscrowAction[] = [
         'buyer_deposit', 'seller_deposit', 'submit_proof',
+        'reject_delivery', 'expire_proof',
         'mark_delivered', 'accept_delivery', 'expire', 'refund'
       ];
       for (const act of allActions) {
