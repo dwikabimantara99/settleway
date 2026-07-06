@@ -333,7 +333,7 @@ describe("Execution Integration (offline end-to-end)", () => {
     if (!result.ok) return;
     expect(result.operation.operation_status).toBe("confirmed");
     expect(result.local_commit.kind).toBe("advance_status");
-    if (result.local_commit.kind === "advance_status") { expect(result.local_commit.target_status).toBe("REFUNDED"); }
+    if (result.local_commit.kind === "advance_status") { expect(result.local_commit.target_status).toBe("REFUND_PENDING"); }
   });
 
   it("expire (SELLER_FUNDED): full happy path", async () => {
@@ -346,7 +346,7 @@ describe("Execution Integration (offline end-to-end)", () => {
     if (!result.ok) return;
     expect(result.operation.operation_status).toBe("confirmed");
     expect(result.local_commit.kind).toBe("advance_status");
-    if (result.local_commit.kind === "advance_status") { expect(result.local_commit.target_status).toBe("REFUNDED"); }
+    if (result.local_commit.kind === "advance_status") { expect(result.local_commit.target_status).toBe("REFUND_PENDING"); }
   });
 
   it("refund (BUYER_FUNDED): full happy path", async () => {

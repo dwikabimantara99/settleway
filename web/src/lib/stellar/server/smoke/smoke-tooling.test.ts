@@ -304,7 +304,7 @@ function makeFeeBumpTransactionEnvelope(): string {
 
 function expectOkScenario(result: Awaited<ReturnType<typeof runHappyPathSmokeScenario>>): asserts result is Extract<typeof result, { readonly ok: true }> {
   if (!result.ok) {
-    console.log(JSON.stringify(result, null, 2));
+    );
     throw new Error(`Expected successful scenario: ${JSON.stringify(result)}`);
   }
   expect(result.ok).toBe(true);

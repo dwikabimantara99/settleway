@@ -45,6 +45,7 @@
 ## Current Status (Phase 10 — Handoff)
 
 We have successfully completed the implementation of the Constrained Failure / Refund / Expiry Path.
+Final failure path classification: LOCAL_FAILURE_CLASSIFICATION_ONLY
 
 1.  **Fixed Idempotency Key in Route Execution:** The `deal-room-route-execution.ts` was generating a new `operation_id` string for every route call (e.g. `route:deal-id:expire:timestamp`), which broke the ability for `planDealLocalCommit` to match the confirmation against the original submitted operation. It has been updated to use the idempotent `operationKey` created by `createStellarIdempotencyKey()`.
 2.  **Fixed Execution Reducer Bug:** A bug was identified and fixed in `execution-reducer.ts` where it was unconditionally checking `result.action !== operation.requested_action` even during the `"submit"` phase where `result.action` does not exist (causing it to return `ERR_ACTION_MISMATCH`). We corrected it to only check `result.action` if it exists.
@@ -53,6 +54,14 @@ We have successfully completed the implementation of the Constrained Failure / R
     *   Expiry of one-sided funding to `REFUND_PENDING` (on-chain testnet mock).
     *   Expiry of `LOCKED` status by buyer moving deal to `REVIEW_REQUIRED` (local-only classification).
     *   Rejection of delivery proof by buyer moving deal to `DELIVERY_REJECTED` (local-only classification).
+
+### Remaining Risks
+- refund/penalty execution is not yet real confirmed Testnet settlement;
+- REFUND_PENDING means pending/projected/manual/future execution, not confirmed refund;
+- DELIVERY_REJECTED and REVIEW_REQUIRED pause settlement;
+- failure reputation policy is only deterministic where explicitly modeled;
+- remote Supabase migration was not applied;
+- production custody/mainnet are out of scope.
 
 ## Next Steps
 
