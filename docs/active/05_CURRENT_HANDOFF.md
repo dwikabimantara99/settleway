@@ -1,83 +1,145 @@
 # Current Handoff
 
-## Current Candidate
+## Current Branch / Baseline
 
-- Candidate branch: `feature/evidence-delivery-proof-corridor`
-- Focus: Evidence Submission & Delivery Proof Corridor
+- **Branch:** `feature/demo-hardening-operator-walkthrough`
+- **Baseline commit (main):** `54864f1fcc5beae034b4d9858470920439905149`
+- **Checkpoint:** `checkpoint/constrained-failure-refund-expiry-2026-07-06`
 
-## What was implemented
+---
 
-- A formal Supabase migration (`20260705_offer_negotiation_schema.sql`) for `offers`, `offer_messages`, and `notifications` including strict Row Level Security (RLS) policies.
-- Exported strict TypeScript domain types for the aforementioned entities in `web/src/lib/types.ts`.
-- Removed external WalletConnect (`ConnectExternalWalletButton`) dependencies from the Offer page and correctly injected the `ProfileWalletCard`.
-- Wired the Deal Room creation logic to map into the `managed_custody_testnet` rail (Profile Wallet funding corridor).
+## Accepted Milestone Classifications (cumulative)
 
-## What is fully functional
+| Milestone | Classification |
+|---|---|
+| Profile Wallet Deposit | `REAL_TESTNET_CONFIRMED_DEPOSIT` |
+| Settlement Execution | `REAL_TESTNET_CONFIRMED_SETTLEMENT` |
+| Offer Negotiation & Deal Room Lifecycle | `OFFER_NEGOTIATION_DEAL_ROOM_LIFECYCLE_ACCEPTED` |
+| Testnet Proof Anchoring | `TESTNET_PROOF_HASH_ANCHORED` |
+| Constrained Failure / Refund / Expiry | `LOCAL_FAILURE_CLASSIFICATION_ONLY` |
+| Demo Hardening & Operator Walkthrough | `DEMO_WALKTHROUGH_READY` |
 
-- **Submit Offer**: Users can submit an offer from a listing or buyer request.
-- **Negotiation Room**: Secure messaging thread between buyer and seller.
-- **Terms Agreement**: Counterparty can accept terms to unblock the Deal Room.
-- **Open Deal Room**: Both parties clicking "Open Deal Room" creates an idempotent Deal and redirects to the active escrow room.
-- **Profile Wallet Corridor**: The Deal Room is instantiated on the Profile Wallet rail, allowing immediate Testnet funding without external Freighter signing.
-- **Delivery Proof Submission**: Sellers can upload delivery evidence (or mock metadata) once the escrow is locked.
-- **Testnet Proof Anchoring**: Submitted proof hashes are recorded as memos in a Testnet custody wallet reference transaction.
-- **Strict Delivery Acceptance Gate**: The API completely prevents buyer acceptance (via `accept-delivery`) until a valid delivery proof has been submitted, enforcing an honest execution corridor.
+---
 
-## What is mock/demo-only
+## What Demo Hardening Changed
 
-- Although Supabase types and adapters are strictly typed and ready, local development defaults to `MockRepositoryAdapter` per `runtimeMode === 'demo'`.
-- Real-time websocket chat subscriptions for negotiation messages are not implemented; it relies on standard fetching/refresh for now.
+1. **Operator Walkthrough Doc created:** `docs/active/DEMO_OPERATOR_WALKTHROUGH.md`
+   Full step-by-step instructions for happy path and failure path, environment checklist, route reachability map, troubleshooting, and explicit stop points before deploy/mainnet.
 
-## What is persistent/Supabase-ready
+2. **Demo Hardening Tests added:** `web/src/lib/integration/demo-hardening.test.tsx`
+   12 deterministic tests asserting:
+   - All `DealStatus` values have correct, honest `StatusPill` labels
+   - `REFUND_PENDING` is never shown as "Refunded" or any confirmed-refund language
+   - No status renders forbidden labels (Mainnet, Production custody, AI decision, AgriTrust)
+   - Demo data brand and role consistency (buyer/seller correctly assigned)
+   - Demo quick-jump IDs are consistent with seeded MockStore data
 
-- The DB schemas (`offers`, `offer_messages`, `notifications`) are formalized in migrations and match the `supabase-adapter.ts` methods perfectly.
-- All RLS policies for offers, messages, and notifications are implemented securely.
+3. **Route reachability documented:** Full table in operator walkthrough covering all 19 major flow steps, which routes are nav-accessible vs. API-only vs. dev-only.
 
-## What routes/components/models changed
+4. **No new product scope added.** No new routes, no new architecture. Existing corridors unchanged.
 
-- `web/src/app/offers/[offerId]/page.tsx` (Replaced external wallet binding with internal ProfileWalletCard)
-- `web/src/lib/types.ts` (Added `Offer`, `OfferStatus`, `NegotiationMessage`, `Notification` domains)
-- `web/supabase/migrations/20260705_offer_negotiation_schema.sql` (Added tables and RLS)
-- `web/src/app/api/deals/[dealId]/accept-delivery/route.ts` (Enforced `proof_hash` presence for testnet deal acceptance)
-- `web/src/components/deal/EscrowTimeline.tsx` and `DealActions.tsx` (Enhanced buyer UI cues for evidence review)
-- `web/src/lib/integration/evidence-corridor.test.ts` (Added integration tests for proof submission and acceptance gating)
+---
 
-## Current Status (Phase 10 — Handoff)
+## Operator Walkthrough Doc Path
 
-We have successfully completed the implementation of the Constrained Failure / Refund / Expiry Path.
-Final failure path classification: LOCAL_FAILURE_CLASSIFICATION_ONLY
+```text
+docs/active/DEMO_OPERATOR_WALKTHROUGH.md
+```
 
-1.  **Fixed Idempotency Key in Route Execution:** The `deal-room-route-execution.ts` was generating a new `operation_id` string for every route call (e.g. `route:deal-id:expire:timestamp`), which broke the ability for `planDealLocalCommit` to match the confirmation against the original submitted operation. It has been updated to use the idempotent `operationKey` created by `createStellarIdempotencyKey()`.
-2.  **Fixed Execution Reducer Bug:** A bug was identified and fixed in `execution-reducer.ts` where it was unconditionally checking `result.action !== operation.requested_action` even during the `"submit"` phase where `result.action` does not exist (causing it to return `ERR_ACTION_MISMATCH`). We corrected it to only check `result.action` if it exists.
-3.  **Mock Store Expansion:** Expanded the `MockStore` to explicitly whitelist `reject_delivery` and `expire_proof` in the `EscrowAction` list so that `replaceDealIfCurrent` permits these local transitions.
-4.  **Integration Test Validation:** Updated the `failure-corridor.test.ts` to supply correct mock data matching the new `StellarAdapterSubmitResult` and `StellarAdapterConfirmationResult` signatures. The tests now pass with 100% success for all three paths:
-    *   Expiry of one-sided funding to `REFUND_PENDING` (on-chain testnet mock).
-    *   Expiry of `LOCKED` status by buyer moving deal to `REVIEW_REQUIRED` (local-only classification).
-    *   Rejection of delivery proof by buyer moving deal to `DELIVERY_REJECTED` (local-only classification).
+---
 
-### Remaining Risks
-- refund/penalty execution is not yet real confirmed Testnet settlement;
-- REFUND_PENDING means pending/projected/manual/future execution, not confirmed refund;
-- DELIVERY_REJECTED and REVIEW_REQUIRED pause settlement;
-- failure reputation policy is only deterministic where explicitly modeled;
-- remote Supabase migration was not applied;
-- production custody/mainnet are out of scope.
+## Happy Path Summary
 
-## Next Steps
+```text
+Marketplace → Listing → Submit Offer → Negotiation Thread → Terms Accepted →
+Open Deal Room (mutual) → Buyer Profile Wallet Deposit → Seller Profile Wallet Deposit →
+Escrow LOCKED → Seller Submits Delivery Proof → Proof Anchored on Testnet →
+Buyer Accepts → Settlement → Reputation Update
+```
 
-1.  Proceed with UI implementation or any remaining frontend tasks for Phase 10.
-2.  Begin integration into `main` branch if all criteria for Phase 10 are met.
+## Failure Path Summary
 
-## How the lifecycle connects to existing Profile Wallet funding flow
+```text
+Failure A: Funding expiry (one-sided) → REFUND_PENDING (LOCAL_FAILURE_CLASSIFICATION_ONLY)
+Failure B: Proof expiry (seller missed deadline) → REVIEW_REQUIRED (LOCAL_FAILURE_CLASSIFICATION_ONLY)
+Failure C: Buyer rejection (after proof) → DELIVERY_REJECTED (LOCAL_FAILURE_CLASSIFICATION_ONLY)
+```
 
-- The `performOpenDealRoomCommitment` helper uses `buildDealFromOffer`, which explicitly sets `rail_version: 'managed_custody_testnet'`.
-- The `managed_custody_testnet` mode triggers the Profile Wallet components (`ManagedCustodyActionPanel`) when entering the Deal Room, which securely executes transactions via the server-side Stellar service.
+---
 
-## What remains partial
+## What Is Stellar Testnet Confirmed
 
-- Dispute & Mediation triggers remain simplified and do not capture granular evidentiary assertions in the Offer phase.
+- Buyer deposit transaction (`REAL_TESTNET_CONFIRMED_DEPOSIT`)
+- Seller deposit transaction → escrow LOCKED on-chain
+- Proof hash anchoring as Stellar Testnet memo (`TESTNET_PROOF_HASH_ANCHORED`)
+- Settlement transaction upon buyer acceptance (`REAL_TESTNET_CONFIRMED_SETTLEMENT`)
 
-## What next macro-batch should be
+## What Is Local Classification Only
 
-- **Automated Dispute Mediation triggers**: The settlement corridor remains strictly verified, but automated dispute resolution limits have not been fully expanded.
-- **Payout Integration**: The payout destination mapping exists, but automated release of testnet assets back to external wallets requires further integration.
+- `REFUND_PENDING`: local state transition. No refund sweep has been executed. Not confirmed on-chain.
+- `REVIEW_REQUIRED`: local state transition. Settlement paused. No automated arbitration.
+- `DELIVERY_REJECTED`: local state transition. Settlement paused. No automatic seller penalization.
+- Failure reputation policy (except unilateral missed deposit): not yet deterministically modeled.
+
+---
+
+## Remote Migration Status
+
+**Not applied.** Migration files are present under `web/supabase/migrations/` but no `supabase db push` has been run. The product runs in `demo` mode using `MockRepositoryAdapter` (in-memory).
+
+## Deployment Status
+
+**Not deployed.** No Vercel commands. No production hosting. `http://localhost:3000` only.
+
+---
+
+## What Is Fully Functional (Demo Mode)
+
+- Marketplace discovery (listings + buyer requests)
+- Submit Offer from listing or buyer request
+- Negotiation thread with timestamped messages
+- Terms acceptance (mutual)
+- Open Deal Room (mutual — both sides must confirm)
+- Profile Wallet deposit (buyer and seller, Testnet XLM)
+- Escrow lock after both parties fund
+- Seller delivery proof submission + Testnet anchor
+- Buyer review + acceptance + settlement execution
+- Reputation score update on settlement
+- Deterministic failure state classification (funding expiry, proof expiry, buyer rejection)
+- Deal Room UI with honest state labels for all 14 `DealStatus` values
+
+## What Is Mock / Demo Only
+
+- In-memory store (`MockRepositoryAdapter`): data resets on server restart
+- Bank/fiat payment rail: UI presents it but it is not live
+- Role switching: `mock_actor` cookie (no real auth in demo mode)
+- Failure sweep execution: `REFUND_PENDING` is a projected state, not a confirmed on-chain refund
+
+## What Remains Partial
+
+- Refund sweep execution step (future milestone: convert REFUND_PENDING → REFUNDED with real tx)
+- Dispute arbitration / admin review panel for REVIEW_REQUIRED / DELIVERY_REJECTED
+- Failure reputation policy for rejection and proof-expiry paths
+- Remote Supabase schema application (requires explicit human-approved step)
+- Real-time negotiation message subscriptions (currently polling/refresh)
+
+---
+
+## Next Recommended Milestone
+
+**Refund Sweep Execution Corridor** — implement the actual withdrawal step that:
+1. Takes a deal in `REFUND_PENDING` state
+2. Executes a real Testnet transfer back to the depositing party
+3. Records the tx hash as confirmed evidence
+4. Transitions to `REFUNDED` with a verified on-chain reference
+
+This would upgrade the failure classification from `LOCAL_FAILURE_CLASSIFICATION_ONLY` to `REAL_TESTNET_CONFIRMED_REFUND`.
+
+## Explicit Non-Goals
+
+- No mainnet
+- No production custody
+- No AI arbitration
+- No real fiat payout
+- No remote Supabase migration (requires separate explicit authorization)
+- No Vercel deployment (requires separate explicit authorization)
