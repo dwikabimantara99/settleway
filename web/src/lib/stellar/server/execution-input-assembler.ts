@@ -261,7 +261,7 @@ export function assembleStellarExecutionInput(
         actor_address: actorAddress,
         proof_hash: input.proof_hash,
       };
-    } else if (input.action === "expire" || input.action === "refund" || input.action === "refund_sweep") {
+    } else if (input.action === "expire" || input.action === "refund") {
       buildInput = {
         action: input.action,
         expected_local_status: expectedLocalStatus,

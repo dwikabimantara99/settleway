@@ -25,8 +25,7 @@ export type EscrowAction =
   | 'expire'
   | 'expire_proof'
   | 'reject_delivery'
-  | 'refund'
-  | 'refund_sweep';
+  | 'refund';
 
 export const FUNDING_WINDOW_DEAL_STATUSES = [
   'WAITING_DEPOSITS',
@@ -152,14 +151,10 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
 
     case 'COMPLETED':
     case 'EXPIRED':
+    case 'REFUND_PENDING':
     case 'REFUNDED':
     case 'CANCELLED':
       throw new Error(`Cannot transition from terminal state: ${currentStatus}`);
-
-    case 'REFUND_PENDING':
-      if (action === 'refund_sweep') nextStatus = 'REFUNDED';
-      else throw new Error(`Cannot transition from terminal state: ${currentStatus}`);
-      break;
 
     case 'DELIVERY_REJECTED':
     case 'REVIEW_REQUIRED':

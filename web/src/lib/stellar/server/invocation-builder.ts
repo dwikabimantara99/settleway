@@ -93,12 +93,6 @@ export type StellarInvocationBuildInput =
       expected_local_status: DealStatus | null;
       contract_id: string;
       escrow_id: string;
-    }
-  | {
-      action: "refund_sweep";
-      expected_local_status: DealStatus | null;
-      contract_id: string;
-      escrow_id: string;
     };
 
 export type StellarInvocationBuildResult =
@@ -254,8 +248,7 @@ export function buildStellarInvocation(
       break;
     }
     case "expire":
-    case "refund":
-    case "refund_sweep": {
+    case "refund": {
       const escErr = validateU64(input.escrow_id, "escrow_id");
       if (escErr) return escErr;
 
