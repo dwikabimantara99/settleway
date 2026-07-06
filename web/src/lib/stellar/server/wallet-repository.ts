@@ -23,8 +23,27 @@ export interface IServerWalletRepository {
   provisionProfileWallet(wallet: DbUserWallet): Promise<void>;
 }
 
+import { resolveDemoWalletFallback } from '@/app/api/profiles/[userId]/wallet/wallet-response-helpers';
+
 export class MockServerWalletRepository implements IServerWalletRepository {
-  async getProfileWallet(userId: string) { return mockStore.getProfileWallet(userId); }
+  async getProfileWallet(userId: string) {
+    const stored = mockStore.getProfileWallet(userId);
+    if (stored) return stored;
+
+    const fallback = resolveDemoWalletFallback(userId);
+    if (fallback) {
+      return {
+        user_id: fallback.userId,
+        public_address: fallback.publicAddress,
+        encrypted_secret_key: 'DEMO_PUBLIC_ONLY',
+        encryption_version: 'demo-fallback',
+        status: fallback.status as 'active',
+        created_at: fallback.createdAt,
+        updated_at: fallback.createdAt,
+      };
+    }
+    return null;
+  }
   async provisionProfileWallet(wallet: DbUserWallet) { mockStore.provisionProfileWallet(wallet); }
 }
 

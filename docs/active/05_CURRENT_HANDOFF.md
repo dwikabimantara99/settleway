@@ -146,3 +146,10 @@ This would close the loop on the constrained failure paths that currently pause 
 - No real fiat payout
 - No remote Supabase migration (requires separate explicit authorization)
 - No Vercel deployment (requires separate explicit authorization)
+
+## What Manual Runtime Funnel Repair Changed
+
+1. **Deal Room Route Access:** Fixed a 404 in pp/deals/[dealId]/page.tsx by correcting the missing deals fetch implementation in the MockStore. Offers successfully transition to Deal Rooms in Demo Mode.
+2. **Profile Wallet Card Alignment:** Updated ProfileWalletCard.tsx to handle 404 responses safely in Demo Mode, suppressing uncaught exceptions that crashed the page.
+3. **Demo Wallet Fallback Configuration:** Updated MockServerWalletRepository to return valid server-safe DbUserWallet structures for demo identities when NEXT_PUBLIC_RUNTIME_MODE='demo' or 'test'.
+4. **Funding Gate Integrity:** Updated uyer-deposit and seller-deposit API routes to gracefully reject signing attempts for demo fallback identities without leaking secrets, allowing the Demo UI to bypass the "You must create a Profile Wallet" roadblock while failing securely during execution.

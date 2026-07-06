@@ -19,18 +19,29 @@ function parseNormalTransaction(
 }
 
 export class ProfileWalletSigner implements StellarSignerPort {
-  private readonly keypair: Keypair;
+  private readonly keypair: Keypair | null = null;
+  private readonly demoPublicKey: string | null = null;
 
-  constructor(encryptedSecret: string) {
+  constructor(encryptedSecret: string, demoPublicKeyFallback?: string) {
+    if (encryptedSecret === 'DEMO_PUBLIC_ONLY') {
+      this.demoPublicKey = demoPublicKeyFallback || null;
+      return;
+    }
     const decrypted = decryptStellarSecret(encryptedSecret);
     this.keypair = Keypair.fromSecret(decrypted);
   }
 
   public getPublicKey(): string {
-    return this.keypair.publicKey();
+    if (this.keypair) return this.keypair.publicKey();
+    if (this.demoPublicKey) return this.demoPublicKey;
+    return '';
   }
 
   async signTransaction(request: StellarSignRequest): Promise<StellarSignResult> {
+    if (!this.keypair) {
+      return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
+    }
+    
     if (request.expected_signer_address !== this.getPublicKey()) {
       return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
     }
