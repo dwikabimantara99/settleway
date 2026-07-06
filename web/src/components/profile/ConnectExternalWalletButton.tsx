@@ -19,9 +19,9 @@ export function ConnectExternalWalletButton({
   initialNetwork,
   canConnect,
 }: ConnectExternalWalletButtonProps) {
-  const [address, setAddress] = useState(initialAddress);
-  const [provider, setProvider] = useState(initialProvider ?? 'Freighter');
-  const [network, setNetwork] = useState<'testnet' | null>(initialNetwork);
+  const [address] = useState(initialAddress);
+  const [provider] = useState(initialProvider ?? 'Freighter');
+  const [network] = useState<'testnet' | null>(initialNetwork);
 
   return (
     <div className="mt-4 rounded-xl border border-slate-200 bg-white/90 p-3 shadow-sm">
