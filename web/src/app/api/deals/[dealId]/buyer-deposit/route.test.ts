@@ -135,9 +135,9 @@ describe("buyer-deposit route", () => {
 
     const payload = await response.clone().json().catch(() => ({}));
     if (response.status !== 200) {
-
+      console.log('Test Failed with payload:', payload);
     }
-    .catch(()=>null)); expect(response.status).toBe(200);
+    console.log("TEST1", response.status, await response.json().catch(()=>null)); expect(response.status).toBe(200);
 
     const updatedDeal = afterRouteDeal;
     expect(updatedDeal?.status).toBe("BUYER_FUNDED");
@@ -193,7 +193,7 @@ describe("buyer-deposit route", () => {
 
     const payload = await response.clone().json().catch(() => ({}));
     if (response.status !== 200) {
-
+      console.log('Test Failed with payload:', payload);
     }
     expect(response.status).toBe(200);
     expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1);
@@ -217,7 +217,7 @@ describe("buyer-deposit route", () => {
 
     const payload = await response.clone().json().catch(() => ({}));
     if (response.status !== 200) {
-
+      console.log('Test Failed with payload:', payload);
     }
     expect(response.status).toBe(200);
     expect(mockStore.deals.get("deal-buyer-mock")?.status).toBe("BUYER_FUNDED");
@@ -305,7 +305,7 @@ describe("buyer-deposit route", () => {
       new Request("http://localhost/api/deals/deal-buyer-idem/buyer-deposit", { method: "POST" }),
       { params: Promise.resolve({ dealId: "deal-buyer-idem" }) }
     );
-    )); ); expect(response2.status).toBe(200);
+    console.log("MockStore Operations:", Array.from(mockStore.operations.keys())); console.log(response2.status, await response2.json()); expect(response2.status).toBe(200);
     expect(mockExecutionAdapter.submit).toHaveBeenCalledTimes(1); // STILL 1
   });
 

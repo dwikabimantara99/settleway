@@ -6,6 +6,8 @@ import { repository } from '../repositories';
 import { mockStore } from '../db/mock-store';
 import * as authServer from '../auth/server';
 import { buildActiveRoomDealTerms } from '../deals/terms';
+import type { DbDeal } from '../db/types';
+import type { AuthenticatedUser } from '../auth/server';
 
 const mockExecutionAdapter = {
   submit: vi.fn(),
@@ -32,9 +34,9 @@ vi.mock('../stellar/server/deal-room-testnet-runtime', () => ({
   })),
 }));
 
-function addMockDeal(props: any) {
+function addMockDeal(props: Partial<DbDeal>): string {
   const dealId = 'test-deal-' + Date.now() + Math.floor(Math.random() * 1000);
-  const deal = {
+  const deal: DbDeal = {
     id: dealId,
     listing_id: null,
     buyer_request_id: null,
@@ -56,6 +58,7 @@ function addMockDeal(props: any) {
     stellar_sync_status: 'idle',
     proof_hash: null,
     version: '1',
+    status: 'WAITING_DEPOSITS',
     terms: buildActiveRoomDealTerms({
       offerId: null,
       activatedAt: new Date(Date.now() - 100000000).toISOString(),
@@ -64,9 +67,9 @@ function addMockDeal(props: any) {
     created_at: new Date(Date.now() - 100000000).toISOString(),
     updated_at: new Date(Date.now() - 100000000).toISOString(),
     expires_at: new Date(Date.now() - 1000).toISOString(), // Expired!
-    ...props
+    ...props,
   };
-  mockStore.deals.set(dealId, deal as any);
+  mockStore.deals.set(dealId, deal);
   return dealId;
 }
 
@@ -74,7 +77,7 @@ const createJsonRequest = (url: string, body?: object) => {
   return new Request(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    ...(body ? { body: JSON.stringify(body) } : {})
+    ...(body ? { body: JSON.stringify(body) } : {}),
   });
 };
 
@@ -83,7 +86,12 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
     mockStore.seed();
     vi.clearAllMocks();
     mockExecutionAdapter.submit.mockResolvedValue({ outcome: 'submitted', transaction_hash: 'tx-hash-001' });
-    mockExecutionAdapter.confirm.mockImplementation(async (req) => ({ outcome: 'confirmed', action: req.action || req.expected_action || 'expire', transaction_hash: 'tx-hash-001', result_escrow_id: null }));
+    mockExecutionAdapter.confirm.mockImplementation(async (req: { action?: string; expected_action?: string }) => ({
+      outcome: 'confirmed',
+      action: req.action ?? req.expected_action ?? 'expire',
+      transaction_hash: 'tx-hash-001',
+      result_escrow_id: null,
+    }));
   });
 
   it('allows expiry from one-sided funding to REFUND_PENDING and issues reputation penalty', async () => {
@@ -92,15 +100,14 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
     });
 
     vi.spyOn(authServer, 'requireDealParticipant').mockImplementation(async (id: string) => ({
-      user: { id: 'buyer-user', name: 'Buyer' } as any,
-      deal: await repository.getDeal(id) as any,
-      role: 'buyer',
+      user: { id: 'buyer-user', name: 'Buyer' } as AuthenticatedUser,
+      deal: (await repository.getDeal(id))!,
+      role: 'buyer' as const,
     }));
 
     const req = createJsonRequest(`https://settleway.test/api/deals/${dealId}/expire`);
     const res = await expireRoute(req, { params: Promise.resolve({ dealId }) });
-    const bodyText = await res.text();
-    
+
     expect(res.status).toBe(200);
 
     const deal = await repository.getDeal(dealId);
@@ -114,9 +121,9 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
     });
 
     vi.spyOn(authServer, 'requireDealParticipant').mockImplementation(async (id: string) => ({
-      user: { id: 'admin', name: 'Admin' } as any,
-      deal: await repository.getDeal(id) as any,
-      role: null as any,
+      user: { id: 'admin', name: 'Admin' } as AuthenticatedUser,
+      deal: (await repository.getDeal(id))!,
+      role: null,
     }));
 
     const req = createJsonRequest(`https://settleway.test/api/deals/${dealId}/expire-proof`);
@@ -125,9 +132,9 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
 
     const deal = await repository.getDeal(dealId);
     expect(deal?.status).toBe('REVIEW_REQUIRED');
-    
+
     const events = await repository.getDealEvents(dealId);
-    const expireEvent = events.find((e: any) => e.event_type === 'expire_proof');
+    const expireEvent = events.find((e) => e.event_type === 'expire_proof');
     expect(expireEvent?.metadata.fixture_kind).toBe('LOCAL_FAILURE_CLASSIFICATION_ONLY');
   });
 
@@ -138,13 +145,13 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
     });
 
     vi.spyOn(authServer, 'requireDealParticipant').mockImplementation(async (id: string) => ({
-      user: { id: 'buyer-user', name: 'Buyer' } as any,
-      deal: await repository.getDeal(id) as any,
-      role: 'buyer',
+      user: { id: 'buyer-user', name: 'Buyer' } as AuthenticatedUser,
+      deal: (await repository.getDeal(id))!,
+      role: 'buyer' as const,
     }));
 
     const req = createJsonRequest(`https://settleway.test/api/deals/${dealId}/reject-delivery`, {
-      reason: 'Quality does not match agreed terms.'
+      reason: 'Quality does not match agreed terms.',
     });
     const res = await rejectDeliveryRoute(req, { params: Promise.resolve({ dealId }) });
     expect(res.status).toBe(200);
@@ -153,7 +160,7 @@ describe('Constrained Failure / Refund / Expiry Path (Integration)', () => {
     expect(deal?.status).toBe('DELIVERY_REJECTED');
 
     const events = await repository.getDealEvents(dealId);
-    const rejectEvent = events.find((e: any) => e.event_type === 'reject_delivery');
+    const rejectEvent = events.find((e) => e.event_type === 'reject_delivery');
     expect(rejectEvent?.metadata.rejection_reason).toBe('Quality does not match agreed terms.');
     expect(rejectEvent?.metadata.fixture_kind).toBe('LOCAL_FAILURE_CLASSIFICATION_ONLY');
   });
