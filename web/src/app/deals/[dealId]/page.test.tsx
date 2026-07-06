@@ -88,4 +88,14 @@ describe('Deal Room state gallery fixtures', () => {
       }
     }
   });
+
+  it('returns not found correctly for unknown deal in demo mode', async () => {
+    const originalEnv = process.env.NEXT_PUBLIC_RUNTIME_MODE;
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'demo';
+    await expect(
+      DealRoomPage({ params: Promise.resolve({ dealId: 'unknown-deal-id' }) })
+    ).rejects.toThrow('not-found');
+
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = originalEnv;
+  });
 });
