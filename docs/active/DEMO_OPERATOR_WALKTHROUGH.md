@@ -409,3 +409,9 @@ The failure path demonstrates `LOCAL_FAILURE_CLASSIFICATION_ONLY`.
 _Last updated: 2026-07-06_
 _Branch: feature/manual-runtime-funnel-repair_
 _Classification: MANUAL_FUNNEL_REPAIRED_TO_DEAL_ROOM_
+
+## 17. Manual Funnel Repair Expected Result
+Deal Room should open.
+Funding gate should no longer show "You must create a Profile Wallet" for valid demo Buyer/Seller.
+If real signing is not configured, clicking funding may show a clear fail-closed signer/runtime message.
+That is not a confirmed deposit.
