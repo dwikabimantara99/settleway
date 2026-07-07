@@ -313,6 +313,26 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     if (existingOperation?.operation_status === 'submitted') {
       return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_UNCONFIRMED', 'Transaction is still pending on the network.'), { status: 502 });
     }
+    if (existingOperation?.operation_status === 'failed') {
+      if (existingOperation.public_error_code === 'ERR_AUTH_FAILED') {
+        return NextResponse.json(
+          createErrorResponse(
+            'ERR_SIGNER_REJECTED',
+            'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.',
+          ),
+          { status: 502 },
+        );
+      }
+      if (existingOperation.public_error_code === 'ERR_TIMEOUT') {
+        return NextResponse.json(
+          createErrorResponse(
+            'ERR_EXECUTION_TIMEOUT',
+            'Funding was submitted but could not be confirmed yet. Do not treat this as funded until a tx hash is confirmed.',
+          ),
+          { status: 504 },
+        );
+      }
+    }
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
       action: 'seller_deposit',

@@ -160,6 +160,30 @@ async function ensureTestnetEscrowPrepared(input: {
 
   for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
     const existingOperation = await repository.getStellarOperation(operationKey);
+
+    if (existingOperation?.operation_status === 'failed') {
+      if (existingOperation.public_error_code === 'ERR_AUTH_FAILED') {
+        return {
+          ok: false as const,
+          result: {
+            ok: false,
+            reason: 'ERR_EXECUTION_SERVICE_FAILURE',
+            inner_result: { ok: false, error_code: 'ERR_SIGNER_UNAVAILABLE' }
+          } as const,
+        };
+      }
+      if (existingOperation.public_error_code === 'ERR_TIMEOUT') {
+        return {
+          ok: false as const,
+          result: {
+            ok: false,
+            reason: 'ERR_EXECUTION_SERVICE_FAILURE',
+            inner_result: { ok: false, error_code: 'ERR_EXECUTION_TIMEOUT' }
+          } as const,
+        };
+      }
+    }
+
     const timestamp = currentTimestamp();
     const result = await coordinateDealExecution({
       action: 'create_deal',
@@ -312,6 +336,26 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     }
     if (existingOperation?.operation_status === 'submitted') {
       return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_UNCONFIRMED', 'Transaction is still pending on the network.'), { status: 502 });
+    }
+    if (existingOperation?.operation_status === 'failed') {
+      if (existingOperation.public_error_code === 'ERR_AUTH_FAILED') {
+        return NextResponse.json(
+          createErrorResponse(
+            'ERR_SIGNER_REJECTED',
+            'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.',
+          ),
+          { status: 502 },
+        );
+      }
+      if (existingOperation.public_error_code === 'ERR_TIMEOUT') {
+        return NextResponse.json(
+          createErrorResponse(
+            'ERR_EXECUTION_TIMEOUT',
+            'Funding was submitted but could not be confirmed yet. Do not treat this as funded until a tx hash is confirmed.',
+          ),
+          { status: 504 },
+        );
+      }
     }
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
