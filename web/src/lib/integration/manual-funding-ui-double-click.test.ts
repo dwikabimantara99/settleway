@@ -57,7 +57,7 @@ describe('Manual Deal Room Funding Gate Repair - Double Click Generic Fallback',
         return undefined;
       },
     }));
-    (nextHeaders as any).cookies = cookiesMock;
+    (nextHeaders as unknown as { cookies: ReturnType<typeof vi.fn> }).cookies = cookiesMock;
 
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'demo';
   });
