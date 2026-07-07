@@ -1,9 +1,9 @@
 import { ApiResult } from '../db/types';
 
-export function createErrorResponse(code: string, message: string, recoverable = true): ApiResult<never> {
+export function createErrorResponse(code: string, message: string, recoverable = true, diagnostic?: Record<string, unknown>): ApiResult<never> {
   return {
     ok: false,
-    error: { code, message, recoverable }
+    error: { code, message, recoverable, ...(diagnostic ? { diagnostic } : {}) }
   };
 }
 

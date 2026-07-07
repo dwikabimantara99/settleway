@@ -73,6 +73,7 @@ export type StellarExecutionPlanningFailure =
         | "ERR_EXISTING_OPERATION_PENDING"
         | "ERR_EXISTING_OPERATION_FAILED"
         | "ERR_EXISTING_OPERATION_CORRUPT";
+      public_error_code?: string;
     };
 
 export type StellarExecutionPlanningResult =
@@ -158,6 +159,7 @@ export function planStellarExecution(
         ok: false,
         stage: "operation",
         error_code: "ERR_EXISTING_OPERATION_FAILED",
+        ...(existing.public_error_code ? { public_error_code: existing.public_error_code } : {})
       };
     }
 

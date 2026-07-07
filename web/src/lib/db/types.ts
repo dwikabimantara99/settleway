@@ -6,7 +6,7 @@ import type {
 
 export type ApiResult<T> =
   | { ok: true; data: T; meta?: Record<string, unknown> }
-  | { ok: false; error: { code: string; message: string; recoverable: boolean } };
+  | { ok: false; error: { code: string; message: string; recoverable: boolean; diagnostic?: Record<string, unknown> } };
 
 export interface DbUserWallet {
   user_id: string;

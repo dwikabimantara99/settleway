@@ -7,6 +7,7 @@ import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
 import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coordinator';
+import { mapCoordinatorFailure } from '@/lib/stellar/server/deal-room-route-execution';
 import { createStellarIdempotencyKey, buildCanonicalDealHashInput } from '@/lib/stellar/helpers';
 import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
 import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/server/deal-room-testnet-runtime';
@@ -35,38 +36,6 @@ function isReconciliationPending(operation: StellarOperation | null): boolean {
 
 async function waitForReconciliationWindow(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ROUTE_RECONCILIATION_DELAY_MS));
-}
-
-function mapCoordinatorFailure(
-  result: Extract<Awaited<ReturnType<typeof coordinateDealExecution>>, { ok: false }>,
-) {
-  if (result.reason === 'ERR_EXECUTION_SERVICE_FAILURE' && 'inner_result' in result && result.inner_result) {
-    const inner = result.inner_result as { ok?: boolean; error_code?: string };
-    if (!inner.ok) {
-      if (inner.error_code === 'ERR_SIGNER_REJECTED') {
-        return { status: 502, code: 'ERR_SIGNER_REJECTED', message: 'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.' };
-      }
-      if (inner.error_code === 'ERR_SIGNER_UNAVAILABLE') {
-        return { status: 503, code: 'STELLAR_RUNTIME_UNAVAILABLE', message: 'Profile Wallet was found, but Stellar Testnet runtime is not configured locally. No deposit was made.' };
-      }
-      if (inner.error_code === 'ERR_EXECUTION_TIMEOUT') {
-        return { status: 504, code: 'ERR_EXECUTION_TIMEOUT', message: 'Funding was submitted but could not be confirmed yet. Do not treat this as funded until a tx hash is confirmed.' };
-      }
-    }
-  }
-  switch (result.reason) {
-    case 'ERR_OUT_OF_SYNC':
-    case 'ERR_DEAL_PERSISTENCE_CONFLICT':
-      return { status: 409, code: 'CONFLICT', message: 'Deal execution is out of sync. Please retry.' };
-    case 'ERR_DEAL_PERSISTENCE_UNAVAILABLE':
-    case 'ERR_EXECUTION_PERSISTENCE_FAILURE':
-      return { status: 503, code: 'STELLAR_PERSISTENCE_UNAVAILABLE', message: 'Testnet execution state could not be persisted.' };
-    case 'ERR_ASSEMBLY_FAILURE':
-    case 'ERR_LOCAL_COMMIT_PLANNING_FAILURE':
-      return { status: 400, code: 'STELLAR_EXECUTION_INVALID', message: 'The Testnet funding input is not valid for this deal state.' };
-    default:
-      return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: 'The Stellar Testnet funding action could not be confirmed.' };
-  }
 }
 
 async function runLegacyLocalBuyerDeposit(
@@ -324,8 +293,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       runtime: adminRuntimeLoaded.runtime,
     });
     if (!preparedDeal.ok) {
-      const failure = mapCoordinatorFailure(preparedDeal.result);
-      return NextResponse.json(createErrorResponse(failure.code, failure.message), { status: failure.status });
+      const failure = mapCoordinatorFailure(preparedDeal.result, 'escrow preparation');
+      return NextResponse.json(createErrorResponse(failure.code, failure.message, true, failure.diagnostic), { status: failure.status });
     }
 
     const existingOperation = await repository.getStellarOperation(
@@ -400,8 +369,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       });
 
       if (!coordinatorResult.ok) {
-        const failure = mapCoordinatorFailure(coordinatorResult);
-        return NextResponse.json(createErrorResponse(failure.code, failure.message), { status: failure.status });
+        const failure = mapCoordinatorFailure(coordinatorResult, 'buyer deposit');
+        return NextResponse.json(createErrorResponse(failure.code, failure.message, true, failure.diagnostic), { status: failure.status });
       }
 
       persistedOperation = await repository.getStellarOperation(operationKey);

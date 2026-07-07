@@ -20,6 +20,7 @@ export interface DealRoomRouteExecutionFailure {
   status: number;
   code: string;
   message: string;
+  diagnostic?: Record<string, unknown>;
 }
 
 export type DealRoomRouteExecutionResult =
@@ -56,13 +57,78 @@ async function waitForReconciliationWindow(): Promise<void> {
   );
 }
 
-function mapCoordinatorFailure(
+function sanitizeDepositFailureDiagnostic(inner: any): Record<string, unknown> {
+  const safe: Record<string, unknown> = {};
+  if (!inner) return safe;
+  
+  if (typeof inner === 'string') {
+    // Treat known static string inner results safely
+    safe.reason = inner;
+    return safe;
+  }
+
+  if (typeof inner === 'object') {
+    if (typeof inner.stage === 'string') safe.stage = inner.stage;
+    if (typeof inner.error_code === 'string') safe.error_code = inner.error_code;
+    if (typeof inner.retryable === 'boolean') safe.retryable = inner.retryable;
+    if (typeof inner.operation_status === 'string') safe.operation_status = inner.operation_status;
+    if (typeof inner.public_error_code === 'string') safe.public_error_code = inner.public_error_code;
+    if (typeof inner.reason === 'string') safe.reason = inner.reason;
+
+    // Extract deeper errors safely if planner failure structure exists
+    if (inner.failure && typeof inner.failure === 'object') {
+      if (typeof inner.failure.stage === 'string') safe.stage = inner.failure.stage;
+      if (typeof inner.failure.error_code === 'string') safe.error_code = inner.failure.error_code;
+      if (typeof inner.failure.public_error_code === 'string') safe.public_error_code = inner.failure.public_error_code;
+    }
+  }
+
+  return safe;
+}
+
+export function mapCoordinatorFailure(
   result: Extract<
     Awaited<ReturnType<typeof coordinateDealExecution>>,
     { ok: false }
   >,
   actionLabel: string,
 ): DealRoomRouteExecutionFailure {
+  let diagnostic: Record<string, unknown> | undefined = undefined;
+  
+  if (result.reason === 'ERR_EXECUTION_SERVICE_FAILURE' && 'inner_result' in result && result.inner_result) {
+    if (process.env.SETTLEWAY_DEBUG_DEPOSIT_FAILURES === '1') {
+      diagnostic = sanitizeDepositFailureDiagnostic(result.inner_result);
+    }
+    
+    const inner = result.inner_result as any;
+    if (typeof inner === 'object' && inner !== null && !inner.ok) {
+      if (inner.error_code === 'ERR_SIGNER_REJECTED') {
+        return { status: 502, code: 'ERR_SIGNER_REJECTED', message: 'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.', diagnostic };
+      }
+      if (inner.error_code === 'ERR_SIGNER_UNAVAILABLE') {
+        return { status: 503, code: 'STELLAR_RUNTIME_UNAVAILABLE', message: 'Profile Wallet was found, but Stellar Testnet runtime is not configured locally. No deposit was made.', diagnostic };
+      }
+      if (inner.error_code === 'ERR_EXECUTION_TIMEOUT') {
+        return { status: 504, code: 'ERR_EXECUTION_TIMEOUT', message: 'Funding was submitted but could not be confirmed yet. Do not treat this as funded until a tx hash is confirmed.', diagnostic };
+      }
+      
+      // If we drill into a planner failure, expose known failures specifically
+      if (inner.stage === 'planning' && inner.failure?.error_code === 'ERR_EXISTING_OPERATION_FAILED') {
+        const pCode = inner.failure.public_error_code;
+        if (pCode === 'ERR_CONTRACT_REJECTED') {
+           return { status: 400, code: 'STELLAR_EXECUTION_INVALID', message: `The Stellar Testnet ${actionLabel} was previously rejected by the escrow contract.`, diagnostic };
+        }
+        if (pCode === 'ERR_NETWORK_FAILURE') {
+           return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: `The Stellar Testnet ${actionLabel} previously failed due to a network error.`, diagnostic };
+        }
+      }
+    } else if (typeof inner === 'string') {
+      if (inner.includes('Escrow bootstrap completed without a persisted escrow id.')) {
+        return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: `The Stellar Testnet ${actionLabel} could not be completed because the escrow room bootstrap failed.`, diagnostic };
+      }
+    }
+  }
+
   switch (result.reason) {
     case "ERR_OUT_OF_SYNC":
     case "ERR_DEAL_PERSISTENCE_CONFLICT":
@@ -70,6 +136,7 @@ function mapCoordinatorFailure(
         status: 409,
         code: "CONFLICT",
         message: "Deal execution is out of sync. Please retry.",
+        diagnostic,
       };
     case "ERR_DEAL_PERSISTENCE_UNAVAILABLE":
     case "ERR_EXECUTION_PERSISTENCE_FAILURE":
@@ -78,6 +145,7 @@ function mapCoordinatorFailure(
         code: "STELLAR_PERSISTENCE_UNAVAILABLE",
         message:
           "Testnet execution state could not be persisted for this room action.",
+        diagnostic,
       };
     case "ERR_ASSEMBLY_FAILURE":
     case "ERR_LOCAL_COMMIT_PLANNING_FAILURE":
@@ -85,12 +153,14 @@ function mapCoordinatorFailure(
         status: 400,
         code: "STELLAR_EXECUTION_INVALID",
         message: `The Testnet ${actionLabel} input is not valid for this deal state. (Reason: ${result.error_code})`,
+        diagnostic,
       };
     default:
       return {
         status: 502,
         code: "STELLAR_EXECUTION_FAILED",
         message: `The Stellar Testnet ${actionLabel} could not be confirmed.`,
+        diagnostic,
       };
   }
 }
