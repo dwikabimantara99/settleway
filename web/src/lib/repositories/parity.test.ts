@@ -155,7 +155,7 @@ describe('Repository Parity Tests', () => {
     expect(retrieved?.encrypted_secret_key).toBe('encrypted-secret-123');
   });
 
-  it('6. DEMO_PUBLIC_ONLY remains fail-closed', async () => {
+  it('6. unknown wallet strictly returns null instead of synthesizing a fallback stub', async () => {
     const wallet = await walletRepo.getProfileWallet('some-unknown-demo-user');
     expect(wallet).toBeNull();
   });
