@@ -191,6 +191,16 @@ async function ensureTestnetEscrowPrepared(input: {
 
     const persistedOperation = await repository.getStellarOperation(operationKey);
     if (!isReconciliationPending(persistedOperation) || attempt === ROUTE_RECONCILIATION_ATTEMPTS - 1) {
+      if (persistedOperation && persistedOperation.operation_status === 'failed' && persistedOperation.public_error_code === 'ERR_AUTH_FAILED') {
+        return {
+          ok: false as const,
+          result: {
+            ok: false,
+            reason: 'ERR_EXECUTION_SERVICE_FAILURE',
+            inner_result: { ok: false, error_code: 'ERR_SIGNER_UNAVAILABLE' }
+          } as const,
+        };
+      }
       return {
         ok: false as const,
         result: {
@@ -366,6 +376,16 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       currentDeal = (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
       currentOperation = persistedOperation;
       await waitForReconciliationWindow();
+    }
+
+    if (persistedOperation !== null && persistedOperation.operation_status === 'failed' && persistedOperation.public_error_code === 'ERR_AUTH_FAILED') {
+      return NextResponse.json(
+        createErrorResponse(
+          'ERR_SIGNER_REJECTED',
+          'Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.',
+        ),
+        { status: 502 },
+      );
     }
 
     if (

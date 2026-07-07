@@ -68,7 +68,7 @@ describe('Manual Deal Room Funding Gate Repair', () => {
       method: 'POST',
     });
     const res = await buyerDepositPost(req, { params: Promise.resolve({ dealId: testDealId }) });
-    const json = await res.json();
+    const json = await res.json(); 
     
     expect(json.error?.message).not.toBe('You must create a Profile Wallet before funding this deal.');
     // In CI test mode without network, checking balance fails or runtime unavailable fails, which proves we passed the wallet check!
@@ -83,7 +83,7 @@ describe('Manual Deal Room Funding Gate Repair', () => {
       method: 'POST',
     });
     const res = await sellerDepositPost(req, { params: Promise.resolve({ dealId: testDealId }) });
-    const json = await res.json();
+    const json = await res.json(); 
     
     expect(json.error?.message).not.toBe('You must create a Profile Wallet before funding this deal.');
     const expectedCodes = ['PROFILE_WALLET_BALANCE_UNAVAILABLE', 'STELLAR_RUNTIME_UNAVAILABLE', 'ERR_SIGNER_REJECTED']; expect(expectedCodes).toContain(json.error?.code); if (json.error?.code === 'ERR_SIGNER_REJECTED') { expect(json.error?.message).toBe('Profile Wallet was found, but this demo wallet cannot sign funding transactions. No deposit was made.'); } if (json.error?.code === 'STELLAR_RUNTIME_UNAVAILABLE') { expect(json.error?.message).toMatch(/runtime is not (ready|configured)/); }
@@ -94,7 +94,7 @@ describe('Manual Deal Room Funding Gate Repair', () => {
       method: 'POST',
     });
     const res = await sellerDepositPost(req, { params: Promise.resolve({ dealId: testDealId }) });
-    const json = await res.json();
+    const json = await res.json(); 
     
     expect(res.status).toBe(403);
     expect(json.error?.message).toBe('Only seller can perform this action');
@@ -114,10 +114,11 @@ describe('Manual Deal Room Funding Gate Repair', () => {
     });
     
     const res = await buyerDepositPost(req, { params: Promise.resolve({ dealId: testDealId }) });
-    const json = await res.json();
+    const json = await res.json(); 
     
     // In our test, if it's unknown user, the demo fallback won't give them a wallet!
     expect(res.status).toBe(400);
     expect(json.error?.message).toBe('You must create a Profile Wallet before funding this deal.');
   });
 });
+
