@@ -24,8 +24,11 @@ export async function GET(
     const walletRepo = getServerWalletRepository();
     let wallet = await walletRepo.getProfileWallet(userId);
 
-    // Idempotent provisioning if no wallet exists
-    if (!wallet) {
+    const canEncrypt = !!process.env.WALLET_ENCRYPTION_KEY;
+    const needsRepair = wallet?.encrypted_secret_key === 'DEMO_PUBLIC_ONLY' && canEncrypt;
+
+    // Idempotent provisioning if no wallet exists or needs repair
+    if (!wallet || needsRepair) {
       try {
         const newWallet = generateAndEncryptProfileWallet(userId);
         await walletRepo.provisionProfileWallet(newWallet);

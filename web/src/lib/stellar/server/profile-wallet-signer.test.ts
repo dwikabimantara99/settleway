@@ -46,6 +46,22 @@ describe('ProfileWalletSigner', () => {
     }
   });
 
+  it('should reject signing if the encrypted secret is DEMO_PUBLIC_ONLY', async () => {
+    const signer = new ProfileWalletSigner('DEMO_PUBLIC_ONLY');
+
+    const result = await signer.signTransaction({
+      prepared_transaction_xdr: 'fake_xdr',
+      expected_network_passphrase: Networks.TESTNET,
+      signer_role: 'buyer_demo',
+      expected_signer_address: 'fake_pub_key',
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error_code).toBe('ERR_SIGNER_REJECTED');
+    }
+  });
+
   it('should sign a valid transaction when the expected address matches', async () => {
     const keypair = Keypair.random();
     const encrypted = encryptStellarSecret(keypair.secret());
