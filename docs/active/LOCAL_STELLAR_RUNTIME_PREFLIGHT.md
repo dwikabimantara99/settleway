@@ -122,12 +122,14 @@ SETTLEWAY_SMOKE_NOW_UNIX_SECONDS      # Current unix timestamp
 #### Missing: Profile Wallet encryption key (required for in-app demo deposit path)
 
 ```text
-WALLET_ENCRYPTION_KEY     # 32-byte hex key for encrypting Profile Wallet seeds (server-only)
+WALLET_ENCRYPTION_KEY     # App-level 32-byte hex key for encrypting Profile Wallet seeds (server-only)
 ```
 
 > **Note:** `SERVER_WALLET_ENCRYPTION_KEY` is an alternative name. Only one is required.
+> This is an **app-level encryption key**. It is **not** a user's private key.
+> User private keys must never be placed in `.env`.
 > The demo's `DEMO_PUBLIC_ONLY` sentinel bypasses decryption for the Profile Wallet
-> public-address-only path, but the full signing path requires this key.
+> public-address-only path, but the full signing path requires this encryption key to locally encrypt/decrypt the generated user seeds.
 
 ---
 
