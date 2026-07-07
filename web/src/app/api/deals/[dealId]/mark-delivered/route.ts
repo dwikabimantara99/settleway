@@ -12,6 +12,8 @@ import {
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { executeCustodyDeliveryReference } from '@/lib/stellar/testnet-proof';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
+import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
+import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 
 async function runLegacyLocalDeliveryMilestone(
   dealId: string,
@@ -207,7 +209,26 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return runLegacyLocalDeliveryMilestone(dealId, existingDeal, authUser.id);
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
+    const walletRepo = getServerWalletRepository();
+    const [buyerWallet, sellerWallet] = await Promise.all([
+      walletRepo.getProfileWallet(existingDeal.buyer_id),
+      walletRepo.getProfileWallet(existingDeal.seller_id),
+    ]);
+
+    if (!buyerWallet || !sellerWallet) {
+      return NextResponse.json(
+        createErrorResponse('STELLAR_EXECUTION_INVALID', 'Both parties must have Profile Wallets to complete settlement.'),
+        { status: 400 }
+      );
+    }
+
+    const runtimeLoaded = loadDealRoomTestnetRuntime(
+      {
+        signer_port_factory: () => new ProfileWalletSigner(sellerWallet.encrypted_secret_key),
+      },
+      buyerWallet.public_address,
+      sellerWallet.public_address
+    );
     if (!runtimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(

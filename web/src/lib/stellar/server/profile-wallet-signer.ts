@@ -41,7 +41,7 @@ export class ProfileWalletSigner implements StellarSignerPort {
     if (!this.keypair) {
       return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
     }
-    
+
     if (request.expected_signer_address !== this.getPublicKey()) {
       return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
     }
