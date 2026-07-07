@@ -57,6 +57,7 @@ async function waitForReconciliationWindow(): Promise<void> {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function sanitizeDepositFailureDiagnostic(inner: any): Record<string, unknown> {
   const safe: Record<string, unknown> = {};
   if (!inner) return safe;
@@ -100,6 +101,7 @@ export function mapCoordinatorFailure(
       diagnostic = sanitizeDepositFailureDiagnostic(result.inner_result);
     }
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const inner = result.inner_result as any;
     if (typeof inner === 'object' && inner !== null && !inner.ok) {
       if (inner.error_code === 'ERR_SIGNER_REJECTED') {

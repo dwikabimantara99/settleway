@@ -310,7 +310,26 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return runLegacyLocalProofSubmission(dealId, existingDeal, actorId, proofHash, evidenceMetadata);
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
+    const { getServerWalletRepository } = await import('@/lib/stellar/server/wallet-repository');
+    const { ProfileWalletSigner } = await import('@/lib/stellar/server/profile-wallet-signer');
+    
+    const walletRepo = getServerWalletRepository();
+    const [buyerWallet, sellerWallet] = await Promise.all([
+      walletRepo.getProfileWallet(existingDeal.buyer_id),
+      walletRepo.getProfileWallet(existingDeal.seller_id),
+    ]);
+
+    if (!buyerWallet) {
+      return NextResponse.json(createErrorResponse('BAD_REQUEST', 'Buyer profile wallet not found'), { status: 400 });
+    }
+    if (!sellerWallet) {
+      return NextResponse.json(createErrorResponse('NOT_FOUND', 'Seller profile wallet not found'), { status: 404 });
+    }
+    
+    const runtimeLoaded = loadDealRoomTestnetRuntime({
+      signer_port_factory: () => new ProfileWalletSigner(sellerWallet.encrypted_secret_key, sellerWallet.public_address),
+    }, buyerWallet.public_address, sellerWallet.public_address);
+
     if (!runtimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(
