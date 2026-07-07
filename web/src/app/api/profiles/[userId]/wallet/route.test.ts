@@ -73,17 +73,9 @@ describe('Wallet Provisioning Integration Route', () => {
     // First, simulate it being requested without a key (which falls back to DEMO_PUBLIC_ONLY)
     delete process.env.WALLET_ENCRYPTION_KEY;
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'demo';
-    
-    // Explicitly seed a DEMO_PUBLIC_ONLY wallet in the store for this test
-    mockStore.provisionProfileWallet({
-      user_id: 'buyer-demo',
-      public_address: 'GDEMO...',
-      encrypted_secret_key: 'DEMO_PUBLIC_ONLY',
-      encryption_version: 'demo',
-      status: 'active',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
+    // Fetch without key (should be virtual DEMO_PUBLIC_ONLY)
+    const reqBefore = new NextRequest('http://localhost/api/profiles/buyer-demo/wallet');
+    await GET(reqBefore, { params: Promise.resolve({ userId: 'buyer-demo' }) });
 
     const repoBefore = getServerWalletRepository();
     const walletBefore = await repoBefore.getProfileWallet('buyer-demo');
