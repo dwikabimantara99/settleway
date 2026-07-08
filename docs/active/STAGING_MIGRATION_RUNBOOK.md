@@ -36,11 +36,21 @@ This runbook prepares Staging Supabase for public Testnet persistent lifecycle t
 - Ensure automated Supabase backups are verified active for the Staging environment.
 
 ## 6. Migration execution sequence
-Run the following against the Staging project locally to deploy the schema change:
-\\\ash
-supabase db push --db-url "postgres://postgres.<STAGING_PROJECT_REF>:<PASSWORD>@aws-0-eu-central-1.pooler.supabase.com:6543/postgres"
-\\\
-*(Replace <STAGING_PROJECT_REF> and <PASSWORD> accordingly)*
+Run the following against the Staging project to deploy the schema change. Use a secure operator environment variable, secret manager, or Supabase CLI linked staging project. Do not paste database passwords into shell history.
+
+> [!WARNING]
+> Never commit, paste, screenshot, or print STAGING_DATABASE_URL, service role keys, database passwords, WALLET_ENCRYPTION_KEY, or Stellar secrets.
+
+No command should be run until explicit approval.
+
+```bash
+# Option A: using a secure local operator environment variable
+supabase db push --db-url "$STAGING_DATABASE_URL"
+
+# Option B: using a linked staging project after explicit operator confirmation
+supabase link --project-ref <STAGING_PROJECT_REF>
+supabase db push
+```
 
 ## 7. Post-migration schema verification
 Connect to Supabase Staging DB and verify:
@@ -113,3 +123,7 @@ Capture evidence:
 - security scan result;
 - blockers;
 - classification.
+
+## 13. Notice
+No remote migration was executed in this branch.
+
