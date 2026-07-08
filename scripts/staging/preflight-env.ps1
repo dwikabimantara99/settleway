@@ -1,8 +1,11 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "=========================================="
-Write-Host "Staging Operator Environment Preflight"
+Write-Host "Testnet Persistent DB Operator Preflight"
 Write-Host "=========================================="
+Write-Host "Target: TESTNET_PERSISTENT_DB."
+Write-Host "This may currently be the Supabase main project by owner approval."
+Write-Host "Do not use this for real-money production or Stellar mainnet."
 Write-Host "WARNING: Do not run migration directly from this script."
 Write-Host "This script only verifies presence of required variables and tools."
 Write-Host "It does not connect to any remote database."
@@ -51,8 +54,19 @@ if (-not $supabaseFound) {
 Write-Host ""
 Write-Host "--- Environment Variables Check ---"
 
+$valTestnetDB = [Environment]::GetEnvironmentVariable("TESTNET_DATABASE_URL")
+$valStagingDB = [Environment]::GetEnvironmentVariable("STAGING_DATABASE_URL")
+
+if (-not [string]::IsNullOrWhiteSpace($valTestnetDB)) {
+    Write-Host "[PASS] Present: TESTNET_DATABASE_URL"
+} elseif (-not [string]::IsNullOrWhiteSpace($valStagingDB)) {
+    Write-Host "[WARN] Present: STAGING_DATABASE_URL (Using as legacy alias for TESTNET_DATABASE_URL)"
+} else {
+    Write-Host "[FAIL] Missing: TESTNET_DATABASE_URL (or STAGING_DATABASE_URL alias)"
+    $missing = $true
+}
+
 $requiredEnv = @(
-    "STAGING_DATABASE_URL",
     "SUPABASE_SERVICE_ROLE_KEY",
     "WALLET_ENCRYPTION_KEY",
     "NEXT_PUBLIC_RUNTIME_MODE",

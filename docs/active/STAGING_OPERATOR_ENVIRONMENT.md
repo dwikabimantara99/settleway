@@ -1,7 +1,13 @@
-# Staging Operator Environment
+# Testnet Persistent DB Operator Environment
 
 ## 1. Purpose
-This document provides guidelines for securely provisioning the operator environment required to execute the Controlled Staging Migration for Settleway.
+This document provides guidelines for securely provisioning the operator environment required to execute the Controlled Migration for Settleway targeting the TESTNET_PERSISTENT_DB.
+
+**Owner-Approved Target:** The existing Supabase main project is used as the temporary Testnet Persistent DB to avoid duplicating work during Testnet validation.
+**Important Limitations:**
+- This is **not** final business production.
+- This is **not** a real-money environment.
+- This is **not** Stellar mainnet.
 
 ## 2. Required tools
 The executing operator machine MUST have:
@@ -18,7 +24,7 @@ px supabase --version\ must successfully execute.**
 
 ## 3. Required environment variables
 The following variables MUST be present in the operator's shell environment or a secure secret manager.
-- \STAGING_DATABASE_URL\
+- \TESTNET_DATABASE_URL\ (Primary. \STAGING_DATABASE_URL\ is accepted as a legacy alias).
 - \SUPABASE_SERVICE_ROLE_KEY\
 - \WALLET_ENCRYPTION_KEY\
 - \NEXT_PUBLIC_RUNTIME_MODE\ (must be strictly \persistent\)
@@ -43,11 +49,11 @@ This script explicitly checks for the tools and variable presence, and validates
 - Use a secure Vault, 1Password, or native OS keychain to inject secrets into the active terminal session.
 
 ## 6. What not to do
-- Do not use the production Supabase project. Use Staging only.
+- Do not use this for real-money production.
 - Do not use Stellar Mainnet. Use Stellar Testnet only.
 - Do not blindly ignore preflight warnings.
 
-## 7. When to retry Controlled Staging Migration Execution
-**Important: This documentation branch only provides preflight docs/scripts. It does not mean the current operator environment is ready.**
+## 7. When to retry Controlled Migration Execution
+**Important: The operator environment is officially ready only when \scripts/staging/preflight-env.ps1\ exits 0.**
 
-The operator environment is officially ready only when \scripts/staging/preflight-env.ps1\ exits 0. Once the script reports **STATUS: READY**, the operator is cleared to formally retry the Controlled Staging Migration Execution following the steps in \docs/active/STAGING_MIGRATION_RUNBOOK.md\.
+Once the script reports **STATUS: READY**, the operator is cleared to formally retry the Controlled Migration Execution following the steps in \docs/active/STAGING_MIGRATION_RUNBOOK.md\.

@@ -1,18 +1,21 @@
-# Staging Migration Runbook
+# Controlled Migration Runbook
 
 ## 1. Purpose
-This runbook prepares Staging Supabase for public Testnet persistent lifecycle testing.
+This runbook prepares the temporary TESTNET_PERSISTENT_DB for public Testnet persistent lifecycle testing.
+
+**Owner-Approved Target:** The existing Supabase main project is used as the temporary Testnet Persistent DB to avoid duplicating work during Testnet validation.
 
 ## 2. Scope
-- Staging only.
-- No production migration unless separately approved.
+- TESTNET_PERSISTENT_DB only.
+- This is not final business production.
+- This is not a real-money environment.
 - No Vercel deployment in this runbook.
 - No Stellar mainnet.
 - Stellar Testnet only.
 
 ## 3. Prerequisites
-- clean main at checkpoint/hybrid-identity-schema-alignment-2026-07-08 or later;
-- remote Staging Supabase project available;
+- clean main at checkpoint/staging-operator-env-preflight-2026-07-08 or later;
+- remote TESTNET_PERSISTENT_DB project available;
 - service role key available only in secure operator environment;
 - database backup/export prepared;
 - WALLET_ENCRYPTION_KEY present in secure environment;
@@ -24,7 +27,7 @@ This runbook prepares Staging Supabase for public Testnet persistent lifecycle t
 - current git commit is checked;
 - migration file content is verified;
 - no pending migration surprises;
-- current Staging schema inspection performed;
+- current schema inspection performed;
 - counts of existing profiles/user_wallets/escrow_events checked;
 - orphan checks before FK creation completed;
 - whether any user_wallets.user_id lacks matching profiles.id verified;
@@ -33,27 +36,27 @@ This runbook prepares Staging Supabase for public Testnet persistent lifecycle t
 
 ## 5. Backup / export checklist
 - Confirm data export is saved locally or safely stored before running any migrations.
-- Ensure automated Supabase backups are verified active for the Staging environment.
+- Ensure automated Supabase backups are verified active for the target environment.
 
 ## 6. Migration execution sequence
-Run the following against the Staging project to deploy the schema change. Use a secure operator environment variable, secret manager, or Supabase CLI linked staging project. Do not paste database passwords into shell history.
+Run the following against the TESTNET_PERSISTENT_DB project to deploy the schema change. Use a secure operator environment variable, secret manager, or Supabase CLI linked project. Do not paste database passwords into shell history.
 
 > [!WARNING]
-> Never commit, paste, screenshot, or print STAGING_DATABASE_URL, service role keys, database passwords, WALLET_ENCRYPTION_KEY, or Stellar secrets.
+> Never commit, paste, screenshot, or print TESTNET_DATABASE_URL, STAGING_DATABASE_URL, service role keys, database passwords, WALLET_ENCRYPTION_KEY, or Stellar secrets.
 
 No command should be run until explicit approval.
 
-```bash
+\\\ash
 # Option A: using a secure local operator environment variable
-supabase db push --db-url "$STAGING_DATABASE_URL"
+supabase db push --db-url "$TESTNET_DATABASE_URL"
 
 # Option B: using a linked staging project after explicit operator confirmation
-supabase link --project-ref <STAGING_PROJECT_REF>
+supabase link --project-ref <PROJECT_REF>
 supabase db push
-```
+\\\
 
 ## 7. Post-migration schema verification
-Connect to Supabase Staging DB and verify:
+Connect to the TESTNET_PERSISTENT_DB and verify:
 - \profiles.auth_user_id\ exists;
 - \profiles.auth_user_id\ is UUID nullable unique;
 - \user_wallets.user_id\ is TEXT;
@@ -61,7 +64,7 @@ Connect to Supabase Staging DB and verify:
 - \escrow_events.id\ is TEXT;
 - \escrow_events.actor_id\ references \profiles.id\;
 
-## 8. Staging seed / profile-wallet verification
+## 8. Target seed / profile-wallet verification
 - create or verify buyer profile;
 - create or verify seller profile;
 - provision profile wallets;
@@ -92,6 +95,8 @@ Capture evidence:
 - Supabase row proof for deals/events/wallets;
 - no secret exposure.
 
+**Note:** Reputation work starts only after persistent lifecycle is confirmed.
+
 ## 10. Abort criteria
 - backup missing;
 - unknown pending migrations;
@@ -102,7 +107,8 @@ Capture evidence:
 - migration syntax fails;
 - public API exposes encrypted_secret_key;
 - lifecycle diverges from expected state machine;
-- tx hash missing after state transition.
+- tx hash missing after state transition;
+- any blocker occurs (stop immediately).
 
 ## 11. Rollback strategy
 - restore from backup preferred;
@@ -126,4 +132,3 @@ Capture evidence:
 
 ## 13. Notice
 No remote migration was executed in this branch.
-
