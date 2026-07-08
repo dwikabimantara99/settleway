@@ -11,23 +11,36 @@ Write-Host ""
 $missing = $false
 
 Write-Host "--- Tooling Check ---"
-if (Get-Command "npx" -ErrorAction SilentlyContinue) {
-    Write-Host "[PASS] npx is available"
-} else {
-    Write-Host "[FAIL] npx is missing"
-    $missing = $true
+$supabaseFound = $false
+
+if (Get-Command "supabase" -ErrorAction SilentlyContinue) {
+    try {
+        $out = supabase --version 2>&1
+        if ($LASTEXITCODE -eq 0 -or $out -match "^\d") {
+            Write-Host "[PASS] global supabase CLI is available and successfully executable"
+            $supabaseFound = $true
+        }
+    } catch {
+        # ignore error, try npx
+    }
 }
 
-$supabaseFound = $false
-if (Get-Command "supabase" -ErrorAction SilentlyContinue) {
-    Write-Host "[PASS] supabase CLI is available"
-    $supabaseFound = $true
-} else {
-    Write-Host "[WARN] supabase CLI not found in PATH. Checking via npx..."
-    # We won't actually execute npx here to avoid download prompts, but we warn the user
-    Write-Host "       npx supabase will be required."
+if (-not $supabaseFound) {
     if (Get-Command "npx" -ErrorAction SilentlyContinue) {
-        $supabaseFound = $true
+        Write-Host "Checking npx supabase --version..."
+        try {
+            $out = npx supabase --version 2>&1
+            if ($LASTEXITCODE -eq 0 -or $out -match "^\d") {
+                Write-Host "[PASS] npx supabase CLI is available and successfully executable"
+                $supabaseFound = $true
+            } else {
+                Write-Host "[FAIL] npx supabase is present but execution failed."
+            }
+        } catch {
+            Write-Host "[FAIL] npx supabase execution failed."
+        }
+    } else {
+        Write-Host "[FAIL] Both global supabase and npx are missing."
     }
 }
 
@@ -43,6 +56,7 @@ $requiredEnv = @(
     "SUPABASE_SERVICE_ROLE_KEY",
     "WALLET_ENCRYPTION_KEY",
     "NEXT_PUBLIC_RUNTIME_MODE",
+    "RUNTIME_MODE",
     "NEXT_PUBLIC_CUSTODY_V2_NETWORK_PASSPHRASE",
     "NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID",
     "CUSTODY_V2_STELLAR_RPC_URL"
@@ -56,10 +70,9 @@ foreach ($name in $requiredEnv) {
     } else {
         Write-Host "[PASS] Present: $name"
         
-        # Safe internal value checks without printing the actual value
-        if ($name -eq "NEXT_PUBLIC_RUNTIME_MODE") {
+        if ($name -eq "NEXT_PUBLIC_RUNTIME_MODE" -or $name -eq "RUNTIME_MODE") {
             if ($val -ne "persistent") {
-                Write-Host "       [!] Error: NEXT_PUBLIC_RUNTIME_MODE is not 'persistent'."
+                Write-Host "       [!] Error: $name is not 'persistent'."
                 $missing = $true
             }
         }
