@@ -35,10 +35,14 @@ The following variables MUST be present in the operator's shell environment or a
 
 ## 4. How to verify presence safely
 Run the provided safe preflight script:
-\\\ash
-pwsh scripts/staging/preflight-env.ps1
-\\\
-This script explicitly checks for the tools and variable presence, and validates their internal constraints without printing sensitive values to standard output.
+```powershell
+# Required: Windows PowerShell
+powershell -ExecutionPolicy Bypass -File .\scripts\staging\preflight-env.ps1
+
+# Optional alternative: PowerShell 7
+# pwsh .\scripts\staging\preflight-env.ps1
+```
+This script explicitly checks for the tools and variable presence, and validates their internal constraints without printing sensitive values to standard output. (Note: pwsh is not required).
 
 **Do not run the migration until this preflight exits 0 (STATUS: READY).**
 

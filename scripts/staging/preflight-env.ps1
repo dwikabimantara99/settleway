@@ -112,7 +112,7 @@ if ($missing) {
     Write-Host "=========================================="
     Write-Host "STATUS: READY"
     Write-Host "Operator environment checks passed."
-    Write-Host "You may proceed with the STAGING_MIGRATION_RUNBOOK.md."
+    Write-Host "You may proceed with docs/active/STAGING_MIGRATION_RUNBOOK.md (Controlled Migration Runbook for TESTNET_PERSISTENT_DB)."
     Write-Host "=========================================="
     exit 0
 }

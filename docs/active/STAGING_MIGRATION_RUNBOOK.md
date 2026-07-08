@@ -46,14 +46,14 @@ Run the following against the TESTNET_PERSISTENT_DB project to deploy the schema
 
 No command should be run until explicit approval.
 
-\\\ash
+```bash
 # Option A: using a secure local operator environment variable
 supabase db push --db-url "$TESTNET_DATABASE_URL"
 
-# Option B: using a linked staging project after explicit operator confirmation
+# Option B: using a linked TESTNET_PERSISTENT_DB project after explicit operator confirmation
 supabase link --project-ref <PROJECT_REF>
 supabase db push
-\\\
+```
 
 ## 7. Post-migration schema verification
 Connect to the TESTNET_PERSISTENT_DB and verify:
