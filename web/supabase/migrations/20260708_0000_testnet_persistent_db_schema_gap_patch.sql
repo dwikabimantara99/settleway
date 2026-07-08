@@ -2,7 +2,7 @@
 -- Purpose: Address observed missing tables and columns on the Testnet persistent DB safely.
 
 -- 1. Safely add auth_user_id to profiles if missing
-DO $$$
+DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.columns 
@@ -13,9 +13,9 @@ BEGIN
         ALTER TABLE public.profiles ADD COLUMN auth_user_id UUID;
     END IF;
 END
-$$$;
+$$;
 
-DO $$$
+DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'profiles_auth_user_id_key'
@@ -29,7 +29,7 @@ BEGIN
         ALTER TABLE public.profiles ADD CONSTRAINT profiles_auth_user_id_fkey FOREIGN KEY (auth_user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
     END IF;
 END
-$$$;
+$$;
 
 -- 2. Create user_wallets if missing, targeting TEXT profiles.id
 CREATE TABLE IF NOT EXISTS public.user_wallets (
@@ -47,7 +47,7 @@ ALTER TABLE public.user_wallets ENABLE ROW LEVEL SECURITY;
 -- No standard user policies; access is via Service Role API.
 
 -- 3. Safely cast escrow_events.id to TEXT if it is UUID
-DO $$$
+DO $$
 DECLARE
     col_type text;
 BEGIN
@@ -62,11 +62,11 @@ BEGIN
         ALTER TABLE public.escrow_events ALTER COLUMN id TYPE TEXT USING id::text;
     END IF;
 END
-$$$;
+$$;
 
 -- 4. Safely constrain escrow_events.actor_id to profiles
 -- This blocks if there are orphan actor_ids.
-DO $$$
+DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'escrow_events_actor_id_fkey'
@@ -83,4 +83,4 @@ BEGIN
         END IF;
     END IF;
 END
-$$$;
+$$;

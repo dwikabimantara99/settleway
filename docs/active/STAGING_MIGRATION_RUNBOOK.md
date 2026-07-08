@@ -28,9 +28,27 @@ This runbook prepares the temporary TESTNET_PERSISTENT_DB for public Testnet per
 - \profiles.auth_user_id\ may be missing;
 - \escrow_events.id\ may still be uuid;
 - run the focused schema inspection before migration;
-- if \user_wallets\ is missing, use the schema gap patch migration (\web/supabase/migrations/20260708_testnet_persistent_db_schema_gap_patch.sql\);
+- if \user_wallets\ is missing, use the schema gap patch migration (\web/supabase/migrations/20260708_0000_testnet_persistent_db_schema_gap_patch.sql\);
 - backup via \supabase db dump\ may require Docker Desktop;
 - if Docker is unavailable, record Docker-unavailable backup limitation and proceed only because owner approved TESTNET_PERSISTENT_DB testnet usage.
+
+### Migration Ordering Risk Warning
+> [!WARNING]
+> If both the schema gap patch and the hybrid identity schema alignment migrations are pending, the **schema gap patch must run first**. The hybrid migration assumes \user_wallets\ exists. Do NOT run \supabase db push\ if the pending migration order is unsafe.
+
+**Local Migration Order Check:**
+Verify that the schema gap patch sorts BEFORE the hybrid migration locally:
+\\\powershell
+Get-ChildItem web/supabase/migrations | Sort-Object Name | Select-Object Name
+\\\
+
+**Supabase Migration History Check:**
+Verify which migrations have already been applied remotely via SQL Editor:
+\\\sql
+select *
+from supabase_migrations.schema_migrations
+order by version;
+\\\
 
 ## 5. Preflight checklist
 - current git commit is checked;
@@ -93,7 +111,7 @@ where p.id is null and e.actor_id is not null;
 
 **Safe Orphan Check (user_wallets.user_id):**
 \\\sql
-DO $$$
+DO $$
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.tables 
@@ -112,7 +130,7 @@ BEGIN
         RAISE NOTICE 'Table user_wallets does not exist. Skipping orphan check.';
     END IF;
 END
-$$$;
+$$;
 \\\
 
 ## 6. Backup / export checklist
