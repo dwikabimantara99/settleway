@@ -67,6 +67,20 @@ from supabase_migrations.schema_migrations
 order by version;
 ```
 
+### Remote migration history observed before execution
+
+Remote applied versions observed:
+- 20260615000000
+- 20260615000001
+- 20260630
+
+Remote not yet applied at time of this fix:
+- 20260705000000_offer_negotiation_schema.sql
+- 20260705000001_profile_wallets.sql
+- 20260706_constrained_failure_states.sql
+- 20260707_testnet_persistent_db_schema_gap_patch.sql
+- 20260708_hybrid_identity_schema_alignment.sql
+
 ## 5. Preflight checklist
 - current git commit is checked;
 - migration file content is verified;
