@@ -13,7 +13,7 @@ ALTER TABLE public.user_wallets ADD CONSTRAINT user_wallets_user_id_fkey FOREIGN
 ALTER TABLE public.escrow_events ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.escrow_events ALTER COLUMN id TYPE TEXT USING id::text;
 -- Add foreign key constraint for actor_id to profiles, if not already constrained
-DO $ $
+DO $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_constraint WHERE conname = 'escrow_events_actor_id_fkey'
@@ -21,4 +21,4 @@ BEGIN
         ALTER TABLE public.escrow_events ADD CONSTRAINT escrow_events_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.profiles(id) ON DELETE SET NULL;
     END IF;
 END
-$ $;
+$$;
