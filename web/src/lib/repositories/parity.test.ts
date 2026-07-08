@@ -197,4 +197,40 @@ describe('Repository Parity Tests', () => {
     expect(updated?.proof_hash).toBe('proof123');
     expect(updated?.latest_stellar_tx_hash).toBe('tx_complete');
   });
+
+  it('8. profile identity model accepts optional auth_user_id for hybrid auth', async () => {
+    // This is purely a type/interface test for the hybrid identity model
+    const profileWithoutAuth: import('../db/types').DbProfile = {
+      id: 'buyer-probolinggo-cabai',
+      display_name: 'Budi (Buyer)',
+      role_label: 'Buyer',
+      location: 'Probolinggo',
+      user_type: 'buyer',
+      seller_score: 0,
+      buyer_score: 10,
+      seller_completed_count: 0,
+      buyer_completed_count: 5,
+      verified_volume_idr: 50000000,
+      proof_visibility: 'public',
+      payout_rail_preference: 'bank',
+      payout_wallet_label: null,
+      payout_wallet_address: null,
+      connected_wallet_address: null,
+      connected_wallet_network: null,
+      connected_wallet_provider: null,
+      connected_wallet_linked_at: null,
+      payout_bank_name: null,
+      payout_bank_account_masked: null,
+      created_at: new Date().toISOString()
+    };
+
+    const profileWithAuth: import('../db/types').DbProfile = {
+      ...profileWithoutAuth,
+      id: 'real-user-123',
+      auth_user_id: '123e4567-e89b-12d3-a456-426614174000'
+    };
+
+    expect(profileWithoutAuth.auth_user_id).toBeUndefined();
+    expect(profileWithAuth.auth_user_id).toBe('123e4567-e89b-12d3-a456-426614174000');
+  });
 });

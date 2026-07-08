@@ -20,6 +20,7 @@ export interface DbUserWallet {
 
 export interface DbProfile {
   id: string;
+  auth_user_id?: string | null;
   display_name: string;
   role_label: string;
   location: string | null;
