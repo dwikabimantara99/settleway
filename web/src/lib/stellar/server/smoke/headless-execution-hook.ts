@@ -70,7 +70,7 @@ async function ensureTestnetEscrowPrepared(input: {
   }
 
   let currentDeal = input.deal;
-  const operationKey = createStellarIdempotencyKey(input.deal.id, null, 'create_deal');
+  const operationKey = createStellarIdempotencyKey(input.deal.id, "WAITING_DEPOSITS", "create_deal");
 
   for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
     const existingOperation = await repository.getStellarOperation(operationKey);

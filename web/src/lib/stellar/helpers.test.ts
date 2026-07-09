@@ -15,8 +15,8 @@ describe("createStellarIdempotencyKey", () => {
   });
 
   it("uses the exact CREATE marker when expected status is null", () => {
-    const key = createStellarIdempotencyKey("deal-1", null, "create_deal");
-    expect(key).toBe("v1:deal-1:CREATE:create_deal");
+    const key = createStellarIdempotencyKey("deal-1", "WAITING_DEPOSITS", "create_deal");
+    expect(key).toBe("v1:deal-1:WAITING_DEPOSITS:create_deal");
   });
 
   it("encodes delimiter-bearing IDs exactly", () => {
