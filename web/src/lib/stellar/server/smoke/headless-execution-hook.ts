@@ -1,5 +1,5 @@
 import 'server-only';
-import { repository } from '@/lib/repositories';
+import { getAdminSmokeRepository } from '@/lib/stellar/server/smoke/headless-smoke-admin-context';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
 import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/server/deal-room-testnet-runtime';
@@ -12,7 +12,6 @@ import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-test
 import crypto from 'node:crypto';
 import { createEvent } from '@/lib/escrow/events';
 import type { StellarOperation } from '@/lib/stellar/types';
-import type { EscrowAction } from '@/lib/escrow/state-machine';
 
 // Replicated from route.ts because it is tightly coupled and not exported
 function deriveDealHash(existingDeal: DbDeal) {
@@ -65,6 +64,7 @@ async function ensureTestnetEscrowPrepared(input: {
   deal: DbDeal;
   runtime: DealRoomTestnetRuntime;
 }) {
+  const repository = getAdminSmokeRepository();
   if (input.deal.stellar_escrow_id !== null) {
     return { ok: true as const, deal: input.deal };
   }
@@ -168,6 +168,8 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
   if (!process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE || process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE.includes('Public Global')) {
     return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Hook refuses mainnet config" };
   }
+
+  const repository = getAdminSmokeRepository();
 
   const existingDeal = await repository.getDeal(params.dealId);
   if (!existingDeal) {

@@ -57,3 +57,18 @@ NODE_OPTIONS="--conditions react-server" ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=
 - **PERSISTENT_SMOKE_RUNNER_PARTIAL**: The script ran successfully until a known automation limitation (e.g., wallet provisioning logic missing or headless hook denied) halted it.
 - **PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE**: Friendbot funding failed (e.g., rate limited) or the Stellar Testnet rejected the funding transaction due to insufficient balance. If rate limited, wait a few minutes and try again.
 - **PERSISTENT_SMOKE_RUNNER_BLOCKED**: Infrastructure failure (e.g., config missing, DB down).
+
+## Headless Admin Context
+
+The persistent headless smoke runner operates outside of a browser session and thus lacks a valid uth.uid().
+Because of this, standard Row Level Security (RLS) hides newly created deals from the non client (which caused the REMOTE_FUNDING_SMOKE_BLOCKED_RUNTIME blocker previously).
+
+To bypass this exclusively during smoke testing, the execution hook now provisions a specialized **Headless Smoke Admin Context** using the Supabase service_role key.
+
+**WARNING**:
+- This is strictly for CLI/test-harness use only.
+- It is NOT a production auth bypass.
+- It operates ONLY on Testnet, enforced by network constraints.
+- You must always remember to rotate your SUPABASE_DB_PASSWORD after any operator run to maintain security boundaries.
+
+If the admin context succeeds in fixing the RLS blocker, the expected next remote smoke classification is: REMOTE_FUNDING_SMOKE_SUCCEEDED.

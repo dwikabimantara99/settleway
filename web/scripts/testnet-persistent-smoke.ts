@@ -1,5 +1,6 @@
 import 'server-only';
-import { repository, runtimeMode } from '@/lib/repositories';
+import { runtimeMode } from '@/lib/repositories';
+import { getAdminSmokeRepository } from '@/lib/stellar/server/smoke/headless-smoke-admin-context';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
 import { generateAndEncryptProfileWallet } from '@/lib/stellar/server/provisioning';
 import { createClient } from '@supabase/supabase-js';
@@ -44,6 +45,8 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
 
   let finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED';
   let exactBlocker = '';
+
+  const repository = getAdminSmokeRepository();
 
   try {
     const supabaseRestUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;

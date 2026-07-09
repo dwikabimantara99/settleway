@@ -70,3 +70,10 @@ The newly provisioned smoke wallets on the Stellar Testnet require manual fundin
 - **Final Classification**: REMOTE_FUNDING_SMOKE_BLOCKED_RUNTIME
 
 *Disclaimer: No deploy was executed. No mainnet was touched. No production funds were used. Proof, delivery, and settlement remain unproven unless actually executed. The database password must be rotated after execution.*
+
+## Runtime RLS Blocker Follow-up
+
+- **Classification**: REMOTE_FUNDING_SMOKE_BLOCKED_RUNTIME
+- **Finding**: Deal exists by admin verification but hook could not see it via RLS-bound context.
+- **Action**: Admin-context patch planned.
+- **Tag**: No success tag created.

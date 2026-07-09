@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { redact, checkSafetyGates, runSmoke } from '../../../../../scripts/testnet-persistent-smoke';
+import { redact, runSmoke } from '../../../../../scripts/testnet-persistent-smoke';
 import { executeHeadlessSmokeAction } from './headless-execution-hook';
 import { fundTestnetWalletViaFriendbot } from './testnet-friendbot';
 
@@ -38,13 +38,16 @@ vi.mock('@/lib/stellar/server/deal-execution-coordinator', () => ({
 }));
 
 vi.mock('@/lib/repositories', () => ({
-  repository: {
+  runtimeMode: 'persistent'
+}));
+
+vi.mock('@/lib/stellar/server/smoke/headless-smoke-admin-context', () => ({
+  getAdminSmokeRepository: vi.fn(() => ({
     getProfile: vi.fn().mockResolvedValue({ id: 'mock', status: 'WAITING_DEPOSITS' }),
     getDeal: (...args: unknown[]) => mockGetDeal(...args),
     getStellarOperation: (...args: unknown[]) => mockGetStellarOperation(...args),
     addEvent: (...args: unknown[]) => mockAddEvent(...args)
-  },
-  runtimeMode: 'persistent'
+  }))
 }));
 
 vi.mock('@/lib/stellar/server/deal-room-testnet-runtime', () => ({ checkTestnetBalance: vi.fn().mockResolvedValue({ status: 'sufficient' }), loadDealRoomTestnetRuntime: vi.fn().mockReturnValue({ ok: true, runtime: { contract_id: 'C123', metadata: {}, execution_adapter: {} } }) }));
