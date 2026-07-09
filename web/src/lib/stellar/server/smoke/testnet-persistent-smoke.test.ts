@@ -49,8 +49,6 @@ vi.mock('@/lib/repositories', () => ({
 vi.mock('@/lib/stellar/server/deal-room-testnet-runtime', () => ({ checkTestnetBalance: vi.fn().mockResolvedValue({ status: 'sufficient' }), loadDealRoomTestnetRuntime: vi.fn().mockReturnValue({ ok: true, runtime: { contract_id: 'C123', metadata: {}, execution_adapter: {} } }) }));
 vi.mock('@/lib/stellar/server/deal-room-funding-runtime', () => ({ composeDealRoomFundingRuntime: vi.fn().mockReturnValue({ ok: true, context: { funding_intent: { actor_address: 'G123' }, public_proof: 'mock_proof' } }) }));
 
-
-
 describe('Testnet Persistent Smoke Runner & Hook', () => {
   const originalEnv = process.env;
 
@@ -95,11 +93,59 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Public Global Stellar Network ; September 2015'; // mainnet passphrase
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Public Global Stellar Network ; September 2015';
     
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'a', expectedRole: 'buyer', action: 'buyer_deposit' });
     expect(result.ok).toBe(false);
     expect(result.blocker).toContain('Hook refuses mainnet config');
+  });
+
+  it('buyer_deposit rejects actorId mismatch', async () => {
+    process.env.RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+
+    mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
+    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'wrong_id', expectedRole: 'buyer', action: 'buyer_deposit' });
+    expect(result.ok).toBe(false);
+    expect(result.blocker).toBe('Actor does not match expected deal participant role');
+  });
+
+  it('seller_deposit rejects actorId mismatch', async () => {
+    process.env.RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+
+    mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
+    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'wrong_id', expectedRole: 'seller', action: 'seller_deposit' });
+    expect(result.ok).toBe(false);
+    expect(result.blocker).toBe('Actor does not match expected deal participant role');
+  });
+
+  it('buyer_deposit rejects expectedRole=seller', async () => {
+    process.env.RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+
+    mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
+    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 's', expectedRole: 'seller', action: 'buyer_deposit' });
+    expect(result.ok).toBe(false);
+    expect(result.blocker).toBe('Action does not match expected participant role');
+  });
+
+  it('seller_deposit rejects expectedRole=buyer', async () => {
+    process.env.RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+
+    mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
+    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'b', expectedRole: 'buyer', action: 'seller_deposit' });
+    expect(result.ok).toBe(false);
+    expect(result.blocker).toBe('Action does not match expected participant role');
   });
 
   it('hook preserves idempotency key usage', async () => {
@@ -113,7 +159,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     
     mockGetStellarOperation.mockResolvedValue({ operation_status: 'confirmed', transaction_hash: 'hash123' });
 
-    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'a', expectedRole: 'buyer', action: 'buyer_deposit', idempotencyKey: 'idem-123' });
+    const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'b', expectedRole: 'buyer', action: 'buyer_deposit', idempotencyKey: 'idem-123' });
     expect(result.ok).toBe(true);
     expect(result.transactionHash).toBe('hash123');
     
@@ -129,7 +175,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     delete process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION;
 
-    mockGetDeal.mockResolvedValue({ id: 'd', status: 'WAITING_DEPOSITS' });
+    mockGetDeal.mockImplementation((id: string) => Promise.resolve({ id, buyer_id: id.replace('deal', 'buyer'), seller_id: id.replace('deal', 'seller'), status: 'WAITING_DEPOSITS' }));
     mockGetProfileWallet.mockResolvedValue({ public_address: 'G123', encrypted_secret_key: 'enc123' });
 
     const mockLog = vi.fn();
@@ -168,12 +214,12 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
 
-    mockGetDeal.mockResolvedValue({ 
-       id: 'd', buyer_id: 'b', seller_id: 's', 
+    mockGetDeal.mockImplementation((id: string) => Promise.resolve({ 
+       id, buyer_id: id.replace('deal', 'buyer'), seller_id: id.replace('deal', 'seller'), 
        stellar_mode: 'testnet', status: 'WAITING_DEPOSITS', 
        volume_kg: 100, principal_idr: 1000, 
        terms: { deposit_deadline_at: '2027-01-01T00:00:00Z' } 
-    });
+    }));
     mockGetProfileWallet.mockResolvedValue({ public_address: 'G123', encrypted_secret_key: 'enc123' });
     
     mockGetStellarOperation.mockResolvedValue({ operation_status: 'confirmed', transaction_hash: 'tx-hash-123' });
@@ -184,7 +230,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
 
     expect(report.classification).toBe('PERSISTENT_SMOKE_RUNNER_READY_FOR_DELIVERY_EXTENSION');
     
-    const logs = mockLog.mock.calls.map(c => c.join(' ')).join('\n');
+    const logs = mockLog.mock.calls.map((c: any) => c.join(' ')).join('\n');
     expect(logs).not.toContain('encrypted_secret_key');
     expect(logs).not.toContain('enc123');
     expect(logs).not.toContain('rawXdr');

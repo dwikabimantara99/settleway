@@ -177,6 +177,28 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Deal is not in testnet mode" };
   }
 
+  const expectedActorId = params.expectedRole === 'buyer' ? existingDeal.buyer_id : existingDeal.seller_id;
+  if (params.actorId !== expectedActorId) {
+    return {
+      ok: false,
+      action: params.action,
+      actorRole: params.expectedRole,
+      blocker: 'Actor does not match expected deal participant role',
+    };
+  }
+
+  if (
+    (params.action === 'buyer_deposit' && params.expectedRole !== 'buyer') ||
+    (params.action === 'seller_deposit' && params.expectedRole !== 'seller')
+  ) {
+    return {
+      ok: false,
+      action: params.action,
+      actorRole: params.expectedRole,
+      blocker: 'Action does not match expected participant role',
+    };
+  }
+
   const walletRepo = getServerWalletRepository();
   const [buyerWallet, sellerWallet] = await Promise.all([
     walletRepo.getProfileWallet(existingDeal.buyer_id),
