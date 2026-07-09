@@ -52,7 +52,8 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
       throw new Error("Missing Supabase REST URL or service role key");
     }
 
-    let supabaseAdmin: unknown = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let supabaseAdmin: any = null;
     if (!isPlanOnly) {
       supabaseAdmin = createClient(supabaseRestUrl, serviceRoleKey);
     }
