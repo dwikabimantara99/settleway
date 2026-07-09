@@ -8,7 +8,7 @@ function makeOp(overrides: Partial<StellarOperation> = {}): StellarOperation {
     idempotency_key: "persist-key",
     deal_id: "persist-deal",
     requested_action: "create_deal",
-    expected_local_status: null,
+    expected_local_status: "WAITING_DEPOSITS",
     target_local_status: "WAITING_DEPOSITS",
     stellar_method: "create_escrow",
     operation_status: "pending",

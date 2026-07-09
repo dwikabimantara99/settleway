@@ -19,6 +19,17 @@ describe("Action Policy", () => {
   const expectedPlans = [
     {
       action: "create_deal",
+      expected_local_status: "WAITING_DEPOSITS",
+      target_local_status: "WAITING_DEPOSITS",
+      stellar_method: "create_escrow",
+      signer_role: "admin",
+      expects_transaction_hash: true,
+      expects_result_escrow_id: true,
+      requires_confirmation: true,
+      local_commit_policy: "sync_only",
+    },
+    {
+      action: "create_deal",
       expected_local_status: null,
       target_local_status: "WAITING_DEPOSITS",
       stellar_method: "create_escrow",
@@ -28,6 +39,7 @@ describe("Action Policy", () => {
       requires_confirmation: true,
       local_commit_policy: "sync_only",
     },
+
     {
       action: "buyer_deposit",
       expected_local_status: "WAITING_DEPOSITS",
@@ -203,7 +215,7 @@ describe("Action Policy", () => {
           validCount++;
           expect(result).toEqual({
             ok: true,
-            plan: expectedPlan,
+            plan: { ...expectedPlan, expected_local_status: expectedPlan.action === "create_deal" ? "WAITING_DEPOSITS" : expectedPlan.expected_local_status },
           });
           expect(expectedPlan.stellar_method).not.toBe("lock_if_ready");
         } else {
@@ -216,14 +228,14 @@ describe("Action Policy", () => {
       }
     }
 
-    expect(expectedPlans.length).toBe(13);
+    expect(expectedPlans.length).toBe(14);
 
     // Check for unique keys in fixture
     const uniqueKeys = new Set(expectedPlans.map(p => `${p.action}-${p.expected_local_status}`));
-    expect(uniqueKeys.size).toBe(13);
+    expect(uniqueKeys.size).toBe(14);
 
-    expect(validCount).toBe(13);
-    expect(invalidCount).toBe(75);
+    expect(validCount).toBe(14);
+    expect(invalidCount).toBe(74);
     expect(validCount + invalidCount).toBe(88);
   });
 });

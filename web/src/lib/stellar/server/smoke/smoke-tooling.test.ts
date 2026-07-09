@@ -359,7 +359,7 @@ function makeOperation(input: {
     throw new Error(`Invalid operation fixture: ${input.action}`);
   }
   let scope: string | null = input.expected_status;
-  if (input.action === "create_deal") scope = null;
+  if (input.action === "create_deal") scope = "WAITING_DEPOSITS";
   if (input.action === "buyer_deposit") scope = input.deal.buyer_id;
   if (input.action === "seller_deposit") scope = input.deal.seller_id;
 

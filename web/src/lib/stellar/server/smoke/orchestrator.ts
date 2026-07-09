@@ -121,7 +121,7 @@ function timestampSet(scenario: SmokeScenarioName, index: number): {
 
 function operationKey(deal: DbDeal, action: OrchestratorStellarAction): string {
   let scope: string | null = deal.status;
-  if (action === "create_deal") scope = null;
+  if (action === "create_deal") scope = "WAITING_DEPOSITS";
   if (action === "buyer_deposit" || action === "accept_delivery") scope = deal.buyer_id;
   if (action === "seller_deposit") scope = deal.seller_id;
 

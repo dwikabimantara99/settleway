@@ -46,12 +46,12 @@ export function resolveStellarActionPlan(
   action: StellarAction,
   expectedLocalStatus: DealStatus | null,
 ): StellarActionPlanResolution {
-  if (action === "create_deal" && expectedLocalStatus === null) {
+  if (action === "create_deal" && (expectedLocalStatus === null || expectedLocalStatus === "WAITING_DEPOSITS")) {
     return {
       ok: true,
       plan: {
         action: "create_deal",
-        expected_local_status: null,
+        expected_local_status: "WAITING_DEPOSITS",
         target_local_status: "WAITING_DEPOSITS",
         stellar_method: "create_escrow",
         signer_role: "admin",

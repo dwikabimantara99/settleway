@@ -91,15 +91,15 @@ describe("Invocation Builder", () => {
         }
       }
     }
-    expect(validCount).toBe(13);
-    expect(invalidCount).toBe(75);
+    expect(validCount).toBe(14);
+    expect(invalidCount).toBe(74);
   });
 
   it("produces exact 13 valid plan invocations with proper argument order", () => {
     // 1. create_deal + null
     const res1 = buildStellarInvocation({
       action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       contract_id: "C123",
       deal_hash: "0123456789ABCDEF0123456789abcdef0123456789abcdef0123456789abcdef",
       buyer_address: "GBUY",
@@ -422,7 +422,7 @@ describe("Invocation Builder", () => {
 
     const createBase = {
       action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       contract_id: "C123",
       deal_hash: "0000000000000000000000000000000000000000000000000000000000000000",
       buyer_address: "B",
@@ -448,7 +448,7 @@ describe("Invocation Builder", () => {
   it("tests valid and invalid i128 numeric bounds", () => {
     const base = {
       action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       contract_id: "C123",
       deal_hash: "0000000000000000000000000000000000000000000000000000000000000000",
       buyer_address: "B",
@@ -526,7 +526,7 @@ describe("Invocation Builder", () => {
     // Also test deal_hash
     const createBase = {
       action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       contract_id: "C123",
       buyer_address: "B",
       seller_address: "S",
@@ -569,7 +569,7 @@ describe("Invocation Builder", () => {
 
     const createBase = {
       action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       contract_id: "C123",
       deal_hash: "0000000000000000000000000000000000000000000000000000000000000000",
       principal: "0",

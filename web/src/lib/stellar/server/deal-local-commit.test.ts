@@ -40,7 +40,7 @@ describe("Deal Local Commit", () => {
       idempotency_key: "key1",
       deal_id: "deal-1",
       requested_action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "WAITING_DEPOSITS",
       stellar_method: "create_escrow",
       operation_status: "confirmed",
@@ -56,7 +56,8 @@ describe("Deal Local Commit", () => {
   }
 
   const plans = [
-    { action: "create_deal", expected: null, target: "WAITING_DEPOSITS", method: "create_escrow" },
+    
+    { action: "create_deal", expected: "WAITING_DEPOSITS", target: "WAITING_DEPOSITS", method: "create_escrow" },
     { action: "buyer_deposit", expected: "WAITING_DEPOSITS", target: "BUYER_FUNDED", method: "deposit_buyer" },
     { action: "buyer_deposit", expected: "SELLER_FUNDED", target: "LOCKED", method: "deposit_buyer" },
     { action: "seller_deposit", expected: "WAITING_DEPOSITS", target: "SELLER_FUNDED", method: "deposit_seller" },
@@ -116,7 +117,7 @@ describe("Deal Local Commit", () => {
 
   it("exact create-deal synchronization", () => {
     const deal = makeDeal({ status: "WAITING_DEPOSITS", stellar_contract_id: null, stellar_escrow_id: null });
-    const operation = makeOp({ requested_action: "create_deal", expected_local_status: null, target_local_status: "WAITING_DEPOSITS", stellar_method: "create_escrow", result_escrow_id: "escrow-1" });
+    const operation = makeOp({ requested_action: "create_deal", expected_local_status: "WAITING_DEPOSITS", target_local_status: "WAITING_DEPOSITS", stellar_method: "create_escrow", result_escrow_id: "escrow-1" });
     const local_commit: StellarLocalCommitDecision = { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "escrow-1" };
 
     const result = planDealLocalCommit({ deal, operation, local_commit, contract_id: "contract-1", committed_at: "time1" });
@@ -220,7 +221,7 @@ describe("Deal Local Commit", () => {
 
   it("source deal and operation unchanged", () => {
     const deal = makeDeal({ status: "WAITING_DEPOSITS", stellar_contract_id: null, stellar_escrow_id: null });
-    const operation = makeOp({ requested_action: "create_deal", expected_local_status: null, target_local_status: "WAITING_DEPOSITS", stellar_method: "create_escrow", result_escrow_id: "escrow-1" });
+    const operation = makeOp({ requested_action: "create_deal", expected_local_status: "WAITING_DEPOSITS", target_local_status: "WAITING_DEPOSITS", stellar_method: "create_escrow", result_escrow_id: "escrow-1" });
     const local_commit: StellarLocalCommitDecision = { kind: "sync_create_deal", transaction_hash: "tx1", result_escrow_id: "escrow-1" };
 
     const dealCopy = JSON.parse(JSON.stringify(deal));

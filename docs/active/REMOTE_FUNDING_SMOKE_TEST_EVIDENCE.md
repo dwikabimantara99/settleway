@@ -102,3 +102,30 @@ The newly provisioned smoke wallets on the Stellar Testnet require manual fundin
 - No production funds.
 - Proof/delivery/settlement remain unproven unless actually executed.
 - Database password must be rotated after execution.
+
+## Stellar Operations Expected Status Follow-up
+
+**Previous Blocker:**
+
+ull value in column "expected_local_status" of relation "stellar_operations" violates not-null constraint
+
+**Root Cause:**
+The schema for stellar_operations enforce a strict NOT NULL constraint on expected_local_status. However, execution-input-assembler.ts hardcoded 
+ull internally for create_deal transactions, ignoring the valid "WAITING_DEPOSITS" policy resolution, and this 
+ull propagated to the local database adapter causing the insert failure. Historical tests heavily depended on 
+ull for create_deal which hid this regression.
+
+**Files Patched:**
+- web/src/lib/stellar/server/execution-input-assembler.ts (propagated "WAITING_DEPOSITS")
+- web/src/lib/stellar/server/smoke/orchestrator.ts (aligned idempotency scope)
+- All associated tests: ction-policy.test.ts, deal-execution-integration.test.ts, deal-local-commit.test.ts, execution-input-assembler.test.ts, execution-planner.test.ts, execution-reducer.test.ts, execution-service.test.ts, invocation-builder.test.ts, mock-store-execution-persistence.test.ts, smoke-tooling.test.ts.
+
+**Confirmed Mapping:**
+- create_deal -> WAITING_DEPOSITS
+- uyer_deposit -> WAITING_DEPOSITS
+- seller_deposit -> WAITING_DEPOSITS
+
+**Explicit Notes:**
+- No remote smoke rerun was executed in this patch.
+- Success tag was not created yet.
+- Remote funding smoke must be rerun after merge.

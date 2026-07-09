@@ -9,7 +9,7 @@ const BASE_OPERATION: StellarOperation = {
   idempotency_key: "k1",
   deal_id: "d1",
   requested_action: "create_deal",
-  expected_local_status: null,
+  expected_local_status: "WAITING_DEPOSITS",
   target_local_status: "WAITING_DEPOSITS",
   stellar_method: "create_escrow",
   operation_status: "pending",

@@ -58,8 +58,9 @@ type PlanCase = {
   isCreateDeal?: boolean;
 };
 
-const ALL_13_PLANS: PlanCase[] = [
+const ALL_14_PLANS: PlanCase[] = [
   { label: "create_deal (null)", action: "create_deal", status: null, expectedSigner: "admin", isCreateDeal: true },
+    { label: "create_deal (WAITING_DEPOSITS)", action: "create_deal", status: "WAITING_DEPOSITS", expectedSigner: "admin", isCreateDeal: true },
   { label: "buyer_deposit (WAITING_DEPOSITS)", action: "buyer_deposit", status: "WAITING_DEPOSITS", expectedSigner: "buyer_demo" },
   { label: "buyer_deposit (SELLER_FUNDED)", action: "buyer_deposit", status: "SELLER_FUNDED", expectedSigner: "buyer_demo" },
   { label: "seller_deposit (WAITING_DEPOSITS)", action: "seller_deposit", status: "WAITING_DEPOSITS", expectedSigner: "seller_demo" },
@@ -75,8 +76,8 @@ const ALL_13_PLANS: PlanCase[] = [
 ];
 
 describe("StellarExecutionInputAssembler", () => {
-  describe("13 canonical plans", () => {
-    for (const plan of ALL_13_PLANS) {
+  describe("14 canonical plans", () => {
+    for (const plan of ALL_14_PLANS) {
       it(plan.label, () => {
         let input: StellarExecutionAssemblyInput;
         const deal = baseDeal({
@@ -116,7 +117,7 @@ describe("StellarExecutionInputAssembler", () => {
           expect(res.operation_id).toBe("op-1");
           expect(res.deal_id).toBe("deal-1");
           expect(res.build_input.action).toBe(plan.action);
-          expect(res.build_input.expected_local_status).toBe(plan.status);
+          expect(res.build_input.expected_local_status).toBe(plan.isCreateDeal ? "WAITING_DEPOSITS" : plan.status);
 
           // Verify signer address
           if (plan.isCreateDeal && res.build_input.action === "create_deal") {

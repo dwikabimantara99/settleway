@@ -78,7 +78,7 @@ const TS3 = "2023-01-01T00:00:02Z";
 
 const BASE_BUILD_INPUT = {
   action: "create_deal" as const,
-  expected_local_status: null as DealStatus | null,
+  expected_local_status: "WAITING_DEPOSITS" as DealStatus | null,
   contract_id: "C123",
   deal_hash: "0000000000000000000000000000000000000000000000000000000000000000",
   buyer_address: "G123",
@@ -197,10 +197,10 @@ describe("Stellar Execution Service", () => {
     });
 
     const BASE_EXISTING: StellarOperation = {
-      idempotency_key: "v1:deal-1:CREATE:create_deal",
+      idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
       deal_id: "deal-1",
       requested_action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "WAITING_DEPOSITS",
       stellar_method: "create_escrow",
       operation_status: "submitted",
@@ -338,10 +338,10 @@ describe("Stellar Execution Service", () => {
     });
 
     const BASE_EXISTING: StellarOperation = {
-      idempotency_key: "v1:deal-1:CREATE:create_deal",
+      idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
       deal_id: "deal-1",
       requested_action: "create_deal",
-      expected_local_status: null,
+      expected_local_status: "WAITING_DEPOSITS",
       target_local_status: "WAITING_DEPOSITS",
       stellar_method: "create_escrow",
       operation_status: "submitted",
@@ -484,7 +484,7 @@ describe("Stellar Execution Service", () => {
       await executeStellarOperation(getBaseInput());
       expect(adapter.submitReqs[0]).toStrictEqual({
         operation_id: "op-1",
-        idempotency_key: "v1:deal-1:CREATE:create_deal",
+        idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
         invocation: { action: "create_deal", method: "create_escrow", contract_id: "C123", signer_role: "admin", arguments: expect.arrayContaining([]) }
       });
       expect(adapter.confirmReqs[0]).toStrictEqual({
@@ -517,10 +517,10 @@ describe("Stellar Execution Service", () => {
     it("supplied existing operation unchanged", async () => {
       const input = getBaseInput();
       input.existing_operation = {
-        idempotency_key: "v1:deal-1:CREATE:create_deal",
+        idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
         deal_id: "deal-1",
         requested_action: "create_deal",
-        expected_local_status: null,
+        expected_local_status: "WAITING_DEPOSITS",
         target_local_status: "WAITING_DEPOSITS",
         stellar_method: "create_escrow",
         operation_status: "submitted",
@@ -558,10 +558,10 @@ describe("Stellar Execution Service", () => {
     it("returned operation is not the same object as the input operation when reduction occurs", async () => {
       const input = getBaseInput();
       input.existing_operation = {
-        idempotency_key: "v1:deal-1:CREATE:create_deal",
+        idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
         deal_id: "deal-1",
         requested_action: "create_deal",
-        expected_local_status: null,
+        expected_local_status: "WAITING_DEPOSITS",
         target_local_status: "WAITING_DEPOSITS",
         stellar_method: "create_escrow",
         operation_status: "submitted",

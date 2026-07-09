@@ -174,7 +174,7 @@ export function assembleStellarExecutionInput(
 
   // Determine expected local status
   const expectedLocalStatus: DealStatus | null =
-    input.action === "create_deal" ? null : input.deal.status;
+    input.action === "create_deal" ? "WAITING_DEPOSITS" : input.deal.status;
 
   // Resolve canonical plan
   const planResult = resolveStellarActionPlan(input.action, expectedLocalStatus);
@@ -228,8 +228,8 @@ export function assembleStellarExecutionInput(
 
     buildInput = {
       action: "create_deal",
-      expected_local_status: null,
-      contract_id: contractId,
+      expected_local_status: expectedLocalStatus,
+        contract_id: contractId,
       deal_hash: input.deal_hash,
       buyer_address: input.metadata.buyer_demo_address,
       seller_address: input.metadata.seller_demo_address,

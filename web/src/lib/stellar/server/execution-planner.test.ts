@@ -9,7 +9,7 @@ const TS2 = "2023-01-01T00:00:01Z";
 
 const BASE_BUILD_INPUT = {
   action: "create_deal" as const,
-  expected_local_status: null as DealStatus | null,
+  expected_local_status: "WAITING_DEPOSITS" as DealStatus | null,
   contract_id: "C123",
   deal_hash: "0000000000000000000000000000000000000000000000000000000000000000",
   buyer_address: "G123",
@@ -68,7 +68,7 @@ describe("Stellar Execution Planner - New operation flows", () => {
       const op = res.operation;
       expect(op.deal_id).toBe("deal-1");
       expect(op.requested_action).toBe("create_deal");
-      expect(op.expected_local_status).toBe(null);
+      expect(op.expected_local_status).toBe("WAITING_DEPOSITS");
       expect(op.operation_status).toBe("pending");
       expect(op.transaction_hash).toBe(null);
       expect(op.result_escrow_id).toBe(null);
@@ -84,7 +84,7 @@ describe("Stellar Execution Planner - New operation flows", () => {
     const res = planStellarExecution(BASE_INPUT);
     expect(res.ok).toBe(true);
     if (res.ok && res.kind === "persist_pending_before_submit") {
-      expect(res.operation.idempotency_key).toBe("v1:deal-1:CREATE:create_deal");
+      expect(res.operation.idempotency_key).toBe("v1:deal-1:WAITING_DEPOSITS:create_deal");
     }
   });
 
@@ -137,10 +137,10 @@ describe("Stellar Execution Planner - New operation flows", () => {
 
 describe("Stellar Execution Planner - Existing operation flows", () => {
   const BASE_EXISTING: StellarOperation = {
-    idempotency_key: "v1:deal-1:CREATE:create_deal",
+    idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
     deal_id: "deal-1",
     requested_action: "create_deal",
-    expected_local_status: null,
+    expected_local_status: "WAITING_DEPOSITS",
     target_local_status: "WAITING_DEPOSITS",
     stellar_method: "create_escrow",
     operation_status: "submitted",
@@ -255,7 +255,7 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
   });
 
   it("20. mismatched expected status rejected", () => {
-    const input = { ...BASE_INPUT, existing_operation: { ...BASE_EXISTING, expected_local_status: "WAITING_DEPOSITS" as const } };
+    const input = { ...BASE_INPUT, existing_operation: { ...BASE_EXISTING, expected_local_status: "BUYER_FUNDED" as const } };
     const res = planStellarExecution(input);
     expect(res).toStrictEqual({ ok: false, stage: "operation", error_code: "ERR_EXISTING_OPERATION_MISMATCH" });
   });
@@ -322,10 +322,10 @@ describe("Stellar Execution Planner - Existing operation flows", () => {
 
 describe("Stellar Execution Planner - Safety and purity", () => {
   const BASE_EXISTING: StellarOperation = {
-    idempotency_key: "v1:deal-1:CREATE:create_deal",
+    idempotency_key: "v1:deal-1:WAITING_DEPOSITS:create_deal",
     deal_id: "deal-1",
     requested_action: "create_deal",
-    expected_local_status: null,
+    expected_local_status: "WAITING_DEPOSITS",
     target_local_status: "WAITING_DEPOSITS",
     stellar_method: "create_escrow",
     operation_status: "submitted",
