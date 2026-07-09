@@ -3,6 +3,12 @@
 [![Web CI](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml)
 [![Soroban Contract CI](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml)
 
+## Hackathon Submission Evidence
+
+- [Submission Evidence Pack](docs/submission/SETTLEWAY_SUBMISSION_EVIDENCE_PACK.md)
+- [3-Minute Demo Script](docs/submission/SETTLEWAY_3_MIN_DEMO_SCRIPT.md)
+- [Final Submission Checklist](docs/submission/SETTLEWAY_FINAL_SUBMISSION_CHECKLIST.md)
+
 Settleway is a B2B agricultural trade-assurance platform that turns commodity discovery into recorded negotiation, bilateral commitment, escrow-style execution, Stellar-backed proof, and outcome-based reputation.
 
 ## Product Thesis
