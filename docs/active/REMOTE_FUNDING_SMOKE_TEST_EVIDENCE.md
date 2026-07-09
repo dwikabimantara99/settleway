@@ -129,3 +129,34 @@ ull for create_deal which hid this regression.
 - No remote smoke rerun was executed in this patch.
 - Success tag was not created yet.
 - Remote funding smoke must be rerun after merge.
+
+## Rerun After Expected Status Mapping Patch — 2026-07-09
+
+- **Git SHA:** 13292ba
+- **Runtime Mode:** persistent
+- **Target:** TESTNET_PERSISTENT_DB + Stellar Testnet
+- **Friendbot Result:** Buyer wallet and Seller wallet funded successfully via Friendbot.
+- **Admin Context Deal Visibility Result:** Deal created and verified successfully across admin contexts.
+- **create_deal Operation Persistence Result:** SUCCESS. The stellar_operations row was successfully inserted with expected_local_status mapped to WAITING_DEPOSITS.
+- **Smoke Buyer ID:** smoke_buyer_1783586105816
+- **Smoke Seller ID:** smoke_seller_1783586105816
+- **Smoke Deal ID:** smoke_deal_1783586105816
+- **Redacted Public Addresses:**
+  - Buyer: GC6RMYZPPTXJR2NNM6F6OLRTLR6SK4YN7Z2QZMKXYZPX3CIY45RKUD7R
+  - Seller: GDQL2TB2BCRKE22KDZOQBDFETNURKRPUKQDNXKHFKVYWRSR454M6Z27G
+- **buyer_deposit Status:** BUYER_FUNDED
+- **seller_deposit Status:** LOCKED
+- **Transaction Hashes Produced:**
+  - create_deal: 15d18a03847cc2e5a9dca27a34b1bd07be21e982b180c81fcf77a14966490e94
+  - uyer_deposit: 40b0165791700cd74280724e4aa5516ef140d02da039370fb5bae0af38b3b9b4
+  - seller_deposit: 4e71afa5676bfde5e2df43c600c21a64ebfb149d9ea58a791924ac471c47b06b
+- **Final Deal Status:** LOCKED
+- **Supabase Verification Summary:** Verified 3 rows in stellar_operations, 1 row in deals, 2 rows in user_wallets, and 3 rows in escrow_events (uyer_deposit, seller_deposit, escrow_locked). No null critical IDs found.
+- **Classification:** REMOTE_FUNDING_SMOKE_SUCCEEDED
+
+**Explicit Statement:**
+- No deploy commands were run.
+- No mainnet transactions were executed.
+- No production funds were involved.
+- Proof, delivery, and settlement remain unproven unless actually executed in subsequent extensions.
+- Database password must be rotated after execution.
