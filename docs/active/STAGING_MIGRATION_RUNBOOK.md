@@ -263,3 +263,12 @@ Capture evidence:
 
 ## 14. Notice
 No remote migration was executed in this branch.
+
+## 15. 20260706 deal_status compatibility note
+- first physical migration attempt applied 20260705000000 and 20260705000001, then failed at 20260706 because deal_status enum did not exist;
+- remote schema uses text status columns;
+- 20260706 was not recorded in migration history, so it was patched before retry;
+- operator must verify migration history before retry:
+  applied should include 20260705000000 and 20260705000001, but not 20260706/20260707/20260708;
+- operator must not run migration repair or db pull for this case;
+- retry should be plain supabase db push --db-url "$env:TESTNET_DATABASE_URL" from web directory.
