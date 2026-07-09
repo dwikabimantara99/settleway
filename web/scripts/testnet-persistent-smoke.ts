@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import * as path from 'path';
 import { executeHeadlessSmokeAction } from '@/lib/stellar/server/smoke/headless-execution-hook';
+import { fundTestnetWalletViaFriendbot } from '@/lib/stellar/server/smoke/testnet-friendbot';
 
 export function redact(val: string | undefined): string {
   if (!val) return 'undefined';
@@ -51,7 +52,7 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
       throw new Error("Missing Supabase REST URL or service role key");
     }
 
-    let supabaseAdmin: any = null;
+    let supabaseAdmin: unknown = null;
     if (!isPlanOnly) {
       supabaseAdmin = createClient(supabaseRestUrl, serviceRoleKey);
     }
@@ -133,6 +134,32 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
       logger(`[OK] Deal created in status: ${verifiedDeal.status}`);
     }
 
+    // 3.5. Friendbot Funding
+    if (isPlanOnly) {
+      logger(`[PLAN] Would fund smoke wallets via Friendbot`);
+    } else if (process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION === '1') {
+      logger(`[3.5] Funding newly provisioned wallets via Friendbot...`);
+      const walletRepo = getServerWalletRepository();
+      const verifiedBuyerWallet = await walletRepo.getProfileWallet(buyerId);
+      const verifiedSellerWallet = await walletRepo.getProfileWallet(sellerId);
+
+      const buyerFundRes = await fundTestnetWalletViaFriendbot(verifiedBuyerWallet!.public_address);
+      if (!buyerFundRes.ok) {
+        finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE';
+        exactBlocker = `Friendbot funding failed for buyer: ${buyerFundRes.message}`;
+        throw new Error(exactBlocker);
+      }
+      logger(`[OK] Buyer wallet funded via Friendbot (addr: ${buyerFundRes.redactedAddress})`);
+
+      const sellerFundRes = await fundTestnetWalletViaFriendbot(verifiedSellerWallet!.public_address);
+      if (!sellerFundRes.ok) {
+        finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE';
+        exactBlocker = `Friendbot funding failed for seller: ${sellerFundRes.message}`;
+        throw new Error(exactBlocker);
+      }
+      logger(`[OK] Seller wallet funded via Friendbot (addr: ${sellerFundRes.redactedAddress})`);
+    }
+
     // 4. Execution Coordinator
     if (isPlanOnly) {
       logger(`[PLAN] Would attempt headless execution orchestration if enabled`);
@@ -153,7 +180,12 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
     });
 
     if (!buyerResult.ok) {
-       throw new Error(`Headless buyer deposit failed: ${buyerResult.blocker}`);
+       const blocker = buyerResult.blocker || "Unknown error";
+       if (blocker.includes("Insufficient balance") || blocker.includes("network unavailable")) {
+         finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE';
+         exactBlocker = blocker;
+       }
+       throw new Error(`Headless buyer deposit failed: ${blocker}`);
     }
     logger(`[OK] Buyer deposit submitted (status: ${buyerResult.nextDealStatus})`);
 
@@ -165,7 +197,12 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
     });
 
     if (!sellerResult.ok) {
-       throw new Error(`Headless seller deposit failed: ${sellerResult.blocker}`);
+       const blocker = sellerResult.blocker || "Unknown error";
+       if (blocker.includes("Insufficient balance") || blocker.includes("network unavailable")) {
+         finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE';
+         exactBlocker = blocker;
+       }
+       throw new Error(`Headless seller deposit failed: ${blocker}`);
     }
     logger(`[OK] Seller deposit submitted (status: ${sellerResult.nextDealStatus})`);
 
@@ -182,6 +219,8 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
 
     if (exactBlocker.includes("Wallet execution") || exactBlocker.includes("Wallet provisioning unavailable")) {
       finalStatus = 'PERSISTENT_SMOKE_RUNNER_PARTIAL';
+    } else if (exactBlocker.includes("Friendbot funding failed") || exactBlocker.includes("Insufficient balance") || exactBlocker.includes("network unavailable")) {
+      finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE';
     } else {
       finalStatus = 'PERSISTENT_SMOKE_RUNNER_BLOCKED';
     }

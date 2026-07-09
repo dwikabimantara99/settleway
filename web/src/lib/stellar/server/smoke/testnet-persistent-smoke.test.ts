@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { redact, checkSafetyGates, runSmoke } from '../../../../../scripts/testnet-persistent-smoke';
 import { executeHeadlessSmokeAction } from './headless-execution-hook';
+import { fundTestnetWalletViaFriendbot } from './testnet-friendbot';
 
 const { mockInsert, mockGetProfileWallet, mockCoordinateDealExecution, mockGetDeal, mockGetStellarOperation, mockAddEvent } = vi.hoisted(() => {
   return {
@@ -39,15 +40,19 @@ vi.mock('@/lib/stellar/server/deal-execution-coordinator', () => ({
 vi.mock('@/lib/repositories', () => ({
   repository: {
     getProfile: vi.fn().mockResolvedValue({ id: 'mock', status: 'WAITING_DEPOSITS' }),
-    getDeal: (...args: any[]) => mockGetDeal(...args),
-    getStellarOperation: (...args: any[]) => mockGetStellarOperation(...args),
-    addEvent: (...args: any[]) => mockAddEvent(...args)
+    getDeal: (...args: unknown[]) => mockGetDeal(...args),
+    getStellarOperation: (...args: unknown[]) => mockGetStellarOperation(...args),
+    addEvent: (...args: unknown[]) => mockAddEvent(...args)
   },
   runtimeMode: 'persistent'
 }));
 
 vi.mock('@/lib/stellar/server/deal-room-testnet-runtime', () => ({ checkTestnetBalance: vi.fn().mockResolvedValue({ status: 'sufficient' }), loadDealRoomTestnetRuntime: vi.fn().mockReturnValue({ ok: true, runtime: { contract_id: 'C123', metadata: {}, execution_adapter: {} } }) }));
 vi.mock('@/lib/stellar/server/deal-room-funding-runtime', () => ({ composeDealRoomFundingRuntime: vi.fn().mockReturnValue({ ok: true, context: { funding_intent: { actor_address: 'G123' }, public_proof: 'mock_proof' } }) }));
+
+vi.mock('@/lib/stellar/server/smoke/testnet-friendbot', () => ({
+  fundTestnetWalletViaFriendbot: vi.fn().mockResolvedValue({ ok: true, status: 200, redactedAddress: 'G...TEST' })
+}));
 
 describe('Testnet Persistent Smoke Runner & Hook', () => {
   const originalEnv = process.env;
@@ -201,6 +206,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     const report = await runSmoke(mockLog, mockErrLog);
 
     expect(mockInsert).not.toHaveBeenCalled();
+    expect(fundTestnetWalletViaFriendbot).not.toHaveBeenCalled();
     expect(report.isPlanOnly).toBe(true);
     expect(report.classification).toBe('PERSISTENT_SMOKE_RUNNER_PARTIAL');
   });
@@ -228,11 +234,39 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     const mockErrLog = vi.fn();
     const report = await runSmoke(mockLog, mockErrLog);
 
+    expect(fundTestnetWalletViaFriendbot).toHaveBeenCalledTimes(2);
     expect(report.classification).toBe('PERSISTENT_SMOKE_RUNNER_READY_FOR_DELIVERY_EXTENSION');
     
-    const logs = mockLog.mock.calls.map((c: any) => c.join(' ')).join('\n');
+    const logs = mockLog.mock.calls.map((c: string[]) => c.join(' ')).join('\n');
     expect(logs).not.toContain('encrypted_secret_key');
     expect(logs).not.toContain('enc123');
     expect(logs).not.toContain('rawXdr');
+  });
+
+  it('runner blocked when Friendbot funding fails', async () => {
+    process.env.RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
+    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyMockToken';
+    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+    process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
+
+    mockGetDeal.mockImplementation((id: string) => Promise.resolve({ 
+       id, buyer_id: id.replace('deal', 'buyer'), seller_id: id.replace('deal', 'seller'), 
+       stellar_mode: 'testnet', status: 'WAITING_DEPOSITS', 
+       volume_kg: 100, principal_idr: 1000, 
+       terms: { deposit_deadline_at: '2027-01-01T00:00:00Z' } 
+    }));
+    mockGetProfileWallet.mockResolvedValue({ public_address: 'G123', encrypted_secret_key: 'enc123' });
+
+    // @ts-expect-error Mocking imported function
+    fundTestnetWalletViaFriendbot.mockResolvedValueOnce({ ok: false, status: 500, message: 'Friendbot rate limit' });
+
+    const mockLog = vi.fn();
+    const mockErrLog = vi.fn();
+    const report = await runSmoke(mockLog, mockErrLog);
+    expect(report.classification).toBe('PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE');
+    expect(report.blocker).toContain('Friendbot funding failed for buyer: Friendbot rate limit');
   });
 });

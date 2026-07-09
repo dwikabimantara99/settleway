@@ -23,6 +23,7 @@ This runbook provides the official sequence and headless command to safely execu
 - If a temporary database password is used to generate the connection string, **ROTATE/RESET** the password immediately after the operator executes the run.
 - **NO DEPLOY**: This runner must not be executed during production deployments.
 - **NO MAINNET**: This runner strictly targets Testnet.
+- **FRIENDBOT FUNDING**: The script calls the SDF Friendbot (`https://friendbot.stellar.org`) to fund newly created wallets. This is strictly Testnet-only. Never adapt this for mainnet.
 
 ## Dry-Run (Plan Only) Mode
 You can dry-run the runner without making any remote connection or data modifications using `SMOKE_PLAN_ONLY=1`:
@@ -34,9 +35,11 @@ SMOKE_PLAN_ONLY=1 ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1 npm run smoke:persist
 ## Operator-Only Headless Execution
 To allow the script to execute actual Testnet funding operations bypassing browser auth, you must provide the explicit environment gate. This is heavily restricted to Testnet-mode and offline operator execution only.
 
+Because the runner uses Next.js server-only packages in a raw Node environment, you MUST provide the `NODE_OPTIONS=--conditions react-server` flag.
+
 ```bash
 cd web
-ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1 npm run smoke:persistent-testnet
+NODE_OPTIONS="--conditions react-server" ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1 npm run smoke:persistent-testnet
 ```
 
 ## Expected Phases
@@ -44,11 +47,13 @@ ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1 npm run smoke:persistent-testnet
 2. **Profile Creation**: Generates isolated test accounts (`smoke_buyer_<timestamp>` and `smoke_seller_<timestamp>`) and writes them directly to the `profiles` table.
 3. **Wallet Provisioning**: Invokes `getServerWalletRepository().provisionProfileWallet()` natively server-side to establish backend signing capabilities.
 4. **Deal Creation**: Initializes an escrow record strictly bound to the ephemeral profiles.
-5. **Headless Execution Coordinator**: If authorized by `ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1`, coordinates and pushes Stellar Testnet funding sequences.
+5. **Friendbot Funding**: Reaches out to the official SDF Friendbot API to fund the newly provisioned buyer and seller public keys with Testnet XLM.
+6. **Headless Execution Coordinator**: If authorized by `ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1`, coordinates and pushes Stellar Testnet funding sequences.
 6. **Report Generation**: Emits `docs/active/PERSISTENT_SMOKE_RUN_LATEST.json` capturing execution depth and blockers.
 
 ## Expected Classifications
 - **PERSISTENT_SMOKE_RUNNER_READY**: Not currently reachable. Requires full delivery/settlement hooks.
-- **PERSISTENT_SMOKE_RUNNER_READY_FOR_DELIVERY_EXTENSION**: The script successfully validated staging and on-chain funding, halting safely before proof/delivery.
+- **PERSISTENT_SMOKE_RUNNER_READY_FOR_DELIVERY_EXTENSION**: The script successfully validated staging and on-chain funding, halting safely before proof/delivery. Proves funding only, not full lifecycle.
 - **PERSISTENT_SMOKE_RUNNER_PARTIAL**: The script ran successfully until a known automation limitation (e.g., wallet provisioning logic missing or headless hook denied) halted it.
+- **PERSISTENT_SMOKE_RUNNER_BLOCKED_BALANCE**: Friendbot funding failed (e.g., rate limited) or the Stellar Testnet rejected the funding transaction due to insufficient balance. If rate limited, wait a few minutes and try again.
 - **PERSISTENT_SMOKE_RUNNER_BLOCKED**: Infrastructure failure (e.g., config missing, DB down).

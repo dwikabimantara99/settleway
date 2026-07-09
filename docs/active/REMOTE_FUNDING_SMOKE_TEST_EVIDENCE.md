@@ -41,3 +41,8 @@ The newly provisioned smoke wallets on the Stellar Testnet require manual fundin
 - No reputation work started.
 - Proof/delivery/settlement remain unproven as they did not execute.
 - Database password must be rotated after execution.
+
+## Next Fix
+- Balance blocker found (REMOTE_FUNDING_SMOKE_BLOCKED_BALANCE).
+- Friendbot patch planned to resolve insufficient balance issue.
+- No success tag was created.
