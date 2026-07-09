@@ -46,3 +46,27 @@ The newly provisioned smoke wallets on the Stellar Testnet require manual fundin
 - Balance blocker found (REMOTE_FUNDING_SMOKE_BLOCKED_BALANCE).
 - Friendbot patch planned to resolve insufficient balance issue.
 - No success tag was created.
+
+## Rerun After Friendbot Patch — 2026-07-09
+
+- **Commit SHA**: ae250838b5bd008ce9f653619a139bcdbef11dde
+- **Runtime Mode**: persistent
+- **Target**: TESTNET_PERSISTENT_DB + Stellar Testnet
+- **Smoke Buyer ID**: smoke_buyer_1783577327553
+- **Smoke Seller ID**: smoke_seller_1783577327553
+- **Smoke Deal ID**: smoke_deal_1783577327553
+- **Buyer Wallet**: GAESH...THH6 (Friendbot OK)
+- **Seller Wallet**: GDAWM...FF4I (Friendbot OK)
+- **Buyer Deposit**: Failed (Headless hook returned "Deal not found" due to missing RLS context)
+- **Seller Deposit**: Did not execute
+- **Tx Hashes**: None
+- **Final Deal Status**: WAITING_DEPOSITS
+- **Supabase Verification**:
+  - Profiles: 2 verified
+  - Wallets: 2 verified
+  - Deal: 1 verified (WAITING_DEPOSITS)
+  - Operations: 0
+  - Escrow Events: 0
+- **Final Classification**: REMOTE_FUNDING_SMOKE_BLOCKED_RUNTIME
+
+*Disclaimer: No deploy was executed. No mainnet was touched. No production funds were used. Proof, delivery, and settlement remain unproven unless actually executed. The database password must be rotated after execution.*
