@@ -77,3 +77,28 @@ The newly provisioned smoke wallets on the Stellar Testnet require manual fundin
 - **Finding**: Deal exists by admin verification but hook could not see it via RLS-bound context.
 - **Action**: Admin-context patch planned.
 - **Tag**: No success tag created.
+
+## Rerun After Admin Context Patch — 2026-07-09
+
+- **Git SHA**: e743be7
+- **Runtime Mode**: persistent
+- **Target**: TESTNET_PERSISTENT_DB + Stellar Testnet
+- **Friendbot Result**: Buyer and seller public wallets funded successfully.
+- **Admin Context Result**: Deal visibility was confirmed (hook bypassed RLS successfully).
+- **Smoke Buyer ID**: smoke_buyer_1783582100265
+- **Smoke Seller ID**: smoke_seller_1783582100265
+- **Smoke Deal ID**: smoke_deal_1783582100265
+- **Redacted Addresses**: GAKN...XXG7 (Buyer), GABE...LEV4 (Seller)
+- **Buyer Deposit Status**: Blocked during execution hook (stellar_operations schema constraint on expected_local_status).
+- **Seller Deposit Status**: Not reached.
+- **Tx Hashes**: None produced.
+- **Final Deal Status**: WAITING_DEPOSITS
+- **Supabase Verification Summary**: Profiles (2), user_wallets (2), deal (1), stellar_operations (0), escrow_events (0). No null critical IDs.
+- **Final Classification**: REMOTE_FUNDING_SMOKE_BLOCKED_RUNTIME
+
+**Explicit statements**:
+- No deploy.
+- No mainnet.
+- No production funds.
+- Proof/delivery/settlement remain unproven unless actually executed.
+- Database password must be rotated after execution.
