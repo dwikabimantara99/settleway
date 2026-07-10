@@ -67,7 +67,7 @@ describe('Deal Room state gallery fixtures', () => {
       }
 
       if (status === 'LOCKED') {
-        expect(html).toContain('Submit Delivery Evidence');
+        expect(html).toContain('Awaiting Delivery Proof');
       }
 
       if (status === 'PROOF_SUBMITTED') {

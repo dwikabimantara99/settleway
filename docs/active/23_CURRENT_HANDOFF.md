@@ -44,3 +44,10 @@ B. **Remote Prove Settlement Custody:** Deploy the upgraded `settleway_escrow` c
 - **Classification:** PERSISTENT_CUSTODY_LIFECYCLE_BLOCKED_REPUTATION
 - **Notes:** Custody lifecycle completed on-chain and deals reached COMPLETED status, but reputation execution failed due to PGRST204 (proof_hash missing in DB).
 - **Rescue Notes:** SECURITY_RESCUE_REQUIRED / BLOCKED_REPUTATION note; do not merge until secrets rotated and branch cleaned.
+
+
+## Phase 4: UI Custody Lifecycle Demo Hardening
+- **Branch**: eature/ui-custody-lifecycle-demo-hardening
+- **Implemented Components**: Escrow Timeline UI, Stellar Evidence Panel, Delivery Proof UI role segregation, Settlement Completed Card, Reputation UI updates, Crowdfunding Eligibility Preview.
+- **Validation Status**: Typecheck, lint, test, build, and audit fully passed locally. Tests added for new UI boundaries.
+- **Merge Recommendation**: MERGE_READY_UI_CUSTODY_LIFECYCLE_DEMO

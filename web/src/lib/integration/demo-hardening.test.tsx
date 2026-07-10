@@ -215,4 +215,91 @@ describe('Account-first UI — no external wallet CTA on public surfaces', () =>
     expect(html).not.toContain('Connect Wallet');
     expect(html).toContain('managed internally by Settleway');
   });
+
+  describe('UI Custody Lifecycle Demo Hardening', () => {
+    it('1,2,3. Stepper timeline handles complete state and proof hash safely', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { Stepper } = await import('@/components/ui/Stepper');
+      const html = renderToString(
+        <Stepper
+          steps={[
+            { label: 'Settled', status: 'complete', txHash: 'abc123def456', proofHash: 'hash789xyz012', timestamp: '2026-07-10' }
+          ]}
+        />
+      );
+      expect(html).toContain('Settled');
+      expect(html).toContain('abc123'); // truncated txHash
+      expect(html).toContain('hash789'); // truncated proofHash
+      expect(html).toContain('2026-07-10');
+    });
+
+    it('3. Stepper handles missing data safely (empty state)', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { Stepper } = await import('@/components/ui/Stepper');
+      const html = renderToString(
+        <Stepper
+          steps={[
+            { label: 'Settled', status: 'complete' }
+          ]}
+        />
+      );
+      expect(html).toContain('Settled');
+      expect(html).not.toContain('undefined');
+      expect(html).not.toContain('null');
+    });
+
+    it('4. StellarEvidencePanel renders tx hashes safely', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { StellarEvidencePanel } = await import('@/components/deal/StellarEvidencePanel');
+      const html = renderToString(
+        <StellarEvidencePanel
+          contractId="C12345"
+          escrowId="E67890"
+          stellarOperations={[{ id: 'op1', deal_id: 'd1', requested_action: 'create_deal_custody', operation_status: 'CONFIRMED', transaction_hash: 'txhash1234567890abcdef', created_at: '2026-07-10', updated_at: '2026-07-10' }]}
+        />
+      );
+      expect(html).toContain('C12345');
+      expect(html).toContain('E67890');
+      expect(html).toContain('txhash1234');
+      expect(html).not.toContain('undefined');
+    });
+
+    it('5. SettlementCompletedCard renders only for completed state', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { SettlementCompletedCard } = await import('@/components/deal/SettlementCompletedCard');
+
+      const htmlCompleted = renderToString(
+        <SettlementCompletedCard status="COMPLETED" settlementTxHash="settlehash123" />
+      );
+      expect(htmlCompleted).toContain('Settlement Completed');
+      expect(htmlCompleted).toContain('settlehash');
+
+      const htmlLocked = renderToString(
+        <SettlementCompletedCard status="LOCKED" settlementTxHash={null} />
+      );
+      expect(htmlLocked).toBe('');
+    });
+
+    it('6. CrowdfundingEligibilityCard evaluates thresholds correctly', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { CrowdfundingEligibilityCard } = await import('@/components/profile/CrowdfundingEligibilityCard');
+
+      const htmlIneligible = renderToString(
+        <CrowdfundingEligibilityCard completedDeals={9} verifiedVolume={300_000_000} />
+      );
+      expect(htmlIneligible).toContain('Not eligible yet');
+
+      const htmlEligible = renderToString(
+        <CrowdfundingEligibilityCard completedDeals={10} verifiedVolume={300_000_000} />
+      );
+      expect(htmlEligible).toContain('Eligible');
+    });
+
+    it('9,10. CopyButton does not require server env and handles cleanly', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { CopyButton } = await import('@/components/ui/CopyButton');
+      const html = renderToString(<CopyButton text="copy_me" />);
+      expect(html).toContain('button'); // Basic rendering test without server constraints
+    });
+  });
 });

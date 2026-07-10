@@ -29,3 +29,5 @@ Once both deposits are mathematically verified on-chain, the Settleway Deal Room
 While the exact downstream lifecycle—submitting proof of delivery, buyer acceptance, and final automated payout settlement—is currently being developed as our next extension phase, this `LOCKED` state proves Settleway's core architectural thesis. We can successfully secure B2B trade using dual-sided bonds and smart contracts.
 
 Thank you for watching the Settleway demo."
+
+- Note: With UI Demo Hardening, judges can visually observe the Deal Timeline capturing real Testnet Hashes (Deposit, Custody, Settled), explore the Stellar Evidence Panel (contract/escrow IDs and execution links), and verify RWA-ready Crowdfunding Eligibility metrics directly on the user profile.

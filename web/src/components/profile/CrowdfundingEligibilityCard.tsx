@@ -1,14 +1,16 @@
 import { Rocket, Info, CheckCircle2, XCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/Card';
 
+import { IDR_TO_USD_RATE, CROWDFUNDING_MIN_VOLUME_USD, CROWDFUNDING_MIN_COMPLETED_TX } from '@/lib/reputation/engine';
+
 interface CrowdfundingEligibilityCardProps {
   completedDeals: number;
   verifiedVolume: number;
 }
 
 export function CrowdfundingEligibilityCard({ completedDeals, verifiedVolume }: CrowdfundingEligibilityCardProps) {
-  const DEALS_THRESHOLD = 10;
-  const VOLUME_THRESHOLD = 20000 * 15000; // rough IDR conversion for UI
+  const DEALS_THRESHOLD = CROWDFUNDING_MIN_COMPLETED_TX;
+  const VOLUME_THRESHOLD = CROWDFUNDING_MIN_VOLUME_USD * IDR_TO_USD_RATE;
   
   const meetsDeals = completedDeals >= DEALS_THRESHOLD;
   const meetsVolume = verifiedVolume >= VOLUME_THRESHOLD;
@@ -54,7 +56,7 @@ export function CrowdfundingEligibilityCard({ completedDeals, verifiedVolume }: 
             <div className="space-y-2 text-sm text-slate-700 bg-slate-50 border border-slate-100 rounded-lg p-3 min-w-[200px]">
               <div className="font-semibold text-slate-900">Settled Volume</div>
               <div className="flex justify-between items-center">
-                <span className="font-mono">Rp {(verifiedVolume / 1000000).toFixed(1)}M / Rp 300M</span>
+                <span className="font-mono">Rp {(verifiedVolume / 1000000).toFixed(1)}M / Rp {(VOLUME_THRESHOLD / 1000000).toFixed(0)}M</span>
                 {meetsVolume ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <XCircle className="h-4 w-4 text-slate-400" />}
               </div>
             </div>

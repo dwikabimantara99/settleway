@@ -1009,7 +1009,6 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             contractId={deal.stellar_contract_id}
             escrowId={deal.stellar_escrow_id}
             stellarOperations={stellarOperations || []}
-            status={deal.status}
           />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
