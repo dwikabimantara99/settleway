@@ -16,14 +16,29 @@ export function RoleSwitcher() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const [isDemoMode, setIsDemoMode] = useState(false);
 
   useEffect(() => {
+    // Check current demo_mode cookie or URL param
+    const searchParams = new URLSearchParams(window.location.search);
+    const hasDemoParam = searchParams.get('demo') === '1';
+    
+    const demoMatch = document.cookie.match(/(?:(?:^|.*;\s*)demo_mode\s*\=\s*([^;]*).*$)|^.*$/);
+    const hasDemoCookie = demoMatch && demoMatch[1] === '1';
+
+    if (hasDemoParam || hasDemoCookie) {
+      if (hasDemoParam && !hasDemoCookie) {
+        document.cookie = 'demo_mode=1; path=/; max-age=86400';
+      }
+      setIsDemoMode(true);
+    }
+
     // Check current mock_actor cookie
     const match = document.cookie.match(/(?:(?:^|.*;\s*)mock_actor\s*\=\s*([^;]*).*$)|^.*$/);
     if (match && match[1]) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole(match[1]);
-    } else {
+    } else if (hasDemoParam || hasDemoCookie) {
       setRole('buyer-surabaya-restaurant');
       document.cookie = 'mock_actor=buyer-surabaya-restaurant; path=/; max-age=86400';
     }
@@ -40,6 +55,10 @@ export function RoleSwitcher() {
     }
     router.refresh();
   };
+
+  if (!isDemoMode) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-5 left-5 z-[2147483647]">

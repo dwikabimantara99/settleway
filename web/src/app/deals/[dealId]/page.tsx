@@ -18,6 +18,8 @@ import { Step } from '@/components/ui/Stepper';
 import { DealRoomTabs } from '@/components/deal/DealRoomTabs';
 import { EvidenceSubmitter } from '@/components/deal/EvidenceSubmitter';
 import { EscrowTimeline } from '@/components/deal/EscrowTimeline';
+import { StellarEvidencePanel } from '@/components/deal/StellarEvidencePanel';
+import { SettlementCompletedCard } from '@/components/deal/SettlementCompletedCard';
 import { getCurrentUser } from '@/lib/auth/server';
 import { demoProfiles } from '@/lib/demo/demo-data';
 import { repository } from '@/lib/repositories';
@@ -229,12 +231,14 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
     evidenceList,
     dealEvents,
     dealReputationEvents,
+    stellarOperations,
   ] = await Promise.all([
     repository.getProfile(deal.buyer_id),
     repository.getProfile(deal.seller_id),
     repository.getDealEvidence(deal.id),
     repository.getDealEvents(deal.id),
     repository.getDealReputationEvents(deal.id),
+    repository.findStellarOperationsByDeal(deal.id),
   ]);
 
   const buyerDisplayName = buyerProfile?.display_name ?? buyer?.displayName ?? 'Buyer';
@@ -302,12 +306,19 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             : 'funding_window',
   });
 
+  const getTx = (action: string) => stellarOperations?.find((o) => o.requested_action === action)?.transaction_hash;
+  const getEventTime = (types: string[]) => {
+    const ev = getLatestEvent(dealEvents, types);
+    return ev ? formatDateTime(ev.created_at) : null;
+  };
+
   const steps: Step[] = [
-    { label: 'Terms Agreed', status: 'complete' },
+    { label: 'Terms Agreed', status: 'complete', timestamp: formatDateTime(deal.created_at) },
     {
       label: 'Funding',
       status: isFundingWindow || isClosed ? 'current' : 'complete',
       detail: isClosed ? 'Closed before lock' : undefined,
+      timestamp: getEventTime(['buyer_deposit', 'seller_deposit']),
     },
     {
       label: 'Escrow Locked',
@@ -317,6 +328,8 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
           : status === 'PROOF_SUBMITTED' || status === 'DELIVERED' || status === 'COMPLETED'
             ? 'complete'
             : 'upcoming',
+      timestamp: getEventTime(['escrow_locked']),
+      txHash: getTx('create_deal_custody'),
     },
     {
       label: 'Delivery & Proof',
@@ -326,12 +339,22 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
           : status === 'DELIVERED' || status === 'COMPLETED'
             ? 'complete'
             : 'upcoming',
+      timestamp: getEventTime(['submit_proof']),
+      txHash: getTx('submit_proof_custody'),
+      proofHash: deal.proof_hash,
     },
     {
       label: 'Buyer Review',
       status: status === 'DELIVERED' ? 'current' : status === 'COMPLETED' ? 'complete' : 'upcoming',
+      timestamp: getEventTime(['mark_delivered']),
+      txHash: getTx('mark_delivered_custody'),
     },
-    { label: 'Settled', status: status === 'COMPLETED' ? 'current' : 'upcoming' },
+    { 
+      label: 'Settled', 
+      status: status === 'COMPLETED' ? 'current' : 'upcoming',
+      timestamp: getEventTime(['accept_delivery', 'buyer_accepts_delivery', 'custody_swept']),
+      txHash: getTx('accept_delivery_custody'),
+    },
   ];
 
   let roomHeadline = 'Deposit window is live';
@@ -592,6 +615,10 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
             steps={steps}
           />
 
+          <SettlementCompletedCard 
+            status={status}
+            settlementTxHash={getTx('accept_delivery_custody')}
+          />
 
           <DealRoomTabs
             overviewContent={
@@ -672,7 +699,14 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               </div>
             </div>
             {status === 'LOCKED' ? (
-              <EvidenceSubmitter dealId={deal.id} sellerId={deal.seller_id} />
+              viewerRole === 'seller' ? (
+                <EvidenceSubmitter dealId={deal.id} sellerId={deal.seller_id} />
+              ) : (
+                <div className="mt-4 p-5 border border-amber-200 rounded-lg bg-amber-50 shadow-sm text-sm text-amber-900">
+                  <div className="font-semibold mb-1">Awaiting Delivery Proof</div>
+                  <div>The seller has not submitted delivery proof yet. Once submitted, you will review the proof hash before accepting delivery.</div>
+                </div>
+              )
             ) : null}
             {evidenceList.length > 0 ? (
               <div className="mt-5 space-y-3">
@@ -970,6 +1004,13 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
               ) : null}
             </div>
           </section>
+
+          <StellarEvidencePanel
+            contractId={deal.stellar_contract_id}
+            escrowId={deal.stellar_escrow_id}
+            stellarOperations={stellarOperations || []}
+            status={deal.status}
+          />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="mb-5 flex items-center gap-3">

@@ -6,6 +6,9 @@ export interface Step {
   status: 'complete' | 'current' | 'upcoming';
   actor?: string;
   detail?: string;
+  timestamp?: string | null;
+  txHash?: string | null;
+  proofHash?: string | null;
 }
 
 interface StepperProps {
@@ -56,6 +59,25 @@ export function Stepper({ steps, className }: StepperProps) {
                 {step.actor ?? step.detail}
               </div>
             ) : null}
+            {step.timestamp && (
+              <div className="mt-2 text-[10px] font-medium text-[var(--text-muted)]">
+                {step.timestamp}
+              </div>
+            )}
+            {step.txHash && (
+              <div className="mt-1 flex items-center gap-1 text-[10px] font-mono text-emerald-600">
+                <span className="truncate" title={step.txHash}>
+                  Tx: {step.txHash.slice(0, 8)}...{step.txHash.slice(-4)}
+                </span>
+              </div>
+            )}
+            {step.proofHash && (
+              <div className="mt-1 flex items-center gap-1 text-[10px] font-mono text-purple-600">
+                <span className="truncate" title={step.proofHash}>
+                  Proof: {step.proofHash.slice(0, 8)}...{step.proofHash.slice(-4)}
+                </span>
+              </div>
+            )}
           </li>
         ))}
       </ol>
