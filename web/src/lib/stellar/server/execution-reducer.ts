@@ -193,7 +193,7 @@ export function reduceStellarExecution(
       nextOperation.public_error_code = null;
       nextOperation.confirmed_at = occurred_at;
 
-      if (result.action === "create_deal") {
+      if (result.action === "create_deal" || result.action === "create_deal_custody") {
         nextOperation.result_escrow_id = result.result_escrow_id;
         localCommit = {
           kind: "sync_create_deal",

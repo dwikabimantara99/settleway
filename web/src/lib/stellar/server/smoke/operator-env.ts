@@ -1026,6 +1026,8 @@ export async function runTestnetSmokeOperator(
     {
       network_passphrase: input.config.network_passphrase,
       contract_id: input.config.contract_id,
+      custody_contract_id: input.config.contract_id,
+      testnet_token_contract_id: input.config.contract_id,
       base_fee_stroops: input.config.fees.base_fee_stroops,
       max_fee_stroops: input.config.fees.max_fee_stroops,
       timeout_seconds: input.config.timebounds.timeout_seconds,

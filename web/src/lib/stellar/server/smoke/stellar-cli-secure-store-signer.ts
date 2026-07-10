@@ -325,7 +325,7 @@ export class StellarCliSecureStoreSigner implements StellarSignerPort {
       max_stderr_bytes: this.#maxStderrBytes,
     });
 
-    const payload = extractSingleStdoutPayload(result.stdout);
+    console.log("CLI run result:", result); const payload = extractSingleStdoutPayload(result.stdout);
     if (
       result.timed_out ||
       result.exit_code !== 0 ||
@@ -393,7 +393,7 @@ export class StellarCliSecureStoreSigner implements StellarSignerPort {
       max_stderr_bytes: this.#maxStderrBytes,
     });
 
-    const payload = extractSingleStdoutPayload(result.stdout);
+    console.log("CLI run result:", result); const payload = extractSingleStdoutPayload(result.stdout);
     if (
       result.timed_out ||
       result.exit_code !== 0 ||
@@ -507,3 +507,4 @@ export async function runStellarCliSecureStoreSignerPreflight(input: {
     },
   };
 }
+

@@ -122,7 +122,7 @@ describe("Deal Execution Integration (Offline E2E)", () => {
         // 1. operation persistence occurs
         let scope = plan.action === "create_deal" ? "WAITING_DEPOSITS" : initialStatus;
         if (plan.action === "buyer_deposit" || plan.action === "accept_delivery") scope = deal.buyer_id;
-        if (plan.action === "seller_deposit") scope = deal.seller_id;
+        if (plan.action === "seller_deposit" || plan.action === "submit_proof" || plan.action === "mark_delivered") scope = deal.seller_id;
         const idempotencyKey = createStellarIdempotencyKey(deal.id, scope, plan.action);
         const op = store.getStellarOperation(idempotencyKey);
         expect(op).not.toBeNull();

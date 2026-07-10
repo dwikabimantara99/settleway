@@ -31,6 +31,8 @@ const CONTRACT_ID = StrKey.encodeContract(Buffer.alloc(32, 1));
 const config: StellarTestnetAdapterConfig = {
   network_passphrase: Networks.TESTNET,
   contract_id: CONTRACT_ID,
+  custody_contract_id: CONTRACT_ID,
+  testnet_token_contract_id: CONTRACT_ID,
   base_fee_stroops: 100,
   max_fee_stroops: 10000000,
   timeout_seconds: 30,

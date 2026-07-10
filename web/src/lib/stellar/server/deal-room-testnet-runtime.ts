@@ -19,9 +19,12 @@ const TESTNET_RUNTIME_ENV = {
   rpc_url: "SETTLEWAY_SMOKE_RPC_URL",
   network_passphrase: "SETTLEWAY_SMOKE_NETWORK_PASSPHRASE",
   contract_id: "SETTLEWAY_SMOKE_CONTRACT_ID",
+  custody_contract_id: "SETTLEWAY_CUSTODY_CONTRACT_ID",
+  testnet_token_contract_id: "SETTLEWAY_TESTNET_TOKEN_CONTRACT_ID",
   stellar_cli_path: "SETTLEWAY_SMOKE_STELLAR_CLI_PATH",
   stellar_config_dir: "SETTLEWAY_SMOKE_STELLAR_CONFIG_DIR",
   stellar_network_alias: "SETTLEWAY_SMOKE_STELLAR_NETWORK_ALIAS",
+  admin_address: "SETTLEWAY_SMOKE_ADMIN_ADDRESS",
   admin_key_alias: "SETTLEWAY_SMOKE_ADMIN_KEY_ALIAS",
   buyer_demo_key_alias: "SETTLEWAY_SMOKE_BUYER_DEMO_KEY_ALIAS",
   seller_demo_key_alias: "SETTLEWAY_SMOKE_SELLER_DEMO_KEY_ALIAS",
@@ -32,6 +35,8 @@ const TESTNET_RUNTIME_ENV = {
 
 export interface DealRoomTestnetRuntime {
   contract_id: string;
+  custody_contract_id: string;
+  testnet_token_contract_id: string;
   metadata: StellarExecutionPublicMetadata;
   execution_adapter: StellarExecutionAdapter;
   signer_port: StellarSignerPort;
@@ -152,6 +157,18 @@ export function loadDealRoomTestnetRuntime(
     "contract_id",
     errors,
   );
+  const custodyContractId = readRequiredTrimmed(
+    reader,
+    TESTNET_RUNTIME_ENV.custody_contract_id,
+    "custody_contract_id",
+    errors,
+  );
+  const testnetTokenContractId = readRequiredTrimmed(
+    reader,
+    TESTNET_RUNTIME_ENV.testnet_token_contract_id,
+    "testnet_token_contract_id",
+    errors,
+  );
   const stellarCliPath = readRequiredTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.stellar_cli_path,
@@ -168,6 +185,12 @@ export function loadDealRoomTestnetRuntime(
     reader,
     TESTNET_RUNTIME_ENV.stellar_network_alias,
     "stellar_network_alias",
+    errors,
+  );
+  const adminAddress = readRequiredTrimmed(
+    reader,
+    TESTNET_RUNTIME_ENV.admin_address,
+    "admin_address",
     errors,
   );
   const adminAlias = readRequiredTrimmed(
@@ -228,6 +251,20 @@ export function loadDealRoomTestnetRuntime(
     errors.push({ code: "ERR_INVALID_CONFIG", field: "contract_id" });
   }
 
+  if (
+    custodyContractId !== null &&
+    !StrKey.isValidContract(custodyContractId)
+  ) {
+    errors.push({ code: "ERR_INVALID_CONFIG", field: "custody_contract_id" });
+  }
+
+  if (
+    testnetTokenContractId !== null &&
+    !StrKey.isValidContract(testnetTokenContractId)
+  ) {
+    errors.push({ code: "ERR_INVALID_CONFIG", field: "testnet_token_contract_id" });
+  }
+
   if (stellarCliPath !== null && !path.isAbsolute(stellarCliPath)) {
     errors.push({ code: "ERR_INVALID_CONFIG", field: "stellar_cli_path" });
   }
@@ -257,7 +294,7 @@ export function loadDealRoomTestnetRuntime(
     return { ok: false, errors };
   }
 
-  const metadata = buildDealRoomExecutionMetadata(contractId!, buyerAddress, sellerAddress);
+  const metadata = buildDealRoomExecutionMetadata(contractId!, buyerAddress, sellerAddress, adminAddress!, testnetTokenContractId ?? undefined, adminAddress!);
   const roleMapping: StellarTestnetRoleMapping = {
     admin_address: metadata.admin_address,
     buyer_demo_address: metadata.buyer_demo_address,
@@ -295,6 +332,8 @@ export function loadDealRoomTestnetRuntime(
   const adapterConfig: StellarTestnetAdapterConfig = {
     network_passphrase: networkPassphrase!,
     contract_id: contractId!,
+    custody_contract_id: custodyContractId!,
+    testnet_token_contract_id: testnetTokenContractId!,
     base_fee_stroops: baseFeeStroops!,
     max_fee_stroops: maxFeeStroops!,
     timeout_seconds: timeoutSeconds!,
@@ -319,6 +358,8 @@ export function loadDealRoomTestnetRuntime(
     ok: true,
     runtime: {
       contract_id: contractId!,
+      custody_contract_id: custodyContractId!,
+      testnet_token_contract_id: testnetTokenContractId!,
       metadata,
       execution_adapter: executionAdapter,
       signer_port: signerPort,

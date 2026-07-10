@@ -101,7 +101,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Public Global Stellar Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Public Global Stellar Network ; September 2015';
     
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'a', expectedRole: 'buyer', action: 'buyer_deposit' });
     expect(result.ok).toBe(false);
@@ -112,7 +112,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
 
     mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'wrong_id', expectedRole: 'buyer', action: 'buyer_deposit' });
@@ -124,7 +124,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
 
     mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'wrong_id', expectedRole: 'seller', action: 'seller_deposit' });
@@ -136,7 +136,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
 
     mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 's', expectedRole: 'seller', action: 'buyer_deposit' });
@@ -148,7 +148,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
 
     mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet' });
     const result = await executeHeadlessSmokeAction({ dealId: 'd', actorId: 'b', expectedRole: 'buyer', action: 'seller_deposit' });
@@ -160,7 +160,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
 
     mockGetDeal.mockResolvedValue({ id: 'd', buyer_id: 'b', seller_id: 's', stellar_mode: 'testnet', status: 'WAITING_DEPOSITS', volume_kg: 100, principal_idr: 1000, terms: { deposit_deadline_at: '2027-01-01T00:00:00Z' } });
     mockGetProfileWallet.mockResolvedValue({ public_address: 'G123', encrypted_secret_key: 'enc123' });
@@ -179,7 +179,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyMockToken';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     delete process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION;
 
@@ -199,7 +199,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyMockToken';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     process.env.SMOKE_PLAN_ONLY = '1';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
@@ -219,7 +219,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyMockToken';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
 
@@ -251,7 +251,7 @@ describe('Testnet Persistent Smoke Runner & Hook', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'eyMockToken';
-    process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE = 'Test SDF Network ; September 2015';
+    process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015';
     process.env.WALLET_ENCRYPTION_KEY = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
     process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION = '1';
 

@@ -45,13 +45,18 @@ export class StellarSdkRpc implements StellarRpcPort {
     transaction: Transaction,
   ): Promise<SimulatedTransactionResult> {
     try {
+      console.log("Simulating transaction. Source account:", transaction.source);
+      console.log("Transaction XDR:", transaction.toXDR());
       const sim = await this.server.simulateTransaction(transaction);
       if (rpc.Api.isSimulationError(sim)) {
+        console.error("Simulation error details:", sim.error);
         return { ok: false, error_code: "ERR_CONTRACT_REJECTED" };
       }
       const results = (sim as rpc.Api.SimulateTransactionSuccessResponse).result?.auth || [];
+      console.log("Simulation auth entries:", JSON.stringify(results, null, 2));
       for (const auth of results) {
         const credentials = auth.credentials();
+        console.log("Auth credentials type:", credentials.switch().name);
         if (credentials.switch().name === "sorobanCredentialsAddress") {
           return { ok: false, error_code: "ERR_AUTH_FAILED" };
         }

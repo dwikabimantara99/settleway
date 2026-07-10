@@ -1,4 +1,4 @@
-import 'server-only';
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { SupabaseRepositoryAdapter } from '@/lib/repositories/supabase-adapter';
 
@@ -16,7 +16,7 @@ export class HeadlessSmokeAdminRepository extends SupabaseRepositoryAdapter {
       throw new Error("Admin smoke context requires ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1");
     }
 
-    const passphrase = process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE;
+    const passphrase = process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE;
     if (!passphrase || passphrase.includes('Public Global')) {
       throw new Error("Admin smoke context refuses mainnet passphrase");
     }

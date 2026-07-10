@@ -278,6 +278,7 @@ export function assembleStellarExecutionInput(
       buildInput = {
         action: input.action,
         expected_local_status: expectedLocalStatus,
+        idempotency_scope: input.deal.seller_id,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,
@@ -310,6 +311,7 @@ export function assembleStellarExecutionInput(
       buildInput = {
         action: input.action as never, // mark_delivered, mark_delivered_custody etc
         expected_local_status: expectedLocalStatus,
+        idempotency_scope: input.deal.seller_id,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,

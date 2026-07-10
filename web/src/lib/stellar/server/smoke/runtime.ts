@@ -136,6 +136,8 @@ export function createSmokeRuntime(
     {
       network_passphrase: config.network_passphrase,
       contract_id: config.contract_id,
+      custody_contract_id: config.contract_id,
+      testnet_token_contract_id: config.contract_id,
       base_fee_stroops: config.fees.base_fee_stroops,
       max_fee_stroops: config.fees.max_fee_stroops,
       timeout_seconds: config.timebounds.timeout_seconds,

@@ -23,6 +23,8 @@ import type { EscrowAction } from "@/lib/escrow/state-machine";
 export interface StellarTestnetAdapterConfig {
   readonly network_passphrase: string;
   readonly contract_id: string;
+  readonly custody_contract_id: string;
+  readonly testnet_token_contract_id: string;
   readonly base_fee_stroops: number;
   readonly max_fee_stroops: number;
   readonly timeout_seconds: number;
@@ -82,6 +84,12 @@ function validateConfig(
     return "ERR_INVALID_TIMEOUT";
   }
   if (!config.contract_id || config.contract_id.trim() === "") {
+    return "ERR_MISSING_CONTRACT_ID";
+  }
+  if (!config.custody_contract_id || config.custody_contract_id.trim() === "") {
+    return "ERR_MISSING_CONTRACT_ID";
+  }
+  if (!config.testnet_token_contract_id || config.testnet_token_contract_id.trim() === "") {
     return "ERR_MISSING_CONTRACT_ID";
   }
   return null;
@@ -380,7 +388,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     }
 
     // 3. Load canonical source account
-    const sourceAddress = resolveSourceAddress(
+    console.log("executeAction signer_role:", invocation.signer_role, "mapping:", this.roleMapping); const sourceAddress = resolveSourceAddress(
       invocation.signer_role,
       this.roleMapping,
     );

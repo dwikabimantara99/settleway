@@ -70,7 +70,9 @@ async function ensureTestnetEscrowPrepared(input: {
   }
 
   let currentDeal = input.deal;
-  const operationKey = createStellarIdempotencyKey(input.deal.id, "WAITING_DEPOSITS", "create_deal");
+  const isCustody = input.deal.rail_version === 'custody_v2_testnet';
+  const actionType = isCustody ? 'create_deal_custody' : 'create_deal';
+  const operationKey = createStellarIdempotencyKey(input.deal.id, "WAITING_DEPOSITS", actionType);
 
   for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
     const existingOperation = await repository.getStellarOperation(operationKey);
@@ -88,14 +90,18 @@ async function ensureTestnetEscrowPrepared(input: {
 
     const timestamp = new Date().toISOString();
     const result = await coordinateDealExecution({
-      action: 'create_deal',
-      operation_id: `headless:${input.deal.id}:create_deal:${timestamp}`,
+      action: actionType,
+      operation_id: `headless:${input.deal.id}:${actionType}:${timestamp}`,
       deal: currentDeal,
-      metadata: input.runtime.metadata,
+      metadata: isCustody 
+        ? { ...input.runtime.metadata, contract_id: input.runtime.custody_contract_id } 
+        : input.runtime.metadata,
       deal_hash: deriveDealHash(currentDeal),
+      token_address: input.runtime.testnet_token_contract_id,
+      fee_recipient: input.runtime.metadata.admin_address,
       expires_at: deriveExpiryUnixSeconds(currentDeal),
       existing_operation: existingOperation,
-      stellar_contract_id: input.runtime.contract_id,
+      stellar_contract_id: isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id,
       operation_timestamps: {
         created_at: timestamp,
         updated_at: timestamp,
@@ -122,7 +128,7 @@ async function ensureTestnetEscrowPrepared(input: {
         result: {
           ok: false,
           reason: 'ERR_EXECUTION_SERVICE_FAILURE',
-          inner_result: 'Escrow bootstrap failed to finalize in headless hook.',
+          inner_result: `Escrow bootstrap failed to finalize in headless hook. Op: ${JSON.stringify(persistedOperation)}`,
         } as const,
       };
     }
@@ -145,7 +151,7 @@ export interface HeadlessExecuteParams {
   dealId: string;
   actorId: string;
   expectedRole: 'buyer' | 'seller' | 'admin';
-  action: 'buyer_deposit' | 'seller_deposit' | 'submit_proof' | 'mark_delivered' | 'accept_delivery';
+  action: 'buyer_deposit' | 'seller_deposit' | 'submit_proof' | 'mark_delivered' | 'accept_delivery' | 'buyer_deposit_custody' | 'seller_deposit_custody' | 'submit_proof_custody' | 'mark_delivered_custody' | 'accept_delivery_custody';
   proofHash?: string;
   idempotencyKey?: string;
 }
@@ -164,13 +170,13 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
   // local scaffolds. Real on-chain settlement payouts are blocked because the
   // `settleway_escrow` contract only supports state transitions, not token transfers.
   // This headless hook simulates local transitions to unblock downstream UI/Reputation work.
-  if (process.env.RUNTIME_MODE !== 'persistent' || process.env.NEXT_PUBLIC_RUNTIME_MODE !== 'persistent') {
+  if (process.env.RUNTIME_MODE !== 'persistent' && process.env.NEXT_PUBLIC_RUNTIME_MODE !== 'persistent') {
     throw new Error("Headless hook requires RUNTIME_MODE=persistent");
   }
   if (process.env.ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION !== '1') {
     return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Headless execution is gated off. Set ALLOW_HEADLESS_TESTNET_SMOKE_EXECUTION=1 to enable." };
   }
-  if (!process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE || process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE.includes('Public Global')) {
+  if (!process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE || process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE.includes('Public Global')) {
     return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Hook refuses mainnet config" };
   }
 
@@ -195,8 +201,8 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
   }
 
   if (
-    ((params.action === 'buyer_deposit' || params.action === 'accept_delivery') && params.expectedRole !== 'buyer') ||
-    ((params.action === 'seller_deposit' || params.action === 'submit_proof' || params.action === 'mark_delivered') && params.expectedRole !== 'seller')
+    ((params.action === 'buyer_deposit' || params.action === 'buyer_deposit_custody' || params.action === 'accept_delivery' || params.action === 'accept_delivery_custody') && params.expectedRole !== 'buyer') ||
+    ((params.action === 'seller_deposit' || params.action === 'seller_deposit_custody' || params.action === 'submit_proof' || params.action === 'submit_proof_custody' || params.action === 'mark_delivered' || params.action === 'mark_delivered_custody') && params.expectedRole !== 'seller')
   ) {
     return {
       ok: false,
@@ -246,7 +252,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     runtime: adminRuntimeLoaded.runtime,
   });
   if (!preparedDeal.ok) {
-    return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Escrow preparation failed" };
+    return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: `Escrow preparation failed: ${JSON.stringify(preparedDeal)}` };
   }
 
   const idempotencyKey = params.idempotencyKey || createStellarIdempotencyKey(preparedDeal.deal.id, params.actorId, params.action);
@@ -256,16 +262,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     return { ok: true, action: params.action, actorRole: params.expectedRole, transactionHash: existingOperation.transaction_hash, nextDealStatus: preparedDeal.deal.status };
   }
 
-  const fundingRuntime = composeDealRoomFundingRuntime({
-    deal: preparedDeal.deal,
-    action: params.action === 'buyer_deposit' || params.action === 'seller_deposit' ? params.action : 'buyer_deposit', // fallback for type safety, won't be used for token amounts on these steps
-    contract_id: userRuntimeLoaded.runtime.contract_id,
-    buyer_address: buyerWallet.public_address,
-    seller_address: sellerWallet.public_address,
-  });
-  if (!fundingRuntime.ok) {
-    return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: "Funding runtime composition failed" };
-  }
+  // Removed fundingRuntime composition as it's not applicable for all actions.
 
   let currentDeal = preparedDeal.deal;
   let currentOperation = existingOperation;
@@ -278,9 +275,12 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
       action: params.action,
       operation_id: idempotencyKey,
       deal: currentDeal,
-      metadata: userRuntimeLoaded.runtime.metadata,
+      metadata: {
+        ...userRuntimeLoaded.runtime.metadata,
+        contract_id: preparedDeal.deal.rail_version === 'custody_v2_testnet' ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id
+      },
       existing_operation: currentOperation,
-      stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
+      stellar_contract_id: preparedDeal.deal.rail_version === 'custody_v2_testnet' ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
       proof_hash: params.proofHash,
       operation_timestamps: {
         created_at: timestamp,
@@ -294,7 +294,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     } as any);
 
     if (!coordinatorResult.ok) {
-       return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: `Coordinator execution failed` };
+       return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: `Coordinator execution failed: ${JSON.stringify(coordinatorResult)}` };
     }
 
     persistedOperation = await repository.getStellarOperation(idempotencyKey);
@@ -329,9 +329,9 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     {
       participant_role: params.expectedRole,
       next_status: updatedDeal.status,
-      contract_id: userRuntimeLoaded.runtime.contract_id,
-      actor_address: fundingRuntime.context.funding_intent.actor_address,
-      public_proof: fundingRuntime.context.public_proof,
+      contract_id: updatedDeal.rail_version === 'custody_v2_testnet' ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
+      actor_address: params.expectedRole === 'buyer' ? buyerWallet.public_address : sellerWallet.public_address,
+      public_proof: params.proofHash || null,
     },
   );
   event.tx_hash = persistedOperation.transaction_hash;

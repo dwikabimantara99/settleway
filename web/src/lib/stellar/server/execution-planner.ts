@@ -202,7 +202,7 @@ export function planStellarExecution(
 
       let reconstructedCommit: StellarLocalCommitDecision;
 
-      if (existing.requested_action === "create_deal") {
+      if (existing.requested_action === "create_deal" || existing.requested_action === "create_deal_custody") {
         if (existing.result_escrow_id === null) {
           return {
             ok: false,

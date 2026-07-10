@@ -42,6 +42,8 @@ function makeConfig(overrides: Partial<StellarTestnetAdapterConfig> = {}): Stell
   return {
     network_passphrase: Networks.TESTNET,
     contract_id: TEST_CONTRACT,
+    custody_contract_id: TEST_CONTRACT,
+    testnet_token_contract_id: TEST_CONTRACT,
     base_fee_stroops: 100,
     max_fee_stroops: 10000000,
     timeout_seconds: 30,

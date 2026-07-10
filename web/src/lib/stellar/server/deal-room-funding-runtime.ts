@@ -5,7 +5,7 @@ import type { StellarSignerRole } from "./action-policy";
 import type { StellarExecutionPublicMetadata } from "./execution-input-assembler";
 import { TESTNET_DEMO_IDENTITIES } from "../testnet-demo-identities";
 
-export type DealRoomFundingAction = "buyer_deposit" | "seller_deposit";
+export type DealRoomFundingAction = "buyer_deposit" | "seller_deposit" | "buyer_deposit_custody" | "seller_deposit_custody";
 export type DealRoomFundingParticipantRole = "buyer" | "seller";
 export type DealRoomFundingWalletRole =
   | DealRoomFundingParticipantRole
@@ -100,7 +100,7 @@ function isValidContractId(contractId: string): boolean {
 function resolveParticipantRole(
   action: DealRoomFundingAction,
 ): DealRoomFundingParticipantRole {
-  return action === "buyer_deposit" ? "buyer" : "seller";
+  return action === "buyer_deposit" || action === "buyer_deposit_custody" ? "buyer" : "seller";
 }
 
 function resolveCounterpartyRole(
@@ -120,12 +120,17 @@ export function buildDealRoomExecutionMetadata(
   contractId: string,
   buyerAddress?: string,
   sellerAddress?: string,
+  adminAddress?: string,
+  tokenAddress?: string,
+  feeRecipient?: string,
 ): StellarExecutionPublicMetadata {
   return {
     contract_id: contractId,
-    admin_address: ROLE_WALLETS.platform.public_address,
+    admin_address: adminAddress ?? ROLE_WALLETS.platform.public_address,
     buyer_demo_address: buyerAddress ?? ROLE_WALLETS.buyer.public_address,
     seller_demo_address: sellerAddress ?? ROLE_WALLETS.seller.public_address,
+    token_address: tokenAddress,
+    fee_recipient: feeRecipient,
   };
 }
 

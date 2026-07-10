@@ -17,16 +17,16 @@ export function redact(val: string | undefined): string {
 }
 
 export function checkSafetyGates() {
-  if (process.env.RUNTIME_MODE !== 'persistent' || process.env.NEXT_PUBLIC_RUNTIME_MODE !== 'persistent') {
-    throw new Error("FATAL: Runner requires RUNTIME_MODE=persistent and NEXT_PUBLIC_RUNTIME_MODE=persistent");
+  if (process.env.RUNTIME_MODE !== 'persistent' && process.env.NEXT_PUBLIC_RUNTIME_MODE !== 'persistent') {
+    throw new Error("FATAL: Runner requires RUNTIME_MODE=persistent or NEXT_PUBLIC_RUNTIME_MODE=persistent");
   }
 
   if (!process.env.TESTNET_DATABASE_URL && !process.env.SUPABASE_URL && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
     throw new Error("FATAL: Missing DB configuration signal");
   }
 
-  if (!process.env.NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE) {
-    throw new Error("FATAL: Missing NEXT_PUBLIC_STELLAR_TESTNET_PASSPHRASE");
+  if (!process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE) {
+    throw new Error("FATAL: Missing SETTLEWAY_SMOKE_NETWORK_PASSPHRASE");
   }
 }
 

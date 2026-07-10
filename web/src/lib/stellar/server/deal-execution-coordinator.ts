@@ -16,6 +16,8 @@ import { isPreLockDealStatus } from "../../escrow/state-machine";
 export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput & {
   existing_operation: StellarOperation | null;
   stellar_contract_id: string;
+  token_address?: string;
+  fee_recipient?: string;
   operation_timestamps: {
     created_at: string;
     updated_at: string;
@@ -46,7 +48,15 @@ export async function coordinateDealExecution(
   input: StellarDealExecutionCoordinatorInput
 ): Promise<StellarDealExecutionCoordinatorResult> {
   // 1. assemble canonical build input
-  const assemblyRes = assembleStellarExecutionInput(input);
+  const assemblyInput = { ...input };
+  if (input.token_address || input.fee_recipient) {
+    assemblyInput.metadata = {
+      ...input.metadata,
+      ...(input.token_address ? { token_address: input.token_address } : {}),
+      ...(input.fee_recipient ? { fee_recipient: input.fee_recipient } : {}),
+    };
+  }
+  const assemblyRes = assembleStellarExecutionInput(assemblyInput);
 
   if (!assemblyRes.ok) {
     if (assemblyRes.error_code === "ERR_BUILD_VALIDATION") {

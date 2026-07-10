@@ -174,9 +174,13 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   runtime: DealRoomTestnetRuntime;
   proof_hash?: string;
 }): Promise<DealRoomRouteExecutionResult> {
+  let scope: string = input.deal.status;
+  if (input.action === "submit_proof" || input.action === "mark_delivered") {
+    scope = input.deal.seller_id;
+  }
   const operationKey = createStellarIdempotencyKey(
     input.deal.id,
-    input.deal.status,
+    scope,
     input.action,
   );
 
