@@ -249,10 +249,39 @@ export async function runSmoke(logger = console.log, errLogger = console.error) 
     if (!acceptDeliveryResult.ok) {
        throw new Error(`Headless accept delivery failed: ${acceptDeliveryResult.blocker}`);
     }
-    logger(`[OK] Accept delivery submitted (status: ${acceptDeliveryResult.nextDealStatus})`);
+    logger(`[5] Verifying persistent records in Supabase...`);
+    const { count: opsCount } = await supabaseAdmin.from('stellar_operations').select('idempotency_key', { count: 'exact' }).eq('deal_id', dealId);
+    const { count: eventsCount } = await supabaseAdmin.from('escrow_events').select('id', { count: 'exact' }).eq('deal_id', dealId);
+    
+    // Fetch live reputation events to derive crowdfunding eligibility
+    const { data: repEvents } = await supabaseAdmin.from('reputation_events').select('*').eq('deal_id', dealId);
+    const repCount = repEvents ? repEvents.length : 0;
+    
+    logger(`    - stellar_operations rows: ${opsCount}`);
+    logger(`    - escrow_events rows: ${eventsCount}`);
+    logger(`    - reputation_events rows: ${repCount}`);
+
+    if (repEvents && repEvents.length > 0) {
+      logger(`[6] Deriving aggregate reputation from live events...`);
+      const { rebuildReputationAggregate } = require('../src/lib/reputation/engine');
+      const aggregate = rebuildReputationAggregate(repEvents);
+      logger(`    - Seller Completed TX: ${aggregate.seller_completed_count}`);
+      logger(`    - Verified Volume (IDR): ${aggregate.verified_volume_idr}`);
+      
+      const { isEligibleForCrowdfunding } = require('../src/lib/reputation/engine');
+      const mockProfile = { 
+        user_type: 'seller', 
+        seller_completed_count: aggregate.seller_completed_count, 
+        verified_volume_idr: aggregate.verified_volume_idr 
+      };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const isEligible = isEligibleForCrowdfunding(mockProfile as any);
+      logger(`    - Crowdfunding Eligibility Derived: ${isEligible}`);
+    }
 
     finalStatus = 'PERSISTENT_CUSTODY_LIFECYCLE_SUCCEEDED';
     exactBlocker = '';
+
 
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
