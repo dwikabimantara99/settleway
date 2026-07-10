@@ -296,21 +296,19 @@ export function assembleStellarExecutionInput(
       input.action === "buyer_deposit_custody" ||
       input.action === "seller_deposit_custody" ||
       input.action === "accept_delivery" ||
-      input.action === "accept_delivery_custody" ||
-      input.action === "mark_delivered" ||
-      input.action === "mark_delivered_custody"
+      input.action === "accept_delivery_custody"
     ) {
       buildInput = {
-        action: input.action as "buyer_deposit" | "seller_deposit" | "buyer_deposit_custody" | "seller_deposit_custody" | "accept_delivery" | "accept_delivery_custody" | "mark_delivered" | "mark_delivered_custody",
+        action: input.action as "buyer_deposit" | "seller_deposit" | "buyer_deposit_custody" | "seller_deposit_custody" | "accept_delivery" | "accept_delivery_custody",
         expected_local_status: expectedLocalStatus,
-        idempotency_scope: (input.action.includes("seller_deposit") || input.action.includes("mark_delivered")) ? input.deal.seller_id : input.deal.buyer_id,
+        idempotency_scope: input.action.includes("seller_deposit") ? input.deal.seller_id : input.deal.buyer_id,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,
       };
     } else {
       buildInput = {
-        action: input.action as never, // All actions should be handled
+        action: input.action as never, // mark_delivered, mark_delivered_custody etc
         expected_local_status: expectedLocalStatus,
         contract_id: contractId,
         escrow_id: escrowId,

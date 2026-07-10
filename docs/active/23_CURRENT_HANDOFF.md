@@ -18,13 +18,21 @@
 - Dual-sided funding execution (`buyer_deposit`, `seller_deposit`).
 - Cryptographic state confirmation up to the `LOCKED` state.
 
-**Unproven (Remote):**
-- Delivery proof submission (`submit_proof`) - Implemented locally / mock-tested, awaiting remote Testnet proof.
-- Buyer delivery acceptance (`accept_delivery`) - Implemented locally / mock-tested, awaiting remote Testnet proof.
-- Settlement and payout routing - Blocked by contract interface for real settlement payout (the contract only supports state transitions, not token transfers).
-- Reputation ledger - Implemented locally, awaiting true remote settlement.
-- Production/Mainnet real-money scaling.
+**Implemented locally in this branch (feature/real-settlement-contract-upgrade):**
+- versioned custody-capable contract path;
+- token transfer funding logic;
+- token transfer settlement logic;
+- Rust/Soroban local tests;
+- TypeScript invocation alignment.
+
+**Still not remotely proven:**
+- upgraded contract deployment;
+- real Testnet custody funding with upgraded contract;
+- real Testnet settlement payout;
+- reputation from confirmed remote settlement;
+- crowdfunding eligibility from remote reputation.
+- Production/Mainnet scaling.
 
 ### Next Recommended Options
 A. **Submit with Funding Corridor Proof:** The currently evidenced functionality provides a powerful, demonstrable baseline proving Settleway's thesis of bridging B2B trade intent with cryptographic escrow bounds.
-B. **Update Escrow Contract:** Implement actual on-chain settlement payouts (XLM/USDC) inside the `settleway_escrow` contract to unblock real settlement functionality, then execute remote tests for the full lifecycle.
+B. **Remote Prove Settlement Custody:** Deploy the upgraded `settleway_escrow` contract with the custody-capable Testnet/local token settlement path and execute remote tests for the full lifecycle.
