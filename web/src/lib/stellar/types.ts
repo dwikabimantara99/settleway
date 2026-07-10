@@ -18,15 +18,21 @@ export type StellarOperationStatus =
   | "failed"
   | "unknown";
 
-export type StellarAction = "create_deal" | EscrowAction;
+export type StellarAction = "create_deal" | "create_deal_custody" | EscrowAction;
 
 export type StellarContractMethod =
   | "create_escrow"
+  | "create_escrow_v2"
   | "deposit_buyer"
+  | "deposit_buyer_v2"
   | "deposit_seller"
+  | "deposit_seller_v2"
   | "submit_proof_hash"
+  | "submit_proof_hash_v2"
   | "mark_delivered"
+  | "mark_delivered_v2"
   | "accept_and_complete"
+  | "settle_and_complete"
   | "expire_if_unfunded"
   | "refund_before_locked";
 

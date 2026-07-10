@@ -18,6 +18,7 @@ import type { ConfirmResultValue, StellarRpcPort } from "./stellar-rpc-port";
 import type { StellarSignerPort, StellarTimeSource } from "./stellar-signer-port";
 import { encodeContractArguments } from "./stellar-sdk-codec";
 import { constructUnsignedSorobanTransaction } from "./stellar-transaction-factory";
+import type { EscrowAction } from "@/lib/escrow/state-machine";
 
 export interface StellarTestnetAdapterConfig {
   readonly network_passphrase: string;
@@ -675,7 +676,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     const result = await this.rpcPort.confirmTransaction(transaction_hash);
 
     if (result.outcome === "confirmed") {
-      if (action === "create_deal") {
+      if (action === "create_deal" || action === "create_deal_custody") {
         if (result.result_value === null) {
           return {
             outcome: "failed",
@@ -689,7 +690,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
         if (escrowId !== null) {
           return {
             outcome: "confirmed",
-            action: "create_deal",
+            action,
             transaction_hash,
             result_escrow_id: escrowId,
           };
@@ -717,7 +718,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
       }
       return {
         outcome: "confirmed",
-        action,
+        action: action as EscrowAction, // It must be an EscrowAction because create_deal/create_deal_custody were caught above
         transaction_hash,
         result_escrow_id: null,
       };

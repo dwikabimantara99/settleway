@@ -27,7 +27,9 @@ export type StellarInvocationErrorField =
   | "escrow_id"
   | "actor_address"
   | "proof_hash"
-  | "expected_local_status";
+  | "expected_local_status"
+  | "token_address"
+  | "fee_recipient";
 
 export type StellarInvocationBuildInput =
   | {
@@ -90,6 +92,44 @@ export type StellarInvocationBuildInput =
     }
   | {
       action: "refund";
+      expected_local_status: DealStatus | null;
+      contract_id: string;
+      escrow_id: string;
+    }
+  | {
+      action: "create_deal_custody";
+      expected_local_status: DealStatus | null;
+      contract_id: string;
+      deal_hash: string;
+      token_address: string;
+      fee_recipient: string;
+      buyer_address: string;
+      seller_address: string;
+      principal: string;
+      buyer_bond: string;
+      seller_bond: string;
+      buyer_fee: string;
+      seller_fee: string;
+      expires_at: string;
+    }
+  | {
+      action: "buyer_deposit_custody" | "seller_deposit_custody" | "mark_delivered_custody" | "accept_delivery_custody";
+      expected_local_status: DealStatus | null;
+      idempotency_scope?: string | null;
+      contract_id: string;
+      escrow_id: string;
+      actor_address: string;
+    }
+  | {
+      action: "submit_proof_custody";
+      expected_local_status: DealStatus | null;
+      contract_id: string;
+      escrow_id: string;
+      actor_address: string;
+      proof_hash: string;
+    }
+  | {
+      action: "expire_custody" | "refund_custody";
       expected_local_status: DealStatus | null;
       contract_id: string;
       escrow_id: string;
@@ -217,10 +257,53 @@ export function buildStellarInvocation(
       ];
       break;
     }
+    case "create_deal_custody": {
+      const dhErr = validateBytes32(input.deal_hash, "deal_hash");
+      if (dhErr) return dhErr;
+      const taErr = validateOpaqueIdentifier(input.token_address, "token_address");
+      if (taErr) return taErr;
+      const frErr = validateOpaqueIdentifier(input.fee_recipient, "fee_recipient");
+      if (frErr) return frErr;
+      const baErr = validateOpaqueIdentifier(input.buyer_address, "buyer_address");
+      if (baErr) return baErr;
+      const saErr = validateOpaqueIdentifier(input.seller_address, "seller_address");
+      if (saErr) return saErr;
+      const pErr = validateI128(input.principal, "principal");
+      if (pErr) return pErr;
+      const bbErr = validateI128(input.buyer_bond, "buyer_bond");
+      if (bbErr) return bbErr;
+      const sbErr = validateI128(input.seller_bond, "seller_bond");
+      if (sbErr) return sbErr;
+      const bfErr = validateI128(input.buyer_fee, "buyer_fee");
+      if (bfErr) return bfErr;
+      const sfErr = validateI128(input.seller_fee, "seller_fee");
+      if (sfErr) return sfErr;
+      const eaErr = validateU64(input.expires_at, "expires_at");
+      if (eaErr) return eaErr;
+
+      args = [
+        { kind: "bytes32", value: input.deal_hash.toLowerCase() },
+        { kind: "address", value: input.token_address },
+        { kind: "address", value: input.fee_recipient },
+        { kind: "address", value: input.buyer_address },
+        { kind: "address", value: input.seller_address },
+        { kind: "i128", value: input.principal },
+        { kind: "i128", value: input.buyer_bond },
+        { kind: "i128", value: input.seller_bond },
+        { kind: "i128", value: input.buyer_fee },
+        { kind: "i128", value: input.seller_fee },
+        { kind: "u64", value: input.expires_at },
+      ];
+      break;
+    }
     case "buyer_deposit":
     case "seller_deposit":
     case "mark_delivered":
-    case "accept_delivery": {
+    case "accept_delivery":
+    case "buyer_deposit_custody":
+    case "seller_deposit_custody":
+    case "mark_delivered_custody":
+    case "accept_delivery_custody": {
       const escErr = validateU64(input.escrow_id, "escrow_id");
       if (escErr) return escErr;
       const actErr = validateOpaqueIdentifier(input.actor_address, "actor_address");
@@ -232,7 +315,8 @@ export function buildStellarInvocation(
       ];
       break;
     }
-    case "submit_proof": {
+    case "submit_proof":
+    case "submit_proof_custody": {
       const escErr = validateU64(input.escrow_id, "escrow_id");
       if (escErr) return escErr;
       const actErr = validateOpaqueIdentifier(input.actor_address, "actor_address");
@@ -248,7 +332,9 @@ export function buildStellarInvocation(
       break;
     }
     case "expire":
-    case "refund": {
+    case "refund":
+    case "expire_custody":
+    case "refund_custody": {
       const escErr = validateU64(input.escrow_id, "escrow_id");
       if (escErr) return escErr;
 

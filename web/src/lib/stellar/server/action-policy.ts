@@ -267,6 +267,45 @@ export function resolveStellarActionPlan(
     };
   }
 
+  if (action === "create_deal_custody" && (expectedLocalStatus === null || expectedLocalStatus === "WAITING_DEPOSITS")) {
+    return {
+      ok: true,
+      plan: {
+        action: "create_deal_custody",
+        expected_local_status: "WAITING_DEPOSITS",
+        target_local_status: "WAITING_DEPOSITS",
+        stellar_method: "create_escrow_v2",
+        signer_role: "admin",
+        expects_transaction_hash: true,
+        expects_result_escrow_id: true,
+        requires_confirmation: true,
+        local_commit_policy: "sync_only",
+      },
+    };
+  }
+
+  if (action === "buyer_deposit_custody" && expectedLocalStatus === "WAITING_DEPOSITS") {
+    return { ok: true, plan: { action: "buyer_deposit_custody", expected_local_status: "WAITING_DEPOSITS", target_local_status: "BUYER_FUNDED", stellar_method: "deposit_buyer_v2", signer_role: "buyer_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "buyer_deposit_custody" && expectedLocalStatus === "SELLER_FUNDED") {
+    return { ok: true, plan: { action: "buyer_deposit_custody", expected_local_status: "SELLER_FUNDED", target_local_status: "LOCKED", stellar_method: "deposit_buyer_v2", signer_role: "buyer_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "seller_deposit_custody" && expectedLocalStatus === "WAITING_DEPOSITS") {
+    return { ok: true, plan: { action: "seller_deposit_custody", expected_local_status: "WAITING_DEPOSITS", target_local_status: "SELLER_FUNDED", stellar_method: "deposit_seller_v2", signer_role: "seller_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "seller_deposit_custody" && expectedLocalStatus === "BUYER_FUNDED") {
+    return { ok: true, plan: { action: "seller_deposit_custody", expected_local_status: "BUYER_FUNDED", target_local_status: "LOCKED", stellar_method: "deposit_seller_v2", signer_role: "seller_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "submit_proof_custody" && expectedLocalStatus === "LOCKED") {
+    return { ok: true, plan: { action: "submit_proof_custody", expected_local_status: "LOCKED", target_local_status: "PROOF_SUBMITTED", stellar_method: "submit_proof_hash_v2", signer_role: "seller_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "mark_delivered_custody" && expectedLocalStatus === "PROOF_SUBMITTED") {
+    return { ok: true, plan: { action: "mark_delivered_custody", expected_local_status: "PROOF_SUBMITTED", target_local_status: "DELIVERED", stellar_method: "mark_delivered_v2", signer_role: "seller_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+  if (action === "accept_delivery_custody" && expectedLocalStatus === "DELIVERED") {
+    return { ok: true, plan: { action: "accept_delivery_custody", expected_local_status: "DELIVERED", target_local_status: "COMPLETED", stellar_method: "settle_and_complete", signer_role: "buyer_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+
   return {
     ok: false,
     error_code: "ERR_INVALID_STATE",

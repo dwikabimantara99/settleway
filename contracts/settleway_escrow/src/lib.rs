@@ -1,7 +1,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short, Address, BytesN, Env, Symbol,
+    contract, contractimpl, contracttype, symbol_short, token, Address, BytesN, Env, Symbol,
 };
 
 #[contracttype]
@@ -44,6 +44,26 @@ const ESCROW_COUNTER_KEY: Symbol = symbol_short!("COUNTER");
 #[contracttype]
 pub enum DataKey {
     Escrow(u64),
+    CustodyEscrow(u64),
+}
+
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct CustodyEscrow {
+    pub id: u64,
+    pub deal_hash: BytesN<32>,
+    pub token: Address,
+    pub fee_recipient: Address,
+    pub buyer: Address,
+    pub seller: Address,
+    pub principal_token_amount: i128,
+    pub buyer_bond_token_amount: i128,
+    pub seller_bond_token_amount: i128,
+    pub buyer_fee_token_amount: i128,
+    pub seller_fee_token_amount: i128,
+    pub status: EscrowStatus,
+    pub proof_hash: Option<BytesN<32>>,
+    pub expires_at: u64,
 }
 
 #[contract]
@@ -289,6 +309,193 @@ impl SettlewayEscrowContract {
             .get(&DataKey::Escrow(escrow_id))
             .expect("Escrow not found")
     }
+
+    // --- V2: Real Token Custody and Settlement --- //
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn create_escrow_v2(
+        env: Env,
+        deal_hash: BytesN<32>,
+        token: Address,
+        fee_recipient: Address,
+        buyer: Address,
+        seller: Address,
+        principal_token_amount: i128,
+        buyer_bond_token_amount: i128,
+        seller_bond_token_amount: i128,
+        buyer_fee_token_amount: i128,
+        seller_fee_token_amount: i128,
+        expires_at: u64,
+    ) -> u64 {
+        let admin: Address = env.storage().instance().get(&ADMIN_KEY).expect("Not initialized");
+        admin.require_auth();
+
+        let mut counter: u64 = env.storage().instance().get(&ESCROW_COUNTER_KEY).unwrap();
+        counter += 1;
+
+        let escrow = CustodyEscrow {
+            id: counter,
+            deal_hash: deal_hash.clone(),
+            token: token.clone(),
+            fee_recipient: fee_recipient.clone(),
+            buyer: buyer.clone(),
+            seller: seller.clone(),
+            principal_token_amount,
+            buyer_bond_token_amount,
+            seller_bond_token_amount,
+            buyer_fee_token_amount,
+            seller_fee_token_amount,
+            status: EscrowStatus::WaitingDeposits,
+            proof_hash: None,
+            expires_at,
+        };
+
+        env.storage().persistent().set(&DataKey::CustodyEscrow(counter), &escrow);
+        env.storage().instance().set(&ESCROW_COUNTER_KEY, &counter);
+
+        env.events().publish(
+            (Symbol::new(&env, "EscrowCreatedV2"), counter),
+            (deal_hash, token, buyer, seller, principal_token_amount),
+        );
+
+        counter
+    }
+
+    pub fn deposit_buyer_v2(env: Env, escrow_id: u64, actor: Address) {
+        actor.require_auth();
+        let mut escrow = Self::get_custody_escrow(env.clone(), escrow_id);
+        if escrow.buyer != actor {
+            panic!("Not the buyer");
+        }
+
+        match escrow.status {
+            EscrowStatus::WaitingDeposits => escrow.status = EscrowStatus::BuyerFunded,
+            EscrowStatus::SellerFunded => escrow.status = EscrowStatus::Locked,
+            _ => panic!("Invalid state for buyer deposit"),
+        }
+
+        // Transfer tokens to contract
+        let amount = escrow.principal_token_amount + escrow.buyer_bond_token_amount + escrow.buyer_fee_token_amount;
+        if amount > 0 {
+            let client = token::Client::new(&env, &escrow.token);
+            client.transfer(&actor, &env.current_contract_address(), &amount);
+        }
+
+        env.storage().persistent().set(&DataKey::CustodyEscrow(escrow_id), &escrow);
+        env.events().publish((Symbol::new(&env, "BuyerDepositedV2"), escrow_id), actor);
+
+        if escrow.status == EscrowStatus::Locked {
+            env.events().publish((Symbol::new(&env, "EscrowLockedV2"), escrow_id), ());
+        }
+    }
+
+    pub fn deposit_seller_v2(env: Env, escrow_id: u64, actor: Address) {
+        actor.require_auth();
+        let mut escrow = Self::get_custody_escrow(env.clone(), escrow_id);
+        if escrow.seller != actor {
+            panic!("Not the seller");
+        }
+
+        match escrow.status {
+            EscrowStatus::WaitingDeposits => escrow.status = EscrowStatus::SellerFunded,
+            EscrowStatus::BuyerFunded => escrow.status = EscrowStatus::Locked,
+            _ => panic!("Invalid state for seller deposit"),
+        }
+
+        // Transfer tokens to contract
+        let amount = escrow.seller_bond_token_amount + escrow.seller_fee_token_amount;
+        if amount > 0 {
+            let client = token::Client::new(&env, &escrow.token);
+            client.transfer(&actor, &env.current_contract_address(), &amount);
+        }
+
+        env.storage().persistent().set(&DataKey::CustodyEscrow(escrow_id), &escrow);
+        env.events().publish((Symbol::new(&env, "SellerDepositedV2"), escrow_id), actor);
+
+        if escrow.status == EscrowStatus::Locked {
+            env.events().publish((Symbol::new(&env, "EscrowLockedV2"), escrow_id), ());
+        }
+    }
+
+    pub fn submit_proof_hash_v2(env: Env, escrow_id: u64, actor: Address, proof_hash: BytesN<32>) {
+        actor.require_auth();
+        let mut escrow = Self::get_custody_escrow(env.clone(), escrow_id);
+        if escrow.seller != actor {
+            panic!("Not the seller");
+        }
+        if escrow.status != EscrowStatus::Locked {
+            panic!("Invalid state for proof");
+        }
+
+        escrow.status = EscrowStatus::ProofSubmitted;
+        escrow.proof_hash = Some(proof_hash.clone());
+
+        env.storage().persistent().set(&DataKey::CustodyEscrow(escrow_id), &escrow);
+        env.events().publish((Symbol::new(&env, "ProofSubmittedV2"), escrow_id), proof_hash);
+    }
+
+    pub fn mark_delivered_v2(env: Env, escrow_id: u64, actor: Address) {
+        actor.require_auth();
+        let mut escrow = Self::get_custody_escrow(env.clone(), escrow_id);
+        if escrow.seller != actor {
+            panic!("Not the seller");
+        }
+        if escrow.status != EscrowStatus::ProofSubmitted {
+            panic!("Invalid state for delivery");
+        }
+
+        escrow.status = EscrowStatus::Delivered;
+        env.storage().persistent().set(&DataKey::CustodyEscrow(escrow_id), &escrow);
+        env.events().publish((Symbol::new(&env, "DeliveryMarkedV2"), escrow_id), ());
+    }
+
+    pub fn settle_and_complete(env: Env, escrow_id: u64, actor: Address) {
+        actor.require_auth();
+        let mut escrow = Self::get_custody_escrow(env.clone(), escrow_id);
+        if escrow.buyer != actor {
+            panic!("Not the buyer");
+        }
+        if escrow.status != EscrowStatus::Delivered {
+            panic!("Invalid state for acceptance");
+        }
+
+        escrow.status = EscrowStatus::Completed;
+
+        // Perform settlement transfers
+        let client = token::Client::new(&env, &escrow.token);
+        
+        // 1. Principal to seller
+        if escrow.principal_token_amount > 0 {
+            client.transfer(&env.current_contract_address(), &escrow.seller, &escrow.principal_token_amount);
+        }
+        
+        // 2. Buyer bond refund to buyer
+        if escrow.buyer_bond_token_amount > 0 {
+            client.transfer(&env.current_contract_address(), &escrow.buyer, &escrow.buyer_bond_token_amount);
+        }
+        
+        // 3. Seller bond refund to seller
+        if escrow.seller_bond_token_amount > 0 {
+            client.transfer(&env.current_contract_address(), &escrow.seller, &escrow.seller_bond_token_amount);
+        }
+        
+        // 4. Fees to fee recipient
+        let total_fees = escrow.buyer_fee_token_amount + escrow.seller_fee_token_amount;
+        if total_fees > 0 {
+            client.transfer(&env.current_contract_address(), &escrow.fee_recipient, &total_fees);
+        }
+
+        env.storage().persistent().set(&DataKey::CustodyEscrow(escrow_id), &escrow);
+        env.events().publish((Symbol::new(&env, "EscrowCompletedV2"), escrow_id), ());
+    }
+
+    pub fn get_custody_escrow(env: Env, escrow_id: u64) -> CustodyEscrow {
+        env.storage()
+            .persistent()
+            .get(&DataKey::CustodyEscrow(escrow_id))
+            .expect("CustodyEscrow not found")
+    }
 }
 
 mod test;
+mod test_v2;

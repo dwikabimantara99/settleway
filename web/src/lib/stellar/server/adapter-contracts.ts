@@ -96,7 +96,7 @@ export interface StellarAdapterConfirmRequest {
 
 export interface StellarConfirmedCreateDealResult {
   outcome: "confirmed";
-  action: "create_deal";
+  action: "create_deal" | "create_deal_custody";
   transaction_hash: string;
   result_escrow_id: string;
 }

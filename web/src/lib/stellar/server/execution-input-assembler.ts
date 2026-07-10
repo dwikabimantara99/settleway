@@ -15,11 +15,13 @@ export interface StellarExecutionPublicMetadata {
   admin_address: string;
   buyer_demo_address: string;
   seller_demo_address: string;
+  token_address?: string;
+  fee_recipient?: string;
 }
 
 export type StellarExecutionAssemblyInput =
   | {
-      action: "create_deal";
+      action: "create_deal" | "create_deal_custody";
       operation_id: string;
       deal: DbDeal;
       metadata: StellarExecutionPublicMetadata;
@@ -27,14 +29,14 @@ export type StellarExecutionAssemblyInput =
       expires_at: string;
     }
   | {
-      action: "submit_proof";
+      action: "submit_proof" | "submit_proof_custody";
       operation_id: string;
       deal: DbDeal;
       metadata: StellarExecutionPublicMetadata;
       proof_hash: string;
     }
   | {
-      action: Exclude<StellarAction, "create_deal" | "submit_proof" | "expire_proof" | "reject_delivery">;
+      action: Exclude<StellarAction, "create_deal" | "create_deal_custody" | "submit_proof" | "submit_proof_custody" | "expire_proof" | "reject_delivery">;
       operation_id: string;
       deal: DbDeal;
       metadata: StellarExecutionPublicMetadata;
@@ -195,7 +197,7 @@ export function assembleStellarExecutionInput(
   // Build action-specific input
   let buildInput: StellarInvocationBuildInput;
 
-  if (input.action === "create_deal") {
+  if (input.action === "create_deal" || input.action === "create_deal_custody") {
     // Validate deal_hash
     if (!input.deal_hash || input.deal_hash.trim() === "") {
       return { ok: false, error_code: "ERR_MISSING_DEAL_HASH" };
@@ -226,20 +228,40 @@ export function assembleStellarExecutionInput(
       }
     }
 
-    buildInput = {
-      action: "create_deal",
-      expected_local_status: expectedLocalStatus,
+    if (input.action === "create_deal") {
+      buildInput = {
+        action: "create_deal",
+        expected_local_status: expectedLocalStatus,
         contract_id: contractId,
-      deal_hash: input.deal_hash,
-      buyer_address: input.metadata.buyer_demo_address,
-      seller_address: input.metadata.seller_demo_address,
-      principal: String(input.deal.principal_idr),
-      buyer_bond: String(input.deal.buyer_bond_idr),
-      seller_bond: String(input.deal.seller_bond_idr),
-      buyer_fee: String(input.deal.buyer_fee_idr),
-      seller_fee: String(input.deal.seller_fee_idr),
-      expires_at: input.expires_at,
-    };
+        deal_hash: input.deal_hash,
+        buyer_address: input.metadata.buyer_demo_address,
+        seller_address: input.metadata.seller_demo_address,
+        principal: String(input.deal.principal_idr),
+        buyer_bond: String(input.deal.buyer_bond_idr),
+        seller_bond: String(input.deal.seller_bond_idr),
+        buyer_fee: String(input.deal.buyer_fee_idr),
+        seller_fee: String(input.deal.seller_fee_idr),
+        expires_at: input.expires_at,
+      };
+    } else {
+      // create_deal_custody
+      buildInput = {
+        action: "create_deal_custody",
+        expected_local_status: expectedLocalStatus,
+        contract_id: contractId,
+        deal_hash: input.deal_hash,
+        token_address: input.metadata.token_address || "CBY4...", // We'll need token_address in metadata
+        fee_recipient: input.metadata.fee_recipient || "GD...", // We'll need fee_recipient in metadata
+        buyer_address: input.metadata.buyer_demo_address,
+        seller_address: input.metadata.seller_demo_address,
+        principal: String(input.deal.principal_idr),
+        buyer_bond: String(input.deal.buyer_bond_idr),
+        seller_bond: String(input.deal.seller_bond_idr),
+        buyer_fee: String(input.deal.buyer_fee_idr),
+        seller_fee: String(input.deal.seller_fee_idr),
+        expires_at: input.expires_at,
+      };
+    }
   } else {
     // Existing-deal actions require escrow_id
     if (input.deal.stellar_escrow_id === null) {
@@ -249,37 +271,46 @@ export function assembleStellarExecutionInput(
     const escrowId = input.deal.stellar_escrow_id;
     const actorAddress = resolveActorAddress(planResult.plan.signer_role, input.metadata);
 
-    if (input.action === "submit_proof") {
+    if (input.action === "submit_proof" || input.action === "submit_proof_custody") {
       if (!input.proof_hash || input.proof_hash.trim() === "") {
         return { ok: false, error_code: "ERR_MISSING_PROOF_HASH" };
       }
       buildInput = {
-        action: "submit_proof",
+        action: input.action,
         expected_local_status: expectedLocalStatus,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,
         proof_hash: input.proof_hash,
       };
-    } else if (input.action === "expire" || input.action === "refund") {
+    } else if (input.action === "expire" || input.action === "refund" || input.action === "expire_custody" || input.action === "refund_custody") {
       buildInput = {
         action: input.action,
         expected_local_status: expectedLocalStatus,
         contract_id: contractId,
         escrow_id: escrowId,
       };
-    } else if (input.action === "buyer_deposit" || input.action === "seller_deposit" || input.action === "accept_delivery") {
+    } else if (
+      input.action === "buyer_deposit" ||
+      input.action === "seller_deposit" ||
+      input.action === "buyer_deposit_custody" ||
+      input.action === "seller_deposit_custody" ||
+      input.action === "accept_delivery" ||
+      input.action === "accept_delivery_custody" ||
+      input.action === "mark_delivered" ||
+      input.action === "mark_delivered_custody"
+    ) {
       buildInput = {
-        action: input.action,
+        action: input.action as "buyer_deposit" | "seller_deposit" | "buyer_deposit_custody" | "seller_deposit_custody" | "accept_delivery" | "accept_delivery_custody" | "mark_delivered" | "mark_delivered_custody",
         expected_local_status: expectedLocalStatus,
-        idempotency_scope: input.action === "seller_deposit" ? input.deal.seller_id : input.deal.buyer_id,
+        idempotency_scope: (input.action.includes("seller_deposit") || input.action.includes("mark_delivered")) ? input.deal.seller_id : input.deal.buyer_id,
         contract_id: contractId,
         escrow_id: escrowId,
         actor_address: actorAddress,
       };
     } else {
       buildInput = {
-        action: input.action,
+        action: input.action as never, // All actions should be handled
         expected_local_status: expectedLocalStatus,
         contract_id: contractId,
         escrow_id: escrowId,

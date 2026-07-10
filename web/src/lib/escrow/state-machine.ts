@@ -25,7 +25,14 @@ export type EscrowAction =
   | 'expire'
   | 'expire_proof'
   | 'reject_delivery'
-  | 'refund';
+  | 'refund'
+  | 'buyer_deposit_custody'
+  | 'seller_deposit_custody'
+  | 'submit_proof_custody'
+  | 'mark_delivered_custody'
+  | 'accept_delivery_custody'
+  | 'expire_custody'
+  | 'refund_custody';
 
 export const FUNDING_WINDOW_DEAL_STATUSES = [
   'WAITING_DEPOSITS',
