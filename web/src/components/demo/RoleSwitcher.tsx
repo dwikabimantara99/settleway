@@ -30,13 +30,13 @@ export function RoleSwitcher() {
       if (hasDemoParam && !hasDemoCookie) {
         document.cookie = 'demo_mode=1; path=/; max-age=86400';
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setIsDemoMode(true);
     }
 
     // Check current mock_actor cookie
     const match = document.cookie.match(/(?:(?:^|.*;\s*)mock_actor\s*\=\s*([^;]*).*$)|^.*$/);
     if (match && match[1]) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe in DOM cookie sync
       setRole(match[1]);
     } else if (hasDemoParam || hasDemoCookie) {
       setRole('buyer-surabaya-restaurant');
