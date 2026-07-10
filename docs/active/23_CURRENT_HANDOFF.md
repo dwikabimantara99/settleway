@@ -43,3 +43,4 @@ B. **Remote Prove Settlement Custody:** Deploy the upgraded `settleway_escrow` c
 - **Branch:** feature/persistent-custody-lifecycle-proof
 - **Classification:** PERSISTENT_CUSTODY_LIFECYCLE_BLOCKED_REPUTATION
 - **Notes:** Custody lifecycle completed on-chain and deals reached COMPLETED status, but reputation execution failed due to PGRST204 (proof_hash missing in DB).
+- **Rescue Notes:** SECURITY_RESCUE_REQUIRED / BLOCKED_REPUTATION note; do not merge until secrets rotated and branch cleaned.

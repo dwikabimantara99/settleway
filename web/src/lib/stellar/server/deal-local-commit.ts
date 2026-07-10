@@ -9,7 +9,6 @@ export interface StellarDealLocalCommitInput {
   local_commit: StellarLocalCommitDecision;
   contract_id: string;
   committed_at: string;
-  proof_hash?: string;
 }
 
 export type LocalCommitFailureReason =
@@ -88,10 +87,6 @@ export function planDealLocalCommit(input: StellarDealLocalCommitInput): Stellar
   }
 
   const next_deal: DbDeal = JSON.parse(JSON.stringify(deal));
-  if (input.proof_hash !== undefined && (operation.requested_action === "submit_proof" || operation.requested_action === "submit_proof_custody")) {
-    next_deal.proof_hash = input.proof_hash;
-  }
-
 
   if (local_commit.kind === "sync_create_deal") {
     // For create_deal
@@ -146,9 +141,6 @@ export function planDealLocalCommit(input: StellarDealLocalCommitInput): Stellar
       return { ok: false, reason: "ERR_UNEXPECTED_ESCROW_ID" };
     }
 
-    if (input.proof_hash) {
-      next_deal.proof_hash = input.proof_hash;
-    }
     next_deal.status = policy.target_local_status;
     next_deal.latest_stellar_tx_hash = operation.transaction_hash;
     next_deal.stellar_sync_status = "idle";

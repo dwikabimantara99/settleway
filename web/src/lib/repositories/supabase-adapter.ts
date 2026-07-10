@@ -284,8 +284,7 @@ export class SupabaseRepositoryAdapter implements IRepository {
   }
 
   async appendReputationEvent(event: DbReputationEvent): Promise<{ appended: boolean; event: DbReputationEvent }> {
-    const { proof_hash, settled_at, settlement_reference, transaction_hash, ...eventWithoutNewFields } = event as any;
-    const { data, error } = await this.client.from('reputation_events').insert(eventWithoutNewFields).select().single();
+    const { data, error } = await this.client.from('reputation_events').insert(event).select().single();
     if (error) {
       if (error.code === '23505') {
         const existing = await this.getReputationEvent(event.id);
@@ -297,12 +296,8 @@ export class SupabaseRepositoryAdapter implements IRepository {
   }
 
   async appendReputationEventPair(events: DbReputationEvent[]): Promise<{ appended: boolean; events: DbReputationEvent[] }> {
-    const safeEvents = events.map(e => {
-      const { proof_hash, settled_at, settlement_reference, transaction_hash, ...rest } = e as any;
-      return rest;
-    });
     // Supabase JS allows array inserts. We don't have transaction wrappers natively in the client, but inserting an array is atomic enough.
-    const { data, error } = await this.client.from('reputation_events').insert(safeEvents).select();
+    const { data, error } = await this.client.from('reputation_events').insert(events).select();
     if (error) {
       if (error.code === '23505') {
         return { appended: false, events: [] }; // Simplified error handling

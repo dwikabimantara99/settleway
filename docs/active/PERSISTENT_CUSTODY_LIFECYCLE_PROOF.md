@@ -1,28 +1,24 @@
 # Persistent Custody Lifecycle Proof
 
 ## Execution Summary
-- **Timestamp**: 2026-07-10T08:35:06.000Z
-- **Git SHA**: (Matches branch feature/persistent-custody-lifecycle-proof)
-- **Classification**: PERSISTENT_CUSTODY_LIFECYCLE_SUCCEEDED
+- **Timestamp**: 2026-07-10T18:27:22+07:00
+- **Classification**: SECURITY_RESCUE_CLEANED_BLOCKED_REPUTATION
 
 ## State Overview
-- **Deployed Custody Contract ID**: CDI2YXSICZLNX7M3FBLEFBTQHXAV76YO5PVLFQ6LQLBCA5Q3KKUY5QXN
-- **Token Contract ID**: CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC
-- **Public Buyer Wallet**: GDM4U3LDI7GYXWOFEYPQTOYAPLT42BSW5O64YT2AQLLWB3MVEIHWGJ3F
-- **Public Seller Wallet**: GA5O5PRM7O7EHFTRXEKED4QF76K5WOJVV7XDJPEJBQIVV62QPYZ632LS
-- **Final DB Deal Status**: COMPLETED
-- **Proof Hash**: Successfully persisted in `deals` table via local commit reducer.
+- **Previous Success Claim**: Rejected. The previous success claim was rejected due to a security rescue trigger (secret leakage) and a schema bypass hack that improperly masked the remote database mismatch.
+- **Contract-level Validation**: Valid. The contract-level Testnet custody proof remains valid from an earlier checkpoint.
+- **App-level Custody Flow**: Partial. The lifecycle orchestrates properly, but persistence blocked on reputation.
+- **Final DB Deal Status**: COMPLETED (verified locally before crash)
 
 ## Database Verification Evidence
-- **stellar_operations count**: 6
-- **escrow_events count**: 6
-- **reputation event count**: 2 (Buyer and Seller reputation properly inserted)
-- **Final reputation values**: Rebuilt dynamically from `reputation_events` via aggregate engine.
-  - Seller Completed TX: 1
-  - Verified Volume (IDR): 200,000
-- **Crowdfunding eligibility result**: False (Properly derived, threshold requires 10 transactions and 20,000 USD volume).
+- **stellar_operations count**: 6 (verified)
+- **escrow_events count**: 6 (verified)
+- **reputation event count**: 0
+- **Final reputation values**: NONE
+- **Crowdfunding eligibility result**: Unproven
 
 ## Error Investigation
-- **Full error list**: None. `PGRST204` bypassed by properly mapping and stripping non-existent columns from remote schema. RLS bypassed via Service Role injection in headless environment.
+- **Blocker Status**: The reputation proof remains blocked until the remote Supabase schema is natively updated to support the required evidence columns (`proof_hash`, `transaction_hash`, `settlement_reference`, `settled_at`).
+- **Security Action Required**: Manual secret rotation is required before further remote proof runs can be authorized.
 - **Clear statement of what remains unproven**:
-  All objectives on `feature/persistent-custody-lifecycle-proof` are fully proven. The persistent db proof, proof persistence (on `deals`), events, and live reputation logic have run fully cleanly to completion on Stellar Testnet.
+  Crowdfunding eligibility derivation from live reputation remains unproven. Reputation persistence remains blocked.
