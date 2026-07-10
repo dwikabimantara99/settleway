@@ -36,3 +36,10 @@
 ### Next Recommended Options
 A. **Submit with Funding Corridor Proof:** The currently evidenced functionality provides a powerful, demonstrable baseline proving Settleway's thesis of bridging B2B trade intent with cryptographic escrow bounds.
 B. **Remote Prove Settlement Custody:** Deploy the upgraded `settleway_escrow` contract with the custody-capable Testnet/local token settlement path and execute remote tests for the full lifecycle.
+
+
+## Submission State — 2026-07-10
+
+- **Branch:** feature/persistent-custody-lifecycle-proof
+- **Classification:** PERSISTENT_CUSTODY_LIFECYCLE_BLOCKED_REPUTATION
+- **Notes:** Custody lifecycle completed on-chain and deals reached COMPLETED status, but reputation execution failed due to PGRST204 (proof_hash missing in DB).
