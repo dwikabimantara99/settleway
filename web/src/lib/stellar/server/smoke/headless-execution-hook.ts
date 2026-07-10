@@ -290,6 +290,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
       operation_persistence: new RepositoryStellarOperationPersistence(repository),
       deal_persistence: new RepositoryDealPersistence(repository),
       execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
+      reputation_persistence: repository,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
 

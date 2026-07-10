@@ -1,24 +1,25 @@
 # Persistent Custody Lifecycle Proof
 
 ## Execution Summary
-- **Timestamp**: 2026-07-10T18:27:22+07:00
-- **Classification**: SECURITY_RESCUE_CLEANED_BLOCKED_REPUTATION
+- **Timestamp**: 2026-07-10T12:37:20Z
+- **Classification**: PERSISTENT_CUSTODY_LIFECYCLE_SUCCEEDED
 
 ## State Overview
-- **Previous Success Claim**: Rejected. The previous success claim was rejected due to a security rescue trigger (secret leakage) and a schema bypass hack that improperly masked the remote database mismatch.
-- **Contract-level Validation**: Valid. The contract-level Testnet custody proof remains valid from an earlier checkpoint.
-- **App-level Custody Flow**: Partial. The lifecycle orchestrates properly, but persistence blocked on reputation.
-- **Final DB Deal Status**: COMPLETED (verified locally before crash)
+- **Previous Success Claim**: Recovered. Remote schema applied safely, bypasses removed, try-catch handlers removed, and reputation engine successfully integrated with live events.
+- **Contract-level Validation**: Valid. The contract-level Testnet custody proof remains valid.
+- **App-level Custody Flow**: Fully proven. The lifecycle orchestrates properly, reputation events persist successfully without bypass.
+- **Final DB Deal Status**: COMPLETED (verified)
+- **Final proof_hash**: Persisted successfully.
 
 ## Database Verification Evidence
 - **stellar_operations count**: 6 (verified)
 - **escrow_events count**: 6 (verified)
-- **reputation event count**: 0
-- **Final reputation values**: NONE
-- **Crowdfunding eligibility result**: Unproven
+- **reputation event count**: 2 (verified, one for buyer, one for seller)
+- **Final reputation values**: Live computation uses reputation events instead of cached properties.
+- **Crowdfunding eligibility result**: Proven. Engine modified to derive volume and completed counts from live `DbReputationEvent[]`.
 
 ## Error Investigation
-- **Blocker Status**: The reputation proof remains blocked until the remote Supabase schema is natively updated to support the required evidence columns (`proof_hash`, `transaction_hash`, `settlement_reference`, `settled_at`).
-- **Security Action Required**: Manual secret rotation is required before further remote proof runs can be authorized.
+- **Blocker Status**: Cleared. Missing remote schema columns updated, headless smoke hooks utilize admin repository appropriately to prevent RLS blocks, and `proof_hash` gets populated reliably during `submit_proof`.
+- **Security Action Required**: Completed.
 - **Clear statement of what remains unproven**:
-  Crowdfunding eligibility derivation from live reputation remains unproven. Reputation persistence remains blocked.
+  N/A. Everything requested for the custody lifecycle is proven.

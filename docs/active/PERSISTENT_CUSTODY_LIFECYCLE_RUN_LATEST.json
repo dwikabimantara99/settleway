@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-07-10T08:36:16.911Z",
-  "classification": "SECURITY_RESCUE_CLEANED_BLOCKED_REPUTATION",
-  "dealId": "custody_deal_1783672507818",
-  "buyerId": "custody_buyer_1783672507818",
-  "sellerId": "custody_seller_1783672507818",
+  "timestamp": "2026-07-10T12:37:20.263Z",
+  "classification": "PERSISTENT_CUSTODY_LIFECYCLE_SUCCEEDED",
+  "dealId": "custody_deal_1783686966598",
+  "buyerId": "custody_buyer_1783686966598",
+  "sellerId": "custody_seller_1783686966598",
   "blocker": "",
   "isPlanOnly": false
 }

@@ -26,6 +26,7 @@ export type StellarDealExecutionCoordinatorInput = StellarExecutionAssemblyInput
   operation_persistence: StellarOperationPersistencePort;
   deal_persistence: StellarDealPersistencePort;
   execution_adapter: StellarExecutionAdapter;
+  reputation_persistence?: import('../../repositories/interfaces').IRepository;
 };
 
 export type StellarDealExecutionCoordinatorResult =
@@ -121,6 +122,11 @@ export async function coordinateDealExecution(
 
     next_deal = commitPlan.next_deal;
 
+    // Inject proof_hash if provided by the action payload
+    if (input.action === 'submit_proof' || input.action === 'submit_proof_custody') {
+      next_deal.proof_hash = input.proof_hash;
+    }
+
     // 6. persist through deal CAS
     const persistRes = await input.deal_persistence.replaceIfCurrent({
       current: commitPlan.current_deal,
@@ -129,44 +135,39 @@ export async function coordinateDealExecution(
 
     if (persistRes.ok) {
       // Phase 8 narrow hook: Trigger idempotent reputation processing after safe recovery
-      try {
-        let outcome: AuthoritativeReputationDecision['reputation_outcome'] | null = null;
-        if (next_deal.status === 'COMPLETED') outcome = 'transaction_completed';
-        else if (next_deal.status === 'REFUNDED') {
-          if (input.action === 'expire') {
-            if (commitPlan.current_deal.status === 'BUYER_FUNDED') outcome = 'seller_failed_deposit';
-            else if (commitPlan.current_deal.status === 'SELLER_FUNDED') outcome = 'buyer_failed_deposit';
-            else if (isPreLockDealStatus(commitPlan.current_deal.status)) outcome = 'refunded_before_locked';
-          } else if (input.action === 'refund' && isPreLockDealStatus(commitPlan.current_deal.status)) {
-            outcome = 'refunded_before_locked';
-          }
-        } else if (next_deal.status === 'EXPIRED') {
+      let outcome: AuthoritativeReputationDecision['reputation_outcome'] | null = null;
+      if (next_deal.status === 'COMPLETED') outcome = 'transaction_completed';
+      else if (next_deal.status === 'REFUNDED') {
+        if (input.action === 'expire') {
           if (commitPlan.current_deal.status === 'BUYER_FUNDED') outcome = 'seller_failed_deposit';
           else if (commitPlan.current_deal.status === 'SELLER_FUNDED') outcome = 'buyer_failed_deposit';
+          else if (isPreLockDealStatus(commitPlan.current_deal.status)) outcome = 'refunded_before_locked';
+        } else if (input.action === 'refund' && isPreLockDealStatus(commitPlan.current_deal.status)) {
+          outcome = 'refunded_before_locked';
         }
-        
-        if (outcome) {
-          const settlementReference =
-            next_deal.latest_stellar_tx_hash ??
-            (next_deal.proof_hash ? `proof:${next_deal.proof_hash}` : `room-settlement:${next_deal.id}`);
-          await processReputationOutcome(repository, {
-            deal_id: next_deal.id,
-            buyer_id: next_deal.buyer_id,
-            seller_id: next_deal.seller_id,
-            reputation_outcome: outcome,
-            principal_idr: next_deal.principal_idr,
-            transaction_hash: next_deal.latest_stellar_tx_hash,
-            proof_hash: next_deal.proof_hash,
-            settlement_reference: settlementReference,
-            settled_at: next_deal.updated_at,
-            local_terminal_outcome_persisted: true,
-            operation_status: candidate_operation.operation_status,
-            sync_status: next_deal.stellar_sync_status
-          }, () => globalThis.crypto.randomUUID());
-        }
-      } catch (err) {
-        console.error("Hook error:", err);
-        // Ignore reputation hook failures to avoid breaking core execution
+      } else if (next_deal.status === 'EXPIRED') {
+        if (commitPlan.current_deal.status === 'BUYER_FUNDED') outcome = 'seller_failed_deposit';
+        else if (commitPlan.current_deal.status === 'SELLER_FUNDED') outcome = 'buyer_failed_deposit';
+      }
+      
+      if (outcome) {
+        const settlementReference =
+          next_deal.latest_stellar_tx_hash ??
+          (next_deal.proof_hash ? `proof:${next_deal.proof_hash}` : `room-settlement:${next_deal.id}`);
+        await processReputationOutcome(input.reputation_persistence ?? repository, {
+          deal_id: next_deal.id,
+          buyer_id: next_deal.buyer_id,
+          seller_id: next_deal.seller_id,
+          reputation_outcome: outcome,
+          principal_idr: next_deal.principal_idr,
+          transaction_hash: next_deal.latest_stellar_tx_hash,
+          proof_hash: next_deal.proof_hash,
+          settlement_reference: settlementReference,
+          settled_at: next_deal.updated_at,
+          local_terminal_outcome_persisted: true,
+          operation_status: candidate_operation.operation_status,
+          sync_status: next_deal.stellar_sync_status
+        }, () => globalThis.crypto.randomUUID());
       }
     } else {
       return { ok: false, reason: "ERR_OUT_OF_SYNC", operation: candidate_operation, candidate_next_deal: next_deal };

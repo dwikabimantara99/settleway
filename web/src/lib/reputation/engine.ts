@@ -155,17 +155,26 @@ export const IDR_TO_USD_RATE = 15000;
 export const CROWDFUNDING_MIN_VOLUME_USD = 20000;
 export const CROWDFUNDING_MIN_COMPLETED_TX = 10;
 
-export function isEligibleForCrowdfunding(profile: DbProfile): boolean {
+export function isEligibleForCrowdfunding(profile: DbProfile, events: DbReputationEvent[]): boolean {
   if (profile.user_type !== 'seller' && profile.user_type !== 'both') {
     return false;
   }
   
-  const completedCount = profile.seller_completed_count;
+  let completedCount = 0;
+  let totalVolumeIdr = 0;
+
+  for (const event of events) {
+    if (event.participant_role === 'seller' && event.reputation_outcome === 'transaction_completed') {
+      completedCount++;
+      totalVolumeIdr += event.volume_delta_idr;
+    }
+  }
+
   if (completedCount < CROWDFUNDING_MIN_COMPLETED_TX) {
     return false;
   }
 
-  const volumeUsd = profile.verified_volume_idr / IDR_TO_USD_RATE;
+  const volumeUsd = totalVolumeIdr / IDR_TO_USD_RATE;
   if (volumeUsd < CROWDFUNDING_MIN_VOLUME_USD) {
     return false;
   }
