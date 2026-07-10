@@ -18,13 +18,13 @@
 - Dual-sided funding execution (`buyer_deposit`, `seller_deposit`).
 - Cryptographic state confirmation up to the `LOCKED` state.
 
-**Unproven:**
-- Delivery proof submission (`submit_proof`).
-- Buyer delivery acceptance (`accept_delivery`).
-- Settlement and payout routing.
-- Reputation ledger.
+**Unproven (Remote):**
+- Delivery proof submission (`submit_proof`) - Implemented locally / mock-tested, awaiting remote Testnet proof.
+- Buyer delivery acceptance (`accept_delivery`) - Implemented locally / mock-tested, awaiting remote Testnet proof.
+- Settlement and payout routing - Blocked by contract interface for real settlement payout (the contract only supports state transitions, not token transfers).
+- Reputation ledger - Implemented locally, awaiting true remote settlement.
 - Production/Mainnet real-money scaling.
 
 ### Next Recommended Options
 A. **Submit with Funding Corridor Proof:** The currently evidenced functionality provides a powerful, demonstrable baseline proving Settleway's thesis of bridging B2B trade intent with cryptographic escrow bounds.
-B. **Implement Headless Delivery/Settlement Extension:** If time remains before the deadline, branch off and implement the `submit_proof`, `accept_delivery`, and `settlement` endpoints within the headless execution environment to prove the complete lifecycle.
+B. **Update Escrow Contract:** Implement actual on-chain settlement payouts (XLM/USDC) inside the `settleway_escrow` contract to unblock real settlement functionality, then execute remote tests for the full lifecycle.

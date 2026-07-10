@@ -1,4 +1,4 @@
-import { DbReputationEvent, DbReputationAggregate, ReputationOutcome } from '../db/types';
+import { DbReputationEvent, DbReputationAggregate, ReputationOutcome, DbProfile } from '../db/types';
 import { createIdempotencyKey } from './idempotency';
 
 export interface AuthoritativeReputationDecision {
@@ -149,4 +149,26 @@ export async function processReputationOutcome(store: ReputationStore, decision:
     }
   }
   return [];
+}
+
+export const IDR_TO_USD_RATE = 15000;
+export const CROWDFUNDING_MIN_VOLUME_USD = 20000;
+export const CROWDFUNDING_MIN_COMPLETED_TX = 10;
+
+export function isEligibleForCrowdfunding(profile: DbProfile): boolean {
+  if (profile.user_type !== 'seller' && profile.user_type !== 'both') {
+    return false;
+  }
+  
+  const completedCount = profile.seller_completed_count;
+  if (completedCount < CROWDFUNDING_MIN_COMPLETED_TX) {
+    return false;
+  }
+
+  const volumeUsd = profile.verified_volume_idr / IDR_TO_USD_RATE;
+  if (volumeUsd < CROWDFUNDING_MIN_VOLUME_USD) {
+    return false;
+  }
+
+  return true;
 }

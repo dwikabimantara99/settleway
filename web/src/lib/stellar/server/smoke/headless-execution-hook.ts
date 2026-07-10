@@ -144,21 +144,26 @@ async function ensureTestnetEscrowPrepared(input: {
 export interface HeadlessExecuteParams {
   dealId: string;
   actorId: string;
-  expectedRole: 'buyer' | 'seller';
-  action: 'buyer_deposit' | 'seller_deposit';
+  expectedRole: 'buyer' | 'seller' | 'admin';
+  action: 'buyer_deposit' | 'seller_deposit' | 'submit_proof' | 'mark_delivered' | 'accept_delivery';
+  proofHash?: string;
   idempotencyKey?: string;
 }
 
 export interface HeadlessExecuteResult {
   ok: boolean;
-  action: 'buyer_deposit' | 'seller_deposit';
-  actorRole: 'buyer' | 'seller';
+  action: HeadlessExecuteParams['action'];
+  actorRole: HeadlessExecuteParams['expectedRole'];
   transactionHash?: string | null;
   nextDealStatus?: string;
   blocker?: string;
 }
 
 export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams): Promise<HeadlessExecuteResult> {
+  // NOTE: proof_submitted, mark_delivered, and accept_delivery are currently
+  // local scaffolds. Real on-chain settlement payouts are blocked because the
+  // `settleway_escrow` contract only supports state transitions, not token transfers.
+  // This headless hook simulates local transitions to unblock downstream UI/Reputation work.
   if (process.env.RUNTIME_MODE !== 'persistent' || process.env.NEXT_PUBLIC_RUNTIME_MODE !== 'persistent') {
     throw new Error("Headless hook requires RUNTIME_MODE=persistent");
   }
@@ -190,8 +195,8 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
   }
 
   if (
-    (params.action === 'buyer_deposit' && params.expectedRole !== 'buyer') ||
-    (params.action === 'seller_deposit' && params.expectedRole !== 'seller')
+    ((params.action === 'buyer_deposit' || params.action === 'accept_delivery') && params.expectedRole !== 'buyer') ||
+    ((params.action === 'seller_deposit' || params.action === 'submit_proof' || params.action === 'mark_delivered') && params.expectedRole !== 'seller')
   ) {
     return {
       ok: false,
@@ -253,7 +258,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
 
   const fundingRuntime = composeDealRoomFundingRuntime({
     deal: preparedDeal.deal,
-    action: params.action,
+    action: params.action === 'buyer_deposit' || params.action === 'seller_deposit' ? params.action : 'buyer_deposit', // fallback for type safety, won't be used for token amounts on these steps
     contract_id: userRuntimeLoaded.runtime.contract_id,
     buyer_address: buyerWallet.public_address,
     seller_address: sellerWallet.public_address,
@@ -276,6 +281,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
       metadata: userRuntimeLoaded.runtime.metadata,
       existing_operation: currentOperation,
       stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
+      proof_hash: params.proofHash,
       operation_timestamps: {
         created_at: timestamp,
         updated_at: timestamp,
@@ -284,7 +290,8 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
       operation_persistence: new RepositoryStellarOperationPersistence(repository),
       deal_persistence: new RepositoryDealPersistence(repository),
       execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
-    });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any);
 
     if (!coordinatorResult.ok) {
        return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: `Coordinator execution failed` };

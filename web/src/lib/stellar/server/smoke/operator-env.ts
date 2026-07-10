@@ -440,7 +440,7 @@ function parseReconciliation(input: {
   }
 
   return {
-    action: actionValue as Exclude<StellarAction, "expire_proof" | "reject_delivery">, // eslint-disable-line @typescript-eslint/no-explicit-any
+    action: actionValue as Exclude<StellarAction, "expire_proof" | "reject_delivery">,
     transaction_hash: transactionHash,
   };
 }

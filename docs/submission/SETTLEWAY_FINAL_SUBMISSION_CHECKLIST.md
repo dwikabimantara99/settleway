@@ -16,6 +16,7 @@ Settleway proves a persistent Testnet dual-funding Deal Room corridor for agricu
 - **`create_deal` TX Hash:** `15d18a03847cc2e5a9dca27a34b1bd07be21e982b180c81fcf77a14966490e94`
 - **`buyer_deposit` TX Hash:** `40b0165791700cd74280724e4aa5516ef140d02da039370fb5bae0af38b3b9b4`
 - **`seller_deposit` TX Hash:** `4e71afa5676bfde5e2df43c600c21a64ebfb149d9ea58a791924ac471c47b06b`
+- **`FULL_LIFECYCLE_LOCAL_SMOKE_SUCCEEDED`:** Proof, Delivery, and Settlement logic locally scaffolded and mock-tested in `testnet-persistent-smoke-full.test.ts`.
 
 ## 4. Demo Recording Checklist
 - [ ] Show landing / marketplace flow if UI is available.
@@ -33,7 +34,7 @@ Settleway proves a persistent Testnet dual-funding Deal Room corridor for agricu
 **What was built:** A comprehensive Next.js web platform, managed profile-wallet orchestration, and a persistent Supabase database tightly integrated with a Stellar Soroban smart contract.
 **Why Stellar matters:** Stellar provides the isolated, low-cost trust layer needed to escrow dual-commitments programmatically without manual banking intervention.
 **Proof achieved:** We successfully achieved a persistent Testnet dual-funding corridor, programmatically locking Testnet XLM from two generated parties into a central escrow, verified via transaction hashes.
-**What remains next:** Our immediate next extension is wiring the downstream lifecycle (submitting proof of delivery, buyer acceptance, and automated payout settlement).
+**What remains next:** Our immediate next extension is unblocking the smart contract to support real token payouts for settlement, then proving the downstream lifecycle (submitting proof of delivery, buyer acceptance, and automated payout settlement) which is currently scaffolded locally. We also scaffolded the Crowdfunding eligibility primitive which deterministically assesses seller volumes and completions.
 
 ## 6. Do Not Claim
 - Mainnet-ready.
