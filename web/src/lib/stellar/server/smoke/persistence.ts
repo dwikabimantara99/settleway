@@ -144,7 +144,6 @@ function preservesDealIdentity(current: DbDeal, next: DbDeal): boolean {
     current.buyer_total_idr === next.buyer_total_idr &&
     current.seller_total_idr === next.seller_total_idr &&
     current.stellar_mode === next.stellar_mode &&
-    current.proof_hash === next.proof_hash &&
     sameJsonValue(current.terms, next.terms) &&
     current.created_at === next.created_at
   );
