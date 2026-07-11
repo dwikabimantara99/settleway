@@ -43,9 +43,15 @@ export function OpenDealRoomButton({
       }
 
       if (payload.data.redirect_to) {
-        const isDemo = new URLSearchParams(window.location.search).get('demo') === '1';
+        const searchParams = new URLSearchParams(window.location.search);
+        const isDemo = searchParams.get('demo') === '1';
+        const role = searchParams.get('role');
+        const queryParams = new URLSearchParams();
+        if (isDemo) queryParams.set('demo', '1');
+        if (role) queryParams.set('role', role);
+        const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
         const url = payload.data.redirect_to;
-        router.push(isDemo ? `${url}${url.includes('?') ? '&' : '?'}demo=1` : url);
+        router.push(queryString ? `${url}${url.includes('?') ? '&' : '?'}${queryParams.toString()}` : url);
         return;
       }
 
@@ -65,8 +71,14 @@ export function OpenDealRoomButton({
           size="lg"
           className="h-14 w-full rounded-xl"
           onClick={() => {
-            const isDemo = new URLSearchParams(window.location.search).get('demo') === '1';
-            router.push(`/deals/${activeDealId}${isDemo ? '?demo=1' : ''}`);
+            const searchParams = new URLSearchParams(window.location.search);
+            const isDemo = searchParams.get('demo') === '1';
+            const role = searchParams.get('role');
+            const queryParams = new URLSearchParams();
+            if (isDemo) queryParams.set('demo', '1');
+            if (role) queryParams.set('role', role);
+            const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+            router.push(`/deals/${activeDealId}${queryString}`);
           }}
         >
           Enter Active Escrow Room

@@ -17,11 +17,17 @@ export function RoleSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isDevRoleSwitcher, setIsDevRoleSwitcher] = useState(false);
 
   useEffect(() => {
     // Check current demo_mode cookie or URL param
     const searchParams = new URLSearchParams(window.location.search);
     const hasDemoParam = searchParams.get('demo') === '1';
+    const hasDevSwitcherParam = searchParams.get('devRoleSwitcher') === '1';
+    
+    if (hasDevSwitcherParam) {
+      setIsDevRoleSwitcher(true);
+    }
     
     const demoMatch = document.cookie.match(/(?:(?:^|.*;\s*)demo_mode\s*\=\s*([^;]*).*$)|^.*$/);
     const hasDemoCookie = demoMatch && demoMatch[1] === '1';
@@ -56,7 +62,7 @@ export function RoleSwitcher() {
     router.refresh();
   };
 
-  if (!isDemoMode) {
+  if (!isDemoMode || !isDevRoleSwitcher) {
     return null;
   }
 

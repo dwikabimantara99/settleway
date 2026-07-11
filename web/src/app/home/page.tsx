@@ -35,16 +35,21 @@ export default async function HomePage({
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <header className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--navy-900)] sm:text-4xl">
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--navy-900)] sm:text-4xl flex items-center gap-3">
           Welcome to Settleway
+          {isDemo && (
+            <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">
+              Testnet Preview
+            </span>
+          )}
         </h1>
         {isDemo ? (
           <p className="mt-2 text-lg text-slate-600">
-            You are exploring the public Stellar Testnet hackathon preview as a{' '}
-            <strong className="font-semibold text-emerald-600">
-              {isBuyer ? 'Buyer' : isSeller ? 'Seller' : 'Demo User'}
-            </strong>
-            .
+            {isBuyer 
+              ? 'Browse verified supply, submit offers, and settle through a trusted Deal Room.' 
+              : isSeller 
+              ? 'Review verified demand, manage deals, submit proof, and build reputation.' 
+              : 'Your trusted gateway to verified agricultural trade and settlement.'}
           </p>
         ) : (
           <p className="mt-2 text-lg text-slate-600">
@@ -57,7 +62,7 @@ export default async function HomePage({
       {isDemo && (
         <section className="mb-12 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-6 sm:p-8">
           <h2 className="text-xl font-semibold text-[var(--navy-900)]">
-            {isBuyer ? 'Buyer Demo Walkthrough' : isSeller ? 'Seller Demo Walkthrough' : 'Getting Started'}
+            Start your workflow
           </h2>
           <ol className="mt-6 flex flex-col gap-4 sm:flex-row sm:gap-6">
             {isBuyer ? (
@@ -71,7 +76,7 @@ export default async function HomePage({
                   <div className="mt-1 text-sm text-slate-600">Enter a secure Deal Room and deposit your funds.</div>
                 </li>
                 <li className="flex-1">
-                  <div className="font-semibold text-emerald-700">3. Review Evidence</div>
+                  <div className="font-semibold text-emerald-700">3. Review Settlement Evidence</div>
                   <div className="mt-1 text-sm text-slate-600">Accept delivery proof and release funds instantly.</div>
                 </li>
               </>
@@ -82,7 +87,7 @@ export default async function HomePage({
                   <div className="mt-1 text-sm text-slate-600">Check the Sell catalog or view active Deals.</div>
                 </li>
                 <li className="flex-1">
-                  <div className="font-semibold text-emerald-700">2. Submit Proof</div>
+                  <div className="font-semibold text-emerald-700">2. Submit Delivery Proof</div>
                   <div className="mt-1 text-sm text-slate-600">Upload delivery evidence to unlock buyer funds.</div>
                 </li>
                 <li className="flex-1">

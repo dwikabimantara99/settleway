@@ -70,12 +70,16 @@ export default async function ListingDetailPage(props: {
   if (!listing) return notFound();
 
   const isDemo = resolvedSearchParams?.demo === '1';
-  let submitOfferHref = `/offers/new?listingId=${listing.id}`;
-  if (isDemo) {
-    submitOfferHref =
-      listingId === 'listing-cabai-001'
-        ? '/offers/offer-demo-cabai-001?demo=1'
-        : `/offers/new?listingId=${listing.id}&demo=1`;
+  const role = typeof resolvedSearchParams?.role === 'string' ? resolvedSearchParams.role : undefined;
+
+  const queryParams = new URLSearchParams();
+  if (isDemo) queryParams.set('demo', '1');
+  if (role) queryParams.set('role', role);
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+
+  let submitOfferHref = `/offers/new?listingId=${listing.id}${queryString ? '&' + queryParams.toString() : ''}`;
+  if (isDemo && listingId === 'listing-cabai-001') {
+    submitOfferHref = `/offers/offer-demo-cabai-001${queryString}`;
   }
 
   const seller = demoProfiles[listing.sellerId];
@@ -92,7 +96,7 @@ export default async function ListingDetailPage(props: {
   return (
     <main className="field-container min-w-0 py-10">
       <Link
-        href={isDemo ? '/marketplace?demo=1' : '/marketplace'}
+        href={`/marketplace${queryString}`}
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--green-700)]"
       >
         <ChevronLeft className="h-4 w-4" />

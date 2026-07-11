@@ -150,7 +150,7 @@ function AuthenticatedHeaderInner() {
                   Profile
                 </Link>
                 <Link
-                  href="/deals"
+                  href={`/deals${queryString}`}
                   role="menuitem"
                   className="flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)] hover:text-[var(--navy-900)]"
                 >

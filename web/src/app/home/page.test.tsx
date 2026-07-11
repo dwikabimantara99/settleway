@@ -7,8 +7,9 @@ describe('HomePage', () => {
     const searchParams = Promise.resolve({ demo: '1', role: 'buyer' });
     const html = renderToString(await HomePage({ searchParams }));
 
-    expect(html).toContain('Buyer Demo Walkthrough');
+    expect(html).toContain('Start your workflow');
     expect(html).toContain('Browse Supply');
+    expect(html).toContain('Submit Offer');
     expect(html).toContain('href="/marketplace?demo=1&amp;role=buyer"');
     expect(html).toContain('href="/buyer-requests?demo=1&amp;role=buyer"');
     expect(html).toContain('href="/deals?demo=1&amp;role=buyer"');
@@ -19,8 +20,9 @@ describe('HomePage', () => {
     const searchParams = Promise.resolve({ demo: '1', role: 'seller' });
     const html = renderToString(await HomePage({ searchParams }));
 
-    expect(html).toContain('Seller Demo Walkthrough');
+    expect(html).toContain('Start your workflow');
     expect(html).toContain('Review Demand');
+    expect(html).toContain('Submit Delivery Proof');
     expect(html).toContain('href="/marketplace?demo=1&amp;role=seller"');
   });
 
