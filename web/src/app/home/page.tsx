@@ -7,18 +7,22 @@ export const metadata: Metadata = {
   description: 'Settleway Testnet App Home',
 };
 
+// Force dynamic rendering so searchParams (demo=1, role) are read at request time.
+export const dynamic = 'force-dynamic';
+
 interface SearchParams {
   demo?: string;
   role?: string;
 }
 
-export default function HomePage({
+export default async function HomePage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const isDemo = searchParams.demo === '1';
-  const role = searchParams.role;
+  const resolvedSearch = await searchParams;
+  const isDemo = resolvedSearch.demo === '1';
+  const role = resolvedSearch.role;
   const isBuyer = role === 'buyer';
   const isSeller = role === 'seller';
 

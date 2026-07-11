@@ -17,11 +17,15 @@ import { EditProfileButton } from '@/components/profile/EditProfileButton';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent } from '@/components/ui/Card';
 import { getCurrentUser } from '@/lib/auth/server';
-import type { DbBuyerRequest, DbListing } from '@/lib/db/types';
+import type { DbBuyerRequest, DbListing, DbProfile } from '@/lib/db/types';
 import { rebuildReputationAggregate } from '@/lib/reputation/engine';
 import { repository } from '@/lib/repositories';
 import { ProfileWalletCard } from '@/components/profile/ProfileWalletCard';
 import { CrowdfundingEligibilityCard } from '@/components/profile/CrowdfundingEligibilityCard';
+import { demoProfiles } from '@/lib/demo/demo-data';
+
+// Force dynamic rendering so searchParams (demo=1) are read at request time.
+export const dynamic = 'force-dynamic';
 
 function formatIdr(value: number | null | undefined): string {
   return `Rp ${(value ?? 0).toLocaleString('id-ID')}`;
@@ -170,9 +174,50 @@ function ActivityRequestCard({ request }: { request: DbBuyerRequest }) {
   );
 }
 
-export default async function ProfilePage({ params }: { params: Promise<{ userId: string }> }) {
+export default async function ProfilePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ userId: string }>;
+  searchParams: Promise<{ demo?: string; role?: string }>;
+}) {
   const resolvedParams = await params;
-  const profile = await repository.getProfile(resolvedParams.userId);
+  const resolvedSearch = await searchParams;
+  const isDemo = resolvedSearch.demo === '1';
+
+  let profile: DbProfile | null = await repository.getProfile(resolvedParams.userId);
+
+  // Demo fallback: if profile not found in persistent store and demo mode is active,
+  // use the seeded demo profile from mock data.
+  if (!profile && isDemo) {
+    const demoEntry = demoProfiles[resolvedParams.userId];
+    if (demoEntry) {
+      profile = {
+        id: demoEntry.id,
+        display_name: demoEntry.displayName,
+        role_label: demoEntry.roleLabel,
+        location: demoEntry.location,
+        user_type: demoEntry.userType,
+        seller_score: demoEntry.sellerScore,
+        buyer_score: demoEntry.buyerScore,
+        seller_completed_count: demoEntry.sellerCompletedCount,
+        buyer_completed_count: demoEntry.buyerCompletedCount,
+        verified_volume_idr: demoEntry.verifiedVolumeIdr,
+        proof_visibility: demoEntry.proofVisibility,
+        payout_rail_preference: demoEntry.payoutRailPreference,
+        payout_wallet_label: demoEntry.payoutWalletLabel,
+        payout_wallet_address: demoEntry.payoutWalletAddress,
+        payout_bank_name: demoEntry.payoutBankName,
+        payout_bank_account_masked: demoEntry.payoutBankAccountMasked,
+        connected_wallet_address: null,
+        connected_wallet_network: null,
+        connected_wallet_provider: null,
+        connected_wallet_linked_at: null,
+        created_at: '2026-01-01T00:00:00.000Z',
+      };
+    }
+  }
+
   if (!profile) return notFound();
 
   const currentUser = await getCurrentUser();
