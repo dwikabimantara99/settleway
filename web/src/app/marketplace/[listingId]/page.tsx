@@ -59,15 +59,24 @@ function buildSellerDescription(input: {
   return `${input.sellerName ?? 'The seller'} is offering ${input.volumeKg.toLocaleString('id-ID')} kg of ${input.variety} from ${input.location}. ${readiness} Buyers should use the recorded negotiation to confirm final quantity, price, grading expectations, packaging, delivery handoff, and the product photos or documents that should be attached before the protected Deal Room opens.`;
 }
 
-export default async function ListingDetailPage({
-  params,
-}: {
+export default async function ListingDetailPage(props: {
   params: Promise<{ listingId: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { listingId } = await params;
+  const { listingId } = await props.params;
+  const resolvedSearchParams = props.searchParams ? await props.searchParams : {};
   const listing = demoListings.find((item) => item.id === listingId);
 
   if (!listing) return notFound();
+
+  const isDemo = resolvedSearchParams?.demo === '1';
+  let submitOfferHref = `/offers/new?listingId=${listing.id}`;
+  if (isDemo) {
+    submitOfferHref =
+      listingId === 'listing-cabai-001'
+        ? '/offers/offer-demo-cabai-001?demo=1'
+        : `/offers/new?listingId=${listing.id}&demo=1`;
+  }
 
   const seller = demoProfiles[listing.sellerId];
   const isReadyStock = listing.status === 'ready_stock';
@@ -83,7 +92,7 @@ export default async function ListingDetailPage({
   return (
     <main className="field-container min-w-0 py-10">
       <Link
-        href="/marketplace"
+        href={isDemo ? '/marketplace?demo=1' : '/marketplace'}
         className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--green-700)]"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -210,7 +219,7 @@ export default async function ListingDetailPage({
                 />
               </dl>
               <Link
-                href={`/offers/new?listingId=${listing.id}`}
+                href={submitOfferHref}
                 className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--radius-control)] border border-[var(--green-700)] bg-[var(--green-700)] px-4 text-sm font-semibold text-white transition-colors hover:bg-[var(--green-800)]"
               >
                 Submit Offer

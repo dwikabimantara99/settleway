@@ -43,7 +43,9 @@ export function OpenDealRoomButton({
       }
 
       if (payload.data.redirect_to) {
-        router.push(payload.data.redirect_to);
+        const isDemo = new URLSearchParams(window.location.search).get('demo') === '1';
+        const url = payload.data.redirect_to;
+        router.push(isDemo ? `${url}${url.includes('?') ? '&' : '?'}demo=1` : url);
         return;
       }
 
@@ -62,7 +64,10 @@ export function OpenDealRoomButton({
           type="button"
           size="lg"
           className="h-14 w-full rounded-xl"
-          onClick={() => router.push(`/deals/${activeDealId}`)}
+          onClick={() => {
+            const isDemo = new URLSearchParams(window.location.search).get('demo') === '1';
+            router.push(`/deals/${activeDealId}${isDemo ? '?demo=1' : ''}`);
+          }}
         >
           Enter Active Escrow Room
         </Button>

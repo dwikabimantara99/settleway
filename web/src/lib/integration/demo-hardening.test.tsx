@@ -8,10 +8,14 @@
  * - Demo data brand and role assignments are consistent
  * - Demo quick-jump route IDs are consistent with seeded data
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { StatusPill } from '@/components/ui/StatusPill';
 import type { DealStatus } from '@/lib/escrow/state-machine';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
 
 const ALL_STATUSES: DealStatus[] = [
   'WAITING_DEPOSITS',
@@ -300,6 +304,22 @@ describe('Account-first UI — no external wallet CTA on public surfaces', () =>
       const { CopyButton } = await import('@/components/ui/CopyButton');
       const html = renderToString(<CopyButton text="copy_me" />);
       expect(html).toContain('button'); // Basic rendering test without server constraints
+    });
+    it('11. OpenDealRoomButton preserves demo mode and handles routing correctly', async () => {
+      const { renderToString } = await import('react-dom/server');
+      const { OpenDealRoomButton } = await import('@/components/offers/OpenDealRoomButton');
+
+      const html = renderToString(
+        <OpenDealRoomButton
+          offerId="offer-123"
+          hasOpened={false}
+          bothOpened={false}
+          activeDealId={null}
+        />
+      );
+
+      expect(html).toContain('button');
+      expect(html).toContain('Open Deal Room');
     });
   });
 });
