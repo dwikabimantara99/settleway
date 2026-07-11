@@ -24,11 +24,11 @@ describe('PublicLandingHeader', () => {
 
     expect(html).toContain('Choose a Demo Role');
     expect(html).toContain('Try as Buyer');
-    expect(html).toContain('href="/marketplace/listing-cabai-001?demo=1&amp;role=buyer"');
+    expect(html).toContain('href="/home?demo=1&amp;role=buyer"');
     expect(html).toContain('Try as Seller');
-    expect(html).toContain('href="/deals/demo-cabai-001?demo=1&amp;role=seller"');
-    expect(html).toContain('View Reputation Profile');
-    expect(html).toContain('href="/profiles/seller-probolinggo-cabai?demo=1"');
+    expect(html).toContain('href="/home?demo=1&amp;role=seller"');
+    expect(html).not.toContain('View Reputation Profile');
+    expect(html).not.toContain('href="/profiles/seller-probolinggo-cabai?demo=1"');
   });
 
   it('opens the single provider-selection dialog without inventing provider success', () => {

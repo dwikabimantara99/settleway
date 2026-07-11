@@ -30,7 +30,7 @@ export default function BuyerRequestsPage() {
       <SectionHeader
         eyebrow="Sell marketplace"
         title="Sell"
-        description="Browse active agricultural purchase requests posted by buyers. Review demand, target prices, delivery needs, and reputation before responding with a supply offer."
+        description="Review buyer requests and sell into verified demand."
         action={
           <StatusBadge
             label={`${filtered.length} request${filtered.length === 1 ? '' : 's'} active`}

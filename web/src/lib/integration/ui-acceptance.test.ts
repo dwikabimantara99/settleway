@@ -117,7 +117,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
       expect(html).toContain('Sell');
       expect(html).toContain(
-        'Browse active agricultural purchase requests posted by buyers.',
+        'Review buyer requests and sell into verified demand.',
       );
       expect(html).toContain('Verified buyer');
       expect(html).toContain('42 completed purchases');

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import {
   Bell,
   ChevronDown,
@@ -30,8 +30,9 @@ function getActorInitials(actorId: string): string {
   return 'SW';
 }
 
-export function AuthenticatedHeader() {
+function AuthenticatedHeaderInner() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [actorId, setActorId] = useState('operator');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -42,18 +43,35 @@ export function AuthenticatedHeader() {
     setActorId(getActorFromCookie());
   }, []);
 
-  const profileHref =
-    actorId === 'operator' ? '/deals' : `/profiles/${actorId}`;
+  const demo = searchParams.get('demo');
+  const role = searchParams.get('role');
+  const isDemo = demo === '1';
+
+  let profileHref = '/home';
+  if (isDemo && role === 'buyer') {
+    profileHref = '/profiles/buyer-surabaya-restaurant?demo=1&role=buyer';
+  } else if (isDemo && role === 'seller') {
+    profileHref = '/profiles/seller-probolinggo-cabai?demo=1&role=seller';
+  } else if (actorId && actorId !== 'operator') {
+    profileHref = `/profiles/${actorId}`;
+  }
+
+  const queryParams = new URLSearchParams();
+  if (isDemo) queryParams.set('demo', '1');
+  if (role) queryParams.set('role', role);
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+
   const handleLogout = () => {
     document.cookie = 'mock_actor=; path=/; max-age=0';
     window.location.href = '/';
   };
 
   const navigation = [
-    { href: '/marketplace', label: 'Buy' },
-    { href: '/buyer-requests', label: 'Sell' },
-    { href: '/deals', label: 'Deals' },
-    { href: profileHref, label: 'Funding' },
+    { href: `/home${queryString}`, pathPrefix: '/home', label: 'Home' },
+    { href: `/marketplace${queryString}`, pathPrefix: '/marketplace', label: 'Buy' },
+    { href: `/buyer-requests${queryString}`, pathPrefix: '/buyer-requests', label: 'Sell' },
+    { href: `/deals${queryString}`, pathPrefix: '/deals', label: 'Deals' },
+    { href: `/funding${queryString}`, pathPrefix: '/funding', label: 'Funding' },
   ];
 
   return (
@@ -64,12 +82,12 @@ export function AuthenticatedHeader() {
         <nav className="mx-auto hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
           {navigation.map((item) => {
             const active =
-              item.href === '/deals'
+              item.pathPrefix === '/deals'
                 ? pathname.startsWith('/deals')
-                : pathname.startsWith(item.href);
+                : pathname.startsWith(item.pathPrefix);
             return (
               <Link
-                key={item.href}
+                key={item.pathPrefix}
                 href={item.href}
                 className={cn(
                   'relative inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:bg-white hover:text-[var(--navy-900)]',
@@ -193,7 +211,7 @@ export function AuthenticatedHeader() {
           <div className="field-container grid gap-1">
             {navigation.map((item) => (
               <Link
-                key={item.href}
+                key={item.pathPrefix}
                 href={item.href}
                 onClick={() => setIsMobileOpen(false)}
                 className="flex min-h-11 items-center rounded-md px-3 text-sm font-semibold text-[var(--text-secondary)] hover:bg-[var(--surface-subtle)]"
@@ -205,5 +223,13 @@ export function AuthenticatedHeader() {
         </nav>
       ) : null}
     </header>
+  );
+}
+
+export function AuthenticatedHeader() {
+  return (
+    <Suspense fallback={<div className="h-[4.5rem] w-full border-b border-white/65 bg-white/82 backdrop-blur-xl" />}>
+      <AuthenticatedHeaderInner />
+    </Suspense>
   );
 }

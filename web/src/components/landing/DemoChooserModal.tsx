@@ -136,7 +136,7 @@ export function DemoChooserModal({
 
         <div className="mt-8 space-y-4">
           <Link
-            href="/marketplace/listing-cabai-001?demo=1&role=buyer"
+            href="/home?demo=1&role=buyer"
             className="group relative flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:border-emerald-500 hover:shadow-md"
             onClick={onClose}
           >
@@ -152,7 +152,7 @@ export function DemoChooserModal({
           </Link>
 
           <Link
-            href="/deals/demo-cabai-001?demo=1&role=seller"
+            href="/home?demo=1&role=seller"
             className="group relative flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:border-emerald-500 hover:shadow-md"
             onClick={onClose}
           >
@@ -167,21 +167,6 @@ export function DemoChooserModal({
             </div>
           </Link>
 
-          <Link
-            href="/profiles/seller-probolinggo-cabai?demo=1"
-            className="group relative flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:border-emerald-500 hover:shadow-md"
-            onClick={onClose}
-          >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-900">View Reputation Profile</h3>
-              <p className="mt-1 text-sm text-slate-600">
-                See verified settlement reputation and funding eligibility.
-              </p>
-            </div>
-          </Link>
         </div>
       </div>
     </div>
