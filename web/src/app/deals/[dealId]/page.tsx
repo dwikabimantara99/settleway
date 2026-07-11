@@ -21,7 +21,7 @@ import { EscrowTimeline } from '@/components/deal/EscrowTimeline';
 import { StellarEvidencePanel } from '@/components/deal/StellarEvidencePanel';
 import { SettlementCompletedCard } from '@/components/deal/SettlementCompletedCard';
 import { getCurrentUser } from '@/lib/auth/server';
-import { demoProfiles } from '@/lib/demo/demo-data';
+import { demoProfiles, demoOffers, demoOfferMessages, demoDbDeals } from '@/lib/demo/demo-data';
 import { repository } from '@/lib/repositories';
 import { getDealDepositDeadlineAt, getDealOfferId } from '@/lib/deals/terms';
 import {
@@ -209,9 +209,22 @@ function formatEvidenceVisibility(value: string): string {
   }
 }
 
-export default async function DealRoomPage({ params }: { params: Promise<{ dealId: string }> }) {
+export default async function DealRoomPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ dealId: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const resolvedParams = await params;
-  const deal = await repository.getDeal(resolvedParams.dealId);
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const isDemo = resolvedSearchParams.demo === '1';
+
+  let deal = await repository.getDeal(resolvedParams.dealId);
+
+  if (!deal && isDemo && resolvedParams.dealId === 'demo-cabai-001') {
+    deal = demoDbDeals['demo-cabai-001'] || null;
+  }
 
   if (!deal) return notFound();
 
@@ -244,8 +257,17 @@ export default async function DealRoomPage({ params }: { params: Promise<{ dealI
   const buyerDisplayName = buyerProfile?.display_name ?? buyer?.displayName ?? 'Buyer';
   const sellerDisplayName = sellerProfile?.display_name ?? seller?.displayName ?? 'Seller';
   const offerId = getDealOfferId(deal.terms);
-  const sourceOffer = offerId ? await repository.getOffer(offerId) : null;
-  const negotiationMessages = offerId ? await repository.getOfferMessages(offerId) : [];
+  
+  let sourceOffer = offerId ? await repository.getOffer(offerId) : null;
+  if (!sourceOffer && isDemo && offerId === 'offer-demo-cabai-001') {
+    sourceOffer = demoOffers['offer-demo-cabai-001'] || null;
+  }
+  
+  let negotiationMessages = offerId ? await repository.getOfferMessages(offerId) : [];
+  if (negotiationMessages.length === 0 && isDemo && offerId === 'offer-demo-cabai-001') {
+    negotiationMessages = demoOfferMessages['offer-demo-cabai-001'] || [];
+  }
+  
   const latestNegotiationMessages = negotiationMessages.slice(-2).reverse();
   const deliveryDeadline = parseDeliveryDeadline(sourceOffer?.terms_note ?? null);
 

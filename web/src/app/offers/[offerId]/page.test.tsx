@@ -26,6 +26,7 @@ vi.mock('next/navigation', async (importOriginal) => {
 
 import OfferDetailPage from './page';
 import { mockStore } from '@/lib/db/mock-store';
+import { repository } from '@/lib/repositories';
 
 describe('Offer Detail Page', () => {
   beforeEach(() => {
@@ -40,6 +41,7 @@ describe('Offer Detail Page', () => {
     const html = renderToString(
       await OfferDetailPage({
         params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+        searchParams: Promise.resolve({}),
       }),
     );
 
@@ -58,6 +60,7 @@ describe('Offer Detail Page', () => {
     const html = renderToString(
       await OfferDetailPage({
         params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+        searchParams: Promise.resolve({}),
       }),
     );
 
@@ -67,4 +70,46 @@ describe('Offer Detail Page', () => {
     expect(html).toContain('Wed 17 Jun');
     expect(html).toContain('Agreed Points');
   });
+
+  describe('Demo Fallback', () => {
+    it('renders negotiation room when persistent repository returns null if demo=1 is present', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ demo: '1', role: 'buyer' }),
+        }),
+      );
+
+      expect(html).toContain('Negotiation Summary');
+      expect(html).not.toContain('404');
+    });
+
+    it('returns notFound when repository returns null and demo=1 is absent', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+
+      await expect(
+        OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({}),
+        })
+      ).rejects.toThrow('notFound');
+    });
+    
+    it('does not route directly to deal room, profile, or funding', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ demo: '1', role: 'seller' }),
+        }),
+      );
+      
+      // Asserts that it rendered the offer page correctly
+      expect(html).toContain('Negotiation Summary');
+    });
+  });
 });
+

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import DealRoomPage from './page';
+import { repository } from '@/lib/repositories';
 import {
   DEAL_STATE_GALLERY_STATUSES,
   type DealStateGalleryStatus,
@@ -44,6 +45,7 @@ describe('Deal Room state gallery fixtures', () => {
     for (const status of DEAL_STATE_GALLERY_STATUSES) {
       const element = await DealRoomPage({
         params: Promise.resolve({ dealId: getDealStateGalleryFixtureId(status) }),
+        searchParams: Promise.resolve({}),
       });
       const html = renderToString(element);
 
@@ -93,9 +95,36 @@ describe('Deal Room state gallery fixtures', () => {
     const originalEnv = process.env.NEXT_PUBLIC_RUNTIME_MODE;
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'demo';
     await expect(
-      DealRoomPage({ params: Promise.resolve({ dealId: 'unknown-deal-id' }) })
+      DealRoomPage({ params: Promise.resolve({ dealId: 'unknown-deal-id' }), searchParams: Promise.resolve({}) })
     ).rejects.toThrow('not-found');
 
     process.env.NEXT_PUBLIC_RUNTIME_MODE = originalEnv;
   });
+
+  describe('Demo Fallback', () => {
+    it('renders deal room when persistent repository returns null if demo=1 is present', async () => {
+      vi.spyOn(repository, 'getDeal').mockResolvedValueOnce(null);
+
+      const element = await DealRoomPage({
+        params: Promise.resolve({ dealId: 'demo-cabai-001' }),
+        searchParams: Promise.resolve({ demo: '1', role: 'buyer' }),
+      });
+      const html = renderToString(element);
+
+      expect(html).toContain('Awaiting deposits');
+      expect(html).toContain('Escrow Timeline');
+    });
+
+    it('returns notFound when repository returns null and demo=1 is absent', async () => {
+      vi.spyOn(repository, 'getDeal').mockResolvedValueOnce(null);
+
+      await expect(
+        DealRoomPage({
+          params: Promise.resolve({ dealId: 'demo-cabai-001' }),
+          searchParams: Promise.resolve({}),
+        })
+      ).rejects.toThrow('not-found');
+    });
+  });
 });
+

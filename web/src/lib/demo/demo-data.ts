@@ -1,4 +1,5 @@
 import { Profile, Listing, Deal, BuyerRequest } from '../types';
+import { DbOffer, DbNegotiationMessage, DbDeal } from '../db/types';
 
 export const demoProfiles: Record<string, Profile> = {
   'seller-probolinggo-cabai': {
@@ -163,4 +164,87 @@ export const demoDeals: Record<string, Deal> = {
     stellarMode: 'not_configured',
     rail_version: 'managed_custody_testnet',
   },
+};
+
+export const demoOffers: Record<string, DbOffer> = {
+  'offer-demo-cabai-001': {
+    id: 'offer-demo-cabai-001',
+    listing_id: 'listing-cabai-001',
+    buyer_request_id: null,
+    buyer_id: 'buyer-surabaya-restaurant',
+    seller_id: 'seller-probolinggo-cabai',
+    initiated_by_id: 'buyer-surabaya-restaurant',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    volume_kg: 700,
+    price_per_kg_idr: 28500,
+    principal_idr: 19950000,
+    terms_note: 'Same-week shipment, proof visible inside the protected room, and buyer pickup coordination after escrow lock.',
+    status: 'active_escrow',
+    latest_message_preview: 'We can prepare the lot as soon as both deposits clear in the active room.',
+    terms_submitted_at: '2026-06-17T08:45:00.000Z',
+    terms_accepted_at: '2026-06-17T09:06:00.000Z',
+    terms_accepted_by_id: 'seller-probolinggo-cabai',
+    buyer_open_room_at: '2026-06-17T09:10:00.000Z',
+    seller_open_room_at: '2026-06-17T09:18:00.000Z',
+    active_deal_id: 'demo-cabai-001',
+    created_at: '2026-06-17T08:45:00.000Z',
+    updated_at: '2026-06-17T09:18:00.000Z',
+  }
+};
+
+export const demoOfferMessages: Record<string, DbNegotiationMessage[]> = {
+  'offer-demo-cabai-001': [
+    {
+      id: 'offer-demo-cabai-001-msg-1',
+      offer_id: 'offer-demo-cabai-001',
+      author_id: 'buyer-surabaya-restaurant',
+      body: 'We need 700 kg this week and want proof visibility inside the room.',
+      created_at: '2026-06-17T08:45:00.000Z',
+    },
+    {
+      id: 'offer-demo-cabai-001-msg-2',
+      offer_id: 'offer-demo-cabai-001',
+      author_id: 'seller-probolinggo-cabai',
+      body: 'We can prepare the lot and upload shipment evidence after both deposits clear.',
+      created_at: '2026-06-17T08:53:00.000Z',
+    },
+    {
+      id: 'offer-demo-cabai-001-msg-3',
+      offer_id: 'offer-demo-cabai-001',
+      author_id: 'buyer-surabaya-restaurant',
+      body: 'Understood. I am ready to open the Deal Room once you confirm the same terms.',
+      created_at: '2026-06-17T09:02:00.000Z',
+    }
+  ]
+};
+
+export const demoDbDeals: Record<string, DbDeal> = {
+  'demo-cabai-001': {
+    id: 'demo-cabai-001',
+    listing_id: 'listing-cabai-001',
+    buyer_request_id: null,
+    buyer_id: 'buyer-surabaya-restaurant',
+    seller_id: 'seller-probolinggo-cabai',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    volume_kg: 700,
+    principal_idr: 19950000,
+    buyer_bond_idr: 997500,
+    seller_bond_idr: 997500,
+    buyer_fee_idr: 99750,
+    seller_fee_idr: 99750,
+    buyer_total_idr: 21047250,
+    seller_total_idr: 1097250,
+    status: 'WAITING_DEPOSITS',
+    stellar_escrow_id: null,
+    stellar_mode: 'mock_only',
+    stellar_contract_id: null,
+    latest_stellar_tx_hash: null,
+    stellar_sync_status: 'idle',
+    proof_hash: null,
+    terms: {
+      offer_id: 'offer-demo-cabai-001'
+    },
+    created_at: '2026-06-17T09:18:00.000Z',
+    updated_at: '2026-06-17T09:18:00.000Z',
+  }
 };

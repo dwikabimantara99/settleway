@@ -22,7 +22,8 @@ import { DealTermsActionButton } from '@/components/offers/DealTermsActionButton
 import { ProfileWalletCard } from '@/components/profile/ProfileWalletCard';
 import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
-import { demoProfiles } from '@/lib/demo/demo-data';
+import { demoProfiles, demoOffers, demoOfferMessages } from '@/lib/demo/demo-data';
+import type { DbNegotiationMessage } from '@/lib/db/types';
 
 function formatIdr(value: number) {
   return `Rp ${value.toLocaleString('id-ID')}`;
@@ -90,11 +91,20 @@ function shortAddress(address: string | null | undefined) {
 
 export default async function OfferDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ offerId: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { offerId } = await params;
-  const offer = await repository.getOffer(offerId);
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const isDemo = resolvedSearchParams.demo === '1';
+
+  let offer = await repository.getOffer(offerId);
+
+  if (!offer && isDemo && offerId === 'offer-demo-cabai-001') {
+    offer = demoOffers['offer-demo-cabai-001'] || null;
+  }
 
   if (!offer) {
     return notFound();
@@ -106,7 +116,9 @@ export default async function OfferDetailPage({
   const buyer = demoProfiles[offer.buyer_id];
   const seller = demoProfiles[offer.seller_id];
   const [messages, buyerProfile, sellerProfile] = await Promise.all([
-    repository.getOfferMessages(offer.id),
+    isDemo && offerId === 'offer-demo-cabai-001' && !await repository.getOffer(offerId)
+      ? Promise.resolve(demoOfferMessages['offer-demo-cabai-001'] || [])
+      : repository.getOfferMessages(offer.id),
     repository.getProfile(offer.buyer_id),
     repository.getProfile(offer.seller_id),
   ]);
@@ -294,7 +306,7 @@ export default async function OfferDetailPage({
                   </p>
                   {recentMessages.length > 0 ? (
                     <div className="mt-4 space-y-3">
-                      {recentMessages.map((message) => {
+                      {recentMessages.map((message: DbNegotiationMessage) => {
                         const author = demoProfiles[message.author_id];
                         const isCurrentActor = actorId === message.author_id;
                         return (
