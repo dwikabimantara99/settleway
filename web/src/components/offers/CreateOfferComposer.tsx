@@ -32,6 +32,8 @@ interface CreateOfferComposerProps {
   counterpartyScore: number;
   counterpartyKind: 'buyer' | 'seller';
   currentActorId: string | null;
+  isDemo?: boolean;
+  role?: string;
 }
 
 interface DraftNegotiationMessage {
@@ -243,6 +245,8 @@ export function CreateOfferComposer({
   counterpartyScore,
   counterpartyKind,
   currentActorId,
+  isDemo = false,
+  role = 'buyer',
 }: CreateOfferComposerProps) {
   const router = useRouter();
   const draftThreadKey = useMemo(
@@ -303,6 +307,12 @@ export function CreateOfferComposer({
         createdAt: message.createdAt,
       }))
       .filter((message) => message.body.length > 0);
+
+    if (isDemo && listingId === 'listing-cabai-001') {
+      if (draftThreadKey) writeDraftMessages(draftThreadKey, []);
+      router.push(`/offers/offer-demo-cabai-001?demo=1&role=${role}&stage=open`);
+      return;
+    }
 
     try {
       const response = await fetch('/api/offers', {

@@ -158,7 +158,11 @@ export default async function OfferDetailPage({
       ? '/buyer-requests'
       : '/marketplace';
   const sourceLabel = offer.listing_id ? 'Back to source listing' : 'Back to source request';
-  const statusLabel = termsAccepted ? 'Offer Agreed' : 'Waiting for Acceptance';
+  const statusLabel = termsAccepted
+    ? 'Offer Agreed'
+    : actorId === offer.seller_id
+      ? 'Action Required: Review Offer'
+      : 'Waiting for Seller Response';
   const summaryIntro = termsAccepted
     ? `Both parties have aligned on the commercial terms for ${(offer.volume_kg ?? 0).toLocaleString(
         'id-ID',
@@ -202,7 +206,14 @@ export default async function OfferDetailPage({
       </div>
 
       <div className="mb-8 max-w-4xl">
-        <h1 className="text-4xl font-bold tracking-tight text-slate-950">{offer.commodity}</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-slate-950">
+          {termsAccepted
+            ? 'Agreed Deal Terms'
+            : actorId === offer.seller_id
+              ? 'Review Buyer Offer'
+              : 'Negotiation Room'}
+        </h1>
+        <p className="mt-2 text-xl text-slate-600">{offer.commodity}</p>
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-700">
           {termsAccepted
             ? 'Commercial terms are aligned. Review the agreement summary below. The Deal Room becomes active only after both parties confirm Open Deal Room.'
@@ -226,145 +237,285 @@ export default async function OfferDetailPage({
 
       <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_27rem]">
         <main className="min-w-0 space-y-6">
-          <section className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
-            <div className="border-b border-slate-100 px-6 py-5">
-              <div className="flex flex-wrap items-center gap-3">
-                <h2 className="text-2xl font-semibold text-slate-950">Negotiation Summary</h2>
-                <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700">
-                  <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
-                  {termsAccepted ? 'Conversation Locked' : 'Conversation Open'}
-                </Badge>
-              </div>
-              <p className="mt-4 max-w-4xl text-base leading-8 text-slate-700">{summaryIntro}</p>
-              {cleanNote ? (
-                <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-500">{cleanNote}</p>
-              ) : null}
-            </div>
-
-            <div className="px-6 py-5">
-              <h3 className="text-base font-semibold text-slate-950">Agreed Points</h3>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <PackageCheck className="h-5 w-5 text-emerald-600" />
-                    <span>Quantity</span>
+          {!termsAccepted ? (
+            <>
+              <section
+                id="conversation-history"
+                className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]"
+              >
+                <div className="border-b border-slate-100 px-6 py-5">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-semibold text-slate-950">Recorded Conversation History</h2>
+                    <Badge className="border-slate-200 bg-slate-100 text-slate-600">
+                      <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
+                      Open
+                    </Badge>
                   </div>
-                  <span className="font-semibold text-slate-950">
-                    {(offer.volume_kg ?? 0).toLocaleString('id-ID')} kg
-                  </span>
                 </div>
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <CalendarDays className="h-5 w-5 text-slate-500" />
-                    <span>Delivery deadline</span>
-                  </div>
-                  <span className="text-right font-semibold text-slate-950">{deliveryDeadline}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <Coins className="h-5 w-5 text-emerald-600" />
-                    <span>Price per kg</span>
-                  </div>
-                  <span className="font-semibold text-slate-950">
-                    {formatPricePerKg(offer.price_per_kg_idr)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <ShieldCheck className="h-5 w-5 text-emerald-600" />
-                    <span>Product quality</span>
-                  </div>
-                  <span className="text-right font-semibold text-slate-950">
-                    Grade A, minimum size 3 cm
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <FileText className="h-5 w-5 text-emerald-600" />
-                    <span>Indicative value</span>
-                  </div>
-                  <span className="font-bold text-emerald-700">{formatIdr(offer.principal_idr)}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    <Camera className="h-5 w-5 text-slate-500" />
-                    <span>Evidence expectation</span>
-                  </div>
-                  <span className="max-w-52 text-right font-semibold text-slate-950">
-                    Recent product photos and delivery proof
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section
-            id="conversation-history"
-            className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]"
-          >
-            <div className="border-b border-slate-100 px-6 py-5">
-              <div className="flex flex-wrap items-center gap-3">
-                <h2 className="text-2xl font-semibold text-slate-950">Recorded Conversation History</h2>
-                <Badge className="border-slate-200 bg-slate-100 text-slate-600">
-                  <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
-                  {termsAccepted ? 'Locked' : 'Open'}
-                </Badge>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="flex gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-                  <MessageSquareText className="h-7 w-7" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm leading-6 text-slate-600">
-                    {termsAccepted
-                      ? 'The negotiation is locked because the commercial terms have been agreed. You can review the latest conversation below for reference.'
-                      : 'The negotiation is still open. Messages remain recorded as supporting context before the protected room opens.'}
-                  </p>
-                  {recentMessages.length > 0 ? (
-                    <div className="mt-4 space-y-3">
-                      {recentMessages.map((message: DbNegotiationMessage) => {
-                        const author = demoProfiles[message.author_id];
-                        const isCurrentActor = actorId === message.author_id;
-                        return (
-                          <div
-                            key={message.id}
-                            className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-                          >
-                            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
-                              <span className="font-semibold text-slate-700">
-                                {isCurrentActor ? 'You' : author?.displayName || message.author_id}
-                              </span>
-                              <span>
-                                {formatMessageDay(message.created_at)}, {formatMessageTime(message.created_at)}
-                              </span>
-                            </div>
-                            <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-700">
-                              {message.body}
-                            </p>
-                          </div>
-                        );
-                      })}
+                <div className="p-6">
+                  <div className="flex gap-5">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                      <MessageSquareText className="h-7 w-7" />
                     </div>
-                  ) : (
-                    <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-500">
-                      No recorded messages yet.
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-6 text-slate-600">
+                        The negotiation is still open. Messages remain recorded as supporting context before the protected room opens.
+                      </p>
+                      {recentMessages.length > 0 ? (
+                        <div className="mt-4 space-y-3">
+                          {recentMessages.map((message: DbNegotiationMessage) => {
+                            const author = demoProfiles[message.author_id];
+                            const isCurrentActor = actorId === message.author_id;
+                            return (
+                              <div
+                                key={message.id}
+                                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                                  <span className="font-semibold text-slate-700">
+                                    {isCurrentActor ? 'You' : author?.displayName || message.author_id}
+                                  </span>
+                                  <span>
+                                    {formatMessageDay(message.created_at)}, {formatMessageTime(message.created_at)}
+                                  </span>
+                                </div>
+                                <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-700">
+                                  {message.body}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-500">
+                          No recorded messages yet.
+                        </div>
+                      )}
+                      <Link
+                        href="#conversation-history"
+                        className="mt-5 inline-flex h-11 items-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm hover:border-emerald-200 hover:text-emerald-700"
+                      >
+                        View Full Conversation
+                        <ChevronLeft className="ml-2 h-4 w-4 rotate-180" />
+                      </Link>
                     </div>
-                  )}
-                  <Link
-                    href="#conversation-history"
-                    className="mt-5 inline-flex h-11 items-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm hover:border-emerald-200 hover:text-emerald-700"
-                  >
-                    View Full Conversation
-                    <ChevronLeft className="ml-2 h-4 w-4 rotate-180" />
-                  </Link>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </section>
+              </section>
 
-          {!termsAccepted && isParticipant ? <NegotiationComposer offerId={offer.id} /> : null}
+              {isParticipant ? <NegotiationComposer offerId={offer.id} /> : null}
+
+              <section className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+                <div className="border-b border-slate-100 px-6 py-5">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-semibold text-slate-950">Proposed Draft</h2>
+                    <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700">
+                      <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
+                      Conversation Open
+                    </Badge>
+                  </div>
+                  <p className="mt-4 max-w-4xl text-base leading-8 text-slate-700">{summaryIntro}</p>
+                  {cleanNote ? (
+                    <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-500">{cleanNote}</p>
+                  ) : null}
+                </div>
+
+                <div className="px-6 py-5">
+                  <h3 className="text-base font-semibold text-slate-950">Proposed Terms</h3>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <PackageCheck className="h-5 w-5 text-emerald-600" />
+                        <span>Quantity</span>
+                      </div>
+                      <span className="font-semibold text-slate-950">
+                        {(offer.volume_kg ?? 0).toLocaleString('id-ID')} kg
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <CalendarDays className="h-5 w-5 text-slate-500" />
+                        <span>Delivery deadline</span>
+                      </div>
+                      <span className="text-right font-semibold text-slate-950">{deliveryDeadline}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <Coins className="h-5 w-5 text-emerald-600" />
+                        <span>Price per kg</span>
+                      </div>
+                      <span className="font-semibold text-slate-950">
+                        {formatPricePerKg(offer.price_per_kg_idr)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                        <span>Product quality</span>
+                      </div>
+                      <span className="text-right font-semibold text-slate-950">
+                        Grade A, minimum size 3 cm
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <FileText className="h-5 w-5 text-emerald-600" />
+                        <span>Indicative value</span>
+                      </div>
+                      <span className="font-bold text-emerald-700">{formatIdr(offer.principal_idr)}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <Camera className="h-5 w-5 text-slate-500" />
+                        <span>Evidence expectation</span>
+                      </div>
+                      <span className="max-w-52 text-right font-semibold text-slate-950">
+                        Recent product photos and delivery proof
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </>
+          ) : (
+            <>
+              <section className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+                <div className="border-b border-slate-100 px-6 py-5">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-semibold text-slate-950">Negotiation Summary</h2>
+                    <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700">
+                      <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
+                      Conversation Locked
+                    </Badge>
+                  </div>
+                  <p className="mt-4 max-w-4xl text-base leading-8 text-slate-700">{summaryIntro}</p>
+                  {cleanNote ? (
+                    <p className="mt-3 max-w-4xl text-sm leading-7 text-slate-500">{cleanNote}</p>
+                  ) : null}
+                </div>
+
+                <div className="px-6 py-5">
+                  <h3 className="text-base font-semibold text-slate-950">Agreed Points</h3>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <PackageCheck className="h-5 w-5 text-emerald-600" />
+                        <span>Quantity</span>
+                      </div>
+                      <span className="font-semibold text-slate-950">
+                        {(offer.volume_kg ?? 0).toLocaleString('id-ID')} kg
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <CalendarDays className="h-5 w-5 text-slate-500" />
+                        <span>Delivery deadline</span>
+                      </div>
+                      <span className="text-right font-semibold text-slate-950">{deliveryDeadline}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <Coins className="h-5 w-5 text-emerald-600" />
+                        <span>Price per kg</span>
+                      </div>
+                      <span className="font-semibold text-slate-950">
+                        {formatPricePerKg(offer.price_per_kg_idr)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                        <span>Product quality</span>
+                      </div>
+                      <span className="text-right font-semibold text-slate-950">
+                        Grade A, minimum size 3 cm
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <FileText className="h-5 w-5 text-emerald-600" />
+                        <span>Indicative value</span>
+                      </div>
+                      <span className="font-bold text-emerald-700">{formatIdr(offer.principal_idr)}</span>
+                    </div>
+                    <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                      <div className="flex items-center gap-3 text-slate-600">
+                        <Camera className="h-5 w-5 text-slate-500" />
+                        <span>Evidence expectation</span>
+                      </div>
+                      <span className="max-w-52 text-right font-semibold text-slate-950">
+                        Recent product photos and delivery proof
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section
+                id="conversation-history"
+                className="rounded-2xl border border-slate-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]"
+              >
+                <div className="border-b border-slate-100 px-6 py-5">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h2 className="text-2xl font-semibold text-slate-950">Recorded Conversation History</h2>
+                    <Badge className="border-slate-200 bg-slate-100 text-slate-600">
+                      <LockKeyhole className="mr-1.5 h-3.5 w-3.5" />
+                      Locked
+                    </Badge>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="flex gap-5">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+                      <MessageSquareText className="h-7 w-7" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm leading-6 text-slate-600">
+                        The negotiation is locked because the commercial terms have been agreed. You can review the latest conversation below for reference.
+                      </p>
+                      {recentMessages.length > 0 ? (
+                        <div className="mt-4 space-y-3">
+                          {recentMessages.map((message: DbNegotiationMessage) => {
+                            const author = demoProfiles[message.author_id];
+                            const isCurrentActor = actorId === message.author_id;
+                            return (
+                              <div
+                                key={message.id}
+                                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                                  <span className="font-semibold text-slate-700">
+                                    {isCurrentActor ? 'You' : author?.displayName || message.author_id}
+                                  </span>
+                                  <span>
+                                    {formatMessageDay(message.created_at)}, {formatMessageTime(message.created_at)}
+                                  </span>
+                                </div>
+                                <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-700">
+                                  {message.body}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-500">
+                          No recorded messages yet.
+                        </div>
+                      )}
+                      <Link
+                        href="#conversation-history"
+                        className="mt-5 inline-flex h-11 items-center rounded-xl border border-slate-200 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm hover:border-emerald-200 hover:text-emerald-700"
+                      >
+                        View Full Conversation
+                        <ChevronLeft className="ml-2 h-4 w-4 rotate-180" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
         </main>
 
         <aside className="min-w-0 space-y-6">
@@ -373,7 +524,7 @@ export default async function OfferDetailPage({
               <div className="flex items-center gap-3">
                 <ClipboardCheck className="h-6 w-6 text-emerald-700" />
                 <h2 className="text-2xl font-semibold text-emerald-900">
-                  {termsAccepted ? 'Agreed Deal Terms' : 'Submitted Deal Terms'}
+                  {termsAccepted ? 'Agreed Deal Terms' : 'Proposed Deal Terms'}
                 </h2>
               </div>
             </header>
@@ -427,52 +578,54 @@ export default async function OfferDetailPage({
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
-            <header className="border-b border-emerald-100 bg-emerald-50 px-6 py-5">
-              <div className="flex items-center gap-3">
-                <UsersRound className="h-6 w-6 text-emerald-700" />
-                <h2 className="text-2xl font-semibold text-emerald-900">Commitment Gate</h2>
-              </div>
-            </header>
-            <div className="space-y-4 p-6">
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-sm font-bold text-amber-700">
-                    {getInitials(buyer?.displayName)}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-slate-950">
-                      {buyer?.displayName}
-                    </div>
-                    <div className="text-xs text-slate-500">Buyer commitment</div>
-                  </div>
+          {termsAccepted ? (
+            <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+              <header className="border-b border-emerald-100 bg-emerald-50 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <UsersRound className="h-6 w-6 text-emerald-700" />
+                  <h2 className="text-2xl font-semibold text-emerald-900">Commitment Gate</h2>
                 </div>
-                <Badge className={statusBadgeClass(buyerOpened)}>
-                  {buyerOpened ? 'Opened' : 'Pending confirmation'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">
-                    {getInitials(seller?.displayName)}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-slate-950">
-                      {seller?.displayName}
+              </header>
+              <div className="space-y-4 p-6">
+                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-50 text-sm font-bold text-amber-700">
+                      {getInitials(buyer?.displayName)}
                     </div>
-                    <div className="text-xs text-slate-500">Seller commitment</div>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-slate-950">
+                        {buyer?.displayName}
+                      </div>
+                      <div className="text-xs text-slate-500">Buyer commitment</div>
+                    </div>
                   </div>
+                  <Badge className={statusBadgeClass(buyerOpened)}>
+                    {buyerOpened ? 'Opened' : 'Pending confirmation'}
+                  </Badge>
                 </div>
-                <Badge className={statusBadgeClass(sellerOpened)}>
-                  {sellerOpened ? 'Opened' : 'Pending confirmation'}
-                </Badge>
+                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">
+                      {getInitials(seller?.displayName)}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-slate-950">
+                        {seller?.displayName}
+                      </div>
+                      <div className="text-xs text-slate-500">Seller commitment</div>
+                    </div>
+                  </div>
+                  <Badge className={statusBadgeClass(sellerOpened)}>
+                    {sellerOpened ? 'Opened' : 'Pending confirmation'}
+                  </Badge>
+                </div>
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-900">
+                  One commitment click is only a signal. After both parties confirm, Settleway checks
+                  the buyer and seller Testnet wallets before creating the Custody V2 Deal Room.
+                </div>
               </div>
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-900">
-                One commitment click is only a signal. After both parties confirm, Settleway checks
-                the buyer and seller Testnet wallets before creating the Custody V2 Deal Room.
-              </div>
-            </div>
-          </section>
+            </section>
+          ) : null}
 
           {termsAccepted ? (
             <section className="overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
@@ -502,30 +655,32 @@ export default async function OfferDetailPage({
             </section>
           ) : null}
 
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
-            <div className="mb-5 flex items-center gap-3">
-              <ShieldCheck className="h-6 w-6 text-emerald-700" />
-              <h2 className="text-lg font-semibold text-slate-950">Activation Reminder</h2>
-            </div>
-            <div className="space-y-4 text-sm leading-6 text-slate-600">
-              <div className="flex gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                <span>After the room activates, buyer deposits principal, bond, and fee.</span>
+          {termsAccepted ? (
+            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+              <div className="mb-5 flex items-center gap-3">
+                <ShieldCheck className="h-6 w-6 text-emerald-700" />
+                <h2 className="text-lg font-semibold text-slate-950">Activation Reminder</h2>
               </div>
-              <div className="flex gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                <span>Seller deposits performance bond and seller fee.</span>
+              <div className="space-y-4 text-sm leading-6 text-slate-600">
+                <div className="flex gap-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  <span>After the room activates, buyer deposits principal, bond, and fee.</span>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  <span>Seller deposits performance bond and seller fee.</span>
+                </div>
+                <div className="flex gap-3">
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  <span>Stellar-backed proof trail begins from that active room.</span>
+                </div>
+                <div className="flex gap-3">
+                  <Banknote className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
+                  <span>Deposits remain downstream; this page only controls mutual commitment.</span>
+                </div>
               </div>
-              <div className="flex gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-                <span>Stellar-backed proof trail begins from that active room.</span>
-              </div>
-              <div className="flex gap-3">
-                <Banknote className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
-                <span>Deposits remain downstream; this page only controls mutual commitment.</span>
-              </div>
-            </div>
-          </section>
+            </section>
+          ) : null}
         </aside>
       </div>
     </div>

@@ -33,7 +33,8 @@ describe('ListingDetailPage', () => {
       }),
     );
 
-    expect(html).toContain('href="/offers/offer-demo-cabai-001?demo=1&amp;role=buyer&amp;stage=open"');
+    expect(html).toContain('href="/offers/new?listingId=listing-cabai-001&amp;demo=1&amp;role=buyer"');
+    expect(html).not.toContain('href="/offers/offer-demo-cabai-001');
     expect(html).not.toContain('href="/deals/');
     expect(html).not.toContain('href="/profiles/');
   });
@@ -46,7 +47,8 @@ describe('ListingDetailPage', () => {
       }),
     );
 
-    expect(html).toContain('href="/offers/offer-demo-cabai-001?demo=1&amp;role=buyer&amp;stage=open"');
+    expect(html).toContain('href="/offers/new?listingId=listing-cabai-001&amp;demo=1&amp;role=buyer"');
+    expect(html).not.toContain('href="/offers/offer-demo-cabai-001');
     expect(html).not.toContain('href="/deals/');
     expect(html).not.toContain('href="/profiles/');
   });

@@ -9,11 +9,13 @@ import { repository } from '@/lib/repositories';
 export default async function NewOfferPage({
   searchParams,
 }: {
-  searchParams: Promise<{ listingId?: string; buyerRequestId?: string }>;
+  searchParams: Promise<{ listingId?: string; buyerRequestId?: string; demo?: string; role?: string }>;
 }) {
   const resolvedParams = await searchParams;
   const listingId = resolvedParams.listingId;
   const buyerRequestId = resolvedParams.buyerRequestId;
+  const isDemo = resolvedParams.demo === '1';
+  const role = resolvedParams.role;
 
   if ((!listingId && !buyerRequestId) || (listingId && buyerRequestId)) {
     redirect('/marketplace');
@@ -89,6 +91,8 @@ export default async function NewOfferPage({
         }
         counterpartyKind={counterpartyKind}
         currentActorId={currentUser?.id ?? null}
+        isDemo={isDemo}
+        role={role}
       />
     </div>
   );

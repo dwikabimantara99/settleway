@@ -26,6 +26,7 @@ export function RoleSwitcher() {
     const hasDevSwitcherParam = searchParams.get('devRoleSwitcher') === '1';
     
     if (hasDevSwitcherParam) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Safe initialization sync
       setIsDevRoleSwitcher(true);
     }
     
