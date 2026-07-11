@@ -22,7 +22,8 @@ export function DealTermsActionButton({
   bothOpened = false,
   activeDealId,
   isDemo = false,
-}: DealTermsActionButtonProps & { isDemo?: boolean }) {
+  role,
+}: DealTermsActionButtonProps & { isDemo?: boolean; role?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +83,8 @@ export function DealTermsActionButton({
       hasOpened={hasOpened}
       bothOpened={bothOpened}
       activeDealId={activeDealId}
+      isDemo={isDemo}
+      role={role}
     />
   );
 }

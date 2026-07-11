@@ -421,6 +421,7 @@ export default async function OfferDetailPage({
                   bothOpened={bothOpened}
                   activeDealId={offer.active_deal_id}
                   isDemo={isDemo}
+                  role={role}
                 />
               ) : null}
             </div>

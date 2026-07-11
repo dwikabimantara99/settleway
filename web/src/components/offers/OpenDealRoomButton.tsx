@@ -9,6 +9,8 @@ interface OpenDealRoomButtonProps {
   hasOpened: boolean;
   bothOpened?: boolean;
   activeDealId: string | null;
+  isDemo?: boolean;
+  role?: string;
 }
 
 export function OpenDealRoomButton({
@@ -16,6 +18,8 @@ export function OpenDealRoomButton({
   hasOpened,
   bothOpened = false,
   activeDealId,
+  isDemo = false,
+  role,
 }: OpenDealRoomButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -43,9 +47,6 @@ export function OpenDealRoomButton({
       }
 
       if (payload.data.redirect_to) {
-        const searchParams = new URLSearchParams(window.location.search);
-        const isDemo = searchParams.get('demo') === '1';
-        const role = searchParams.get('role');
         const queryParams = new URLSearchParams();
         if (isDemo) queryParams.set('demo', '1');
         if (role) queryParams.set('role', role);
@@ -71,9 +72,6 @@ export function OpenDealRoomButton({
           size="lg"
           className="h-14 w-full rounded-xl"
           onClick={() => {
-            const searchParams = new URLSearchParams(window.location.search);
-            const isDemo = searchParams.get('demo') === '1';
-            const role = searchParams.get('role');
             const queryParams = new URLSearchParams();
             if (isDemo) queryParams.set('demo', '1');
             if (role) queryParams.set('role', role);

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/navigation';
 import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { OpenDealRoomButton } from './OpenDealRoomButton';
@@ -54,5 +55,43 @@ describe('OpenDealRoomButton', () => {
     );
 
     expect(html).toContain('Enter Active Escrow Room');
+  });
+
+  it('buyer agreed offer links to /deals/demo-cabai-001?demo=1&role=buyer', () => {
+    const mockPush = vi.fn();
+    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<typeof useRouter>);
+
+    const element = OpenDealRoomButton({
+      offerId: 'offer-1',
+      hasOpened: true,
+      activeDealId: 'demo-cabai-001',
+      isDemo: true,
+      role: 'buyer'
+    }) as React.ReactElement<unknown>;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const button = (element.props as any).children[0];
+    button.props.onClick();
+
+    expect(mockPush).toHaveBeenCalledWith('/deals/demo-cabai-001?demo=1&role=buyer');
+  });
+
+  it('seller agreed offer links to /deals/demo-cabai-001?demo=1&role=seller', () => {
+    const mockPush = vi.fn();
+    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<typeof useRouter>);
+
+    const element = OpenDealRoomButton({
+      offerId: 'offer-1',
+      hasOpened: true,
+      activeDealId: 'demo-cabai-001',
+      isDemo: true,
+      role: 'seller'
+    }) as React.ReactElement<unknown>;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const button = (element.props as any).children[0];
+    button.props.onClick();
+
+    expect(mockPush).toHaveBeenCalledWith('/deals/demo-cabai-001?demo=1&role=seller');
   });
 });
