@@ -24,7 +24,17 @@ export default async function NewOfferPage({
 
   let listing = listingId ? await repository.getListing(listingId) : null;
   const buyerRequest = buyerRequestId ? await repository.getBuyerRequest(buyerRequestId) : null;
-  const currentUser = await getCurrentUser();
+  let currentUser = await getCurrentUser();
+
+  if (isDemo && listingId === 'listing-cabai-001' && !currentUser) {
+    const activeRole = role || 'buyer';
+    if (activeRole === 'buyer') {
+      const demoBuyer = demoProfiles['buyer-surabaya-restaurant'];
+      if (demoBuyer) {
+        currentUser = { id: demoBuyer.id } as any;
+      }
+    }
+  }
 
   if (isDemo && listingId === 'listing-cabai-001' && !listing) {
     const demoListing = demoListings.find((l) => l.id === listingId);

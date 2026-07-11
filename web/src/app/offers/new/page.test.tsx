@@ -5,6 +5,7 @@ import NewOfferPage from './page';
 import { vi } from 'vitest';
 import { redirect } from 'next/navigation';
 import { repository } from '@/lib/repositories';
+import { getCurrentUser } from '@/lib/auth/server';
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
@@ -35,6 +36,7 @@ describe('New Offer Page', () => {
   });
 
   it('renders demo fallback when repository returns null in demo mode', async () => {
+    vi.mocked(getCurrentUser).mockResolvedValueOnce(null);
     vi.spyOn(repository, 'getListing').mockResolvedValueOnce(null);
     const html = renderToString(
       await NewOfferPage({
@@ -44,8 +46,21 @@ describe('New Offer Page', () => {
 
     expect(html).toContain('Recorded Negotiation');
     expect(html).toContain('Submit Offer');
+    expect(html).not.toContain('Authentication Required');
+    expect(html).not.toContain('Login to Submit Offer');
     expect(html).not.toContain('Commitment Gate');
     expect(html).not.toContain('Activation Reminder');
+  });
+
+  it('preserves non-demo unauthenticated behavior', async () => {
+    vi.mocked(getCurrentUser).mockResolvedValueOnce(null);
+    const html = renderToString(
+      await NewOfferPage({
+        searchParams: Promise.resolve({ listingId: 'listing-cabai-001' }),
+      }),
+    );
+    expect(html).toContain('Authentication Required');
+    expect(html).toContain('Login to Submit Offer');
   });
 
   it('redirects for unknown listing in non-demo mode when repository returns null', async () => {
