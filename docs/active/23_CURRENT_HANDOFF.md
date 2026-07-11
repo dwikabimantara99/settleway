@@ -51,3 +51,8 @@ B. **Remote Prove Settlement Custody:** Deploy the upgraded `settleway_escrow` c
 - **Implemented Components**: Escrow Timeline UI, Stellar Evidence Panel, Delivery Proof UI role segregation, Settlement Completed Card, Reputation UI updates, Crowdfunding Eligibility Preview.
 - **Validation Status**: Typecheck, lint, test, build, and audit fully passed locally. Tests added for new UI boundaries.
 - **Merge Recommendation**: MERGE_READY_UI_CUSTODY_LIFECYCLE_DEMO
+
+## Phase 5: Public Testnet Vercel Preview
+- **Submit Offer Fix**: Merged safely into main.
+- **Vercel Public Testnet Deployment**: Ready. Vercel deployment runbook created at PUBLIC_TESTNET_VERCEL_DEPLOYMENT_RUNBOOK.md.
+- **Next Human Action**: Follow the deployment runbook to deploy Settleway on Vercel, then perform the manual QA checklist using the live public URL.
