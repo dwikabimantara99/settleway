@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Package2, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import { EmptyState, StatusBadge } from '@/components/field-ledger/primitives';
 import { Select, TextInput } from '@/components/field-ledger/forms';
@@ -14,7 +15,9 @@ const STATUS_OPTIONS = [
   { value: 'pre_harvest', label: 'Pre-harvest' },
 ];
 
-export default function MarketplacePage() {
+function MarketplaceContent() {
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : '';
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -150,7 +153,7 @@ export default function MarketplacePage() {
                 verificationLabel="Verified seller"
                 activityLabel={`${demoProfiles[featured.sellerId]?.sellerCompletedCount ?? 0} completed deals`}
                 counterpartyName={demoProfiles[featured.sellerId]?.displayName ?? 'Counterparty'}
-                detailHref={`/marketplace/${featured.id}`}
+                detailHref={`/marketplace/${featured.id}${queryString}`}
                 detailLabel="Review opportunity"
                 featured
               />
@@ -188,7 +191,7 @@ export default function MarketplacePage() {
                         verificationLabel="Verified seller"
                         activityLabel={`${seller?.sellerCompletedCount ?? 0} completed deals`}
                         counterpartyName={seller?.displayName ?? 'Counterparty'}
-                        detailHref={`/marketplace/${listing.id}`}
+                        detailHref={`/marketplace/${listing.id}${queryString}`}
                         detailLabel="Review opportunity"
                       />
                     );
@@ -200,5 +203,17 @@ export default function MarketplacePage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function MarketplacePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--green-500)] border-t-transparent" />
+      </div>
+    }>
+      <MarketplaceContent />
+    </Suspense>
   );
 }

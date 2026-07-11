@@ -14,6 +14,10 @@ vi.mock('next/navigation', () => ({
     refresh: vi.fn(),
     back: vi.fn(),
   })),
+  useSearchParams: vi.fn(() => ({
+    get: vi.fn(),
+    toString: vi.fn(() => ''),
+  })),
 }));
 
 import DealRoomPage from '../../app/deals/[dealId]/page';

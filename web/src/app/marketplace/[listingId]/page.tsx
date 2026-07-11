@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth/server';
 import {
   ArrowRight,
   BadgeCheck,
@@ -77,9 +78,20 @@ export default async function ListingDetailPage(props: {
   if (role) queryParams.set('role', role);
   const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
 
-  let submitOfferHref = `/offers/new?listingId=${listing.id}${queryString ? '&' + queryParams.toString() : ''}`;
+  const offerRole = isDemo && !role ? 'buyer' : role;
+  const offerQueryParams = new URLSearchParams();
+  if (isDemo) offerQueryParams.set('demo', '1');
+  if (offerRole) offerQueryParams.set('role', offerRole);
+  const offerQueryString = offerQueryParams.toString() ? `?${offerQueryParams.toString()}` : '';
+
+  const user = await getCurrentUser();
+  const isAuthenticated = !!user;
+
+  let submitOfferHref = `/offers/new?listingId=${listing.id}${offerQueryString ? '&' + offerQueryParams.toString() : ''}`;
   if (isDemo && listingId === 'listing-cabai-001') {
-    submitOfferHref = `/offers/offer-demo-cabai-001${queryString}`;
+    submitOfferHref = `/offers/offer-demo-cabai-001${offerQueryString}`;
+  } else if (!isAuthenticated && !isDemo) {
+    submitOfferHref = '/#settleway-demo-chooser';
   }
 
   const seller = demoProfiles[listing.sellerId];
