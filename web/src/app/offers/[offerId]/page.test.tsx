@@ -82,7 +82,7 @@ describe('Offer Detail Page', () => {
         }),
       );
 
-      expect(html).toContain('Negotiation Summary');
+      expect(html).toContain('Proposed Draft');
       expect(html).not.toContain('404');
     });
 
@@ -108,7 +108,7 @@ describe('Offer Detail Page', () => {
       );
       
       // Asserts that it rendered the offer page correctly
-      expect(html).toContain('Negotiation Summary');
+      expect(html).toContain('Proposed Draft');
     });
   });
 });

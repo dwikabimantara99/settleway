@@ -29,6 +29,6 @@ describe('DealTermsActionButton', () => {
       }),
     );
 
-    expect(html).toContain('Accept Offer');
+    expect(html).toContain('Accept Terms');
   });
 });

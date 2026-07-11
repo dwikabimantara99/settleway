@@ -69,7 +69,7 @@ export function DealTermsActionButton({
           {loading
             ? 'Processing...'
             : canAcceptTerms
-              ? 'Accept Offer'
+              ? 'Accept Terms'
               : 'Waiting for Counterparty Acceptance'}
         </Button>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
