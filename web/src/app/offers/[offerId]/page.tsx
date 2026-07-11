@@ -99,11 +99,27 @@ export default async function OfferDetailPage({
   const { offerId } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const isDemo = resolvedSearchParams.demo === '1';
+  const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
+  
+  let stage = typeof resolvedSearchParams.stage === 'string' ? resolvedSearchParams.stage : undefined;
+  if (isDemo && !stage) {
+    stage = role === 'seller' ? 'review' : 'open';
+  }
 
   let offer = await repository.getOffer(offerId);
 
   if (!offer && isDemo && offerId === 'offer-demo-cabai-001') {
-    offer = demoOffers['offer-demo-cabai-001'] || null;
+    const baseOffer = demoOffers['offer-demo-cabai-001'];
+    if (baseOffer) {
+      offer = { ...baseOffer };
+      if (stage === 'open' || stage === 'review') {
+        offer.status = 'negotiating';
+        offer.terms_accepted_at = null;
+        offer.buyer_open_room_at = null;
+        offer.seller_open_room_at = null;
+        offer.active_deal_id = null;
+      }
+    }
   }
 
   if (!offer) {
@@ -190,7 +206,9 @@ export default async function OfferDetailPage({
         <p className="mt-4 max-w-3xl text-base leading-7 text-slate-700">
           {termsAccepted
             ? 'Commercial terms are aligned. Review the agreement summary below. The Deal Room becomes active only after both parties confirm Open Deal Room.'
-            : 'The offer has been submitted. Review the proposed terms while the counterparty accepts or continues the negotiation.'}
+            : actorId === offer.seller_id
+              ? 'Review Buyer Offer. Please review the proposed terms below and use the chat to align before accepting.'
+              : 'The offer has been submitted. Review the proposed terms while the counterparty accepts or continues the negotiation.'}
         </p>
         <p className="mt-3 text-base leading-7 text-slate-500">
           Indicative baseline: {(offer.volume_kg ?? 0).toLocaleString('id-ID')} kg at{' '}
@@ -402,6 +420,7 @@ export default async function OfferDetailPage({
                   hasOpened={hasOpened}
                   bothOpened={bothOpened}
                   activeDealId={offer.active_deal_id}
+                  isDemo={isDemo}
                 />
               ) : null}
             </div>

@@ -21,7 +21,8 @@ export function DealTermsActionButton({
   hasOpened,
   bothOpened = false,
   activeDealId,
-}: DealTermsActionButtonProps) {
+  isDemo = false,
+}: DealTermsActionButtonProps & { isDemo?: boolean }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +30,12 @@ export function DealTermsActionButton({
   async function handleAccept() {
     setLoading(true);
     setError(null);
+
+    if (isDemo && offerId === 'offer-demo-cabai-001') {
+      router.push(`/offers/offer-demo-cabai-001?demo=1&role=seller&stage=agreed`);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/offers/${offerId}`, {
         method: 'PATCH',

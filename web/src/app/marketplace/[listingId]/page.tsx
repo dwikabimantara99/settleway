@@ -89,7 +89,8 @@ export default async function ListingDetailPage(props: {
 
   let submitOfferHref = `/offers/new?listingId=${listing.id}${offerQueryString ? '&' + offerQueryParams.toString() : ''}`;
   if (isDemo && listingId === 'listing-cabai-001') {
-    submitOfferHref = `/offers/offer-demo-cabai-001${offerQueryString}`;
+    offerQueryParams.set('stage', 'open');
+    submitOfferHref = `/offers/offer-demo-cabai-001?${offerQueryParams.toString()}`;
   } else if (!isAuthenticated && !isDemo) {
     submitOfferHref = '/#settleway-demo-chooser';
   }
