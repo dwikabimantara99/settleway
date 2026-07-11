@@ -13,7 +13,16 @@ describe('AuthenticatedHeader', () => {
     expect(html).toContain('Buy');
     expect(html).toContain('Sell');
     expect(html).toContain('Deals');
+    expect(html).toContain('Funding');
     expect(html).toContain('aria-label="Notifications"');
     expect(html).not.toContain('>Notifications</a>');
+  });
+
+  it('does not render public-only nav clutter', () => {
+    const html = renderToString(<AuthenticatedHeader />);
+    expect(html).not.toContain('How It Works');
+    expect(html).not.toContain('Trust &amp; Settlement');
+    expect(html).not.toContain('Demo');
+    expect(html).not.toContain('Choose a Demo Role');
   });
 });

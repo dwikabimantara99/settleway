@@ -53,6 +53,7 @@ export function AuthenticatedHeader() {
     { href: '/marketplace', label: 'Buy' },
     { href: '/buyer-requests', label: 'Sell' },
     { href: '/deals', label: 'Deals' },
+    { href: profileHref, label: 'Funding' },
   ];
 
   return (

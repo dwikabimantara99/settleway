@@ -1,45 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDown, Menu, ShoppingBag, Store } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { SettlewayLogo } from '@/components/brand/SettlewayLogo';
 import { GetStartedModal } from './GetStartedModal';
-import { isEscapeDismissKey, isMarketplaceOpenKey } from './landing-interactions';
-
-const marketplaceItems = [
-  {
-    href: '/marketplace',
-    label: 'Buy',
-    description: 'Review verified agricultural supply.',
-    icon: ShoppingBag,
-  },
-  {
-    href: '/buyer-requests',
-    label: 'Sell',
-    description: 'Respond to active buyer requirements.',
-    icon: Store,
-  },
-];
+import { DemoChooserModal } from './DemoChooserModal';
 
 export function PublicLandingHeader({
-  initialMarketplaceOpen = false,
   initialModalOpen = false,
+  initialDemoOpen = false,
 }: {
-  initialMarketplaceOpen?: boolean;
   initialModalOpen?: boolean;
+  initialDemoOpen?: boolean;
 }) {
-  const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(initialMarketplaceOpen);
   const [isModalOpen, setIsModalOpen] = useState(initialModalOpen);
+  const [isDemoOpen, setIsDemoOpen] = useState(initialDemoOpen);
   const [modalFeedback, setModalFeedback] = useState<{
     message: string;
     tone: 'info' | 'success' | 'error';
   } | null>(null);
   const loginButtonRef = useRef<HTMLAnchorElement>(null);
+  const demoButtonRef = useRef<HTMLAnchorElement>(null);
 
   const handleOpenModal = () => {
     setModalFeedback(null);
     setIsModalOpen(true);
+  };
+
+  const handleOpenDemo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDemoOpen(true);
   };
 
   const handleGoogleClick = () => {
@@ -60,68 +51,6 @@ export function PublicLandingHeader({
             className="mx-auto hidden items-center gap-1 lg:flex"
             aria-label="Public navigation"
           >
-            <div
-              className="group relative"
-              onMouseEnter={() => setIsMarketplaceOpen(true)}
-              onMouseLeave={() => setIsMarketplaceOpen(false)}
-              onBlur={(event) => {
-                const nextTarget = event.relatedTarget;
-                if (nextTarget instanceof Node && event.currentTarget.contains(nextTarget)) return;
-                setIsMarketplaceOpen(false);
-              }}
-            >
-              <button
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={isMarketplaceOpen}
-                onClick={() => setIsMarketplaceOpen((open) => !open)}
-                onKeyDown={(event) => {
-                  if (isMarketplaceOpen && isEscapeDismissKey(event.key)) {
-                    event.preventDefault();
-                    setIsMarketplaceOpen(false);
-                    return;
-                  }
-                  if (isMarketplaceOpenKey(event.key)) {
-                    event.preventDefault();
-                    setIsMarketplaceOpen(true);
-                  }
-                }}
-                className="inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-semibold text-[var(--navy-900)] transition-colors hover:bg-white/80 hover:text-[var(--green-700)]"
-              >
-                Marketplace
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${isMarketplaceOpen ? 'rotate-180 text-[var(--green-700)]' : 'text-[var(--text-muted)]'}`}
-                />
-              </button>
-
-              <div
-                role="menu"
-                aria-label="Marketplace routes"
-                className={`absolute left-1/2 top-full z-30 w-[22rem] -translate-x-1/2 pt-3 ${isMarketplaceOpen ? 'block' : 'hidden'} group-hover:block group-focus-within:block`}
-              >
-                <div className="aurora-acrylic overflow-hidden rounded-[1.25rem] p-2">
-                  {marketplaceItems.map(({ href, label, description, icon: Icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      role="menuitem"
-                      className="flex min-h-16 items-start gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-[var(--azure-50)] focus-visible:bg-[var(--azure-50)] focus-visible:outline-none"
-                    >
-                      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-[var(--green-700)]" />
-                      <span>
-                        <span className="block text-sm font-semibold text-[var(--navy-900)]">
-                          {label}
-                        </span>
-                        <span className="mt-1 block text-xs leading-5 text-[var(--text-secondary)]">
-                          {description}
-                        </span>
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             <a
               href="#how-it-works"
               className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-[var(--navy-900)] transition-colors hover:bg-white/80 hover:text-[var(--green-700)]"
@@ -133,6 +62,14 @@ export function PublicLandingHeader({
               className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-[var(--navy-900)] transition-colors hover:bg-white/80 hover:text-[var(--green-700)]"
             >
               Trust &amp; Settlement
+            </a>
+            <a
+              href="#settleway-demo-chooser"
+              ref={demoButtonRef}
+              onClick={handleOpenDemo}
+              className="inline-flex min-h-11 items-center rounded-xl px-4 text-sm font-semibold text-[var(--navy-900)] transition-colors hover:bg-white/80 hover:text-[var(--green-700)]"
+            >
+              Demo
             </a>
           </nav>
 
@@ -157,15 +94,6 @@ export function PublicLandingHeader({
                 className="absolute right-0 top-full z-40 mt-3 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-[var(--border-subtle)] bg-white/96 p-3 shadow-[var(--shadow-panel)] backdrop-blur-xl"
               >
                 <div className="grid gap-1">
-                  {marketplaceItems.map(({ href, label }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
-                    >
-                      {label}
-                    </Link>
-                  ))}
                   <a
                     href="#how-it-works"
                     className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
@@ -177,6 +105,13 @@ export function PublicLandingHeader({
                     className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
                   >
                     Trust &amp; Settlement
+                  </a>
+                  <a
+                    href="#settleway-demo-chooser"
+                    onClick={handleOpenDemo}
+                    className="flex min-h-11 items-center rounded-xl px-3 text-sm font-semibold text-[var(--navy-900)] hover:bg-[var(--surface-subtle)]"
+                  >
+                    Demo
                   </a>
                   <a
                     href="#settleway-login"
@@ -199,6 +134,11 @@ export function PublicLandingHeader({
         onGoogleClick={handleGoogleClick}
         feedbackMessage={modalFeedback?.message}
         feedbackTone={modalFeedback?.tone}
+      />
+      <DemoChooserModal
+        isOpen={isDemoOpen}
+        onClose={() => setIsDemoOpen(false)}
+        returnFocusRef={demoButtonRef}
       />
     </>
   );
