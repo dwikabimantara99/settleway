@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { RoleSwitcher } from './RoleSwitcher';
 

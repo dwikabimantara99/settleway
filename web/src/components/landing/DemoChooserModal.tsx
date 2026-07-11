@@ -134,7 +134,11 @@ export function DemoChooserModal({
           Experience the Settleway trust corridor from different perspectives on the public Stellar Testnet. No account required.
         </p>
 
-        <div className="mt-8 space-y-4">
+        <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+          To experience both sides of Settleway, open Buyer and Seller in separate browser profiles, or use one normal window and one incognito window.
+        </div>
+
+        <div className="mt-6 space-y-4">
           <Link
             href="/home?demo=1&role=buyer"
             className="group relative flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:border-emerald-500 hover:shadow-md"
