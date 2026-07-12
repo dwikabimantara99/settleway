@@ -38,6 +38,29 @@ export default async function NotificationsPage({
     }
   }
 
+  const isDemoBuyer =
+    user?.id === 'buyer-surabaya-restaurant' || (isDemoUrl && role === 'buyer');
+
+  if (isDemoBuyer) {
+    const hasDemoAccepted = notifications.some(
+      (n) => n.offer_id.includes('offer-demo-cabai-001') && n.type === 'offer_accepted'
+    );
+    if (!hasDemoAccepted) {
+      notifications = [
+        {
+          id: 'notif-demo-buyer-001',
+          recipient_id: 'buyer-surabaya-restaurant',
+          offer_id: 'offer-demo-cabai-001?demo=1&role=buyer&stage=agreed',
+          type: 'offer_accepted',
+          message: 'Probolinggo Farmer Group accepted your Red Chili offer.',
+          read_at: null,
+          created_at: '2026-06-17T09:06:00.000Z',
+        },
+        ...notifications,
+      ];
+    }
+  }
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       {/* ── Header ── */}
