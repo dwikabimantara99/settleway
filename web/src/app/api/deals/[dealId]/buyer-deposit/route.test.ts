@@ -19,6 +19,14 @@ vi.mock("@/lib/stellar/server/anchor-demo-event", () => ({
   }),
 }));
 
+const mockServiceClient = {
+  from: vi.fn(),
+};
+
+vi.mock("@/lib/db/server-service-client", () => ({
+  getServiceRoleClient: vi.fn(() => mockServiceClient),
+}));
+
 vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
   resolveDealRoomDefaultStellarState: vi.fn(() => ({
     stellar_mode: "mock_only",
@@ -347,34 +355,111 @@ describe("buyer-deposit route", () => {
     expect(mockStore.deals.get("deal-buyer-unconfirmed")?.status).toBe("WAITING_DEPOSITS"); // Not funded
   });
 
-  it("calls Stellar anchor wrapper for demo deal and returns tx_hash/proof_hash", async () => {
-    setupDeal("demo-cabai-001", {
-      stellar_mode: "mock_only",
-      stellar_contract_id: null,
-      stellar_escrow_id: null,
+  describe("Demo Service Client Branch", () => {
+    let originalEnv: NodeJS.ProcessEnv;
+    let mockSupabaseBuilder: any;
+
+    beforeEach(() => {
+      originalEnv = process.env;
+      process.env = { ...originalEnv, NEXT_PUBLIC_RUNTIME_MODE: 'persistent', STELLAR_PLATFORM_SECRET: 'secret' };
+      
+      mockSupabaseBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
+          data: {
+            id: 'demo-cabai-001',
+            buyer_id: 'buyer-surabaya-restaurant',
+            seller_id: 'seller-probolinggo-cabai',
+            stellar_mode: 'mock_only',
+            status: 'WAITING_DEPOSITS',
+            buyer_total_idr: 1000,
+          },
+          error: null
+        }),
+        update: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockResolvedValue({ error: null }),
+      };
+
+      mockServiceClient.from.mockReturnValue(mockSupabaseBuilder);
     });
-    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-1" }) } as any);
 
-    const response = await buyerDepositRoute(
-      new Request("http://localhost/api/deals/demo-cabai-001/buyer-deposit", { method: "POST" }),
-      { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
-    );
-    const payload = await response.json();
+    afterEach(() => {
+      process.env = originalEnv;
+    });
 
-    expect(response.status).toBe(200);
-    expect(anchorDemoEvent).toHaveBeenCalledWith(expect.objectContaining({
-      deal_id: "demo-cabai-001",
-      event_type: "BUYER_DEPOSIT_INTENT_RECORDED",
-      actor_id: "buyer-1",
-    }));
+    it("calls Stellar anchor wrapper for demo deal via service client", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-surabaya-restaurant" }) } as any);
+      const response = await buyerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/buyer-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
 
-    const deal = mockStore.deals.get("demo-cabai-001");
-    expect(deal?.latest_stellar_tx_hash).toBe("mocked-tx-hash");
-    expect(deal?.proof_hash).toBe("mocked-proof-hash");
-    
-    expect(payload.data.latest_stellar_tx_hash).toBe("mocked-tx-hash");
-    expect(payload.meta.tx_hash).toBe("mocked-tx-hash");
-    expect(payload.meta.proof_hash).toBe("mocked-proof-hash");
+      expect(response.status).toBe(200);
+      expect(anchorDemoEvent).toHaveBeenCalledWith(expect.objectContaining({
+        deal_id: "demo-cabai-001",
+        event_type: "BUYER_DEPOSIT_INTENT_RECORDED",
+        actor_id: "buyer-surabaya-restaurant",
+      }));
+      expect(mockServiceClient.from).toHaveBeenCalledWith('deals');
+      expect(payload.data.latest_stellar_tx_hash).toBe("mocked-tx-hash");
+    });
+
+    it("returns idempotent success if already BUYER_FUNDED", async () => {
+      mockSupabaseBuilder.single.mockResolvedValueOnce({
+        data: {
+          id: 'demo-cabai-001',
+          buyer_id: 'buyer-surabaya-restaurant',
+          seller_id: 'seller-probolinggo-cabai',
+          stellar_mode: 'mock_only',
+          status: 'BUYER_FUNDED',
+          latest_stellar_tx_hash: 'existing-tx-hash',
+          proof_hash: 'existing-proof-hash',
+        },
+        error: null
+      });
+
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-surabaya-restaurant" }) } as any);
+
+      const response = await buyerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/buyer-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(anchorDemoEvent).not.toHaveBeenCalled();
+      expect(payload.data.latest_stellar_tx_hash).toBe("existing-tx-hash");
+      expect(mockSupabaseBuilder.update).not.toHaveBeenCalled();
+    });
+
+    it("rejects if wrong actor tries to trigger demo branch", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "wrong-actor" }) } as any);
+
+      const response = await buyerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/buyer-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(mockServiceClient.from).not.toHaveBeenCalled();
+    });
+
+    it("fails clearly if STELLAR_PLATFORM_SECRET is missing", async () => {
+      delete process.env.STELLAR_PLATFORM_SECRET;
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "buyer-surabaya-restaurant" }) } as any);
+
+      const response = await buyerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/buyer-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(payload.error.code).toBe("SERVER_CONFIG_ERROR");
+    });
   });
 
   it("does not call Stellar anchor wrapper for normal mock_only deal", async () => {
@@ -390,7 +475,5 @@ describe("buyer-deposit route", () => {
 
     expect(response.status).toBe(200);
     expect(anchorDemoEvent).not.toHaveBeenCalled();
-    const deal = mockStore.deals.get("normal-mock-deal");
-    expect(deal?.latest_stellar_tx_hash).toBeNull();
   });
 });

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import crypto from 'node:crypto';
-import { repository } from '@/lib/repositories';
+import { repository, runtimeMode } from '@/lib/repositories';
+import { getServiceRoleClient } from '@/lib/db/server-service-client';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import type { DbDeal } from '@/lib/db/types';
@@ -46,25 +48,6 @@ async function runLegacyLocalBuyerDeposit(
 ) {
   let txHash: string | null = null;
   let proofHash: string | null = null;
-  
-  if (dealId === 'demo-cabai-001' && existingDeal.stellar_mode === 'mock_only') {
-    try {
-      const anchorResult = await anchorDemoEvent({
-        deal_id: dealId,
-        event_type: 'BUYER_DEPOSIT_INTENT_RECORDED',
-        actor_id: authUser.id,
-        payload: {
-          amount_idr: existingDeal.buyer_total_idr,
-          action: 'buyer_deposit',
-          timestamp: new Date().toISOString(),
-        }
-      });
-      txHash = anchorResult.tx_hash;
-      proofHash = anchorResult.proof_hash;
-    } catch (e) {
-      return NextResponse.json(createErrorResponse('STELLAR_ANCHOR_FAILED', e instanceof Error ? e.message : 'Demo proof anchoring failed'), { status: 502 });
-    }
-  }
 
   const updatedDeal = transition(existingDeal, 'buyer_deposit');
   if (txHash && proofHash) {
@@ -259,6 +242,109 @@ async function ensureTestnetEscrowPrepared(input: {
 export async function POST(_request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
   const actionName = 'buyer_deposit' as EscrowAction;
+
+  if (dealId === 'demo-cabai-001') {
+    const cookieStore = await cookies();
+    const mockActor = cookieStore.get('mock_actor')?.value;
+    if (mockActor === 'buyer-surabaya-restaurant') {
+      let serviceClient;
+      try {
+        serviceClient = getServiceRoleClient();
+      } catch (e) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', e instanceof Error ? e.message : 'Missing config'), { status: 500 });
+      }
+
+      if (!process.env.STELLAR_PLATFORM_SECRET) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', 'Missing STELLAR_PLATFORM_SECRET for demo anchor'), { status: 500 });
+      }
+
+      const { data: demoDeal, error: demoError } = await serviceClient
+        .from('deals')
+        .select('*')
+        .eq('id', dealId)
+        .single();
+
+      if (demoError || !demoDeal) {
+        return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Demo deal not found'), { status: 401 });
+      }
+
+      if (
+        demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
+        demoDeal.seller_id === 'seller-probolinggo-cabai' &&
+        demoDeal.stellar_mode === 'mock_only'
+      ) {
+        if (demoDeal.status === 'BUYER_FUNDED' && demoDeal.latest_stellar_tx_hash) {
+          return NextResponse.json(createSuccessResponse(demoDeal, { tx_hash: demoDeal.latest_stellar_tx_hash, proof_hash: demoDeal.proof_hash, stellar_network: 'testnet' }));
+        }
+
+        if (demoDeal.status !== 'WAITING_DEPOSITS') {
+          return NextResponse.json(createErrorResponse('CONFLICT', 'Unexpected deal status'), { status: 409 });
+        }
+
+        let txHash: string | null = null;
+        let proofHash: string | null = null;
+        try {
+          const anchorResult = await anchorDemoEvent({
+            deal_id: dealId,
+            event_type: 'BUYER_DEPOSIT_INTENT_RECORDED',
+            actor_id: mockActor,
+            payload: {
+              amount_idr: demoDeal.buyer_total_idr,
+              action: 'buyer_deposit',
+              timestamp: new Date().toISOString(),
+            }
+          });
+          txHash = anchorResult.tx_hash;
+          proofHash = anchorResult.proof_hash;
+        } catch (e) {
+          return NextResponse.json(createErrorResponse('STELLAR_ANCHOR_FAILED', e instanceof Error ? e.message : 'Demo proof anchoring failed'), { status: 502 });
+        }
+
+        const updatedDeal = transition(demoDeal, 'buyer_deposit');
+        updatedDeal.latest_stellar_tx_hash = txHash;
+        updatedDeal.proof_hash = proofHash;
+
+        const { error: updateError } = await serviceClient.from('deals').update(updatedDeal).eq('id', dealId);
+        if (updateError) {
+          return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+        }
+
+        const event = createEvent(
+          dealId,
+          'buyer_deposit',
+          mockActor,
+          'Buyer deposit recorded for escrow preparation.',
+          {
+            participant_role: 'buyer',
+            deposit_total_idr: updatedDeal.buyer_total_idr,
+            next_status: updatedDeal.status,
+          }
+        );
+        event.tx_hash = txHash;
+        event.proof_hash = proofHash;
+
+        await serviceClient.from('escrow_events').insert(event);
+
+        if (updatedDeal.status === 'LOCKED') {
+          const protectedValueIdr = updatedDeal.principal_idr + updatedDeal.buyer_bond_idr + updatedDeal.seller_bond_idr;
+          const lockEvent = createEvent(dealId, 'escrow_locked', mockActor, 'Escrow locked after both required deposits were confirmed.', {
+            protected_value_idr: protectedValueIdr,
+            buyer_total_idr: updatedDeal.buyer_total_idr,
+            seller_total_idr: updatedDeal.seller_total_idr,
+            platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
+            next_status: updatedDeal.status,
+          });
+          lockEvent.tx_hash = txHash;
+          lockEvent.proof_hash = proofHash;
+          await serviceClient.from('escrow_events').insert(lockEvent);
+        }
+
+        return NextResponse.json(
+          createSuccessResponse(updatedDeal, { tx_hash: txHash, proof_hash: proofHash, stellar_network: 'testnet' })
+        );
+      }
+    }
+  }
 
   try {
     let existingDeal;

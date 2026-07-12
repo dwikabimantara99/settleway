@@ -1,22 +1,28 @@
 import { anchorDemoEvent } from './anchor-demo-event';
 import { Horizon } from '@stellar/stellar-sdk';
 import { createHash } from 'node:crypto';
+import { vi, describe, it, expect, beforeEach, afterEach, afterAll } from 'vitest';
 
-jest.mock('@stellar/stellar-sdk', () => {
-  const original = jest.requireActual('@stellar/stellar-sdk');
+vi.mock('@stellar/stellar-sdk', async () => {
+  const actual = await vi.importActual<typeof import('@stellar/stellar-sdk')>('@stellar/stellar-sdk');
+  
+  class MockServer {
+    constructor() {}
+    loadAccount = vi.fn().mockResolvedValue({
+      sequenceNumber: () => '100',
+    });
+    submitTransaction = vi.fn().mockResolvedValue({
+      successful: true,
+      hash: 'mock-tx-hash-12345',
+      ledger: 1000,
+    });
+  }
+
   return {
-    ...original,
+    ...actual,
     Horizon: {
-      Server: jest.fn().mockImplementation(() => ({
-        loadAccount: jest.fn().mockResolvedValue({
-          sequenceNumber: () => '100',
-        }),
-        submitTransaction: jest.fn().mockResolvedValue({
-          successful: true,
-          hash: 'mock-tx-hash-12345',
-          ledger: 1000,
-        }),
-      })),
+      ...actual.Horizon,
+      Server: MockServer,
     },
   };
 });
@@ -25,7 +31,7 @@ describe('anchorDemoEvent', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = { ...originalEnv };
   });
 
@@ -34,7 +40,7 @@ describe('anchorDemoEvent', () => {
   });
 
   it('builds deterministic proof hash from payload', async () => {
-    process.env.STELLAR_PLATFORM_SECRET = 'SAUDIJQW3YDFG23ZTRUXYL5I45RQVUKL62BDBA72D6DMRN3T2Y3RFR6P'; // valid length dummy
+    process.env.STELLAR_PLATFORM_SECRET = 'SA3YGBBGRI75HCAQCIV34QSZ3JNPZ5NRGONWTDJQ7UQRVY7556CMDNDL'; // valid length dummy
 
     const payload = { b: 2, a: 1 };
     const result = await anchorDemoEvent({
