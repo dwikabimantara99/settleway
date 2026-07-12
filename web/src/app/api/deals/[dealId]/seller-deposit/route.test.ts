@@ -11,6 +11,22 @@ const mockExecutionAdapter = {
   confirm: vi.fn(),
 };
 
+vi.mock("@/lib/stellar/server/anchor-demo-event", () => ({
+  anchorDemoEvent: vi.fn().mockResolvedValue({
+    proof_hash: 'mocked-proof-hash',
+    tx_hash: 'mocked-tx-hash',
+    stellar_network: 'testnet',
+  }),
+}));
+
+const mockServiceClient = {
+  from: vi.fn(),
+};
+
+vi.mock("@/lib/db/server-service-client", () => ({
+  getServiceRoleClient: vi.fn(() => mockServiceClient),
+}));
+
 vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
   resolveDealRoomDefaultStellarState: vi.fn(() => ({
     stellar_mode: "mock_only",
@@ -34,6 +50,7 @@ vi.mock("@/lib/stellar/server/deal-room-testnet-runtime", () => ({
 
 import { mockStore } from "@/lib/db/mock-store";
 import { checkTestnetBalance } from "@/lib/stellar/server/deal-room-testnet-runtime";
+import { anchorDemoEvent } from "@/lib/stellar/server/anchor-demo-event";
 import { POST as sellerDepositRoute } from "./route";
 
 const globalFetch = global.fetch;
@@ -334,6 +351,129 @@ describe("seller-deposit route", () => {
     expect(response.status).toBe(502);
     expect(payload.error.code).toBe("STELLAR_EXECUTION_UNCONFIRMED");
     expect(mockStore.deals.get("deal-seller-unconfirmed")?.status).toBe("WAITING_DEPOSITS"); // Not funded
+  });
+
+  describe("Demo Service Client Branch", () => {
+    let originalEnv: NodeJS.ProcessEnv;
+    let mockSupabaseBuilder: any;
+
+    beforeEach(() => {
+      originalEnv = process.env;
+      process.env = { ...originalEnv, NEXT_PUBLIC_RUNTIME_MODE: 'persistent', STELLAR_PLATFORM_SECRET: 'secret' };
+      
+      mockSupabaseBuilder = {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({
+          data: {
+            id: 'demo-cabai-001',
+            buyer_id: 'buyer-surabaya-restaurant',
+            seller_id: 'seller-probolinggo-cabai',
+            stellar_mode: 'mock_only',
+            status: 'BUYER_FUNDED',
+            seller_total_idr: 1000,
+          },
+          error: null
+        }),
+        update: vi.fn().mockReturnThis(),
+        insert: vi.fn().mockResolvedValue({ error: null }),
+      };
+
+      mockServiceClient.from.mockReturnValue(mockSupabaseBuilder);
+    });
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    it("calls Stellar anchor wrapper for demo deal via service client", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-probolinggo-cabai" }) } as any);
+      const response = await sellerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/seller-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(anchorDemoEvent).toHaveBeenCalledWith(expect.objectContaining({
+        deal_id: "demo-cabai-001",
+        event_type: "SELLER_DEPOSIT_INTENT_RECORDED",
+        actor_id: "seller-probolinggo-cabai",
+      }));
+      expect(mockServiceClient.from).toHaveBeenCalledWith('deals');
+      expect(payload.data.latest_stellar_tx_hash).toBe("mocked-tx-hash");
+    });
+
+    it("returns idempotent success if already SELLER_FUNDED", async () => {
+      mockSupabaseBuilder.single.mockResolvedValueOnce({
+        data: {
+          id: 'demo-cabai-001',
+          buyer_id: 'buyer-surabaya-restaurant',
+          seller_id: 'seller-probolinggo-cabai',
+          stellar_mode: 'mock_only',
+          status: 'SELLER_FUNDED',
+          latest_stellar_tx_hash: 'existing-tx-hash',
+          proof_hash: 'existing-proof-hash',
+        },
+        error: null
+      });
+
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-probolinggo-cabai" }) } as any);
+
+      const response = await sellerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/seller-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(anchorDemoEvent).not.toHaveBeenCalled();
+      expect(payload.data.latest_stellar_tx_hash).toBe("existing-tx-hash");
+      expect(mockSupabaseBuilder.update).not.toHaveBeenCalled();
+    });
+
+    it("rejects if wrong actor tries to trigger demo branch", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "wrong-actor" }) } as any);
+
+      const response = await sellerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/seller-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(mockServiceClient.from).not.toHaveBeenCalled();
+    });
+
+    it("fails clearly if STELLAR_PLATFORM_SECRET is missing", async () => {
+      delete process.env.STELLAR_PLATFORM_SECRET;
+      vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-probolinggo-cabai" }) } as any);
+
+      const response = await sellerDepositRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/seller-deposit", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+      const payload = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(payload.error.code).toBe("SERVER_CONFIG_ERROR");
+    });
+  });
+
+  it("does not call Stellar anchor wrapper for normal mock_only deal", async () => {
+    setupDeal("normal-mock-deal", {
+      stellar_mode: "mock_only",
+      status: "BUYER_FUNDED",
+    });
+    vi.mocked(nextHeaders.cookies).mockReturnValue({ get: () => ({ value: "seller-1" }) } as any);
+
+    const response = await sellerDepositRoute(
+      new Request("http://localhost/api/deals/normal-mock-deal/seller-deposit", { method: "POST" }),
+      { params: Promise.resolve({ dealId: "normal-mock-deal" }) }
+    );
+
+    expect(response.status).toBe(200);
+    expect(anchorDemoEvent).not.toHaveBeenCalled();
   });
 
 });
