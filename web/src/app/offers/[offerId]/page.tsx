@@ -126,7 +126,14 @@ export default async function OfferDetailPage({
     return notFound();
   }
 
-  const user = await getCurrentUser();
+  let user = await getCurrentUser();
+  if (isDemo && offerId === 'offer-demo-cabai-001' && !user) {
+    const demoRole = role || 'buyer';
+    const demoUserId = demoRole === 'seller' ? 'seller-probolinggo-cabai' : 'buyer-surabaya-restaurant';
+    if (demoProfiles[demoUserId]) {
+      user = { id: demoProfiles[demoUserId].id } as any;
+    }
+  }
   const actorId = user?.id || null;
   const isParticipant = actorId === offer.buyer_id || actorId === offer.seller_id;
   const buyer = demoProfiles[offer.buyer_id];

@@ -228,7 +228,17 @@ export default async function DealRoomPage({
 
   if (!deal) return notFound();
 
-  const currentUser = await getCurrentUser();
+  const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
+
+  let currentUser = await getCurrentUser();
+  if (isDemo && resolvedParams.dealId === 'demo-cabai-001' && !currentUser) {
+    const demoRole = role || 'buyer';
+    const demoUserId = demoRole === 'seller' ? 'seller-probolinggo-cabai' : 'buyer-surabaya-restaurant';
+    if (demoProfiles[demoUserId]) {
+      currentUser = { id: demoProfiles[demoUserId].id } as any;
+    }
+  }
+  
   const viewerRole: ViewerRole =
     currentUser?.id === deal.buyer_id
       ? 'buyer'

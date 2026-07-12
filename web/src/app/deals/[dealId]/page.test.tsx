@@ -125,6 +125,33 @@ describe('Deal Room state gallery fixtures', () => {
         })
       ).rejects.toThrow('not-found');
     });
+    it('demo buyer resolves buyer actor and shows buyer action area when state allows', async () => {
+      // We mock the deal to be LOCKED so we can see the role-specific EscrowTimeline text
+      // without being blocked by the Wallet Funding Panel loading state.
+      const { demoDbDeals } = await import('@/lib/demo/demo-data');
+      const demoDeal = demoDbDeals['demo-cabai-001'];
+      vi.spyOn(repository, 'getDeal').mockResolvedValueOnce({ ...demoDeal, status: 'LOCKED' } as any);
+
+      const element = await DealRoomPage({
+        params: Promise.resolve({ dealId: 'demo-cabai-001' }),
+        searchParams: Promise.resolve({ demo: '1', role: 'buyer' }),
+      });
+      const html = renderToString(element);
+      expect(html).toContain('Wait for the seller to submit delivery proof');
+    });
+
+    it('demo seller resolves seller actor and shows seller action area when state allows', async () => {
+      const { demoDbDeals } = await import('@/lib/demo/demo-data');
+      const demoDeal = demoDbDeals['demo-cabai-001'];
+      vi.spyOn(repository, 'getDeal').mockResolvedValueOnce({ ...demoDeal, status: 'LOCKED' } as any);
+
+      const element = await DealRoomPage({
+        params: Promise.resolve({ dealId: 'demo-cabai-001' }),
+        searchParams: Promise.resolve({ demo: '1', role: 'seller' }),
+      });
+      const html = renderToString(element);
+      expect(html).toContain('Submit your delivery proof and mark the milestone');
+    });
   });
 });
 

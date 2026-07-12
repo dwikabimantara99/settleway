@@ -110,6 +110,52 @@ describe('Offer Detail Page', () => {
       // Asserts that it rendered the offer page correctly
       expect(html).toContain('Proposed Draft');
     });
+    it('demo seller review resolves seller actor and shows Accept Terms / seller CTA', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ demo: '1', role: 'seller', stage: 'review' }),
+        }),
+      );
+      expect(html).toContain('Accept Terms');
+    });
+
+    it('demo seller agreed resolves seller actor and shows Open Deal Room', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ demo: '1', role: 'seller', stage: 'agreed' }),
+        }),
+      );
+      expect(html).toContain('Open Deal Room');
+    });
+
+    it('demo buyer agreed resolves buyer actor and shows Open Deal Room', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ demo: '1', role: 'buyer', stage: 'agreed' }),
+        }),
+      );
+      expect(html).toContain('Open Deal Room');
+    });
+
+    it('non-demo unauthenticated behavior is unchanged', async () => {
+      vi.mocked(nextHeaders.cookies).mockResolvedValue({ get: () => undefined } as never);
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({}),
+        }),
+      );
+      expect(html).not.toContain('Accept Terms');
+    });
   });
 });
 
