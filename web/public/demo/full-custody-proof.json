@@ -1,0 +1,31 @@
+{
+  "corridor": "FULL_SOROBAN_CUSTODY_TESTNET_VERIFIED",
+  "contract_id": "CACN3V6XXPYNOLMQDVXQSSK6DCIAMSNJFSIODRCHP4EC5NYCL4N7APPJ",
+  "asset_contract_id": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "buyer_public_key": "GDJZJCYTIX4HUHOHR4H5VQS7HXOVIO6QYYGHORRAZOPMZQN34CKHZKMO",
+  "seller_public_key": "GAB62QS7A5AGWP6T3RRAMTVB2SV2EYUH6555WSBWIHV46ZXDBPDRPNSD",
+  "balances_before": {
+    "buyer": "10000.0000000",
+    "seller": "10000.0000000"
+  },
+  "balances_after": {
+    "buyer": "9979.9860937",
+    "seller": "10019.9958563"
+  },
+  "tx_hashes": {
+    "deposit_buyer": "51956a4fc0e99bfb6346df61f32f9de1c20ab1c361375ec3bf7193509457ba2c",
+    "deposit_seller": "4a859de7d8ecac387cd0b3b50e9e7785b5b6644c18ab00707c0b33ecb915e70a",
+    "submit_proof": "f0a185a74f1df2d44c149387d25c1d231d3ee1875eda517f22d292ec5b06a519",
+    "mark_delivered": "0da95b71ecd13360b976ab75a4a0fe51734925508de42147a8647d06b23b40ae",
+    "settle": "6eae8dcf8bde461de1dd5494ebe8050f637bd41f874349ddba2972e025e19bfc"
+  },
+  "states": {
+    "before_funding": "WaitingDeposits",
+    "after_buyer": "BuyerFunded",
+    "after_seller": "Locked",
+    "after_proof": "ProofSubmitted",
+    "after_delivery": "Delivered",
+    "final": "Completed"
+  },
+  "timestamp": "2026-07-12T15:54:02.489Z"
+}
