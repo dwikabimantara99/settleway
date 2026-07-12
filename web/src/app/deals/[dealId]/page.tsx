@@ -222,8 +222,41 @@ export default async function DealRoomPage({
 
   let deal = await repository.getDeal(resolvedParams.dealId);
 
-  if (!deal && isDemo && resolvedParams.dealId === 'demo-cabai-001') {
-    deal = demoDbDeals['demo-cabai-001'] || null;
+  let evidenceList: any[] = [];
+  let dealEvents: any[] = [];
+  let dealReputationEvents: any[] = [];
+  let stellarOperations: any[] = [];
+
+  if (isDemo && resolvedParams.dealId === 'demo-cabai-001') {
+    const { getServiceRoleClient } = await import('@/lib/db/server-service-client');
+    const serviceClient = getServiceRoleClient();
+    const { data: demoDeal } = await serviceClient.from('deals').select('*').eq('id', 'demo-cabai-001').single();
+    if (demoDeal) {
+      deal = demoDeal;
+    } else if (!deal) {
+      deal = demoDbDeals['demo-cabai-001'] || null;
+    }
+    const [{ data: evs }, { data: events }, { data: repEvents }, { data: ops }] = await Promise.all([
+      serviceClient.from('deal_evidence').select('*').eq('deal_id', 'demo-cabai-001'),
+      serviceClient.from('escrow_events').select('*').eq('deal_id', 'demo-cabai-001').order('created_at', { ascending: true }),
+      serviceClient.from('reputation_events').select('*').eq('deal_id', 'demo-cabai-001'),
+      serviceClient.from('stellar_operations').select('*').eq('deal_id', 'demo-cabai-001'),
+    ]);
+    evidenceList = evs || [];
+    dealEvents = events || [];
+    dealReputationEvents = repEvents || [];
+    stellarOperations = ops || [];
+  } else if (deal) {
+    const [evs, events, repEvents, ops] = await Promise.all([
+      repository.getDealEvidence(deal.id),
+      repository.getDealEvents(deal.id),
+      repository.getDealReputationEvents(deal.id),
+      repository.findStellarOperationsByDeal(deal.id),
+    ]);
+    evidenceList = evs;
+    dealEvents = events;
+    dealReputationEvents = repEvents;
+    stellarOperations = ops;
   }
 
   if (!deal) return notFound();
@@ -251,17 +284,9 @@ export default async function DealRoomPage({
   const [
     buyerProfile,
     sellerProfile,
-    evidenceList,
-    dealEvents,
-    dealReputationEvents,
-    stellarOperations,
   ] = await Promise.all([
     repository.getProfile(deal.buyer_id),
     repository.getProfile(deal.seller_id),
-    repository.getDealEvidence(deal.id),
-    repository.getDealEvents(deal.id),
-    repository.getDealReputationEvents(deal.id),
-    repository.findStellarOperationsByDeal(deal.id),
   ]);
 
   const buyerDisplayName = buyerProfile?.display_name ?? buyer?.displayName ?? 'Buyer';
