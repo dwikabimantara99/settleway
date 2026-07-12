@@ -3,9 +3,40 @@ import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
 import { NotificationsClient } from './NotificationsClient';
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ demo?: string; role?: string }>;
+}) {
+  const resolvedSearch = await searchParams;
+  const isDemoUrl = resolvedSearch.demo === '1';
+  const role = resolvedSearch.role;
+
   const user = await getCurrentUser();
-  const notifications = user ? await repository.getNotifications(user.id) : [];
+  let notifications = user ? await repository.getNotifications(user.id) : [];
+
+  const isDemoSeller =
+    user?.id === 'seller-probolinggo-cabai' || (isDemoUrl && role === 'seller');
+
+  if (isDemoSeller) {
+    const hasDemoOffer = notifications.some(
+      (n) => n.offer_id.includes('offer-demo-cabai-001')
+    );
+    if (!hasDemoOffer) {
+      notifications = [
+        {
+          id: 'notif-demo-seller-001',
+          recipient_id: 'seller-probolinggo-cabai',
+          offer_id: 'offer-demo-cabai-001?demo=1&role=seller&stage=review',
+          type: 'offer_received',
+          message: 'Surabaya Spice Co. (Buyer) has submitted an offer for Red Chili.',
+          read_at: null,
+          created_at: '2026-06-17T08:45:00.000Z',
+        },
+        ...notifications,
+      ];
+    }
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">

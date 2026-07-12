@@ -183,13 +183,20 @@ export default async function ProfilePage({
 }) {
   const resolvedParams = await params;
   const resolvedSearch = await searchParams;
-  const isDemo = resolvedSearch.demo === '1';
+  const isDemoUrl = resolvedSearch.demo === '1';
 
   let profile: DbProfile | null = await repository.getProfile(resolvedParams.userId);
+  const currentUser = await getCurrentUser();
 
-  // Demo fallback: if profile not found in persistent store and demo mode is active,
-  // use the seeded demo profile from mock data.
-  if (!profile && isDemo) {
+  const isKnownDemoProfile = resolvedParams.userId in demoProfiles;
+  const isDemoContext =
+    isDemoUrl ||
+    currentUser?.id === resolvedParams.userId ||
+    (currentUser?.id && currentUser.id in demoProfiles);
+
+  // Demo fallback: if profile not found in persistent store, but it's a known demo profile
+  // and we are in a demo context (via URL or current user).
+  if (!profile && isKnownDemoProfile && isDemoContext) {
     const demoEntry = demoProfiles[resolvedParams.userId];
     if (demoEntry) {
       profile = {
@@ -220,7 +227,6 @@ export default async function ProfilePage({
 
   if (!profile) return notFound();
 
-  const currentUser = await getCurrentUser();
   const canEditProfile = currentUser?.id === profile.id;
   const [reputationEvents, listings, buyerRequests] = await Promise.all([
     repository.getParticipantReputationEvents(resolvedParams.userId),
