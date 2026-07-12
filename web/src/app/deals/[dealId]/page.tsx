@@ -1041,6 +1041,8 @@ export default async function DealRoomPage({
             contractId={deal.stellar_contract_id}
             escrowId={deal.stellar_escrow_id}
             stellarOperations={stellarOperations || []}
+            demoBuyerDepositTxHash={deal.id === 'demo-cabai-001' ? latestBuyerFundingEvent?.tx_hash : null}
+            demoProofHash={deal.id === 'demo-cabai-001' ? latestBuyerFundingEvent?.proof_hash : null}
           />
 
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

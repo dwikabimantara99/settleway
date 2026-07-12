@@ -6,9 +6,11 @@ interface StellarEvidencePanelProps {
   contractId: string | null;
   escrowId: string | null;
   stellarOperations: StellarOperation[];
+  demoBuyerDepositTxHash?: string | null;
+  demoProofHash?: string | null;
 }
 
-export function StellarEvidencePanel({ contractId, escrowId, stellarOperations }: StellarEvidencePanelProps) {
+export function StellarEvidencePanel({ contractId, escrowId, stellarOperations, demoBuyerDepositTxHash, demoProofHash }: StellarEvidencePanelProps) {
   const getTx = (action: string) => stellarOperations.find((o) => o.requested_action === action)?.transaction_hash;
 
   const createTx = getTx('create_deal_custody');
@@ -49,12 +51,31 @@ export function StellarEvidencePanel({ contractId, escrowId, stellarOperations }
         <div className="border-t border-slate-200 pt-4 space-y-3">
           <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Transaction Hashes</div>
           
-          <TxRow label="Create Escrow" txHash={createTx} />
-          <TxRow label="Buyer Deposit" txHash={buyerTx} />
-          <TxRow label="Seller Deposit" txHash={sellerTx} />
-          <TxRow label="Submit Proof" txHash={proofTx} />
-          <TxRow label="Mark Delivered" txHash={markDeliveredTx} />
-          <TxRow label="Settlement" txHash={settlementTx} />
+          {demoBuyerDepositTxHash ? (
+            <>
+              <TxRow label="Buyer Deposit (Testnet Anchor)" txHash={demoBuyerDepositTxHash} />
+              {demoProofHash && (
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs text-slate-600">Proof Hash</div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 font-mono text-[10px] text-slate-700 truncate bg-slate-50 p-1 rounded border border-slate-100">
+                      {demoProofHash}
+                    </div>
+                    <CopyButton text={demoProofHash} />
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <TxRow label="Create Escrow" txHash={createTx} />
+              <TxRow label="Buyer Deposit" txHash={buyerTx} />
+              <TxRow label="Seller Deposit" txHash={sellerTx} />
+              <TxRow label="Submit Proof" txHash={proofTx} />
+              <TxRow label="Mark Delivered" txHash={markDeliveredTx} />
+              <TxRow label="Settlement" txHash={settlementTx} />
+            </>
+          )}
         </div>
       </div>
     </section>

@@ -17,6 +17,7 @@ import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repositor
 import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
+import { anchorDemoEvent } from '@/lib/stellar/server/anchor-demo-event';
 
 function currentTimestamp(): string {
   return new Date().toISOString();
@@ -43,7 +44,34 @@ async function runLegacyLocalBuyerDeposit(
   existingDeal: DbDeal,
   authUser: { id: string },
 ) {
+  let txHash: string | null = null;
+  let proofHash: string | null = null;
+  
+  if (dealId === 'demo-cabai-001' && existingDeal.stellar_mode === 'mock_only') {
+    try {
+      const anchorResult = await anchorDemoEvent({
+        deal_id: dealId,
+        event_type: 'BUYER_DEPOSIT_INTENT_RECORDED',
+        actor_id: authUser.id,
+        payload: {
+          amount_idr: existingDeal.buyer_total_idr,
+          action: 'buyer_deposit',
+          timestamp: new Date().toISOString(),
+        }
+      });
+      txHash = anchorResult.tx_hash;
+      proofHash = anchorResult.proof_hash;
+    } catch (e) {
+      return NextResponse.json(createErrorResponse('STELLAR_ANCHOR_FAILED', e instanceof Error ? e.message : 'Demo proof anchoring failed'), { status: 502 });
+    }
+  }
+
   const updatedDeal = transition(existingDeal, 'buyer_deposit');
+  if (txHash && proofHash) {
+    updatedDeal.latest_stellar_tx_hash = txHash;
+    updatedDeal.proof_hash = proofHash;
+  }
+  
   const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
   if (!replaced) {
     return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
@@ -60,6 +88,10 @@ async function runLegacyLocalBuyerDeposit(
       next_status: updatedDeal.status,
     },
   );
+  if (txHash) {
+    event.tx_hash = txHash;
+    event.proof_hash = proofHash;
+  }
   await repository.addEvent(event);
 
   if (updatedDeal.status === 'LOCKED') {
@@ -78,10 +110,16 @@ async function runLegacyLocalBuyerDeposit(
         next_status: updatedDeal.status,
       },
     );
+    if (txHash) {
+      lockEvent.tx_hash = txHash;
+      lockEvent.proof_hash = proofHash;
+    }
     await repository.addEvent(lockEvent);
   }
 
-  return NextResponse.json(createSuccessResponse(updatedDeal));
+  return NextResponse.json(
+    createSuccessResponse(updatedDeal, txHash ? { tx_hash: txHash, proof_hash: proofHash, stellar_network: 'testnet' } : undefined)
+  );
 }
 
 function deriveDealHash(existingDeal: DbDeal) {
