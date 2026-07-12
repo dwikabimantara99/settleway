@@ -11,10 +11,16 @@ export interface UserSession {
 }
 
 export async function getCurrentUser(): Promise<UserSession | null> {
+  const cookieStore = await cookies();
+  const mockActor = cookieStore.get('mock_actor')?.value;
+
+  // Always allow hardcoded demo profiles to bypass real auth (demo escape hatch)
+  if (mockActor === 'buyer-surabaya-restaurant' || mockActor === 'seller-probolinggo-cabai') {
+    return { id: mockActor };
+  }
+
   if (runtimeMode !== 'persistent') {
-    // Mock / Demo mode: trust the client cookie 'mock_actor'
-    const cookieStore = await cookies();
-    const mockActor = cookieStore.get('mock_actor')?.value;
+    // Mock / Demo mode: trust the client cookie 'mock_actor' for any other actor
     if (mockActor) {
       return { id: mockActor };
     }
@@ -24,7 +30,6 @@ export async function getCurrentUser(): Promise<UserSession | null> {
   // Persistent mode
   if (!supabase) return null;
   
-  const cookieStore = await cookies();
   const token = cookieStore.get('sb-access-token')?.value;
   
   if (!token) return null;
