@@ -83,7 +83,7 @@ const quickJumpTargets = [
   { label: 'Marketplace (Buy)', href: '/marketplace', icon: MapPin },
   { label: 'Chili Listing Detail', href: '/marketplace/listing-cabai-001', icon: BadgeCheck },
   { label: 'Notifications', href: '/notifications', icon: CheckCircle2 },
-  { label: 'Negotiation Thread', href: '/offers/offer-demo-cabai-001', icon: FileText },
+  { label: 'Negotiation Thread', href: '/offers/offer-demo-cabai-001?demo=1&role=buyer&stage=agreed', icon: FileText },
   { label: 'Active Deal Room', href: '/deals/demo-cabai-001', icon: ShieldCheck },
   { label: 'Seller Profile', href: '/profiles/seller-probolinggo-cabai', icon: Wallet },
 ];
