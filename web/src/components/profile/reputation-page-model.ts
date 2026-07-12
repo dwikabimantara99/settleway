@@ -18,6 +18,28 @@ export interface ReputationRecord {
 
 export const reputationRecords: ReputationRecord[] = [
   {
+    id: 'demo-cabai-001-seller',
+    role: 'seller',
+    status: 'successful',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    volume: '700 kg',
+    counterparty: 'Buyer: Surabaya Spice Co.',
+    value: 'Rp 19.950.000',
+    date: '12 Jul 2026',
+    txHash: '5d59e0e5a57cf762589253a37616fe2650af2eaf8c6f467c2000020094dbfaa8',
+  },
+  {
+    id: 'demo-cabai-001-buyer',
+    role: 'buyer',
+    status: 'successful',
+    commodity: "Red Chili (Bird's Eye Chili)",
+    volume: '700 kg',
+    counterparty: 'Seller: Probolinggo Farmer Group',
+    value: 'Rp 19.950.000',
+    date: '12 Jul 2026',
+    txHash: '5d59e0e5a57cf762589253a37616fe2650af2eaf8c6f467c2000020094dbfaa8',
+  },
+  {
     id: 'record-chili',
     role: 'buyer',
     status: 'successful',
