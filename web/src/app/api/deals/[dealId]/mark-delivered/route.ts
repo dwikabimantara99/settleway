@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { repository, runtimeMode } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
@@ -14,6 +15,9 @@ import { executeCustodyDeliveryReference } from '@/lib/stellar/testnet-proof';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
 import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import { getServiceRoleClient } from '@/lib/db/server-service-client';
+import { anchorDemoEvent } from '@/lib/stellar/server/anchor-demo-event';
+
 
 async function runLegacyLocalDeliveryMilestone(
   dealId: string,
@@ -185,6 +189,108 @@ async function runCustodyWalletDeliveryMilestone(input: {
 export async function POST(request: Request, { params }: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await params;
   const actionName = 'mark_delivered' as EscrowAction;
+
+  if (dealId === 'demo-cabai-001') {
+    const cookieStore = await cookies();
+    const mockActor = cookieStore.get('mock_actor')?.value;
+    if (mockActor === 'seller-probolinggo-cabai') {
+      let serviceClient;
+      try {
+        serviceClient = getServiceRoleClient();
+      } catch (e) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', e instanceof Error ? e.message : 'Missing config'), { status: 500 });
+      }
+
+      if (!process.env.STELLAR_PLATFORM_SECRET) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', 'Missing STELLAR_PLATFORM_SECRET for demo anchor'), { status: 500 });
+      }
+
+      const { data: demoDeal, error: demoError } = await serviceClient
+        .from('deals')
+        .select('*')
+        .eq('id', dealId)
+        .single();
+
+      if (demoError || !demoDeal) {
+        return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Demo deal not found'), { status: 401 });
+      }
+
+      if (
+        demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
+        demoDeal.seller_id === 'seller-probolinggo-cabai' &&
+        demoDeal.stellar_mode === 'mock_only'
+      ) {
+        // Idempotency
+        if (demoDeal.status === 'DELIVERED' || demoDeal.status === 'PROOF_SUBMITTED') {
+          return NextResponse.json(createSuccessResponse(demoDeal, { tx_hash: demoDeal.latest_stellar_tx_hash, proof_hash: demoDeal.proof_hash, stellar_network: 'testnet' }));
+        }
+
+        // Must be LOCKED or PROOF_SUBMITTED
+        if (demoDeal.status !== 'LOCKED' && demoDeal.status !== 'PROOF_SUBMITTED') {
+          return NextResponse.json(createErrorResponse('CONFLICT', 'Unexpected deal status for delivery proof'), { status: 409 });
+        }
+
+        let txHash: string | null = null;
+        let proofHash: string | null = null;
+        try {
+          const anchorResult = await anchorDemoEvent({
+            deal_id: dealId,
+            event_type: 'DELIVERY_PROOF_RECORDED',
+            actor_id: mockActor,
+            payload: {
+              buyer_id: demoDeal.buyer_id,
+              seller_id: demoDeal.seller_id,
+              product: demoDeal.commodity || "Red Chili",
+              previous_tx_hash: demoDeal.latest_stellar_tx_hash,
+              timestamp: new Date().toISOString(),
+            }
+          });
+          txHash = anchorResult.tx_hash;
+          proofHash = anchorResult.proof_hash;
+        } catch (e) {
+          return NextResponse.json(createErrorResponse('STELLAR_ANCHOR_FAILED', e instanceof Error ? e.message : 'Demo proof anchoring failed'), { status: 502 });
+        }
+
+        // Transition from LOCKED to PROOF_SUBMITTED to DELIVERED, or just to DELIVERED
+        // For existing local flow, transition(existingDeal, 'mark_delivered') assumes PROOF_SUBMITTED
+        // We will just set it to DELIVERED manually to match the prompt or use state-machine if valid.
+        let updatedDeal = demoDeal;
+        if (updatedDeal.status === 'LOCKED') {
+          updatedDeal = transition(updatedDeal, 'submit_proof');
+        }
+        if (updatedDeal.status === 'PROOF_SUBMITTED') {
+          updatedDeal = transition(updatedDeal, 'mark_delivered');
+        }
+
+        updatedDeal.latest_stellar_tx_hash = txHash;
+        updatedDeal.proof_hash = proofHash;
+
+        const { error: updateError } = await serviceClient.from('deals').update(updatedDeal).eq('id', dealId);
+        if (updateError) {
+          return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
+        }
+
+        const event = createEvent(
+          dealId,
+          'mark_delivered',
+          mockActor,
+          'Seller submitted delivery proof and anchored on Stellar Testnet.',
+          {
+            next_status: updatedDeal.status,
+            proof_hash: proofHash,
+          }
+        );
+        event.tx_hash = txHash;
+        event.proof_hash = proofHash;
+
+        await serviceClient.from('escrow_events').insert(event);
+
+        return NextResponse.json(
+          createSuccessResponse(updatedDeal, { tx_hash: txHash, proof_hash: proofHash, stellar_network: 'testnet' })
+        );
+      }
+    }
+  }
 
   try {
     let existingDeal;

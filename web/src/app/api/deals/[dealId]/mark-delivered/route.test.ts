@@ -1,9 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import * as nextHeaders from "next/headers";
 
 vi.mock("next/headers", () => ({
   cookies: vi.fn(),
+}));
+
+const mockServiceClient = {
+  from: vi.fn(),
+};
+
+vi.mock("@/lib/db/server-service-client", () => ({
+  getServiceRoleClient: vi.fn(() => mockServiceClient),
+}));
+
+vi.mock("@/lib/stellar/server/anchor-demo-event", () => ({
+  anchorDemoEvent: vi.fn(),
 }));
 
 const mockExecutionAdapter = {
@@ -42,6 +54,7 @@ vi.mock("@/lib/stellar/server/wallet-repository", () => ({
 
 import { mockStore } from "@/lib/db/mock-store";
 import { executeCustodyDeliveryReference } from "@/lib/stellar/testnet-proof";
+import { anchorDemoEvent } from "@/lib/stellar/server/anchor-demo-event";
 import { POST as markDeliveredRoute } from "./route";
 
 describe("mark-delivered route (signer injection)", () => {
@@ -329,5 +342,150 @@ describe("mark-delivered route (signer injection)", () => {
     expect(data.ok).toBe(true);
     expect(data.data.status).toBe("DELIVERED");
     expect(data.data.latest_stellar_tx_hash).toBe("d".repeat(64));
+  });
+
+  describe("demo corridor", () => {
+    let mockFrom: any;
+    let mockSelect: any;
+    let mockEq: any;
+    let mockSingle: any;
+    let mockUpdate: any;
+    let mockInsert: any;
+
+    beforeEach(() => {
+      process.env.STELLAR_PLATFORM_SECRET = "test-secret";
+      mockSingle = vi.fn();
+      mockEq = vi.fn(() => ({ single: mockSingle }));
+      mockSelect = vi.fn(() => ({ eq: mockEq }));
+      mockUpdate = vi.fn(() => ({ eq: mockEq }));
+      mockInsert = vi.fn();
+      mockFrom = vi.fn((table) => {
+        if (table === 'deals') {
+          return { select: mockSelect, update: mockUpdate };
+        }
+        if (table === 'escrow_events') {
+          return { insert: mockInsert };
+        }
+        return {};
+      });
+      mockServiceClient.from.mockImplementation(mockFrom);
+      vi.mocked(anchorDemoEvent).mockResolvedValue({
+        tx_hash: "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        proof_hash: "abcd",
+        status: "success",
+      });
+    });
+
+    afterEach(() => {
+      delete process.env.STELLAR_PLATFORM_SECRET;
+    });
+
+    it("anchors delivery proof for demo-cabai-001 when seller acts", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({
+        get: () => ({ value: "seller-probolinggo-cabai" }),
+      } as any);
+
+      mockSingle.mockResolvedValue({
+        data: {
+          id: 'demo-cabai-001',
+          buyer_id: 'buyer-surabaya-restaurant',
+          seller_id: 'seller-probolinggo-cabai',
+          stellar_mode: 'mock_only',
+          status: 'LOCKED',
+          latest_stellar_tx_hash: 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',
+          commodity: "Red Chili",
+        },
+        error: null,
+      });
+      // No mockEq.mockResolvedValue({ error: null }) here since it would break the chain
+      mockInsert.mockResolvedValue({ error: null });
+
+      const response = await markDeliveredRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/mark-delivered", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.data.status).toBe("DELIVERED");
+      expect(data.data.latest_stellar_tx_hash).toBe("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+
+      expect(anchorDemoEvent).toHaveBeenCalledWith({
+        deal_id: "demo-cabai-001",
+        event_type: "DELIVERY_PROOF_RECORDED",
+        actor_id: "seller-probolinggo-cabai",
+        payload: expect.objectContaining({
+          buyer_id: "buyer-surabaya-restaurant",
+          seller_id: "seller-probolinggo-cabai",
+          previous_tx_hash: "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        })
+      });
+    });
+
+    it("is idempotent for demo-cabai-001 if already DELIVERED", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({
+        get: () => ({ value: "seller-probolinggo-cabai" }),
+      } as any);
+
+      mockSingle.mockResolvedValue({
+        data: {
+          id: 'demo-cabai-001',
+          buyer_id: 'buyer-surabaya-restaurant',
+          seller_id: 'seller-probolinggo-cabai',
+          stellar_mode: 'mock_only',
+          status: 'DELIVERED',
+          latest_stellar_tx_hash: 'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
+          proof_hash: 'abcd',
+        },
+        error: null,
+      });
+
+      const response = await markDeliveredRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/mark-delivered", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.data.latest_stellar_tx_hash).toBe("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd");
+      expect(anchorDemoEvent).not.toHaveBeenCalled();
+    });
+
+    it("rejects non-seller actor for demo-cabai-001", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({
+        get: () => ({ value: "buyer-surabaya-restaurant" }),
+      } as any);
+
+      const response = await markDeliveredRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/mark-delivered", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+
+      expect(response.status).toBe(403);
+    });
+
+    it("rejects if status is not LOCKED or PROOF_SUBMITTED", async () => {
+      vi.mocked(nextHeaders.cookies).mockReturnValue({
+        get: () => ({ value: "seller-probolinggo-cabai" }),
+      } as any);
+
+      mockSingle.mockResolvedValue({
+        data: {
+          id: 'demo-cabai-001',
+          buyer_id: 'buyer-surabaya-restaurant',
+          seller_id: 'seller-probolinggo-cabai',
+          stellar_mode: 'mock_only',
+          status: 'SELLER_FUNDED',
+        },
+        error: null,
+      });
+
+      const response = await markDeliveredRoute(
+        new Request("http://localhost/api/deals/demo-cabai-001/mark-delivered", { method: "POST" }),
+        { params: Promise.resolve({ dealId: "demo-cabai-001" }) }
+      );
+
+      expect(response.status).toBe(409);
+    });
   });
 });
