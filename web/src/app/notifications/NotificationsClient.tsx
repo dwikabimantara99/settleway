@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Bell, ChevronRight, Inbox, CheckCheck, Clock } from 'lucide-react';
 import type { DbNotification } from '@/lib/db/types';
 
@@ -114,7 +115,20 @@ export function NotificationsClient({
   initialNotifications: DbNotification[];
   userId: string | null;
 }) {
+  const router = useRouter();
   const [notifications, setNotifications] = useState(initialNotifications);
+
+  useEffect(() => {
+    setNotifications(initialNotifications);
+  }, [initialNotifications]);
+
+  useEffect(() => {
+    if (!userId) return;
+    const interval = setInterval(() => {
+      router.refresh();
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [userId, router]);
 
   const handleMarkRead = useCallback(async (id: string) => {
     await fetch(`/api/notifications/${id}`, { method: 'PATCH' });

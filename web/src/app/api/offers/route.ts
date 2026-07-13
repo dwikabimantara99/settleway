@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   try {
     const user = await requireAuth();
     const body = await request.json();
-    const { listingId, buyerRequestId, openingMessage, draftMessages, volumeKg, pricePerKgIdr, termsNote } = body as {
+    const { listingId, buyerRequestId, openingMessage, draftMessages, volumeKg, pricePerKgIdr, termsNote, isDemo, runId, role } = body as {
       listingId?: string;
       buyerRequestId?: string;
       openingMessage?: string;
@@ -38,6 +38,9 @@ export async function POST(request: Request) {
       volumeKg?: number;
       pricePerKgIdr?: number;
       termsNote?: string;
+      isDemo?: boolean;
+      runId?: string;
+      role?: string;
     };
 
     if ((!listingId && !buyerRequestId) || (listingId && buyerRequestId)) {
@@ -50,7 +53,7 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
     const trimmedOpeningMessage = openingMessage?.trim() || null;
     const trimmedTermsNote = termsNote?.trim() || null;
-    const offerId = `offer-${Date.now()}`;
+    const offerId = isDemo && runId ? `offer-live-cabai-${runId}` : `offer-${Date.now()}`;
     const normalizedDraftMessages = Array.isArray(draftMessages)
       ? draftMessages
           .map((message) => ({
@@ -101,6 +104,25 @@ export async function POST(request: Request) {
         termsNote: trimmedTermsNote,
         now,
       });
+
+      if (isDemo && runId) {
+        const { insertDemoOffer, insertDemoNotification } = await import('@/lib/offers/demo-service');
+        await insertDemoOffer(offer);
+        await insertDemoNotification(
+          buildNotification({
+            id: `notif-live-cabai-${runId}`,
+            recipientId: offer.seller_id,
+            offerId,
+            type: 'offer_received',
+            message: 'A buyer sent an offer and opened a negotiation thread.',
+            now,
+          }),
+        );
+        return NextResponse.json(
+          createSuccessResponse({ offer, redirect_to: `/offers/${offer.id}?demo=1&role=${role || 'buyer'}&runId=${runId}&stage=open` }, { source: 'repository' }),
+        );
+      }
+
       await repository.createOffer(offer);
 
       if (persistedDraftMessages.length > 0) {

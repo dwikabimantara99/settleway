@@ -51,6 +51,32 @@ export async function PATCH(
       updated_at: now,
     };
 
+    if (offerId.startsWith('offer-live-cabai-')) {
+      const runId = offerId.replace('offer-live-cabai-', '');
+      const { updateDemoOffer, insertDemoNotification } = await import('@/lib/offers/demo-service');
+      await updateDemoOffer(offerId, {
+        status: 'terms_accepted',
+        terms_accepted_at: now,
+        terms_accepted_by_id: user.id,
+        updated_at: now,
+      });
+
+      await insertDemoNotification(
+        buildNotification({
+          id: `notif-live-cabai-acc-${runId}`,
+          recipientId: getCounterpartyId(offer, user.id),
+          offerId,
+          type: 'offer_accepted',
+          message: 'Your counterparty accepted the proposed deal terms. Open Deal Room is now available.',
+          now,
+        }),
+      );
+
+      return NextResponse.json(
+        createSuccessResponse({ offer: updatedOffer }, { source: 'repository' }),
+      );
+    }
+
     await repository.updateOffer(offerId, {
       status: 'terms_accepted',
       terms_accepted_at: now,

@@ -73,33 +73,55 @@ export async function performOpenDealRoomCommitment(
       const dealId = `deal-${offer.id}`;
       const existingDeal = await repository.getDeal(dealId);
 
+      const isDemoRun = offerId.startsWith('offer-live-cabai-');
+
       if (!existingDeal) {
-        await repository.createDeal(
-          buildDealFromOffer({
-            id: dealId,
-            offer: updatedOffer,
+        const dealToCreate = buildDealFromOffer({
+          id: dealId,
+          offer: updatedOffer,
+          now,
+        });
+        if (isDemoRun) {
+          const { insertDemoDeal } = await import('@/lib/offers/demo-service');
+          await insertDemoDeal(dealToCreate);
+        } else {
+          await repository.createDeal(dealToCreate);
+        }
+      }
+
+      const offerUpdatePayload = {
+        ...updatedFields,
+        status: 'active_escrow' as const,
+        active_deal_id: dealId,
+        updated_at: now,
+      };
+
+      if (isDemoRun) {
+        const { updateDemoOffer, insertDemoNotification } = await import('@/lib/offers/demo-service');
+        await updateDemoOffer(offerId, offerUpdatePayload);
+        await insertDemoNotification(
+          buildNotification({
+            id: `notif-${Date.now()}`,
+            recipientId: getCounterpartyId(updatedOffer, user.id),
+            offerId,
+            type: 'deal_room_activated',
+            message: 'Both parties committed. The active escrow room is now open for deposits.',
+            now,
+          }),
+        );
+      } else {
+        await repository.updateOffer(offerId, offerUpdatePayload);
+        await repository.addNotification(
+          buildNotification({
+            id: `notif-${Date.now()}`,
+            recipientId: getCounterpartyId(updatedOffer, user.id),
+            offerId,
+            type: 'deal_room_activated',
+            message: 'Both parties committed. The active escrow room is now open for deposits.',
             now,
           }),
         );
       }
-
-      await repository.updateOffer(offerId, {
-        ...updatedFields,
-        status: 'active_escrow',
-        active_deal_id: dealId,
-        updated_at: now,
-      });
-
-      await repository.addNotification(
-        buildNotification({
-          id: `notif-${Date.now()}`,
-          recipientId: getCounterpartyId(updatedOffer, user.id),
-          offerId,
-          type: 'deal_room_activated',
-          message: 'Both parties committed. The active escrow room is now open for deposits.',
-          now,
-        }),
-      );
 
       return {
         status: 200,
@@ -119,22 +141,38 @@ export async function performOpenDealRoomCommitment(
       };
     }
 
-    await repository.updateOffer(offerId, {
+    const offerUpdatePayload2 = {
       ...updatedFields,
-      status: 'awaiting_counterparty_open',
+      status: 'awaiting_counterparty_open' as const,
       updated_at: now,
-    });
+    };
 
-    await repository.addNotification(
-      buildNotification({
-        id: `notif-${Date.now()}`,
-        recipientId: getCounterpartyId(updatedOffer, user.id),
-        offerId,
-        type: 'counterparty_opened_room',
-        message: 'Your counterpart already clicked Open Deal Room. Your confirmation will activate the escrow room.',
-        now,
-      }),
-    );
+    if (offerId.startsWith('offer-live-cabai-')) {
+      const { updateDemoOffer, insertDemoNotification } = await import('@/lib/offers/demo-service');
+      await updateDemoOffer(offerId, offerUpdatePayload2);
+      await insertDemoNotification(
+        buildNotification({
+          id: `notif-${Date.now()}`,
+          recipientId: getCounterpartyId(updatedOffer, user.id),
+          offerId,
+          type: 'counterparty_opened_room',
+          message: 'Your counterpart already clicked Open Deal Room. Your confirmation will activate the escrow room.',
+          now,
+        }),
+      );
+    } else {
+      await repository.updateOffer(offerId, offerUpdatePayload2);
+      await repository.addNotification(
+        buildNotification({
+          id: `notif-${Date.now()}`,
+          recipientId: getCounterpartyId(updatedOffer, user.id),
+          offerId,
+          type: 'counterparty_opened_room',
+          message: 'Your counterpart already clicked Open Deal Room. Your confirmation will activate the escrow room.',
+          now,
+        }),
+      );
+    }
 
     return {
       status: 200,

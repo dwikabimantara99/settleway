@@ -308,11 +308,7 @@ export function CreateOfferComposer({
       }))
       .filter((message) => message.body.length > 0);
 
-    if (isDemo && listingId === 'listing-cabai-001') {
-      if (draftThreadKey) writeDraftMessages(draftThreadKey, []);
-      router.push(`/offers/offer-demo-cabai-001?demo=1&role=${role}&stage=open`);
-      return;
-    }
+    const runId = isDemo ? `${Date.now()}-${Math.random().toString(36).substring(2, 8)}` : undefined;
 
     try {
       const response = await fetch('/api/offers', {
@@ -326,6 +322,9 @@ export function CreateOfferComposer({
           volumeKg: parsedVolumeKg,
           pricePerKgIdr: parsedPricePerKgIdr,
           termsNote: composeTermsNote(termsNote, deliveryDeadline),
+          isDemo,
+          runId,
+          role,
         }),
       });
 

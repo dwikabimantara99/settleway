@@ -19,10 +19,7 @@ export default async function NotificationsPage({
     user?.id === 'seller-probolinggo-cabai' || (isDemoUrl && role === 'seller');
 
   if (isDemoSeller) {
-    const hasDemoOffer = notifications.some(
-      (n) => n.offer_id.includes('offer-demo-cabai-001')
-    );
-    if (!hasDemoOffer) {
+    if (notifications.length === 0) {
       notifications = [
         {
           id: 'notif-demo-seller-001',
@@ -33,7 +30,6 @@ export default async function NotificationsPage({
           read_at: null,
           created_at: '2026-06-17T08:45:00.000Z',
         },
-        ...notifications,
       ];
     }
   }
@@ -42,10 +38,7 @@ export default async function NotificationsPage({
     user?.id === 'buyer-surabaya-restaurant' || (isDemoUrl && role === 'buyer');
 
   if (isDemoBuyer) {
-    const hasDemoAccepted = notifications.some(
-      (n) => n.offer_id.includes('offer-demo-cabai-001') && n.type === 'offer_accepted'
-    );
-    if (!hasDemoAccepted) {
+    if (notifications.length === 0) {
       notifications = [
         {
           id: 'notif-demo-buyer-001',
@@ -56,7 +49,6 @@ export default async function NotificationsPage({
           read_at: null,
           created_at: '2026-06-17T09:06:00.000Z',
         },
-        ...notifications,
       ];
     }
   }
