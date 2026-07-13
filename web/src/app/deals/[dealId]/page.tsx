@@ -222,6 +222,11 @@ export default async function DealRoomPage({
 
   let deal = await repository.getDeal(resolvedParams.dealId);
 
+  if (!deal && isDemo && resolvedParams.dealId.startsWith('deal-offer-live-cabai-')) {
+    const { getDemoDeal } = await import('@/lib/offers/demo-service');
+    deal = await getDemoDeal(resolvedParams.dealId);
+  }
+
   let evidenceList: any[] = [];
   let dealEvents: any[] = [];
   let dealReputationEvents: any[] = [];
@@ -294,6 +299,10 @@ export default async function DealRoomPage({
   const offerId = getDealOfferId(deal.terms);
   
   let sourceOffer = offerId ? await repository.getOffer(offerId) : null;
+  if (!sourceOffer && isDemo && offerId?.startsWith('offer-live-cabai-')) {
+    const { getDemoOffer } = await import('@/lib/offers/demo-service');
+    sourceOffer = await getDemoOffer(offerId);
+  }
   if (!sourceOffer && isDemo && offerId === 'offer-demo-cabai-001') {
     sourceOffer = demoOffers['offer-demo-cabai-001'] || null;
   }

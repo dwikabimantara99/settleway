@@ -49,3 +49,20 @@ export async function getDemoOffer(id: string): Promise<DbOffer | null> {
   }
   return data;
 }
+
+export async function getDemoDeal(id: string): Promise<DbDeal | null> {
+  if (!supabaseAdmin) throw new Error("Service role key not configured for demo.");
+  const { data, error } = await supabaseAdmin.from('deals').select('*').eq('id', id).single();
+  if (error) {
+    if (error.code === 'PGRST116') return null; // Not found
+    throw error;
+  }
+  return data;
+}
+
+export async function getDemoNotifications(recipientId: string): Promise<DbNotification[]> {
+  if (!supabaseAdmin) throw new Error("Service role key not configured for demo.");
+  const { data, error } = await supabaseAdmin.from('notifications').select('*').eq('recipient_id', recipientId).order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}

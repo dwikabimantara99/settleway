@@ -6,7 +6,16 @@ import { repository } from '@/lib/repositories';
 export async function GET() {
   try {
     const user = await requireAuth();
-    const notifications = await repository.getNotifications(user.id);
+    let notifications = await repository.getNotifications(user.id);
+    
+    if (notifications.length === 0) {
+      const { getDemoNotifications } = await import('@/lib/offers/demo-service');
+      const demoNotifs = await getDemoNotifications(user.id);
+      if (demoNotifs.length > 0) {
+        notifications = demoNotifs;
+      }
+    }
+    
     return NextResponse.json(createSuccessResponse(notifications, { source: 'repository' }));
   } catch (error) {
     return NextResponse.json(

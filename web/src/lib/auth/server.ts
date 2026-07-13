@@ -54,7 +54,11 @@ export async function requireAuth(): Promise<UserSession> {
 export async function requireDealParticipant(dealId: string): Promise<{ deal: DbDeal; role: 'buyer' | 'seller'; user: UserSession }> {
   const user = await requireAuth();
 
-  const deal = await repository.getDeal(dealId);
+  let deal = await repository.getDeal(dealId);
+  if (!deal && dealId.startsWith('deal-offer-live-cabai-')) {
+    const { getDemoDeal } = await import('@/lib/offers/demo-service');
+    deal = await getDemoDeal(dealId);
+  }
   if (!deal) throw new Error("Deal not found");
 
   if (deal.buyer_id === user.id) return { deal, role: 'buyer', user };
@@ -66,7 +70,11 @@ export async function requireDealParticipant(dealId: string): Promise<{ deal: Db
 export async function requireOfferParticipant(offerId: string): Promise<{ offer: DbOffer; role: 'buyer' | 'seller'; user: UserSession }> {
   const user = await requireAuth();
 
-  const offer = await repository.getOffer(offerId);
+  let offer = await repository.getOffer(offerId);
+  if (!offer && offerId.startsWith('offer-live-cabai-')) {
+    const { getDemoOffer } = await import('@/lib/offers/demo-service');
+    offer = await getDemoOffer(offerId);
+  }
   if (!offer) throw new Error("Offer not found");
 
   if (offer.buyer_id === user.id) return { offer, role: 'buyer', user };
