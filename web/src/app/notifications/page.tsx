@@ -15,51 +15,13 @@ export default async function NotificationsPage({
   const user = await getCurrentUser();
   let notifications = user ? await repository.getNotifications(user.id) : [];
 
-  const isDemoActor = user?.id === 'buyer-surabaya-restaurant' || user?.id === 'seller-probolinggo-cabai' || isDemoUrl;
+  const isApprovedDemoActor = user?.id === 'buyer-surabaya-restaurant' || user?.id === 'seller-probolinggo-cabai';
 
-  if (notifications.length === 0 && isDemoActor && user?.id) {
+  if (isApprovedDemoActor && user?.id) {
     const { getDemoNotifications } = await import('@/lib/offers/demo-service');
     const demoNotifs = await getDemoNotifications(user.id);
     if (demoNotifs.length > 0) {
       notifications = demoNotifs;
-    }
-  }
-
-  const isDemoSeller =
-    user?.id === 'seller-probolinggo-cabai' || (isDemoUrl && role === 'seller');
-
-  if (isDemoSeller) {
-    if (notifications.length === 0) {
-      notifications = [
-        {
-          id: 'notif-demo-seller-001',
-          recipient_id: 'seller-probolinggo-cabai',
-          offer_id: 'offer-demo-cabai-001?demo=1&role=seller&stage=review',
-          type: 'offer_received',
-          message: 'Surabaya Spice Co. (Buyer) has submitted an offer for Red Chili.',
-          read_at: null,
-          created_at: '2026-06-17T08:45:00.000Z',
-        },
-      ];
-    }
-  }
-
-  const isDemoBuyer =
-    user?.id === 'buyer-surabaya-restaurant' || (isDemoUrl && role === 'buyer');
-
-  if (isDemoBuyer) {
-    if (notifications.length === 0) {
-      notifications = [
-        {
-          id: 'notif-demo-buyer-001',
-          recipient_id: 'buyer-surabaya-restaurant',
-          offer_id: 'offer-demo-cabai-001?demo=1&role=buyer&stage=agreed',
-          type: 'offer_accepted',
-          message: 'Probolinggo Farmer Group accepted your Red Chili offer.',
-          read_at: null,
-          created_at: '2026-06-17T09:06:00.000Z',
-        },
-      ];
     }
   }
 

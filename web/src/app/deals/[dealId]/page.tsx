@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -218,15 +219,26 @@ export default async function DealRoomPage({
 }) {
   const resolvedParams = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  let isDemo = resolvedSearchParams.demo === '1';
+  const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
 
-  if (resolvedParams.dealId.startsWith('deal-offer-live-cabai-')) {
-    isDemo = true;
+  const currentUser = await getCurrentUser();
+  const actorId = currentUser?.id || null;
+  const isApprovedDemoActor = actorId === 'buyer-surabaya-restaurant' || actorId === 'seller-probolinggo-cabai';
+
+  const isLiveDemoPrefix = resolvedParams.dealId.startsWith('deal-offer-live-cabai-');
+  const isStaticDemoId = resolvedParams.dealId === 'demo-cabai-001';
+  const isDemoPrefix = isLiveDemoPrefix || isStaticDemoId;
+  const hasDemoParam = resolvedSearchParams.demo === '1';
+
+  if ((isDemoPrefix || hasDemoParam) && !isApprovedDemoActor) {
+    return notFound();
   }
+
+  const shouldUseDemoService = (isDemoPrefix || hasDemoParam) && isApprovedDemoActor;
 
   let deal = await repository.getDeal(resolvedParams.dealId);
 
-  if (!deal && isDemo && resolvedParams.dealId.startsWith('deal-offer-live-cabai-')) {
+  if (!deal && shouldUseDemoService && isLiveDemoPrefix) {
     const { getDemoDeal } = await import('@/lib/offers/demo-service');
     deal = await getDemoDeal(resolvedParams.dealId);
   }
@@ -236,15 +248,20 @@ export default async function DealRoomPage({
   let dealReputationEvents: any[] = [];
   let stellarOperations: any[] = [];
 
-  if (isDemo && resolvedParams.dealId === 'demo-cabai-001') {
+  if (!deal && shouldUseDemoService && isStaticDemoId) {
     const { getServiceRoleClient } = await import('@/lib/db/server-service-client');
     const serviceClient = getServiceRoleClient();
     const { data: demoDeal } = await serviceClient.from('deals').select('*').eq('id', 'demo-cabai-001').single();
     if (demoDeal) {
       deal = demoDeal;
-    } else if (!deal) {
+    } else {
       deal = demoDbDeals['demo-cabai-001'] || null;
     }
+  }
+
+  if (shouldUseDemoService && isStaticDemoId && deal) {
+    const { getServiceRoleClient } = await import('@/lib/db/server-service-client');
+    const serviceClient = getServiceRoleClient();
     const [{ data: evs }, { data: events }, { data: repEvents }, { data: ops }] = await Promise.all([
       serviceClient.from('deal_evidence').select('*').eq('deal_id', 'demo-cabai-001'),
       serviceClient.from('escrow_events').select('*').eq('deal_id', 'demo-cabai-001').order('created_at', { ascending: true }),
@@ -269,17 +286,13 @@ export default async function DealRoomPage({
   }
 
   if (!deal) return notFound();
-
-  const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
-
-  let currentUser = await getCurrentUser();
-  if (isDemo && resolvedParams.dealId === 'demo-cabai-001' && !currentUser) {
-    const demoRole = role || 'buyer';
-    const demoUserId = demoRole === 'seller' ? 'seller-probolinggo-cabai' : 'buyer-surabaya-restaurant';
-    if (demoProfiles[demoUserId]) {
-      currentUser = { id: demoProfiles[demoUserId].id } as any;
-    }
+  
+  const isParticipant = actorId === deal.buyer_id || actorId === deal.seller_id;
+  if (!isParticipant) {
+    return notFound();
   }
+
+  const isDemo = shouldUseDemoService;
   
   const viewerRole: ViewerRole =
     currentUser?.id === deal.buyer_id

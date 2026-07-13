@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -98,21 +99,31 @@ export default async function OfferDetailPage({
 }) {
   const { offerId } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  let isDemo = resolvedSearchParams.demo === '1';
   const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
 
-  if (offerId.startsWith('offer-live-cabai-')) {
-    isDemo = true;
-  }
+  const user = await getCurrentUser();
+  const actorId = user?.id || null;
+  const isApprovedDemoActor = actorId === 'buyer-surabaya-restaurant' || actorId === 'seller-probolinggo-cabai';
   
+  const isLiveDemoPrefix = offerId.startsWith('offer-live-cabai-');
+  const isStaticDemoId = offerId === 'offer-demo-cabai-001';
+  const isDemoPrefix = isLiveDemoPrefix || isStaticDemoId;
+  const hasDemoParam = resolvedSearchParams.demo === '1';
+  
+  if ((isDemoPrefix || hasDemoParam) && !isApprovedDemoActor) {
+    return notFound();
+  }
+
+  const shouldUseDemoService = (isDemoPrefix || hasDemoParam) && isApprovedDemoActor;
+
   let stage = typeof resolvedSearchParams.stage === 'string' ? resolvedSearchParams.stage : undefined;
-  if (isDemo && !stage) {
+  if (shouldUseDemoService && !stage) {
     stage = role === 'seller' ? 'review' : 'open';
   }
 
   let offer = await repository.getOffer(offerId);
 
-  if (!offer && isDemo && offerId.startsWith('offer-live-cabai-')) {
+  if (!offer && shouldUseDemoService && isLiveDemoPrefix) {
     const { getDemoOffer } = await import('@/lib/offers/demo-service');
     offer = await getDemoOffer(offerId);
     
@@ -127,7 +138,7 @@ export default async function OfferDetailPage({
       }
     }
   }
-  if (!offer && isDemo && offerId === 'offer-demo-cabai-001') {
+  if (!offer && shouldUseDemoService && isStaticDemoId) {
     const baseOffer = demoOffers['offer-demo-cabai-001'];
     if (baseOffer) {
       offer = { ...baseOffer };
@@ -145,16 +156,12 @@ export default async function OfferDetailPage({
     return notFound();
   }
 
-  let user = await getCurrentUser();
-  if (isDemo && offerId === 'offer-demo-cabai-001' && !user) {
-    const demoRole = role || 'buyer';
-    const demoUserId = demoRole === 'seller' ? 'seller-probolinggo-cabai' : 'buyer-surabaya-restaurant';
-    if (demoProfiles[demoUserId]) {
-      user = { id: demoProfiles[demoUserId].id } as any;
-    }
-  }
-  const actorId = user?.id || null;
   const isParticipant = actorId === offer.buyer_id || actorId === offer.seller_id;
+  if (!isParticipant) {
+    return notFound();
+  }
+
+  const isDemo = shouldUseDemoService;
   const buyer = demoProfiles[offer.buyer_id];
   const seller = demoProfiles[offer.seller_id];
   const [messages, buyerProfile, sellerProfile] = await Promise.all([

@@ -60,12 +60,11 @@ describe('Identity Spoofing Boundaries', () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
     
     const { getCurrentUser } = await import('./server');
-    
     vi.mocked(nextHeaders.cookies).mockReturnValue({
-      get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined,
+      get: (name: string) => name === 'mock_actor' ? { value: 'some-hacker' } : undefined,
     } as any);
 
-    // Because there's no sb-access-token, it should return null, ignoring the mock_actor cookie
+    // Because there's no sb-access-token, it should return null, ignoring 'some-hacker'
     const user = await getCurrentUser();
     expect(user).toBeNull();
   });

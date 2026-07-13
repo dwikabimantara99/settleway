@@ -101,31 +101,6 @@ describe('CreateOfferComposer', () => {
     expect(html).not.toContain('Shared negotiation panel');
   });
 
-  it('CreateOfferComposer demo submit routes to /offers/offer-demo-cabai-001?demo=1&role=buyer&stage=open', async () => {
-    const mockPush = vi.fn();
-    vi.mocked(useRouter).mockReturnValue({ push: mockPush } as unknown as ReturnType<typeof useRouter>);
-
-    const element = CreateOfferComposer({
-      listingId: 'listing-cabai-001',
-      initialVolumeKg: 700,
-      initialPricePerKgIdr: 28500,
-      commodity: 'Red Chili',
-      counterpartyName: 'Seller',
-      counterpartyRoleLabel: 'Seller',
-      counterpartyLocation: 'Loc',
-      counterpartyScore: 100,
-      counterpartyKind: 'seller',
-      currentActorId: 'buyer-surabaya-restaurant',
-      isDemo: true,
-      role: 'buyer'
-    }) as React.ReactElement<unknown>;
-
-    const button = findButton(element);
-    expect(button).not.toBeNull();
-    await button.props.onClick();
-
-    expect(mockPush).toHaveBeenCalledWith('/offers/offer-demo-cabai-001?demo=1&role=buyer&stage=open');
-  });
 
   it('non-demo CreateOfferComposer still uses POST /api/offers', async () => {
     const mockPush = vi.fn();

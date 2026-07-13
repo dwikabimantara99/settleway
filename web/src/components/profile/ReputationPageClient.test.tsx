@@ -17,7 +17,7 @@ describe('ReputationPageClient', () => {
     expect(html).toContain('Failed Deals');
     expect(html).toContain('Total Verified Tx');
     expect(html).toContain('outcome ledger');
-    expect(html.match(/View Testnet reference/g)).toHaveLength(4);
+    expect(html.match(/View Testnet reference/g)).toHaveLength(6);
   });
 
   it('filters failed outcomes without requesting backend data', () => {

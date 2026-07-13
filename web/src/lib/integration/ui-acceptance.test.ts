@@ -18,6 +18,20 @@ vi.mock('next/navigation', () => ({
     get: vi.fn(),
     toString: vi.fn(() => ''),
   })),
+  notFound: vi.fn(() => {
+    throw new Error('notFound');
+  }),
+}));
+
+vi.mock('@/lib/db/server-service-client', () => ({
+  getServiceRoleClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      order: vi.fn().mockReturnThis(),
+    })),
+  })),
 }));
 
 import DealRoomPage from '../../app/deals/[dealId]/page';
@@ -75,8 +89,16 @@ function hasText(element: unknown, text: string): boolean {
 
 describe('Product UI Acceptance (Phase 8)', () => {
   beforeEach(() => {
-    vi.mocked(nextHeaders.cookies).mockResolvedValue({ get: () => undefined } as never);
+    vi.mocked(nextHeaders.cookies).mockResolvedValue({
+      get: vi.fn((name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined),
+    } as never);
     mockStore.seed();
+    
+    // Create test-deal-1 for UI acceptance tests
+    const demoDeal = mockStore.deals.get('demo-cabai-001');
+    if (demoDeal) {
+      mockStore.deals.set('test-deal-1', { ...demoDeal, id: 'test-deal-1' });
+    }
   });
 
   describe('Discovery Trust UI', () => {
@@ -145,7 +167,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
 
   describe('Evidence UI (Deal Room)', () => {
     it('shows a calmer funding-first deal room in waiting deposits state', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
       const html = renderToString(page);
@@ -157,7 +179,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('carries negotiation continuity into the active room when activated from an offer', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       const offerId = 'offer-linked-1';
       const now = new Date().toISOString();
 
@@ -219,7 +241,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('shows protected execution timeline and room events after lock', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, {
         status: 'LOCKED',
         stellar_mode: 'testnet',
@@ -258,7 +280,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('shows success settlement summary after buyer acceptance', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'COMPLETED' });
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
@@ -285,7 +307,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('shows refund-oriented room messaging when the deal closes before lock', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'REFUNDED' });
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
@@ -304,7 +326,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('distinguishes unfunded expiry from refunded outcomes', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'EXPIRED' });
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
@@ -323,7 +345,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('shows refund outcome and penalty visibility after a failed counterparty deposit', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'REFUNDED' });
       mockStore.addEvent({
         id: 'event-buyer-funded-phase-e',
@@ -393,7 +415,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('displays EvidenceSubmitter when deal is LOCKED', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'LOCKED' });
       
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
@@ -402,7 +424,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('displays submitted evidence correctly and not as confirmed', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'PROOF_SUBMITTED' });
       mockStore.addEvidence({
         id: 'ev-123',
@@ -432,7 +454,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('displays confirmed anchoring state when operation reference is present', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'DELIVERED' });
       mockStore.addEvidence({
         id: 'ev-124',
@@ -456,7 +478,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('shows evidence-state and operator demo cues in the proof section', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       mockStore.updateDeal(dealId, { status: 'LOCKED' });
 
       const page = await DealRoomPage({ params: Promise.resolve({ dealId }) });
@@ -470,7 +492,7 @@ describe('Product UI Acceptance (Phase 8)', () => {
     });
 
     it('keeps mock-mode honesty while still showing any stored Stellar references', async () => {
-      const dealId = 'demo-cabai-001';
+      const dealId = 'test-deal-1';
       // Mock mode without contract ID
       mockStore.updateDeal(dealId, { stellar_mode: 'mock_only', stellar_contract_id: null });
       let page = await DealRoomPage({ params: Promise.resolve({ dealId }) });

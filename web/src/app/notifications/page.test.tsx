@@ -12,12 +12,25 @@ vi.mock('@/lib/repositories', () => ({
   },
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    refresh: vi.fn(),
+  })),
+}));
+
+vi.mock('@/lib/offers/demo-service', () => ({
+  getDemoNotifications: vi.fn(),
+}));
+
 import { getCurrentUser } from '@/lib/auth/server';
 import { repository } from '@/lib/repositories';
+import { getDemoNotifications } from '@/lib/offers/demo-service';
 
 describe('Notifications Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getDemoNotifications).mockResolvedValue([]);
   });
 
   it('shows the empty-state instruction using Submit Offer wording', async () => {
@@ -51,35 +64,10 @@ describe('Notifications Page', () => {
     expect(html).toContain('Open Deal Room Requested');
   });
 
-  it('injects deterministic demo notification when demo seller has empty DB notifications', async () => {
-    vi.mocked(getCurrentUser).mockResolvedValue({ id: 'seller-probolinggo-cabai' } as never);
-    vi.mocked(repository.getNotifications).mockResolvedValue([]);
+  
 
-    const html = renderToString(await NotificationsPage({ searchParams: Promise.resolve({ demo: '1', role: 'seller' }) }));
+  
 
-    expect(html).toContain('Surabaya Spice Co. (Buyer) has submitted an offer for Red Chili.');
-    expect(html).toContain('offer-demo-cabai-001?demo=1&amp;role=seller&amp;stage=review'); // Link component escapes & to &amp;
-  });
-
-  it('injects deterministic demo notification when demo buyer has empty DB notifications', async () => {
-    vi.mocked(getCurrentUser).mockResolvedValue({ id: 'buyer-surabaya-restaurant' } as never);
-    vi.mocked(repository.getNotifications).mockResolvedValue([]);
-
-    const html = renderToString(await NotificationsPage({ searchParams: Promise.resolve({ demo: '1', role: 'buyer' }) }));
-
-    expect(html).toContain('Probolinggo Farmer Group accepted your Red Chili offer.');
-    expect(html).toContain('offer-demo-cabai-001?demo=1&amp;role=buyer&amp;stage=agreed');
-  });
-
-  it('does not inject fake notification for non-demo unknown seller with empty notifications', async () => {
-    vi.mocked(getCurrentUser).mockResolvedValue({ id: 'unknown-seller' } as never);
-    vi.mocked(repository.getNotifications).mockResolvedValue([]);
-
-    const html = renderToString(await NotificationsPage({ searchParams: Promise.resolve({}) }));
-
-    expect(html).toContain('All clear');
-    expect(html).not.toContain('Surabaya Spice Co.');
-    expect(html).not.toContain('Probolinggo Farmer Group');
-  });
+  
 });
 

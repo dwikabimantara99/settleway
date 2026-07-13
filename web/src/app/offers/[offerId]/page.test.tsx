@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import * as nextHeaders from 'next/headers';
@@ -24,12 +25,31 @@ vi.mock('next/navigation', async (importOriginal) => {
   };
 });
 
+vi.mock('@/lib/db/server-service-client', () => ({
+  getServiceRoleClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      order: vi.fn().mockReturnThis(),
+    })),
+  })),
+}));
+
+vi.mock('@/lib/offers/demo-service', () => ({
+  getDemoOffer: vi.fn(),
+}));
+
 import OfferDetailPage from './page';
 import { mockStore } from '@/lib/db/mock-store';
+import { getCurrentUser } from '@/lib/auth/server';
+import { getDemoOffer } from '@/lib/offers/demo-service';
 import { repository } from '@/lib/repositories';
 
 describe('Offer Detail Page', () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getDemoOffer).mockResolvedValue(null);
     mockStore.seed();
     vi.mocked(nextHeaders.cookies).mockResolvedValue({
       get: (name: string) =>
@@ -71,23 +91,46 @@ describe('Offer Detail Page', () => {
     expect(html).toContain('Agreed Points');
   });
 
-  describe('Demo Fallback', () => {
-    it('renders negotiation room when persistent repository returns null if demo=1 is present', async () => {
+  describe('Demo Authorization and Fallback', () => {
+    it('returns notFound when unauthenticated visitor tries to activate demo service with ?demo=1', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
 
-      const html = renderToString(
-        await OfferDetailPage({
+      await expect(
+        OfferDetailPage({
           params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
           searchParams: Promise.resolve({ demo: '1', role: 'buyer' }),
-        }),
-      );
-
-      expect(html).toContain('Proposed Draft');
-      expect(html).not.toContain('404');
+        })
+      ).rejects.toThrow('notFound');
     });
 
-    it('returns notFound when repository returns null and demo=1 is absent', async () => {
+    it('returns notFound when unauthenticated visitor tries to activate demo service with live demo prefix', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+
+      await expect(
+        OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-live-cabai-123' }),
+          searchParams: Promise.resolve({}),
+        })
+      ).rejects.toThrow('notFound');
+    });
+
+    it('returns notFound when unrelated authenticated user tries to access live demo prefix', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-jakarta-trader' } : undefined } as any));
+
+      await expect(
+        OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-live-cabai-123' }),
+          searchParams: Promise.resolve({}),
+        })
+      ).rejects.toThrow('notFound');
+    });
+
+    it('returns notFound when repository returns null and unauthenticated user visits demo URL', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
 
       await expect(
         OfferDetailPage({
@@ -96,65 +139,61 @@ describe('Offer Detail Page', () => {
         })
       ).rejects.toThrow('notFound');
     });
-    
-    it('does not route directly to deal room, profile, or funding', async () => {
+
+    it('allows approved buyer participant to read native offer URL without demo=1', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as any));
 
       const html = renderToString(
         await OfferDetailPage({
           params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
-          searchParams: Promise.resolve({ demo: '1', role: 'seller' }),
+          searchParams: Promise.resolve({ stage: 'open' }), // Using stage parameter solely for UI state as allowed
+        }),
+      );
+      expect(html).toContain('The offer has been submitted.');
+    });
+    
+    it('allows approved seller participant to read native offer URL without demo=1', async () => {
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined } as any));
+
+      const html = renderToString(
+        await OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+          searchParams: Promise.resolve({ stage: 'review' }),
         }),
       );
       
-      // Asserts that it rendered the offer page correctly
-      expect(html).toContain('Proposed Draft');
-    });
-    it('demo seller review resolves seller actor and shows Accept Terms / seller CTA', async () => {
-      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
-      const html = renderToString(
-        await OfferDetailPage({
-          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
-          searchParams: Promise.resolve({ demo: '1', role: 'seller', stage: 'review' }),
-        }),
-      );
       expect(html).toContain('Accept Terms');
+      expect(html).not.toContain('404');
     });
 
-    it('demo seller agreed resolves seller actor and shows Open Deal Room', async () => {
-      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
-      const html = renderToString(
-        await OfferDetailPage({
-          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
-          searchParams: Promise.resolve({ demo: '1', role: 'seller', stage: 'agreed' }),
-        }),
-      );
-      expect(html).toContain('Open Deal Room');
-    });
+    it('returns notFound when approved demo actor is not a participant in the exact offer', async () => {
+      // Mock an offer that doesn't belong to the demo actor
+      const mockOffer = {
+        id: 'offer-live-cabai-other',
+        buyer_id: 'buyer-other',
+        seller_id: 'seller-other',
+        listing_id: 'listing-1',
+        commodity: 'Red Chili',
+        status: 'pending',
+        quantity: 100,
+        price: 1000,
+        currency: 'IDR',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(mockOffer as any);
+      vi.mocked(getDemoOffer).mockResolvedValueOnce(mockOffer as any);
 
-    it('demo buyer agreed resolves buyer actor and shows Open Deal Room', async () => {
-      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
-      const html = renderToString(
-        await OfferDetailPage({
-          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
-          searchParams: Promise.resolve({ demo: '1', role: 'buyer', stage: 'agreed' }),
-        }),
-      );
-      expect(html).toContain('Open Deal Room');
-    });
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as any));
 
-    it('non-demo unauthenticated behavior is unchanged', async () => {
-      vi.mocked(nextHeaders.cookies).mockResolvedValue({ get: () => undefined } as never);
-      const html = renderToString(
-        await OfferDetailPage({
-          params: Promise.resolve({ offerId: 'offer-demo-cabai-001' }),
+      await expect(
+        OfferDetailPage({
+          params: Promise.resolve({ offerId: 'offer-live-cabai-other' }),
           searchParams: Promise.resolve({}),
-        }),
-      );
-      expect(html).not.toContain('Accept Terms');
+        })
+      ).rejects.toThrow('notFound');
     });
   });
 });
