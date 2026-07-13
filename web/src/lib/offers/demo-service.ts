@@ -40,3 +40,12 @@ export async function insertDemoDeal(deal: DbDeal): Promise<void> {
     throw error;
   }
 }
+export async function getDemoOffer(id: string): Promise<DbOffer | null> {
+  if (!supabaseAdmin) throw new Error("Service role key not configured for demo.");
+  const { data, error } = await supabaseAdmin.from('offers').select('*').eq('id', id).single();
+  if (error) {
+    if (error.code === 'PGRST116') return null; // Not found
+    throw error;
+  }
+  return data;
+}

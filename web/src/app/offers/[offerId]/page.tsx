@@ -108,6 +108,21 @@ export default async function OfferDetailPage({
 
   let offer = await repository.getOffer(offerId);
 
+  if (!offer && isDemo && offerId.startsWith('offer-live-cabai-')) {
+    const { getDemoOffer } = await import('@/lib/offers/demo-service');
+    offer = await getDemoOffer(offerId);
+    
+    if (offer) {
+      const isValidDemoCorridor = 
+        offer.buyer_id === 'buyer-surabaya-restaurant' &&
+        offer.seller_id === 'seller-probolinggo-cabai' &&
+        (offer.listing_id === 'listing-cabai-001' || offer.commodity?.includes('Red Chili'));
+        
+      if (!isValidDemoCorridor) {
+        offer = null;
+      }
+    }
+  }
   if (!offer && isDemo && offerId === 'offer-demo-cabai-001') {
     const baseOffer = demoOffers['offer-demo-cabai-001'];
     if (baseOffer) {
