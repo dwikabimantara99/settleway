@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -219,7 +219,7 @@ export default async function DealRoomPage({
 }) {
   const resolvedParams = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
+  
 
   const currentUser = await getCurrentUser();
   const actorId = currentUser?.id || null;
@@ -243,10 +243,10 @@ export default async function DealRoomPage({
     deal = await getDemoDeal(resolvedParams.dealId);
   }
 
-  let evidenceList: any[] = [];
-  let dealEvents: any[] = [];
-  let dealReputationEvents: any[] = [];
-  let stellarOperations: any[] = [];
+  let evidenceList: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+  let dealEvents: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+  let dealReputationEvents: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
+  let stellarOperations: any[] = []; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   if (!deal && shouldUseDemoService && isStaticDemoId) {
     const { getServiceRoleClient } = await import('@/lib/db/server-service-client');

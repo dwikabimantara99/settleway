@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { cookies } from 'next/headers';
@@ -130,7 +130,7 @@ describe('Deal Room state gallery fixtures', () => {
   describe('Demo Authorization and Fallback', () => {
     it('returns not-found when unauthenticated visitor tries to activate demo service with ?demo=1', async () => {
       vi.spyOn(repository, 'getDeal').mockResolvedValue(null);
-      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as any);
+      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as unknown);
 
       await expect(
         DealRoomPage({
@@ -142,7 +142,7 @@ describe('Deal Room state gallery fixtures', () => {
 
     it('returns not-found when unauthenticated visitor tries to activate demo service with live demo prefix', async () => {
       vi.spyOn(repository, 'getDeal').mockResolvedValue(null);
-      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as any);
+      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as unknown);
 
       await expect(
         DealRoomPage({
@@ -154,7 +154,7 @@ describe('Deal Room state gallery fixtures', () => {
 
     it('returns not-found when unrelated authenticated user tries to access live demo prefix', async () => {
       vi.spyOn(repository, 'getDeal').mockResolvedValue(null);
-      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-jakarta-trader' } : undefined } as any);
+      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-jakarta-trader' } : undefined } as unknown);
 
       await expect(
         DealRoomPage({
@@ -166,7 +166,7 @@ describe('Deal Room state gallery fixtures', () => {
 
     it('returns not-found when repository returns null and unauthenticated user visits demo URL', async () => {
       vi.spyOn(repository, 'getDeal').mockResolvedValue(null);
-      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as any);
+      vi.mocked(cookies).mockResolvedValue({ get: () => undefined } as unknown);
 
       await expect(
         DealRoomPage({
@@ -181,8 +181,8 @@ describe('Deal Room state gallery fixtures', () => {
       // without being blocked by the Wallet Funding Panel loading state.
       const { demoDbDeals } = await import('@/lib/demo/demo-data');
       const demoDeal = demoDbDeals['demo-cabai-001'];
-      vi.spyOn(repository, 'getDeal').mockResolvedValue({ ...demoDeal, status: 'LOCKED' } as any);
-      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as any);
+      vi.spyOn(repository, 'getDeal').mockResolvedValue({ ...demoDeal, status: 'LOCKED' } as unknown);
+      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as unknown);
 
       const element = await DealRoomPage({
         params: Promise.resolve({ dealId: 'demo-cabai-001' }),
@@ -195,8 +195,8 @@ describe('Deal Room state gallery fixtures', () => {
     it('demo seller resolves seller actor and shows seller action area when state allows', async () => {
       const { demoDbDeals } = await import('@/lib/demo/demo-data');
       const demoDeal = demoDbDeals['demo-cabai-001'];
-      vi.spyOn(repository, 'getDeal').mockResolvedValue({ ...demoDeal, status: 'LOCKED' } as any);
-      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined } as any);
+      vi.spyOn(repository, 'getDeal').mockResolvedValue({ ...demoDeal, status: 'LOCKED' } as unknown);
+      vi.mocked(cookies).mockResolvedValue({ get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined } as unknown);
 
       const element = await DealRoomPage({
         params: Promise.resolve({ dealId: 'demo-cabai-001' }),

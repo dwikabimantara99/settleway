@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import {
@@ -85,10 +85,6 @@ function statusBadgeClass(active: boolean) {
     : 'border-amber-200 bg-amber-50 text-amber-700';
 }
 
-function shortAddress(address: string | null | undefined) {
-  if (!address) return 'Not connected';
-  return `${address.slice(0, 7)}...${address.slice(-5)}`;
-}
 
 export default async function OfferDetailPage({
   params,
@@ -164,7 +160,7 @@ export default async function OfferDetailPage({
   const isDemo = shouldUseDemoService;
   const buyer = demoProfiles[offer.buyer_id];
   const seller = demoProfiles[offer.seller_id];
-  const [messages, buyerProfile, sellerProfile] = await Promise.all([
+  const [messages] = await Promise.all([
     isDemo && offerId === 'offer-demo-cabai-001' && !await repository.getOffer(offerId)
       ? Promise.resolve(demoOfferMessages['offer-demo-cabai-001'] || [])
       : repository.getOfferMessages(offer.id),

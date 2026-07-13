@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import * as nextHeaders from 'next/headers';
@@ -42,7 +42,6 @@ vi.mock('@/lib/offers/demo-service', () => ({
 
 import OfferDetailPage from './page';
 import { mockStore } from '@/lib/db/mock-store';
-import { getCurrentUser } from '@/lib/auth/server';
 import { getDemoOffer } from '@/lib/offers/demo-service';
 import { repository } from '@/lib/repositories';
 
@@ -94,7 +93,7 @@ describe('Offer Detail Page', () => {
   describe('Demo Authorization and Fallback', () => {
     it('returns notFound when unauthenticated visitor tries to activate demo service with ?demo=1', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as unknown));
 
       await expect(
         OfferDetailPage({
@@ -106,7 +105,7 @@ describe('Offer Detail Page', () => {
 
     it('returns notFound when unauthenticated visitor tries to activate demo service with live demo prefix', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as unknown));
 
       await expect(
         OfferDetailPage({
@@ -118,7 +117,7 @@ describe('Offer Detail Page', () => {
 
     it('returns notFound when unrelated authenticated user tries to access live demo prefix', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-jakarta-trader' } : undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-jakarta-trader' } : undefined } as unknown));
 
       await expect(
         OfferDetailPage({
@@ -130,7 +129,7 @@ describe('Offer Detail Page', () => {
 
     it('returns notFound when repository returns null and unauthenticated user visits demo URL', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: () => undefined } as unknown));
 
       await expect(
         OfferDetailPage({
@@ -142,7 +141,7 @@ describe('Offer Detail Page', () => {
 
     it('allows approved buyer participant to read native offer URL without demo=1', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as unknown));
 
       const html = renderToString(
         await OfferDetailPage({
@@ -155,7 +154,7 @@ describe('Offer Detail Page', () => {
     
     it('allows approved seller participant to read native offer URL without demo=1', async () => {
       vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(null);
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'seller-probolinggo-cabai' } : undefined } as unknown));
 
       const html = renderToString(
         await OfferDetailPage({
@@ -183,10 +182,10 @@ describe('Offer Detail Page', () => {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
-      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(mockOffer as any);
-      vi.mocked(getDemoOffer).mockResolvedValueOnce(mockOffer as any);
+      vi.spyOn(repository, 'getOffer').mockResolvedValueOnce(mockOffer as unknown);
+      vi.mocked(getDemoOffer).mockResolvedValueOnce(mockOffer as unknown);
 
-      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as any));
+      vi.mocked(nextHeaders.cookies).mockImplementationOnce(async () => ({ get: (name: string) => name === 'mock_actor' ? { value: 'buyer-surabaya-restaurant' } : undefined } as unknown));
 
       await expect(
         OfferDetailPage({
