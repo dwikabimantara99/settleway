@@ -31,6 +31,16 @@ function createRepository(): IRepository {
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error("Missing Supabase configuration in persistent mode. Failsafe activated: refusing silent fallback to MockStore.");
     }
+    if (typeof window === 'undefined') {
+      // Server-side context, inject service role client to bypass RLS for CAS operations
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      if (serviceKey) {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { createClient } = require('@supabase/supabase-js');
+        const serviceClient = createClient(supabaseUrl, serviceKey);
+        return new SupabaseRepositoryAdapter(serviceClient);
+      }
+    }
     return new SupabaseRepositoryAdapter();
   }
   return new MockRepositoryAdapter();

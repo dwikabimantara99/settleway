@@ -18,7 +18,10 @@ import type {
 import type { StellarOperation } from '../stellar/types';
 
 export class SupabaseRepositoryAdapter implements IRepository {
+  constructor(private overrideClient?: typeof supabase) {}
+
   protected get client() {
+    if (this.overrideClient) return this.overrideClient;
     if (!supabase) throw new Error("Supabase client is not configured");
     return supabase;
   }
