@@ -98,8 +98,12 @@ export default async function OfferDetailPage({
 }) {
   const { offerId } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const isDemo = resolvedSearchParams.demo === '1';
+  let isDemo = resolvedSearchParams.demo === '1';
   const role = typeof resolvedSearchParams.role === 'string' ? resolvedSearchParams.role : undefined;
+
+  if (offerId.startsWith('offer-live-cabai-')) {
+    isDemo = true;
+  }
   
   let stage = typeof resolvedSearchParams.stage === 'string' ? resolvedSearchParams.stage : undefined;
   if (isDemo && !stage) {

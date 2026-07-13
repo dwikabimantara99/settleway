@@ -15,6 +15,16 @@ export default async function NotificationsPage({
   const user = await getCurrentUser();
   let notifications = user ? await repository.getNotifications(user.id) : [];
 
+  const isDemoActor = user?.id === 'buyer-surabaya-restaurant' || user?.id === 'seller-probolinggo-cabai' || isDemoUrl;
+
+  if (notifications.length === 0 && isDemoActor && user?.id) {
+    const { getDemoNotifications } = await import('@/lib/offers/demo-service');
+    const demoNotifs = await getDemoNotifications(user.id);
+    if (demoNotifs.length > 0) {
+      notifications = demoNotifs;
+    }
+  }
+
   const isDemoSeller =
     user?.id === 'seller-probolinggo-cabai' || (isDemoUrl && role === 'seller');
 

@@ -218,7 +218,11 @@ export default async function DealRoomPage({
 }) {
   const resolvedParams = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const isDemo = resolvedSearchParams.demo === '1';
+  let isDemo = resolvedSearchParams.demo === '1';
+
+  if (resolvedParams.dealId.startsWith('deal-offer-live-cabai-')) {
+    isDemo = true;
+  }
 
   let deal = await repository.getDeal(resolvedParams.dealId);
 
