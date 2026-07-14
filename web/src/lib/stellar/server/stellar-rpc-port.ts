@@ -18,6 +18,11 @@ export type SimulatedTransactionResult =
   | {
       readonly ok: true;
       readonly prepared_transaction: Transaction | FeeBumpTransaction;
+      /**
+       * Ledger sequence to use as validUntilLedgerSeq when signing Soroban auth entries.
+       * Callers should add a buffer (e.g. +50 ledgers ≈ 4 minutes) before passing to authorizeEntry.
+       */
+      readonly current_ledger: number;
     }
   | {
       readonly ok: false;

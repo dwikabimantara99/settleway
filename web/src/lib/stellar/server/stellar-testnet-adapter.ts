@@ -154,11 +154,47 @@ function readTransactionBody(tx: Transaction): xdr.Transaction | null {
     return null;
   }
 }
-
-function transactionBodyXdr(tx: Transaction): string | null {
+/**
+ * Strip Soroban auth entries from all invoke_host_function operations in an xdr.Transaction body.
+ * Returns the serialized XDR of the modified body (auth arrays cleared).
+ * This allows the body-tamper check to pass when signers legitimately add auth signatures.
+ */
+function transactionBodyWithoutAuthXdr(tx: Transaction): string | null {
   const body = readTransactionBody(tx);
-  return body === null ? null : body.toXDR("base64");
+  if (body === null) return null;
+  try {
+    // Round-trip through XDR to get a mutable deep copy
+    const clone = xdr.Transaction.fromXDR(body.toXDR());
+    for (const op of clone.operations()) {
+      const opBody = op.body();
+      if (opBody.switch().name === "invokeHostFunction") {
+        opBody.invokeHostFunctionOp().auth([]);
+      }
+    }
+    return clone.toXDR("base64");
+  } catch {
+    return null;
+  }
 }
+
+/**
+ * Verify that the signed transaction body is identical to the prepared transaction body,
+ * except for Soroban auth entry contents (which the signer is allowed to populate/sign).
+ * This detects fee tampering, soroban_data tampering, source account changes, etc.
+ */
+function sameTransactionBodyExceptAuth(
+  preparedTx: Transaction,
+  signedTx: Transaction,
+): boolean {
+  const preparedXdr = transactionBodyWithoutAuthXdr(preparedTx);
+  const signedXdr = transactionBodyWithoutAuthXdr(signedTx);
+  return (
+    preparedXdr !== null &&
+    signedXdr !== null &&
+    preparedXdr === signedXdr
+  );
+}
+
 
 interface HostFunctionIntent {
   readonly operation_source_xdr: string | null;
@@ -281,19 +317,6 @@ function sameTransactionIntent(
   return true;
 }
 
-function sameUnsignedTransactionBody(
-  expectedTx: Transaction,
-  actualTx: Transaction,
-): boolean {
-  const expectedBodyXdr = transactionBodyXdr(expectedTx);
-  const actualBodyXdr = transactionBodyXdr(actualTx);
-  return (
-    expectedBodyXdr !== null &&
-    actualBodyXdr !== null &&
-    expectedBodyXdr === actualBodyXdr
-  );
-}
-
 function verifySignature(
   signed: Transaction,
   expectedAddress: string,
@@ -388,7 +411,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     }
 
     // 3. Load canonical source account
-    console.log("executeAction signer_role:", invocation.signer_role, "mapping:", this.roleMapping); const sourceAddress = resolveSourceAddress(
+    const sourceAddress = resolveSourceAddress(
       invocation.signer_role,
       this.roleMapping,
     );
@@ -556,13 +579,14 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
       };
     }
 
-    // 10. Call signer
+    // 10. Call signer (pass current_ledger so signer can authorize Soroban auth entries)
     const preparedXdr = preparedTx.toXDR();
     const signResult = await this.signerPort.signTransaction({
       prepared_transaction_xdr: preparedXdr,
       expected_network_passphrase: this.config.network_passphrase,
       signer_role: invocation.signer_role,
       expected_signer_address: sourceAddress,
+      valid_until_ledger_seq: simResult.current_ledger,
     });
     if (!signResult.ok) {
       return {
@@ -592,8 +616,10 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
     }
     const signedTx = signedTxResult.transaction;
 
-    // 12. Verify signer only added signatures to the RPC-prepared transaction
-    if (!sameUnsignedTransactionBody(preparedTx, signedTx)) {
+    // 12. Verify the signed transaction body is identical to the RPC-prepared body
+    // except for Soroban auth entry contents (which the signer populates).
+    // This detects fee tampering, soroban_data changes, source account changes, etc.
+    if (!sameTransactionBodyExceptAuth(preparedTx, signedTx)) {
       return {
         outcome: "failed",
         action: invocation.action,
@@ -603,6 +629,7 @@ export class StellarTestnetAdapter implements StellarExecutionAdapter {
         retryable: false,
       };
     }
+
 
     // 13. Verify valid signature from expected address
     const sigValid = verifySignature(

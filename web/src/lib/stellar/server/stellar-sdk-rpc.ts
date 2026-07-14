@@ -46,23 +46,35 @@ export class StellarSdkRpc implements StellarRpcPort {
   ): Promise<SimulatedTransactionResult> {
     try {
       console.log("Simulating transaction. Source account:", transaction.source);
-      console.log("Transaction XDR:", transaction.toXDR());
+
+      // 1. Simulate first to check for contract-level errors
       const sim = await this.server.simulateTransaction(transaction);
       if (rpc.Api.isSimulationError(sim)) {
         console.error("Simulation error details:", sim.error);
         return { ok: false, error_code: "ERR_CONTRACT_REJECTED" };
       }
-      const results = (sim as rpc.Api.SimulateTransactionSuccessResponse).result?.auth || [];
-      console.log("Simulation auth entries:", JSON.stringify(results, null, 2));
-      for (const auth of results) {
-        const credentials = auth.credentials();
-        console.log("Auth credentials type:", credentials.switch().name);
-        if (credentials.switch().name === "sorobanCredentialsAddress") {
-          return { ok: false, error_code: "ERR_AUTH_FAILED" };
-        }
-      }
+
+      // 2. Prepare the transaction (attaches resource footprint, fee, and auth entry stubs)
+      // Auth entries with sorobanCredentialsAddress are EXPECTED and NORMAL —
+      // they will be signed by the appropriate participant signers before submission.
       const preparedTransaction = await this.server.prepareTransaction(transaction);
-      return { ok: true, prepared_transaction: preparedTransaction };
+
+      // 3. Get the current ledger so signers can compute valid_until_ledger_seq
+      let currentLedger = 0;
+      try {
+        const ledgerInfo = await this.server.getLatestLedger();
+        currentLedger = ledgerInfo.sequence;
+      } catch {
+        // Non-fatal: callers will use a safe default
+        console.warn("Could not fetch current ledger; using 0");
+      }
+
+      console.log("Transaction prepared. Current ledger:", currentLedger);
+      return {
+        ok: true,
+        prepared_transaction: preparedTransaction,
+        current_ledger: currentLedger,
+      };
     } catch {
       return { ok: false, error_code: "ERR_NETWORK_FAILURE" };
     }
