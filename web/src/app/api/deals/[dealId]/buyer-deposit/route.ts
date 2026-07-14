@@ -226,7 +226,7 @@ async function ensureTestnetEscrowPrepared(input: {
         result: {
           ok: false,
           reason: 'ERR_EXECUTION_SERVICE_FAILURE',
-          inner_result: 'Escrow bootstrap completed without a persisted escrow id.',
+          inner_result: `Escrow bootstrap completed without a persisted escrow id. Operation status: ${persistedOperation?.operation_status}. Error code: ${persistedOperation?.public_error_code}`,
         } as const,
       };
     }

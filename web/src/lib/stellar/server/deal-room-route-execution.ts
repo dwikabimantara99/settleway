@@ -126,7 +126,7 @@ export function mapCoordinatorFailure(
       }
     } else if (typeof inner === 'string') {
       if (inner.includes('Escrow bootstrap completed without a persisted escrow id.')) {
-        return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: `The Stellar Testnet ${actionLabel} could not be completed because the escrow room bootstrap failed.`, diagnostic };
+        return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: `The Stellar Testnet ${actionLabel} could not be completed because the escrow room bootstrap failed. Detail: ${inner}`, diagnostic };
       }
     }
   }
