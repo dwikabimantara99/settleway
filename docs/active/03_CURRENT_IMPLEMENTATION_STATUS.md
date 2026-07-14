@@ -22,6 +22,8 @@
 - Soroban Custody V2.1 contract integrated into the Testnet proof corridor.
 - Cross-platform CI fixtures for Testnet configuration validation.
 - Strict Soroban Clippy validation with narrow documented ABI/event exceptions.
+- End-to-end Testnet transaction lifecycle (deposit, proof, delivery, settlement) proven over API and UI.
+- Reputation updates seamlessly triggered by Testnet settlement events.
 
 ## Demo/Testnet Bridges Retained
 
@@ -42,7 +44,7 @@ These remain because they prove the product story without pretending that the ap
 - Bank rail is visual/product intent only.
 - Legacy `settleway_escrow` is not final token custody escrow.
 - Custody V2.1 is integrated into the Settleway Deal Room frontend, application backend, database records, and event projection, providing an end-to-end Testnet product corridor.
-- Active Testnet contract `CAFNVE...` exists and read-only ABI/event compatibility was verified, recorded in a verification manifest. However, the original deployment receipt and Wasm hash remain unavailable. This is acceptable for testnet demo readiness but remains a provenance limitation.
+- Active Testnet contract `CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D` is deployed and successfully handles the end-to-end Testnet transaction lifecycle. This replaces the previous undocumented contract.
 - Custody V2.1 is not externally audited or mainnet-ready.
 - The V2.1 Testnet proof uses native XLM SAC and proof-only treasury/mediator governance.
 - Arbitrary user wallet payout is not final production architecture.

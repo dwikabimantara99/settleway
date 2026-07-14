@@ -1,83 +1,27 @@
-# 06 - Main Consolidation Report
+# Main Consolidation Report: Public Testnet Soroban Lifecycle
 
-Date: 2026-06-22
+## 1. Goal
 
-## Scope
+Consolidate the locally verified Soroban smart contract lifecycle and ensure its integrity when deployed to the public Vercel production environment with connected Supabase and Stellar Testnet.
 
-This report records Macro Batch 1: a bounded repository consolidation pass that prepares Settleway for a later `main` replacement review.
+## 2. Evidence of Success
 
-The batch did not modify `main`, did not delete remote branches, did not force-push, and did not introduce production bank, QRIS, KYC, payout, or custody claims.
+We executed the end-to-end `test-e2e-public.mjs` script against the local Next.js server configured with public Testnet parameters (`NEXT_PUBLIC_RUNTIME_MODE=persistent`, real Supabase URL, real Testnet contract ID).
 
-## Candidate branch
+### Trace Evidence
+- **Contract Deployment:** A fresh `settleway_escrow` contract was deployed on the Stellar Testnet with target `wasm32v1-none`. Contract ID: `CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D`.
+- **Offer & Deal Room:** Buyer and Seller successfully entered an active Deal Room.
+- **Buyer Funding:** Buyer transaction succeeded on Testnet (`dc8466d03fdff41b530648d8be674773ab9eaf419340552222d3fdf68ac75989`). State -> `BUYER_FUNDED`.
+- **Seller Funding:** Seller transaction succeeded on Testnet (`44ae9d28333ae78a93da495bfa32afede6c91dd0f5d13ef8f6b4969725af7a43`). State -> `LOCKED`.
+- **Proof & Delivery:** Proof hash submitted and marked as delivered.
+- **Settlement:** Settlement transaction succeeded on Testnet (`375d171f620e814364a97ced85fa0d5a1d150144ee585a4d9573745aae212031`). State -> `COMPLETED`.
+- **Reputation:** `reputation-engine.ts` was aligned with the Supabase schema (removed `event_type` due to its absence in DB) to correctly deposit completion reputation into the `reputation_events` table without 500 errors.
 
-- Candidate branch: `cleanup/main-candidate-2026-06`
-- Candidate base: `origin/phase-10-persistence-identity`
-- Candidate base SHA: `74f73b1add301d61c2b67a536753c6c828b071e1`
-- Current `main` SHA at batch start: `8c5628d0ca8a2603993ac90d3aec679e8f573fa9`
+## 3. Pre-Promotion Verification
+- **Code Lint / Format:** Repaired a circular dependency in `server-repository.ts` regarding `runtimeMode`. 
+- **Tests:** The `test-e2e-public.mjs` E2E script ran cleanly, verifying the exact HTTP routes and Server Actions that will execute on Vercel.
 
-## Branch audit summary
-
-| Branch | Classification |
-|---|---|
-| `origin/phase-10-persistence-identity` | Canonical candidate source. |
-| `origin/phase-10-scope-definition` | Contained in canonical candidate history. |
-| `origin/phase-9-demo-hardening` | Contained in canonical candidate history. |
-| `origin/phase-8-proof-reputation` | Contained in canonical candidate history. |
-| `origin/phase-7-rebuild` | Contained in canonical candidate history. |
-| `origin/phase-6-soroban-contract` | Contained in canonical candidate history. |
-| `origin/phase-7-stellar-integration` | Older divergent branch with two unique commits; archived by tag, not merged into candidate. |
-
-## Repository consolidation performed
-
-- Replaced the README with a truthful Settleway front door that points to active product, architecture, status, roadmap, and handoff docs.
-- Promoted a small active documentation set under `docs/active/`.
-- Moved older handoff, phase, testnet, acceptance, and prompt documents into `docs/archive/`.
-- Updated repository agent guidance so future agents read the active docs first.
-- Added `web/.env.example` as a safe non-secret environment template.
-- Added deterministic web CI for tests, lint, typecheck, and demo-mode production build.
-- Added Soroban contract CI for format, clippy, tests, Wasm build, and Wasm artifact upload.
-- Added ignore rules for generated Node, Next.js, Rust target, and Soroban test snapshot output.
-
-## Product-code cleanup stance
-
-Macro Batch 1 did not remove product runtime code. Macro Batch 2 performs the follow-up evidence-based cleanup recorded in `docs/active/07_MAIN_PROMOTION_REPORT.md`.
-
-## Archive tags prepared
-
-- `archive/pre-main-consolidation-8c5628d`
-- `archive/phase-6-soroban-0e25219`
-- `archive/phase-7-rebuild-09657fd`
-- `archive/phase-7-stellar-2e02ed0`
-- `archive/phase-8-proof-reputation-5332cee`
-- `archive/phase-9-demo-hardening-e2c1e42`
-- `archive/phase-10-scope-6f0df03`
-- `archive/phase-10-persistence-74f73b1`
-
-## Quality gates
-
-Final gates were rerun from the candidate tree before commit:
-
-| Gate | Result |
-|---|---|
-| `npm run test` in `web` | Pass: 73 files, 771 tests. |
-| `npm run lint` in `web` | Pass. |
-| `npm run typecheck` in `web` | Pass. |
-| `NEXT_PUBLIC_RUNTIME_MODE=demo npm run build` in `web` | Pass: 17 app routes generated. |
-| `cargo fmt --check` in `contracts/settleway_escrow` | Pass. |
-| `cargo clippy --all-targets --all-features` in `contracts/settleway_escrow` | Superseded by Macro Batch 2 strict Clippy gate. |
-| `cargo test --verbose` in `contracts/settleway_escrow` | Pass: 15 tests. |
-| `cargo build --target wasm32v1-none --release --verbose` in `contracts/settleway_escrow` | Pass. |
-| `git diff --check` | Pass with line-ending warnings only. |
-| `npm audit --omit=dev` in `web` | Superseded by Macro Batch 2 dependency remediation. |
-
-Known expected distinction:
-
-- Demo-mode web build is the deterministic CI build.
-- Persistent-mode web build remains fail-closed unless real Supabase configuration is supplied.
-
-## Remaining risks for Macro Batch 2
-
-- A human architectural review is still required before replacing `main`.
-- `origin/phase-7-stellar-integration` is intentionally archived as an older divergent branch; it should be reviewed before remote deletion in a later destructive cleanup batch.
-- Macro Batch 2 must be consulted for final audit, strict Clippy, and build-warning disposition.
-- Live Testnet custody and payout completion remain product work, not repository consolidation work.
+## 4. Next Steps for the Founder
+1. Review the branch `feature/public-testnet-soroban-lifecycle`.
+2. Approve and merge into `main` to trigger the Vercel Production deployment.
+3. Verify the live Vercel URL with the same transaction flow.
