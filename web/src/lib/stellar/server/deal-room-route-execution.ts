@@ -194,10 +194,29 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   if (input.action === "submit_proof" || input.action === "mark_delivered") {
     scope = input.deal.seller_id;
   }
+  const isCustody = input.deal.rail_version === 'managed_custody_testnet' || input.deal.rail_version === 'custody_v2_testnet';
+  let resolvedAction: StellarAction;
+  if (isCustody) {
+    const custodyAction = resolveCustodyAction(input.action);
+    if (custodyAction === null) {
+      return {
+        ok: false,
+        failure: {
+          status: 400,
+          code: "STELLAR_EXECUTION_INVALID",
+          message: `Action '${input.action}' has no custody-rail variant and cannot be executed on this deal.`,
+        },
+      };
+    }
+    resolvedAction = custodyAction;
+  } else {
+    resolvedAction = input.action as Exclude<StellarAction, 'expire_proof' | 'reject_delivery'>;
+  }
+
   const operationKey = createStellarIdempotencyKey(
     input.deal.id,
     scope,
-    input.action,
+    resolvedAction,
   );
 
   let currentDeal = input.deal;
@@ -213,24 +232,6 @@ export async function executeConfirmedDealRoomRouteAction(input: {
     attempt += 1
   ) {
     const timestamp = currentTimestamp();
-    const isCustody = currentDeal.rail_version === 'managed_custody_testnet' || currentDeal.rail_version === 'custody_v2_testnet';
-    let resolvedAction: StellarAction;
-    if (isCustody) {
-      const custodyAction = resolveCustodyAction(input.action);
-      if (custodyAction === null) {
-        return {
-          ok: false,
-          failure: {
-            status: 400,
-            code: "STELLAR_EXECUTION_INVALID",
-            message: `Action '${input.action}' has no custody-rail variant and cannot be executed on this deal.`,
-          },
-        };
-      }
-      resolvedAction = custodyAction;
-    } else {
-      resolvedAction = input.action as Exclude<StellarAction, 'expire_proof' | 'reject_delivery'>;
-    }
     const resolvedContractId = isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id;
     const resolvedMetadata = {
       ...input.runtime.metadata,
