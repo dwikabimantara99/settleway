@@ -175,6 +175,34 @@ async function runPreflight(): Promise<void> {
   // ── 6. Smoke env presence (Removed from Production Preflight) ──
   pass('smoke_env_present');
 
+  // ── 6a. Admin Address Validation ───────────────────────────────
+  const adminAddress = process.env.SETTLEWAY_SMOKE_ADMIN_ADDRESS;
+  const platformSecret = process.env.STELLAR_PLATFORM_SECRET;
+  
+  if (isPresent(platformSecret)) {
+    try {
+      const { Keypair } = await import('@stellar/stellar-sdk');
+      const kp = Keypair.fromSecret(platformSecret!.trim());
+      const derivedAddress = kp.publicKey();
+      // Output exactly as required for Phase 3
+      console.log(`PLATFORM_PUBLIC_ADDRESS=${derivedAddress}`);
+      
+      if (isPresent(adminAddress)) {
+        if (adminAddress!.trim() === derivedAddress) {
+          pass('platform_secret_matches_admin_address');
+        } else {
+          fail('platform_secret_matches_admin_address', 'STELLAR_PLATFORM_SECRET does not match SETTLEWAY_SMOKE_ADMIN_ADDRESS');
+        }
+      } else {
+        fail('admin_address_present', 'SETTLEWAY_SMOKE_ADMIN_ADDRESS is absent');
+      }
+    } catch {
+      fail('platform_secret_valid', 'STELLAR_PLATFORM_SECRET is invalid');
+    }
+  } else {
+    fail('platform_secret_present', 'STELLAR_PLATFORM_SECRET is absent');
+  }
+
   // ── 7. Network passphrase ──────────────────────────────────────
   const passphrase = process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE;
   if (passphrase && passphrase.trim() !== EXPECTED_NETWORK_PASSPHRASE) {
