@@ -197,16 +197,24 @@ export async function executeConfirmedDealRoomRouteAction(input: {
     attempt += 1
   ) {
     const timestamp = currentTimestamp();
+    const isCustody = currentDeal.rail_version === 'managed_custody_testnet' || currentDeal.rail_version === 'custody_v2_testnet';
+    const resolvedAction = isCustody ? `${input.action}_custody` as any : input.action;
+    const resolvedContractId = isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id;
+    const resolvedMetadata = {
+      ...input.runtime.metadata,
+      contract_id: resolvedContractId,
+    };
+
     const coordinatorInput: Parameters<typeof coordinateDealExecution>[0] =
       input.action === "submit_proof"
         ? {
-            action: "submit_proof",
+            action: resolvedAction,
             operation_id: operationKey,
             deal: currentDeal,
-            metadata: input.runtime.metadata,
+            metadata: resolvedMetadata,
             proof_hash: input.proof_hash ?? "",
             existing_operation: currentOperation,
-            stellar_contract_id: input.runtime.contract_id,
+            stellar_contract_id: resolvedContractId,
             operation_timestamps: {
               created_at: timestamp,
               updated_at: timestamp,
@@ -219,12 +227,12 @@ export async function executeConfirmedDealRoomRouteAction(input: {
             execution_adapter: input.runtime.execution_adapter,
           }
         : {
-            action: input.action,
+            action: resolvedAction,
             operation_id: operationKey,
             deal: currentDeal,
-            metadata: input.runtime.metadata,
+            metadata: resolvedMetadata,
             existing_operation: currentOperation,
-            stellar_contract_id: input.runtime.contract_id,
+            stellar_contract_id: resolvedContractId,
             operation_timestamps: {
               created_at: timestamp,
               updated_at: timestamp,
