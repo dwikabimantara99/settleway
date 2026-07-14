@@ -335,8 +335,13 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     });
     if (!executionResult.ok) {
       return NextResponse.json(
-        createErrorResponse(executionResult.failure.code, executionResult.failure.message),
-        { status: executionResult.failure.status },
+        createErrorResponse(
+          executionResult.failure.code, 
+          executionResult.failure.message, 
+          executionResult.failure.recoverable, 
+          executionResult.failure.diagnostic as Record<string, unknown>
+        ),
+        { status: executionResult.failure.status }
       );
     }
 
