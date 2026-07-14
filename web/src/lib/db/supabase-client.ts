@@ -8,8 +8,7 @@ export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseKey);
 
 export const supabase = hasSupabaseConfig 
   ? createClient(supabaseUrl, supabaseKey, {
-      global: {
-        fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+      global: { fetch: (url, options) => { const headers = new Headers(options?.headers); headers.set('Cache-Control', 'no-cache, no-store, must-revalidate'); return fetch(url, { ...options, headers, cache: 'no-store', next: { revalidate: 0 } } as RequestInit); } })
       }
     })
   : null;

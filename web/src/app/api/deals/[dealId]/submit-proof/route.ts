@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { repository, runtimeMode } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';

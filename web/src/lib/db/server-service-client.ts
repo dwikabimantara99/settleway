@@ -15,8 +15,7 @@ export function getServiceRoleClient() {
       autoRefreshToken: false,
       detectSessionInUrl: false
     },
-    global: {
-      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+    global: { fetch: (url, options) => { const headers = new Headers(options?.headers); headers.set('Cache-Control', 'no-cache, no-store, must-revalidate'); return fetch(url, { ...options, headers, cache: 'no-store', next: { revalidate: 0 } } as RequestInit); } })
     }
   });
 }
