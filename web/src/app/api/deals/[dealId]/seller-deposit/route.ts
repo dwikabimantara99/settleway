@@ -145,7 +145,7 @@ async function ensureTestnetEscrowPrepared(input: {
       action: createAction,
       operation_id: `route:${input.deal.id}:${createAction}:${timestamp}`,
       deal: currentDeal,
-      metadata: input.runtime.metadata,
+      metadata: { ...input.runtime.metadata, contract_id: isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id },
       deal_hash: deriveDealHash(currentDeal),
       expires_at: deriveExpiryUnixSeconds(currentDeal),
       existing_operation: existingOperation,
@@ -452,7 +452,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         action: actionNameResolved as any,
         operation_id: operationKey,
         deal: currentDeal,
-        metadata: userRuntimeLoaded.runtime.metadata,
+        metadata: { ...userRuntimeLoaded.runtime.metadata, contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id },
         existing_operation: currentOperation,
         stellar_contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
         operation_timestamps: {
