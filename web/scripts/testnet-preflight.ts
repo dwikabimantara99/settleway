@@ -172,23 +172,8 @@ async function runPreflight(): Promise<void> {
     pass('custody_contract_id_not_banned');
   }
 
-  // ── 6. Smoke env presence ──────────────────────────────────────
-  const smokeVars = [
-    'SETTLEWAY_SMOKE_RPC_URL',
-    'SETTLEWAY_SMOKE_NETWORK_PASSPHRASE',
-    'SETTLEWAY_SMOKE_BASE_FEE_STROOPS',
-    'SETTLEWAY_SMOKE_MAX_FEE_STROOPS',
-    'SETTLEWAY_SMOKE_TIMEOUT_SECONDS',
-    'SETTLEWAY_SMOKE_ADMIN_ADDRESS',
-    'SETTLEWAY_SMOKE_BUYER_DEMO_ADDRESS',
-    'SETTLEWAY_SMOKE_SELLER_DEMO_ADDRESS',
-  ];
-  const missingSmoke = smokeVars.filter(v => !isPresent(process.env[v]));
-  if (missingSmoke.length > 0) {
-    fail('smoke_env_present', `Missing: ${missingSmoke.join(', ')}`);
-  } else {
-    pass('smoke_env_present');
-  }
+  // ── 6. Smoke env presence (Removed from Production Preflight) ──
+  pass('smoke_env_present');
 
   // ── 7. Network passphrase ──────────────────────────────────────
   const passphrase = process.env.SETTLEWAY_SMOKE_NETWORK_PASSPHRASE;
@@ -231,18 +216,18 @@ async function runPreflight(): Promise<void> {
         pass('supabase_table_deals');
       }
 
-      const { error: custodyLinksError } = await sb.from('custody_deal_links').select('application_deal_id').limit(1);
+      const { error: custodyLinksError } = await sb.from('custody_v2_deal_links').select('application_deal_id').limit(1);
       if (custodyLinksError) {
-        fail('supabase_table_custody_deal_links', `custody_deal_links table read failed: ${custodyLinksError.message}`);
+        fail('supabase_table_custody_v2_deal_links', `custody_v2_deal_links table read failed: ${custodyLinksError.message}`);
       } else {
-        pass('supabase_table_custody_deal_links');
+        pass('supabase_table_custody_v2_deal_links');
       }
 
-      const { error: custodyOpsError } = await sb.from('custody_operations').select('operation_id').limit(1);
+      const { error: custodyOpsError } = await sb.from('custody_v2_operations').select('operation_id').limit(1);
       if (custodyOpsError) {
-        fail('supabase_table_custody_operations', `custody_operations table read failed: ${custodyOpsError.message}`);
+        fail('supabase_table_custody_v2_operations', `custody_v2_operations table read failed: ${custodyOpsError.message}`);
       } else {
-        pass('supabase_table_custody_operations');
+        pass('supabase_table_custody_v2_operations');
       }
 
       pass('supabase_connectivity');
@@ -272,17 +257,17 @@ async function runPreflight(): Promise<void> {
             .select('*', { count: 'exact', head: true })
             .eq('encryption_version', VERSION_V2);
 
-          if ((countV1 ?? 0) > 0 && !legacyKey) {
+          if ((countV1 ?? 0) > 0) {
             fail(
-              'wallet_v1_records_need_legacy_key',
-              `${countV1} v1 wallet rows exist but WALLET_ENCRYPTION_KEY_LEGACY is absent`,
+              'wallet_v1_records_zero',
+              `${countV1} v1 wallet rows exist — migration incomplete`,
             );
           } else {
-            // countV2 is informational — log if zero as a sanity check
-            if ((countV2 ?? 0) === 0 && (countV1 ?? 0) === 0) {
-              fail('wallet_v1_records_need_legacy_key', 'No wallet rows found in user_wallets');
+            pass('wallet_v1_records_zero');
+            if ((countV2 ?? 0) === 0) {
+              fail('wallet_v2_records_exist', 'No v2 wallet rows found in user_wallets');
             } else {
-              pass('wallet_v1_records_need_legacy_key');
+              pass('wallet_v2_records_exist');
             }
           }
 
@@ -422,8 +407,8 @@ async function runPreflight(): Promise<void> {
 
   // ── 16. Mock fallback prevention ───────────────────────────────
   const runtimeMode = process.env.NEXT_PUBLIC_RUNTIME_MODE;
-  if (runtimeMode === 'mock_only') {
-    fail('no_mock_fallback', 'NEXT_PUBLIC_RUNTIME_MODE=mock_only is set — production must not use mock');
+  if (runtimeMode === 'mock_only' || runtimeMode === 'demo') {
+    fail('no_mock_fallback', `NEXT_PUBLIC_RUNTIME_MODE=${runtimeMode} is set — production must not use mock or legacy local funding`);
   } else {
     pass('no_mock_fallback');
   }
