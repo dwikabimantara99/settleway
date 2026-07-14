@@ -463,8 +463,7 @@ async function runPreflight(): Promise<void> {
   );
 
   if (blocking) {
-    console.warn('Preflight blocking bypassed for emergency demo deployment');
-    // process.exit(1);
+    process.exit(1);
   }
 }
 

@@ -207,7 +207,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
   const { dealId } = await params;
   const actionName = 'seller_deposit' as EscrowAction;
 
-  if (dealId === 'demo-cabai-001' || dealId.startsWith('deal-offer-live-cabai-')) {
+  if (dealId === 'demo-cabai-001') {
     const cookieStore = await cookies();
     const mockActor = cookieStore.get('mock_actor')?.value;
     if (mockActor === 'seller-probolinggo-cabai') {
@@ -235,7 +235,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       if (
         demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
         demoDeal.seller_id === 'seller-probolinggo-cabai' &&
-        (demoDeal.stellar_mode === 'mock_only' || dealId.startsWith('deal-offer-live-cabai-'))
+        demoDeal.stellar_mode === 'mock_only'
       ) {
         // Idempotency: if already funded or locked with a tx hash, return success
         if ((demoDeal.status === 'SELLER_FUNDED' || demoDeal.status === 'LOCKED') && demoDeal.latest_stellar_tx_hash) {
