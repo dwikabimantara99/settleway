@@ -12,3 +12,4 @@ web/.next/
 # Supabase CLI local link metadata
 supabase/.temp/
 web/supabase/.temp/
+.vercel

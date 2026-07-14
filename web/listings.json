@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "error": null,
+  "data": [
+    {
+      "id": "listing-cabai-001",
+      "seller_id": "seller-probolinggo-cabai",
+      "commodity": "Red Chili (Bird's Eye Chili)",
+      "variety": "Bird's Eye Chili Grade A",
+      "status": "ready_stock",
+      "location": "Probolinggo",
+      "estimated_volume_kg": 700,
+      "price_per_kg_idr": 28500,
+      "estimated_value_idr": 19950000,
+      "harvest_date": null,
+      "description": "Fresh harvest from Probolinggo group. Sorted and ready for pickup or delivery.",
+      "created_at": "2026-07-12T11:18:27.445838+00:00"
+    }
+  ],
+  "count": null,
+  "status": 200,
+  "statusText": "OK"
+}

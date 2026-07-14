@@ -1,1 +1,16 @@
-{"projectId":"prj_kKq82vZP4IlUPvwVWOWXVNzMnkwN","orgId":"team_WrmctGv7s5xYnIcxs2GO0Ugi","projectName":"web"}
+{
+  "projectId": "prj_CGhzsEH0rArhRZtA010E4NAyA5EP",
+  "orgId": "team_WrmctGv7s5xYnIcxs2GO0Ugi",
+  "projectName": "settleway",
+  "settings": {
+    "createdAt": 1783998850597,
+    "framework": "nextjs",
+    "devCommand": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "24.x"
+  }
+}

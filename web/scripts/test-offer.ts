@@ -4,6 +4,10 @@ import { buildOfferFromListing } from '../src/lib/offers/helpers.js';
 
 async function run() {
   const listing = await repository.getListing('listing-cabai-001');
+  if (!listing) {
+    throw new Error('Listing not found');
+  }
+
   const offer = buildOfferFromListing({
     id: 'offer-' + Date.now(),
     listing,
