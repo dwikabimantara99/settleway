@@ -151,13 +151,11 @@ export function loadDealRoomTestnetRuntime(
 
   const isPersistent = process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent' || process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
 
-  const rpcUrl = readTrimmed(
-    reader,
-    "TESTNET_RPC_URL",
-    "rpc_url",
-    errors,
-    TESTNET_RUNTIME_ENV.rpc_url
-  );
+  let rpcUrl = reader("CUSTODY_V2_STELLAR_RPC_URL") || reader("STELLAR_RPC_URL") || reader("TESTNET_RPC_URL") || reader(TESTNET_RUNTIME_ENV.rpc_url);
+  if (!rpcUrl || rpcUrl.trim() === "") {
+    errors.push({ code: "ERR_MISSING_CONFIG", field: "rpc_url" });
+    rpcUrl = null;
+  }
   const networkPassphrase = readTrimmed(
     reader,
     "STELLAR_NETWORK_PASSPHRASE",
