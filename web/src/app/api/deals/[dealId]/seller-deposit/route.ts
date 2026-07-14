@@ -149,7 +149,7 @@ async function ensureTestnetEscrowPrepared(input: {
       deal_hash: deriveDealHash(currentDeal),
       expires_at: deriveExpiryUnixSeconds(currentDeal),
       existing_operation: existingOperation,
-      stellar_contract_id: input.runtime.contract_id,
+      stellar_contract_id: isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id,
       operation_timestamps: {
         created_at: timestamp,
         updated_at: timestamp,
@@ -454,7 +454,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         deal: currentDeal,
         metadata: userRuntimeLoaded.runtime.metadata,
         existing_operation: currentOperation,
-        stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
+        stellar_contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
         operation_timestamps: {
           created_at: timestamp,
           updated_at: timestamp,
