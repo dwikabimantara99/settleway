@@ -34,14 +34,15 @@ export function ProfileWalletCard({ userId }: { userId: string }) {
     if (!wallet) return;
     setFunding(true);
     try {
-      const res = await fetch(`https://friendbot.stellar.org/?addr=${wallet.publicAddress}`);
+      const res = await fetch(`/api/profiles/${userId}/wallet/fund`, { method: 'POST' });
       if (res.ok) {
         await fetchBalance(wallet.publicAddress);
       } else {
-        setError('Friendbot funding failed. Please try again later.');
+        const errData = await res.json().catch(() => ({}));
+        setError(errData.error || 'Friendbot funding failed. Please try again later.');
       }
     } catch {
-      setError('Friendbot is currently unreachable.');
+      setError('Funding service is currently unreachable.');
     } finally {
       setFunding(false);
     }

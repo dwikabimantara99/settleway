@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import crypto from 'node:crypto';
 import { repository } from '@/lib/repositories';
+import { createPrivilegedServerRepository } from '@/lib/repositories/server-repository';
 import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import type { DbDeal } from '@/lib/db/types';
@@ -47,7 +48,8 @@ async function runLegacyLocalSellerDeposit(
   authUser: { id: string },
 ) {
   const updatedDeal = transition(existingDeal, 'seller_deposit');
-  const { replaced } = await repository.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
+  const privilegedRepo = createPrivilegedServerRepository();
+  const { replaced } = await privilegedRepo.replaceDealIfCurrent({ current: existingDeal, next: updatedDeal });
   if (!replaced) {
     return NextResponse.json(createErrorResponse('CONFLICT', 'Concurrent update'), { status: 409 });
   }
@@ -63,7 +65,7 @@ async function runLegacyLocalSellerDeposit(
       next_status: updatedDeal.status,
     },
   );
-  await repository.addEvent(event);
+  await privilegedRepo.addEvent(event);
 
   if (updatedDeal.status === 'LOCKED') {
     const protectedValueIdr =
@@ -81,7 +83,7 @@ async function runLegacyLocalSellerDeposit(
         next_status: updatedDeal.status,
       },
     );
-    await repository.addEvent(lockEvent);
+    await privilegedRepo.addEvent(lockEvent);
   }
 
   return NextResponse.json(createSuccessResponse(updatedDeal));
@@ -147,8 +149,8 @@ async function ensureTestnetEscrowPrepared(input: {
         updated_at: timestamp,
       },
       local_commit_timestamp: timestamp,
-      operation_persistence: new RepositoryStellarOperationPersistence(repository),
-      deal_persistence: new RepositoryDealPersistence(repository),
+      operation_persistence: new RepositoryStellarOperationPersistence(createPrivilegedServerRepository()),
+      deal_persistence: new RepositoryDealPersistence(createPrivilegedServerRepository()),
       execution_adapter: input.runtime.execution_adapter,
     });
 
@@ -447,8 +449,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
           updated_at: timestamp,
         },
         local_commit_timestamp: timestamp,
-        operation_persistence: new RepositoryStellarOperationPersistence(repository),
-        deal_persistence: new RepositoryDealPersistence(repository),
+        operation_persistence: new RepositoryStellarOperationPersistence(createPrivilegedServerRepository()),
+        deal_persistence: new RepositoryDealPersistence(createPrivilegedServerRepository()),
         execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
       });
 
@@ -509,8 +511,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
+    const privilegedRepo = createPrivilegedServerRepository();
     const updatedDeal =
-      (await repository.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
+      (await privilegedRepo.getDeal(preparedDeal.deal.id)) ?? coordinatorResult.next_deal;
     const event = createEvent(
       dealId,
       actionName,
@@ -526,7 +529,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       },
     );
     event.tx_hash = persistedOperation.transaction_hash;
-    await repository.addEvent(event);
+    await privilegedRepo.addEvent(event);
 
     if (updatedDeal.status === 'LOCKED') {
       const protectedValueIdr =
@@ -546,7 +549,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         },
       );
       lockEvent.tx_hash = persistedOperation.transaction_hash;
-      await repository.addEvent(lockEvent);
+      await privilegedRepo.addEvent(lockEvent);
     }
 
     return NextResponse.json(

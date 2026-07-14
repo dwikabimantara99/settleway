@@ -1,5 +1,5 @@
 import "server-only";
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@supabase/supabase-js';
 import type { DbCustodyDealLink, DbCustodyOperation, DbCustodyEvent, DbCustodyEventCursor } from '../db/types';
 
 function resolveRuntimeMode(): 'test' | 'demo' | 'persistent' {
@@ -40,17 +40,12 @@ export class MockCustodyV2AdminWriter implements ICustodyV2AdminWriter {
 
 let adminClientInstance: SupabaseClient | null = null;
 
+import { getServiceRoleClient } from '../db/server-service-client';
+
 export class SupabaseCustodyV2AdminWriter implements ICustodyV2AdminWriter {
   private get client() {
     if (adminClientInstance) return adminClientInstance;
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !serviceRoleKey) {
-      throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_URL in persistent mode. Failsafe activated: refusing to execute server-derived Custody V2 mutations.");
-    }
-    
-    adminClientInstance = createClient(supabaseUrl, serviceRoleKey);
+    adminClientInstance = getServiceRoleClient();
     return adminClientInstance;
   }
 
