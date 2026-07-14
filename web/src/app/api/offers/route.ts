@@ -248,8 +248,9 @@ export async function POST(request: Request) {
       createSuccessResponse({ offer, redirect_to: `/offers/${offer.id}` }, { source: 'repository' }),
     );
   } catch (error) {
+    console.error('API /offers POST Error:', error);
     return NextResponse.json(
-      createErrorResponse('INTERNAL_ERROR', error instanceof Error ? error.message : String(error)),
+      createErrorResponse('INTERNAL_ERROR', error instanceof Error ? error.message : JSON.stringify(error)),
       { status: 500 },
     );
   }
