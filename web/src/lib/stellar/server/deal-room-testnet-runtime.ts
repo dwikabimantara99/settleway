@@ -149,7 +149,7 @@ export function loadDealRoomTestnetRuntime(
   const reader = dependencies.reader ?? ((name: string) => process.env[name]);
   const errors: DealRoomTestnetRuntimeError[] = [];
 
-  const isPersistent = process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent';
+  const isPersistent = process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent' || process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production';
 
   const rpcUrl = readTrimmed(
     reader,
