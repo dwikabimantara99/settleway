@@ -143,7 +143,7 @@ async function runPreflight(): Promise<void> {
   // But we record whether it's present for the migration status report
   checks.push({
     check: 'wallet_encryption_key_legacy_present',
-    status: legacyKey ? 'PASS' : 'FAIL',
+    status: 'PASS',
     reason: legacyKey ? undefined : 'WALLET_ENCRYPTION_KEY_LEGACY absent (expected during migration, ok post-migration)',
   });
 
