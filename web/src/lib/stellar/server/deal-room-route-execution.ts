@@ -36,6 +36,7 @@ export interface DealRoomRouteExecutionFailure {
   status: number;
   code: string;
   message: string;
+  recoverable?: boolean;
   diagnostic?: Record<string, unknown>;
 }
 
