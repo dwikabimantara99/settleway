@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createPrivilegedServerRepository } from '@/lib/repositories/server-repository';
+import { getServiceRoleClient } from '@/lib/db/server-service-client';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 
 export async function GET(
@@ -8,9 +8,9 @@ export async function GET(
 ) {
   try {
     const { userId } = await params;
-    const repository = createPrivilegedServerRepository();
+    const client = getServiceRoleClient();
     
-    const events = await repository.client
+    const events = await client
       .from('reputation_events')
       .select('*')
       .eq('profile_id', userId)

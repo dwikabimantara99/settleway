@@ -480,8 +480,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         dealId,
         updatedDeal.buyer_id,
         updatedDeal.seller_id,
-        updatedDeal.volume_kg,
-        updatedDeal.price_per_kg_idr,
+        updatedDeal.volume_kg || 0,
+        (updatedDeal.volume_kg && updatedDeal.volume_kg > 0) ? Math.floor(updatedDeal.principal_idr / updatedDeal.volume_kg) : 0,
         settlementReference
       );
     } catch (e) {
