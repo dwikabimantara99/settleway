@@ -151,21 +151,27 @@ export function assembleStellarExecutionInput(
 ): StellarExecutionAssemblyResult {
   // Validate identifiers
   if (!isValidIdentifier(input.operation_id)) {
+    console.log('ASSEMBLY_FAILED', 'operation_id', input.operation_id);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "operation_id" };
   }
   if (!isValidIdentifier(input.deal.id)) {
+    console.log('ASSEMBLY_FAILED', 'deal.id', input.deal.id);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "deal.id" };
   }
   if (!isValidIdentifier(input.metadata.contract_id)) {
+    console.log('ASSEMBLY_FAILED', 'metadata.contract_id', input.metadata.contract_id);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "metadata.contract_id" };
   }
   if (!isValidIdentifier(input.metadata.admin_address)) {
+    console.log('ASSEMBLY_FAILED', 'metadata.admin_address', input.metadata.admin_address);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "metadata.admin_address" };
   }
   if (!isValidIdentifier(input.metadata.buyer_demo_address)) {
+    console.log('ASSEMBLY_FAILED', 'metadata.buyer_demo_address', input.metadata.buyer_demo_address);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "metadata.buyer_demo_address" };
   }
   if (!isValidIdentifier(input.metadata.seller_demo_address)) {
+    console.log('ASSEMBLY_FAILED', 'metadata.seller_demo_address', input.metadata.seller_demo_address);
     return { ok: false, error_code: "ERR_INVALID_IDENTIFIER", field: "metadata.seller_demo_address" };
   }
 
@@ -268,7 +274,7 @@ export function assembleStellarExecutionInput(
       return { ok: false, error_code: "ERR_MISSING_ESCROW_ID" };
     }
 
-    const escrowId = input.deal.stellar_escrow_id;
+    const escrowId = input.deal.stellar_escrow_id.toString();
     const actorAddress = resolveActorAddress(planResult.plan.signer_role, input.metadata);
 
     if (input.action === "submit_proof" || input.action === "submit_proof_custody") {

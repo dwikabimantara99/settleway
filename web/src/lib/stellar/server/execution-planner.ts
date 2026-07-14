@@ -138,6 +138,14 @@ export function planStellarExecution(
       existing.target_local_status !== canonicalPlan.target_local_status ||
       existing.stellar_method !== canonicalPlan.stellar_method
     ) {
+      console.error('MISMATCH DETECTED!', {
+        existing,
+        derivedIdempotencyKey,
+        build_action: input.build_input.action,
+        build_expected_status: input.build_input.expected_local_status,
+        canonical_target_status: canonicalPlan.target_local_status,
+        canonical_method: canonicalPlan.stellar_method
+      });
       return {
         ok: false,
         stage: "operation",

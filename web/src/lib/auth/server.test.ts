@@ -58,6 +58,7 @@ describe('Identity Spoofing Boundaries', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'key';
     
     const { getCurrentUser } = await import('./server');
     vi.mocked(nextHeaders.cookies).mockReturnValue({
@@ -73,6 +74,7 @@ describe('Identity Spoofing Boundaries', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'key';
     
     const { getCurrentUser } = await import('./server');
     

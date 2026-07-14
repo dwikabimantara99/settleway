@@ -32,6 +32,7 @@ describe('Runtime Mode Resolution', () => {
     process.env.NEXT_PUBLIC_RUNTIME_MODE = 'persistent';
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'key';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'key';
     const { runtimeMode, repository } = await import('./index');
     expect(runtimeMode).toBe('persistent');
     expect(repository.constructor.name).toBe('SupabaseRepositoryAdapter');
@@ -48,7 +49,7 @@ describe('Runtime Mode Resolution', () => {
     process.env.NODE_ENV = 'production';
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     
-    await expect(import('./index')).rejects.toThrow(/Missing Supabase configuration in persistent mode/);
+    await expect(import('./index')).rejects.toThrow(/Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL for server-only service client/);
   });
 
   it('persistent mode never returns Mock adapter', async () => {
@@ -56,7 +57,7 @@ describe('Runtime Mode Resolution', () => {
     delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     
     // It should throw, not return mock adapter
-    await expect(import('./index')).rejects.toThrow(/Missing Supabase configuration in persistent mode/);
+    await expect(import('./index')).rejects.toThrow(/Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL for server-only service client/);
   });
 
   it('development default remains usable for the demo', async () => {
