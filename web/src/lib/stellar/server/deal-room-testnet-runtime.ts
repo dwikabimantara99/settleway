@@ -80,15 +80,23 @@ export interface DealRoomTestnetRuntimeDependencies {
   time_source?: StellarTimeSource;
 }
 
-function readRequiredTrimmed(
+function readTrimmed(
   reader: (name: string) => string | undefined,
   envName: string,
   field: string,
   errors: DealRoomTestnetRuntimeError[],
+  fallbackEnvName?: string,
+  required: boolean = true
 ): string | null {
-  const value = reader(envName);
+  let value = reader(envName);
+  if ((value === undefined || value.trim() === "") && fallbackEnvName) {
+    value = reader(fallbackEnvName);
+  }
+  
   if (value === undefined || value.trim() === "") {
-    errors.push({ code: "ERR_MISSING_CONFIG", field });
+    if (required) {
+      errors.push({ code: "ERR_MISSING_CONFIG", field });
+    }
     return null;
   }
   if (value.trim() !== value) {
@@ -103,8 +111,9 @@ function readPositiveInteger(
   envName: string,
   field: string,
   errors: DealRoomTestnetRuntimeError[],
+  fallbackEnvName?: string
 ): number | null {
-  const raw = readRequiredTrimmed(reader, envName, field, errors);
+  const raw = readTrimmed(reader, envName, field, errors, fallbackEnvName, true);
   if (raw === null) {
     return null;
   }
@@ -139,77 +148,98 @@ export function loadDealRoomTestnetRuntime(
   const reader = dependencies.reader ?? ((name: string) => process.env[name]);
   const errors: DealRoomTestnetRuntimeError[] = [];
 
-  const rpcUrl = readRequiredTrimmed(
+  const isPersistent = process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent';
+
+  const rpcUrl = readTrimmed(
     reader,
-    TESTNET_RUNTIME_ENV.rpc_url,
+    "TESTNET_RPC_URL",
     "rpc_url",
     errors,
+    TESTNET_RUNTIME_ENV.rpc_url
   );
-  const networkPassphrase = readRequiredTrimmed(
+  const networkPassphrase = readTrimmed(
     reader,
-    TESTNET_RUNTIME_ENV.network_passphrase,
+    "STELLAR_NETWORK_PASSPHRASE",
     "network_passphrase",
     errors,
+    TESTNET_RUNTIME_ENV.network_passphrase
   );
-  const contractId = readRequiredTrimmed(
+  const contractId = readTrimmed(
     reader,
-    TESTNET_RUNTIME_ENV.contract_id,
+    "NEXT_PUBLIC_LEGACY_CONTRACT_ID",
     "contract_id",
     errors,
+    TESTNET_RUNTIME_ENV.contract_id
   );
-  const custodyContractId = readRequiredTrimmed(
+  const custodyContractId = readTrimmed(
     reader,
-    TESTNET_RUNTIME_ENV.custody_contract_id,
+    "NEXT_PUBLIC_CUSTODY_V2_CONTRACT_ID",
     "custody_contract_id",
     errors,
+    TESTNET_RUNTIME_ENV.custody_contract_id
   );
-  const testnetTokenContractId = readRequiredTrimmed(
+  const testnetTokenContractId = readTrimmed(
     reader,
-    TESTNET_RUNTIME_ENV.testnet_token_contract_id,
+    "NEXT_PUBLIC_CUSTODY_V2_ASSET_CONTRACT_ID",
     "testnet_token_contract_id",
     errors,
+    TESTNET_RUNTIME_ENV.testnet_token_contract_id
   );
-  const stellarCliPath = readRequiredTrimmed(
+  const stellarCliPath = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.stellar_cli_path,
     "stellar_cli_path",
     errors,
+    undefined,
+    !isPersistent
   );
-  const configDir = readRequiredTrimmed(
+  const configDir = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.stellar_config_dir,
     "stellar_config_dir",
     errors,
+    undefined,
+    !isPersistent
   );
-  const networkAlias = readRequiredTrimmed(
+  const networkAlias = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.stellar_network_alias,
     "stellar_network_alias",
     errors,
+    undefined,
+    !isPersistent
   );
-  const adminAddress = readRequiredTrimmed(
+  const adminAddress = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.admin_address,
     "admin_address",
     errors,
+    undefined,
+    !isPersistent
   );
-  const adminAlias = readRequiredTrimmed(
+  const adminAlias = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.admin_key_alias,
     "role_aliases.admin",
     errors,
+    undefined,
+    !isPersistent
   );
-  const buyerAlias = readRequiredTrimmed(
+  const buyerAlias = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.buyer_demo_key_alias,
     "role_aliases.buyer_demo",
     errors,
+    undefined,
+    !isPersistent
   );
-  const sellerAlias = readRequiredTrimmed(
+  const sellerAlias = readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.seller_demo_key_alias,
     "role_aliases.seller_demo",
     errors,
+    undefined,
+    !isPersistent
   );
   const baseFeeStroops = readPositiveInteger(
     reader,
@@ -287,29 +317,40 @@ export function loadDealRoomTestnetRuntime(
     sellerAlias !== null &&
     new Set([adminAlias, buyerAlias, sellerAlias]).size !== 3
   ) {
-    errors.push({ code: "ERR_INVALID_CONFIG", field: "role_aliases" });
+    if (!isPersistent) {
+      errors.push({ code: "ERR_INVALID_CONFIG", field: "role_aliases" });
+    }
   }
 
   if (errors.length > 0) {
     return { ok: false, errors };
   }
 
-  const metadata = buildDealRoomExecutionMetadata(contractId!, buyerAddress, sellerAddress, adminAddress!, testnetTokenContractId ?? undefined, adminAddress!);
+  const metadata = buildDealRoomExecutionMetadata(
+    contractId!, 
+    buyerAddress, 
+    sellerAddress, 
+    adminAddress ?? 'G_MISSING_PERSISTENT_ADMIN', 
+    testnetTokenContractId ?? undefined, 
+    adminAddress ?? 'G_MISSING_PERSISTENT_ADMIN'
+  );
   const roleMapping: StellarTestnetRoleMapping = {
     admin_address: metadata.admin_address,
     buyer_demo_address: metadata.buyer_demo_address,
     seller_demo_address: metadata.seller_demo_address,
+    admin_alias: adminAlias ?? 'admin',
+    buyer_demo_alias: buyerAlias ?? 'buyer_demo',
+    seller_demo_alias: sellerAlias ?? 'seller_demo',
   };
-
   const signerConfig: StellarCliSecureStoreSignerConfig = {
-    stellar_cli_path: stellarCliPath!,
-    config_dir: configDir!,
+    stellar_cli_path: stellarCliPath ?? '',
+    config_dir: configDir ?? '',
     rpc_url: rpcUrl!,
-    network_alias: networkAlias!,
+    network_alias: networkAlias ?? '',
     role_aliases: {
-      admin: adminAlias!,
-      buyer_demo: buyerAlias!,
-      seller_demo: sellerAlias!,
+      admin: adminAlias ?? '',
+      buyer_demo: buyerAlias ?? '',
+      seller_demo: sellerAlias ?? '',
     },
     public_addresses: {
       admin: roleMapping.admin_address,
@@ -324,9 +365,15 @@ export function loadDealRoomTestnetRuntime(
   const rpcPort =
     dependencies.rpc_port_factory?.(rpcUrl!, networkPassphrase!) ??
     new StellarSdkRpc(rpcUrl!, networkPassphrase!);
-  const signerPort =
-    dependencies.signer_port_factory?.(signerConfig) ??
-    new StellarCliSecureStoreSigner(signerConfig);
+
+  let signerPort = dependencies.signer_port_factory?.(signerConfig);
+  if (!signerPort) {
+    if (isPersistent) {
+      errors.push({ code: "ERR_MISSING_CONFIG", field: "signer_port_factory_required_in_persistent_mode" });
+      return { ok: false, errors };
+    }
+    signerPort = new StellarCliSecureStoreSigner(signerConfig);
+  }
   const timeSource =
     dependencies.time_source ?? { nowUnixSeconds };
   const adapterConfig: StellarTestnetAdapterConfig = {
