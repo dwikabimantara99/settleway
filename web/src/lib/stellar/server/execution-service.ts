@@ -275,6 +275,7 @@ export async function executeStellarOperation(
       current: submitReduction.next_operation,
       next: confirmReduction.next_operation,
     });
+    console.log('storeConfirmRes:', JSON.stringify(storeConfirmRes, null, 2));
 
     if (!storeConfirmRes.ok) {
       return {

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mapCoordinatorFailure } from './deal-room-route-execution';
+import { mapCoordinatorFailure, CUSTODY_ACTION_MAP, resolveCustodyAction } from './deal-room-route-execution';
 
 describe('mapCoordinatorFailure Diagnostics Safety', () => {
   const originalEnv = process.env.SETTLEWAY_DEBUG_DEPOSIT_FAILURES;
@@ -77,5 +77,37 @@ describe('mapCoordinatorFailure Diagnostics Safety', () => {
     expect(result.status).toBe(502);
     expect(result.code).toBe('STELLAR_EXECUTION_FAILED');
     expect(result.message).toContain('escrow room bootstrap failed');
+  });
+});
+
+describe('CUSTODY_ACTION_MAP', () => {
+  it('should map submit_proof to submit_proof_custody', () => {
+    expect(CUSTODY_ACTION_MAP['submit_proof']).toBe('submit_proof_custody');
+    expect(resolveCustodyAction('submit_proof')).toBe('submit_proof_custody');
+  });
+
+  it('should map mark_delivered to mark_delivered_custody', () => {
+    expect(CUSTODY_ACTION_MAP['mark_delivered']).toBe('mark_delivered_custody');
+    expect(resolveCustodyAction('mark_delivered')).toBe('mark_delivered_custody');
+  });
+
+  it('should map accept_delivery to accept_delivery_custody', () => {
+    expect(CUSTODY_ACTION_MAP['accept_delivery']).toBe('accept_delivery_custody');
+    expect(resolveCustodyAction('accept_delivery')).toBe('accept_delivery_custody');
+  });
+
+  it('should map expire to expire_custody', () => {
+    expect(CUSTODY_ACTION_MAP['expire']).toBe('expire_custody');
+    expect(resolveCustodyAction('expire')).toBe('expire_custody');
+  });
+
+  it('should map refund to refund_custody', () => {
+    expect(CUSTODY_ACTION_MAP['refund']).toBe('refund_custody');
+    expect(resolveCustodyAction('refund')).toBe('refund_custody');
+  });
+
+  it('should fail closed (return null) for unknown actions', () => {
+    // We cast to unknown to bypass TS for the test
+    expect(resolveCustodyAction('unknown_action' as any)).toBeNull();
   });
 });

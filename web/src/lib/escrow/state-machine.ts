@@ -115,23 +115,23 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
 
   switch (currentStatus) {
     case 'WAITING_DEPOSITS':
-      if (action === 'buyer_deposit') nextStatus = 'BUYER_FUNDED';
-      else if (action === 'seller_deposit') nextStatus = 'SELLER_FUNDED';
-      else if (action === 'expire') nextStatus = 'EXPIRED';
+      if (action === 'buyer_deposit' || action === 'buyer_deposit_custody') nextStatus = 'BUYER_FUNDED';
+      else if (action === 'seller_deposit' || action === 'seller_deposit_custody') nextStatus = 'SELLER_FUNDED';
+      else if (action === 'expire' || action === 'expire_custody') nextStatus = 'EXPIRED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'BUYER_FUNDED':
-      if (action === 'seller_deposit') nextStatus = 'LOCKED';
-      else if (action === 'expire') nextStatus = 'REFUND_PENDING';
-      else if (action === 'refund') nextStatus = 'REFUNDED';
+      if (action === 'seller_deposit' || action === 'seller_deposit_custody') nextStatus = 'LOCKED';
+      else if (action === 'expire' || action === 'expire_custody') nextStatus = 'REFUND_PENDING';
+      else if (action === 'refund' || action === 'refund_custody') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'SELLER_FUNDED':
-      if (action === 'buyer_deposit') nextStatus = 'LOCKED';
-      else if (action === 'expire') nextStatus = 'REFUND_PENDING';
-      else if (action === 'refund') nextStatus = 'REFUNDED';
+      if (action === 'buyer_deposit' || action === 'buyer_deposit_custody') nextStatus = 'LOCKED';
+      else if (action === 'expire' || action === 'expire_custody') nextStatus = 'REFUND_PENDING';
+      else if (action === 'refund' || action === 'refund_custody') nextStatus = 'REFUNDED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
@@ -139,19 +139,19 @@ export function transition(deal: DbDeal, action: EscrowAction): DbDeal {
       throw new Error('Custody transfer must complete before escrow can lock');
 
     case 'LOCKED':
-      if (action === 'submit_proof') nextStatus = 'PROOF_SUBMITTED';
+      if (action === 'submit_proof' || action === 'submit_proof_custody') nextStatus = 'PROOF_SUBMITTED';
       else if (action === 'expire_proof') nextStatus = 'REVIEW_REQUIRED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'PROOF_SUBMITTED':
-      if (action === 'mark_delivered') nextStatus = 'DELIVERED';
+      if (action === 'mark_delivered' || action === 'mark_delivered_custody') nextStatus = 'DELIVERED';
       else if (action === 'reject_delivery') nextStatus = 'DELIVERY_REJECTED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;
 
     case 'DELIVERED':
-      if (action === 'accept_delivery') nextStatus = 'COMPLETED';
+      if (action === 'accept_delivery' || action === 'accept_delivery_custody') nextStatus = 'COMPLETED';
       else if (action === 'reject_delivery') nextStatus = 'DELIVERY_REJECTED';
       else throw new Error(`Invalid transition: ${action} from ${currentStatus}`);
       break;

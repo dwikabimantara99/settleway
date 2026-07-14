@@ -219,7 +219,7 @@ export class SupabaseRepositoryAdapter implements IRepository {
       .select()
       .single();
       
-    if (error) return { replaced: false, operation: null };
+    if (error) { console.error('replaceStellarOperationIfCurrent ERROR:', error); return { replaced: false, operation: null }; }
     return { replaced: !!data, operation: data || null };
   }
 

@@ -20,7 +20,7 @@ export type DealRoomRouteExecutionAction =
  * Explicit typed map from base route actions to their custody-rail variants.
  * Fails closed: any action not in this map returns null and is rejected before execution.
  */
-const CUSTODY_ACTION_MAP: Partial<Record<DealRoomRouteExecutionAction, StellarAction>> = {
+export const CUSTODY_ACTION_MAP: Partial<Record<DealRoomRouteExecutionAction, StellarAction>> = {
   submit_proof: "submit_proof_custody",
   mark_delivered: "mark_delivered_custody",
   accept_delivery: "accept_delivery_custody",
@@ -28,7 +28,7 @@ const CUSTODY_ACTION_MAP: Partial<Record<DealRoomRouteExecutionAction, StellarAc
   refund: "refund_custody",
 } as const;
 
-function resolveCustodyAction(action: DealRoomRouteExecutionAction): StellarAction | null {
+export function resolveCustodyAction(action: DealRoomRouteExecutionAction): StellarAction | null {
   return CUSTODY_ACTION_MAP[action] ?? null;
 }
 
@@ -193,6 +193,8 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   let scope: string = input.deal.status;
   if (input.action === "submit_proof" || input.action === "mark_delivered") {
     scope = input.deal.seller_id;
+  } else if (input.action === "accept_delivery") {
+    scope = input.deal.buyer_id;
   }
   const isCustody = input.deal.rail_version === 'managed_custody_testnet' || input.deal.rail_version === 'custody_v2_testnet';
   let resolvedAction: StellarAction;
@@ -226,6 +228,14 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   > | null = null;
   let persistedOperation: StellarOperation | null = null;
 
+  if (
+    currentOperation !== null &&
+    currentOperation.operation_status === "confirmed" &&
+    currentOperation.target_local_status === input.deal.status
+  ) {
+    return { ok: true, deal: input.deal, operation: currentOperation };
+  }
+
   for (
     let attempt = 0;
     attempt < ROUTE_RECONCILIATION_ATTEMPTS;
@@ -258,6 +268,7 @@ export async function executeConfirmedDealRoomRouteAction(input: {
         : { ...commonFields, action: resolvedAction as Exclude<typeof resolvedAction, 'submit_proof' | 'submit_proof_custody' | 'create_deal' | 'create_deal_custody' | 'expire_proof' | 'reject_delivery'> };
 
     coordinatorResult = await coordinateDealExecution(coordinatorInput);
+    console.log('coordinatorResult:', JSON.stringify(coordinatorResult, null, 2));
 
     if (!coordinatorResult.ok) {
       // When the deal CAS fails (out-of-sync or conflict), the Stellar operation may already
@@ -265,7 +276,8 @@ export async function executeConfirmedDealRoomRouteAction(input: {
       const isIdempotentConflict =
         coordinatorResult.reason === 'ERR_OUT_OF_SYNC' ||
         coordinatorResult.reason === 'ERR_DEAL_PERSISTENCE_CONFLICT' ||
-        coordinatorResult.reason === 'ERR_DEAL_PERSISTENCE_UNAVAILABLE';
+        coordinatorResult.reason === 'ERR_DEAL_PERSISTENCE_UNAVAILABLE' ||
+        coordinatorResult.reason === 'ERR_EXECUTION_PERSISTENCE_FAILURE';
 
       if (isIdempotentConflict) {
         persistedOperation = await repository.getStellarOperation(operationKey);
@@ -306,6 +318,8 @@ export async function executeConfirmedDealRoomRouteAction(input: {
     currentOperation = persistedOperation;
     await waitForReconciliationWindow();
   }
+
+  console.log('persistedOperation (after loop):', JSON.stringify(persistedOperation, null, 2));
 
   if (
     persistedOperation === null ||

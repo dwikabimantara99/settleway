@@ -138,7 +138,10 @@ describe("accept-delivery route", () => {
     mockAuth("buyer-1");
     setupDeal("deal-1");
     const req = new Request("http://localhost");
+    console.log('mockStore.operations keys BEFORE:', Array.from(mockStore.operations.keys()));
     const res = await acceptDeliveryRoute(req, { params: Promise.resolve({ dealId: "deal-1" }) });
+    console.log(await res.clone().json());
+    console.log('mockStore.operations keys:', Array.from(mockStore.operations.keys()));
     expect(res.status).toBe(200);
 
     const deal = mockStore.deals.get("deal-1")!;

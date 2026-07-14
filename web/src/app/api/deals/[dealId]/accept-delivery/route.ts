@@ -10,7 +10,7 @@ import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation
 import type { DbDeal } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
-import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coordinator';
+import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { createStellarIdempotencyKey } from '@/lib/stellar/helpers';
 import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
@@ -27,36 +27,6 @@ function currentTimestamp(): string {
 }
 
 const ROUTE_RECONCILIATION_ATTEMPTS = 5;
-const ROUTE_RECONCILIATION_DELAY_MS = 1500;
-
-function isReconciliationPending(operation: StellarOperation | null): boolean {
-  return (
-    operation !== null &&
-    (operation.operation_status === 'submitted' || operation.operation_status === 'unknown')
-  );
-}
-
-async function waitForReconciliationWindow(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, ROUTE_RECONCILIATION_DELAY_MS));
-}
-
-function mapCoordinatorFailure(
-  result: Extract<Awaited<ReturnType<typeof coordinateDealExecution>>, { ok: false }>,
-) {
-  switch (result.reason) {
-    case 'ERR_OUT_OF_SYNC':
-    case 'ERR_DEAL_PERSISTENCE_CONFLICT':
-      return { status: 409, code: 'CONFLICT', message: 'Deal execution is out of sync. Please retry.' };
-    case 'ERR_DEAL_PERSISTENCE_UNAVAILABLE':
-    case 'ERR_EXECUTION_PERSISTENCE_FAILURE':
-      return { status: 503, code: 'STELLAR_PERSISTENCE_UNAVAILABLE', message: 'Testnet execution state could not be persisted.' };
-    case 'ERR_ASSEMBLY_FAILURE':
-    case 'ERR_LOCAL_COMMIT_PLANNING_FAILURE':
-      return { status: 400, code: 'STELLAR_EXECUTION_INVALID', message: 'The Testnet settlement input is not valid for this deal state.' };
-    default:
-      return { status: 502, code: 'STELLAR_EXECUTION_FAILED', message: 'The Stellar Testnet settlement action could not be confirmed.' };
-  }
-}
 
 async function buildCompletionPayoutMetadata(deal: DbDeal) {
   const [buyerProfile, sellerProfile] = await Promise.all([
@@ -356,92 +326,21 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_INVALID', 'Testnet escrow ID is missing.'), { status: 400 });
     }
 
-    const operationKey = createStellarIdempotencyKey(existingDeal.id, authUser.id, 'accept_delivery');
-    const existingOperation = await repository.getStellarOperation(operationKey);
-    
-    if (existingOperation?.operation_status === 'confirmed') {
-      const refreshedDeal = await repository.getDeal(existingDeal.id);
-      return NextResponse.json(createSuccessResponse(refreshedDeal ?? existingDeal));
-    }
-    if (existingOperation?.operation_status === 'submitted') {
-      return NextResponse.json(createErrorResponse('STELLAR_EXECUTION_UNCONFIRMED', 'Transaction is still pending on the network.'), { status: 502 });
-    }
-
-    let currentDeal = existingDeal;
-    let currentOperation = existingOperation;
-    let coordinatorResult: Awaited<ReturnType<typeof coordinateDealExecution>> | null = null;
-    let persistedOperation: StellarOperation | null = null;
-
-    for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
-      const timestamp = currentTimestamp();
-      coordinatorResult = await coordinateDealExecution({
-        action: 'accept_delivery',
-        operation_id: operationKey,
-        deal: currentDeal,
-        metadata: userRuntimeLoaded.runtime.metadata,
-        existing_operation: currentOperation,
-        stellar_contract_id: userRuntimeLoaded.runtime.contract_id,
-        operation_timestamps: {
-          created_at: timestamp,
-          updated_at: timestamp,
-        },
-        local_commit_timestamp: timestamp,
-        operation_persistence: new RepositoryStellarOperationPersistence(repository),
-        deal_persistence: new RepositoryDealPersistence(repository),
-        execution_adapter: userRuntimeLoaded.runtime.execution_adapter,
-      });
-
-      if (!coordinatorResult.ok) {
-        const failure = mapCoordinatorFailure(coordinatorResult);
-        return NextResponse.json(createErrorResponse(failure.code, failure.message), { status: failure.status });
-      }
-
-      persistedOperation = await repository.getStellarOperation(operationKey);
-      if (
-        persistedOperation !== null &&
-        persistedOperation.operation_status === 'confirmed' &&
-        persistedOperation.transaction_hash !== null
-      ) {
-        break;
-      }
-
-      if (!isReconciliationPending(persistedOperation) || attempt === ROUTE_RECONCILIATION_ATTEMPTS - 1) {
-        break;
-      }
-
-      currentDeal = (await repository.getDeal(existingDeal.id)) ?? coordinatorResult.next_deal;
-      currentOperation = persistedOperation;
-      await waitForReconciliationWindow();
-    }
-
-    if (
-      persistedOperation === null ||
-      persistedOperation.operation_status !== 'confirmed' ||
-      persistedOperation.transaction_hash === null
-    ) {
+    const executionResult = await executeConfirmedDealRoomRouteAction({
+      action: 'accept_delivery',
+      action_label: 'delivery acceptance',
+      deal: existingDeal,
+      runtime: userRuntimeLoaded.runtime,
+    });
+    if (!executionResult.ok) {
       return NextResponse.json(
-        createErrorResponse(
-          'STELLAR_EXECUTION_UNCONFIRMED',
-          'Buyer acceptance reached Stellar, but the public confirmation was not finalized yet.',
-        ),
-        { status: 502 },
+        createErrorResponse(executionResult.failure.code, executionResult.failure.message),
+        { status: executionResult.failure.status },
       );
     }
 
-    if (coordinatorResult === null) {
-      return NextResponse.json(
-        createErrorResponse(
-          'STELLAR_EXECUTION_UNCONFIRMED',
-          'Buyer acceptance could not be finalized because the Stellar execution result was unavailable.',
-        ),
-        { status: 502 },
-      );
-    }
-
-    const updatedDeal =
-      (await repository.getDeal(existingDeal.id)) ?? coordinatorResult.next_deal;
-      
-    const settlementReference = persistedOperation.transaction_hash;
+    const updatedDeal = executionResult.deal;
+    const settlementReference = executionResult.operation.transaction_hash as string;
     const settledAt = new Date().toISOString();
     const payoutMetadata = await buildCompletionPayoutMetadata(updatedDeal);
 
@@ -466,12 +365,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         ...payoutMetadata,
       },
     );
-    event.tx_hash = persistedOperation.transaction_hash;
+    event.tx_hash = executionResult.operation.transaction_hash;
     
     // Avoid creating duplicate events if one already exists for this hash
     const existingEvents = await repository.getDealEvents(dealId);
     const hasAcceptanceEvent = existingEvents.some(
-      (e) => e.event_type === 'accept_delivery' && e.tx_hash === persistedOperation?.transaction_hash
+      (e) => e.event_type === 'accept_delivery' && e.tx_hash === executionResult.operation.transaction_hash
     );
     
     if (!hasAcceptanceEvent) {
@@ -495,8 +394,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
 
     return NextResponse.json(
       createSuccessResponse(updatedDeal, {
-        operation_status: persistedOperation.operation_status,
-        transaction_hash: persistedOperation.transaction_hash,
+        operation_status: executionResult.operation.operation_status,
+        transaction_hash: executionResult.operation.transaction_hash,
       }),
     );
   } catch (err: unknown) {

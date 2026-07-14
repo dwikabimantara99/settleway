@@ -1,12 +1,12 @@
 import { getServiceRoleClient } from '@/lib/db/server-service-client';
 
 export interface ReputationEventInput {
-  profile_id: string;
+  participant_id: string;
   deal_id: string;
-  role_context: 'buyer' | 'seller';
+  participant_role: 'buyer' | 'seller';
   score_delta: number;
   volume_delta_idr: number;
-  public_tx_hash?: string;
+  transaction_hash?: string;
 }
 
 export async function awardDealCompletionReputation(
@@ -24,7 +24,7 @@ export async function awardDealCompletionReputation(
     // Check for existing completion events for this deal to ensure idempotency
     const { data: existingEvents, error: checkError } = await supabase
       .from('reputation_events')
-      .select('id, profile_id')
+      .select('id, participant_id')
       .eq('deal_id', dealId);
 
     if (checkError) {
@@ -32,30 +32,30 @@ export async function awardDealCompletionReputation(
       return { ok: false, error: checkError.message };
     }
 
-    const hasBuyerEvent = existingEvents?.some((e) => e.profile_id === buyerId);
-    const hasSellerEvent = existingEvents?.some((e) => e.profile_id === sellerId);
+    const hasBuyerEvent = existingEvents?.some((e) => e.participant_id === buyerId);
+    const hasSellerEvent = existingEvents?.some((e) => e.participant_id === sellerId);
 
     const newEvents: ReputationEventInput[] = [];
 
     if (!hasBuyerEvent) {
       newEvents.push({
-        profile_id: buyerId,
+        participant_id: buyerId,
         deal_id: dealId,
-        role_context: 'buyer',
+        participant_role: 'buyer',
         score_delta: 10,
         volume_delta_idr: volumeIdr,
-        public_tx_hash: settlementTxHash,
+        transaction_hash: settlementTxHash,
       });
     }
 
     if (!hasSellerEvent) {
       newEvents.push({
-        profile_id: sellerId,
+        participant_id: sellerId,
         deal_id: dealId,
-        role_context: 'seller',
+        participant_role: 'seller',
         score_delta: 10,
         volume_delta_idr: volumeIdr,
-        public_tx_hash: settlementTxHash,
+        transaction_hash: settlementTxHash,
       });
     }
 

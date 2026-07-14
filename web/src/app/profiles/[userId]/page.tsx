@@ -10,6 +10,8 @@ import {
   Star,
   TrendingUp,
   UserCircle2,
+  ExternalLink,
+  History,
 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { ConnectExternalWalletButton } from '@/components/profile/ConnectExternalWalletButton';
@@ -17,7 +19,7 @@ import { EditProfileButton } from '@/components/profile/EditProfileButton';
 import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent } from '@/components/ui/Card';
 import { getCurrentUser } from '@/lib/auth/server';
-import type { DbBuyerRequest, DbListing, DbProfile } from '@/lib/db/types';
+import type { DbBuyerRequest, DbListing, DbProfile, DbDeal } from '@/lib/db/types';
 import { rebuildReputationAggregate } from '@/lib/reputation/engine';
 import { repository } from '@/lib/repositories';
 import { ProfileWalletCard } from '@/components/profile/ProfileWalletCard';
@@ -174,6 +176,45 @@ function ActivityRequestCard({ request }: { request: DbBuyerRequest }) {
   );
 }
 
+function CompletedDealCard({ deal, roleContext, txHash }: { deal: DbDeal; roleContext: 'buyer' | 'seller'; txHash: string }) {
+  const isDemo = deal.stellar_mode !== 'testnet';
+  const explorerUrl = isDemo ? '#' : `https://stellar.expert/explorer/testnet/tx/${txHash}`;
+  
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <Badge className="border-emerald-200 bg-emerald-50 text-emerald-700">
+          <History className="mr-1.5 h-3.5 w-3.5" />
+          Completed Deal
+        </Badge>
+        <span className="text-sm text-slate-500 capitalize">{roleContext}</span>
+      </div>
+      <h3 className="mt-3 text-lg font-bold text-slate-950">Deal {deal.id.replace('deal-', '')}</h3>
+      <div className="mt-4 space-y-1.5 text-sm text-slate-600">
+        <div className="flex items-center gap-2">
+          <Package className="h-4 w-4 text-slate-400" />
+          {(deal.volume_kg ?? 0).toLocaleString('id-ID')} kg
+        </div>
+      </div>
+      <div className="mt-4 border-t border-slate-100 pt-4">
+        <div className="text-xl font-bold text-slate-950">
+          {formatIdr(deal.principal_idr)}
+        </div>
+        {txHash && (
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+          >
+            Settlement Tx <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default async function ProfilePage({
   params,
   searchParams,
@@ -237,6 +278,18 @@ export default async function ProfilePage({
   const agg = rebuildReputationAggregate(reputationEvents);
   const sellerListings = listings.filter((listing) => listing.seller_id === profile.id);
   const userBuyerRequests = buyerRequests.filter((request) => request.buyer_id === profile.id);
+  
+  const completedDealEvents = reputationEvents.filter(e => e.transaction_hash && e.reputation_outcome === 'transaction_completed');
+  const completedDealsDataRaw = await Promise.all(
+    completedDealEvents.map(async (e) => {
+      const deal = await repository.getDeal(e.deal_id);
+      return deal ? { event: e, deal } : null;
+    })
+  );
+  const completedDealsData = completedDealsDataRaw.filter(Boolean) as { event: typeof reputationEvents[0], deal: DbDeal }[];
+  // Sort latest first
+  completedDealsData.sort((a, b) => new Date(b.event.created_at).getTime() - new Date(a.event.created_at).getTime());
+
   const finalVerifiedVolume = profile.verified_volume_idr + agg.verified_volume_idr;
   const finalSellerScore = profile.seller_score + agg.seller_score;
   const finalBuyerScore = profile.buyer_score + agg.buyer_score;
@@ -455,6 +508,27 @@ export default async function ProfilePage({
           ))}
         </div>
       </section>
+
+      {completedDealsData.length > 0 && (
+        <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-slate-950">Transaction History</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Completed deals with verified public settlements.
+            </p>
+          </div>
+          <div className="grid gap-5 lg:grid-cols-2">
+            {completedDealsData.map(({ event, deal }) => (
+              <CompletedDealCard 
+                key={event.id} 
+                deal={deal} 
+                roleContext={event.participant_role} 
+                txHash={event.transaction_hash!} 
+              />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
