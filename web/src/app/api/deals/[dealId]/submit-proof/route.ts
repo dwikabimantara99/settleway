@@ -13,6 +13,8 @@ import {
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { executeCustodyProofReference } from '@/lib/stellar/testnet-proof';
 
+export const maxDuration = 60;
+
 async function runLegacyLocalProofSubmission(
   dealId: string,
   existingDeal: DbDeal,
@@ -311,7 +313,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
     }
 
     const { getServerWalletRepository } = await import('@/lib/stellar/server/wallet-repository');
-    const { ProfileWalletSigner } = await import('@/lib/stellar/server/profile-wallet-signer');
+    const { ProfileWalletSigner, PlatformWalletSigner } = await import('@/lib/stellar/server/profile-wallet-signer');
     
     const walletRepo = getServerWalletRepository();
     const [buyerWallet, sellerWallet] = await Promise.all([
@@ -326,9 +328,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       return NextResponse.json(createErrorResponse('NOT_FOUND', 'Seller profile wallet not found'), { status: 404 });
     }
     
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
     const runtimeLoaded = loadDealRoomTestnetRuntime({
       signer_port_factory: () => new ProfileWalletSigner(sellerWallet.encrypted_secret_key, sellerWallet.public_address, sellerWallet.encryption_version),
-    }, buyerWallet.public_address, sellerWallet.public_address);
+    }, buyerWallet.public_address, sellerWallet.public_address, adminAddressOverride);
 
     if (!runtimeLoaded.ok) {
       return NextResponse.json(

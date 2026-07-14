@@ -6,6 +6,7 @@ import type { DbDeal, ReputationOutcome } from '@/lib/db/types';
 import { transition, EscrowAction } from '@/lib/escrow/state-machine';
 import { createEvent } from '@/lib/escrow/events';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { processReputationOutcome } from '@/lib/reputation/engine';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
@@ -100,7 +101,14 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
+    const runtimeLoaded = loadDealRoomTestnetRuntime({}, undefined, undefined, adminAddressOverride);
     if (!runtimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(

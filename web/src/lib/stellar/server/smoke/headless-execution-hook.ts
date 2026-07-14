@@ -1,7 +1,7 @@
 import 'server-only';
 import { getAdminSmokeRepository } from '@/lib/stellar/server/smoke/headless-smoke-admin-context';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
-import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import { ProfileWalletSigner, PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
 import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coordinator';
@@ -46,7 +46,7 @@ function deriveExpiryUnixSeconds(existingDeal: DbDeal) {
   return String(Math.floor(millis / 1000));
 }
 
-const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_ATTEMPTS = 20;
 const ROUTE_RECONCILIATION_DELAY_MS = 1500;
 
 function isReconciliationPending(operation: StellarOperation | null): boolean {
@@ -229,10 +229,18 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
     return { ok: false, action: params.action, actorRole: params.expectedRole, blocker: `Insufficient balance or network unavailable for ${params.expectedRole}` };
   }
 
+  let adminAddressOverride: string | undefined;
+  try {
+    adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+  } catch {
+    // Allow fallback if not configured
+  }
+
   const adminRuntimeLoaded = loadDealRoomTestnetRuntime(
     {},
     buyerWallet.public_address,
-    sellerWallet.public_address
+    sellerWallet.public_address,
+    adminAddressOverride
   );
 
   const userRuntimeLoaded = loadDealRoomTestnetRuntime(
@@ -240,7 +248,8 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
       signer_port_factory: () => new ProfileWalletSigner(actorWallet.encrypted_secret_key, actorWallet.public_address, actorWallet.encryption_version),
     },
     buyerWallet.public_address,
-    sellerWallet.public_address
+    sellerWallet.public_address,
+    adminAddressOverride
   );
 
   if (!adminRuntimeLoaded.ok || !userRuntimeLoaded.ok) {

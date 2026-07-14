@@ -4,6 +4,7 @@ import { requireDealParticipant } from '@/lib/auth/server';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api/validation';
 import { createEvent } from '@/lib/escrow/events';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { executeExternalWalletPayouts } from '@/lib/stellar/testnet-external-payout';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 
@@ -86,7 +87,14 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
-    const runtimeLoaded = loadDealRoomTestnetRuntime();
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
+    const runtimeLoaded = loadDealRoomTestnetRuntime({}, undefined, undefined, adminAddressOverride);
     if (!runtimeLoaded.ok) {
       return NextResponse.json(
         createErrorResponse(

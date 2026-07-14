@@ -10,8 +10,10 @@ import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coo
 import { createStellarIdempotencyKey } from '@/lib/stellar/helpers';
 import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+
+export const maxDuration = 60;
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
-import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import { ProfileWalletSigner, PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 import { processReputationOutcome } from '@/lib/reputation/engine';
@@ -22,7 +24,7 @@ function currentTimestamp(): string {
   return new Date().toISOString();
 }
 
-const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_ATTEMPTS = 20;
 const ROUTE_RECONCILIATION_DELAY_MS = 1500;
 
 function isReconciliationPending(operation: StellarOperation | null): boolean {
@@ -329,12 +331,20 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
     const userRuntimeLoaded = loadDealRoomTestnetRuntime(
       {
         signer_port_factory: () => new ProfileWalletSigner(buyerWallet.encrypted_secret_key, buyerWallet.public_address, buyerWallet.encryption_version),
       },
       buyerWallet.public_address,
-      sellerWallet.public_address
+      sellerWallet.public_address,
+      adminAddressOverride
     );
 
     if (!userRuntimeLoaded.ok) {

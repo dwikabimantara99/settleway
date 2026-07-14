@@ -14,10 +14,11 @@ import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-r
 import { executeCustodyDeliveryReference } from '@/lib/stellar/testnet-proof';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
-import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import { ProfileWalletSigner, PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { getServiceRoleClient } from '@/lib/db/server-service-client';
 import { anchorDemoEvent } from '@/lib/stellar/server/anchor-demo-event';
 
+export const maxDuration = 60;
 
 async function runLegacyLocalDeliveryMilestone(
   dealId: string,
@@ -328,12 +329,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       );
     }
 
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
     const runtimeLoaded = loadDealRoomTestnetRuntime(
       {
         signer_port_factory: () => new ProfileWalletSigner(sellerWallet.encrypted_secret_key, sellerWallet.public_address, sellerWallet.encryption_version),
       },
       buyerWallet.public_address,
-      sellerWallet.public_address
+      sellerWallet.public_address,
+      adminAddressOverride
     );
     if (!runtimeLoaded.ok) {
       return NextResponse.json(

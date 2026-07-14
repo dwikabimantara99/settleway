@@ -144,6 +144,7 @@ export function loadDealRoomTestnetRuntime(
   dependencies: DealRoomTestnetRuntimeDependencies = {},
   buyerAddress?: string,
   sellerAddress?: string,
+  adminAddressOverride?: string,
 ): DealRoomTestnetRuntimeResult {
   const reader = dependencies.reader ?? ((name: string) => process.env[name]);
   const errors: DealRoomTestnetRuntimeError[] = [];
@@ -209,7 +210,7 @@ export function loadDealRoomTestnetRuntime(
     undefined,
     !isPersistent
   );
-  const adminAddress = readTrimmed(
+  const adminAddress = adminAddressOverride ?? readTrimmed(
     reader,
     TESTNET_RUNTIME_ENV.admin_address,
     "admin_address",

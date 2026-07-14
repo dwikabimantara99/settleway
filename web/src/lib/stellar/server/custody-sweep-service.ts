@@ -3,6 +3,7 @@ import { createEvent } from '@/lib/escrow/events';
 import { lockAfterCustody } from '@/lib/escrow/state-machine';
 import type { IRepository } from '@/lib/repositories';
 import { loadDealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
+import { PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import { executeAtomicCustodySweep } from '@/lib/stellar/testnet-custody';
 import type { DealRoomTestnetRuntimeResult } from '@/lib/stellar/server/deal-room-testnet-runtime';
 
@@ -141,7 +142,14 @@ export async function completeCustodySweep(input: {
     };
   }
 
-  const runtime = (input.loadRuntime ?? loadDealRoomTestnetRuntime)();
+  let adminAddressOverride: string | undefined;
+  try {
+    adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+  } catch {
+    // Allow fallback if not configured
+  }
+
+  const runtime = (input.loadRuntime ?? loadDealRoomTestnetRuntime)({}, undefined, undefined, adminAddressOverride);
   if (!runtime.ok) {
     return {
       ok: false,

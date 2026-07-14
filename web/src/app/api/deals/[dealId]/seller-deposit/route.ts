@@ -12,11 +12,16 @@ import { coordinateDealExecution } from '@/lib/stellar/server/deal-execution-coo
 import { mapCoordinatorFailure } from '@/lib/stellar/server/deal-room-route-execution';
 import { createStellarIdempotencyKey, buildCanonicalDealHashInput } from '@/lib/stellar/helpers';
 import { RepositoryDealPersistence, RepositoryStellarOperationPersistence } from '@/lib/stellar/server/repository-execution-persistence';
+
+export const maxDuration = 60;
 import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
-import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import {
+  ProfileWalletSigner,
+  PlatformWalletSigner,
+} from '@/lib/stellar/server/profile-wallet-signer';
 import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 import { getServiceRoleClient } from '@/lib/db/server-service-client';
@@ -28,7 +33,7 @@ function currentTimestamp(): string {
 
 // Live Testnet confirmation can arrive a few seconds after the initial submit.
 // Keep the route bounded, but long enough to absorb the normal confirmation lag.
-const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_ATTEMPTS = 20;
 const ROUTE_RECONCILIATION_DELAY_MS = 1500;
 
 function isReconciliationPending(operation: StellarOperation | null): boolean {
@@ -141,7 +146,7 @@ async function ensureTestnetEscrowPrepared(input: {
     const timestamp = currentTimestamp();
     const result = await coordinateDealExecution({
       action: 'create_deal',
-      operation_id: `route:${input.deal.id}:create_deal:${timestamp}`,
+      operation_id: operationKey,
       deal: currentDeal,
       metadata: input.runtime.metadata,
       deal_hash: deriveDealHash(currentDeal),
@@ -169,13 +174,23 @@ async function ensureTestnetEscrowPrepared(input: {
 
     const persistedOperation = await repository.getStellarOperation(operationKey);
     if (!isReconciliationPending(persistedOperation) || attempt === ROUTE_RECONCILIATION_ATTEMPTS - 1) {
-      if (persistedOperation && persistedOperation.operation_status === 'failed' && persistedOperation.public_error_code === 'ERR_AUTH_FAILED') {
+      if (persistedOperation && persistedOperation.operation_status === 'failed') {
+        if (persistedOperation.public_error_code === 'ERR_AUTH_FAILED') {
+          return {
+            ok: false as const,
+            result: {
+              ok: false,
+              reason: 'ERR_EXECUTION_SERVICE_FAILURE',
+              inner_result: { ok: false, error_code: 'ERR_SIGNER_UNAVAILABLE' }
+            } as const,
+          };
+        }
         return {
           ok: false as const,
           result: {
             ok: false,
             reason: 'ERR_EXECUTION_SERVICE_FAILURE',
-            inner_result: { ok: false, error_code: 'ERR_SIGNER_UNAVAILABLE' }
+            inner_result: { stage: 'planning', failure: { error_code: 'ERR_EXISTING_OPERATION_FAILED', public_error_code: persistedOperation.public_error_code } },
           } as const,
         };
       }
@@ -358,17 +373,28 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       return NextResponse.json(createErrorResponse('PROFILE_WALLET_BALANCE_UNAVAILABLE', 'The Profile Wallet balance could not be verified on Testnet.'), { status: 400 });
     }
     
+    let adminAddressOverride: string | undefined;
+    try {
+      adminAddressOverride = new PlatformWalletSigner().getPublicKey();
+    } catch {
+      // Allow fallback if not configured
+    }
+
     const adminRuntimeLoaded = loadDealRoomTestnetRuntime(
-      {},
+      {
+        signer_port_factory: () => new PlatformWalletSigner(),
+      },
       buyerWallet.public_address,
-      sellerWallet.public_address
+      sellerWallet.public_address,
+      adminAddressOverride
     );
     const userRuntimeLoaded = loadDealRoomTestnetRuntime(
       {
         signer_port_factory: () => new ProfileWalletSigner(sellerWallet.encrypted_secret_key, sellerWallet.public_address, sellerWallet.encryption_version),
       },
       buyerWallet.public_address,
-      sellerWallet.public_address
+      sellerWallet.public_address,
+      adminAddressOverride
     );
 
     if (!adminRuntimeLoaded.ok || !userRuntimeLoaded.ok) {
