@@ -1,4 +1,4 @@
-# 20 - Testnet Custody V2.1 Production Acceptance
+# 20 - Testnet Custody V2.1 Production Readiness
 
 ## Execution Context
 
@@ -7,7 +7,13 @@
 
 ## Executive Summary
 
-The Vercel persistent environment was verified and configured to support the full Testnet Custody V2.1 lifecycle. The backend runtime (`deal-room-testnet-runtime.ts`) was updated to bridge legacy configuration gaps with V2 configurations without relying on `stellar_cli_path` when operating in persistent mode. Missing secrets were safely pushed to Vercel, and a read-only operator preflight script (`testnet-preflight.ts`) was established and executed successfully.
+This is a **configuration readiness report only**.
+- No state-changing public proof yet.
+- Manual acceptance is pending.
+- No transaction hashes yet.
+- No claim of bilateral funding proof.
+
+The Vercel persistent environment was verified and configured to support the full Testnet Custody V2.1 lifecycle. The backend runtime (`deal-room-testnet-runtime.ts`) was updated to bridge legacy configuration gaps with V2 configurations without relying on `stellar_cli_path` when operating in persistent mode. Missing secrets were safely pushed to Vercel, and a read-only operator preflight script (`testnet-preflight.ts`) was established.
 
 ## Preflight State
 

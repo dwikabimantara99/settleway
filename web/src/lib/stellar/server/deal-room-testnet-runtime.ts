@@ -338,9 +338,6 @@ export function loadDealRoomTestnetRuntime(
     admin_address: metadata.admin_address,
     buyer_demo_address: metadata.buyer_demo_address,
     seller_demo_address: metadata.seller_demo_address,
-    admin_alias: adminAlias ?? 'admin',
-    buyer_demo_alias: buyerAlias ?? 'buyer_demo',
-    seller_demo_alias: sellerAlias ?? 'seller_demo',
   };
   const signerConfig: StellarCliSecureStoreSignerConfig = {
     stellar_cli_path: stellarCliPath ?? '',

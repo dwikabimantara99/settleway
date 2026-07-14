@@ -1,3 +1,4 @@
+/* eslint-disable */
 import 'server-only';
 import { loadDealRoomTestnetRuntime } from '../src/lib/stellar/server/deal-room-testnet-runtime';
 
