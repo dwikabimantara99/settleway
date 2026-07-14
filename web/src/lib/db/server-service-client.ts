@@ -9,5 +9,14 @@ export function getServiceRoleClient() {
     throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL for server-only service client.');
   }
   
-  return createClient(supabaseUrl, supabaseServiceKey);
+  return createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    },
+    global: {
+      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+    }
+  });
 }

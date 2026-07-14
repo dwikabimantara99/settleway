@@ -7,5 +7,9 @@ const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUP
 export const hasSupabaseConfig = Boolean(supabaseUrl && supabaseKey);
 
 export const supabase = hasSupabaseConfig 
-  ? createClient(supabaseUrl, supabaseKey) 
+  ? createClient(supabaseUrl, supabaseKey, {
+      global: {
+        fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' })
+      }
+    })
   : null;
