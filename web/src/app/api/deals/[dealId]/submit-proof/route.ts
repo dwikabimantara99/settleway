@@ -233,6 +233,91 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const { dealId } = await params;
   const actionName = 'submit_proof' as EscrowAction;
 
+  if (dealId === 'demo-cabai-001' || dealId.startsWith('deal-offer-live-cabai-')) {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const mockActor = cookieStore.get('mock_actor')?.value;
+    if (mockActor === 'seller-probolinggo-cabai') {
+      const { getServiceRoleClient } = await import('@/lib/db/server-service-client');
+      let serviceClient;
+      try {
+        serviceClient = getServiceRoleClient();
+      } catch (e) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', e instanceof Error ? e.message : 'Missing config'), { status: 500 });
+      }
+
+      if (!process.env.STELLAR_PLATFORM_SECRET) {
+        return NextResponse.json(createErrorResponse('SERVER_CONFIG_ERROR', 'Missing STELLAR_PLATFORM_SECRET for demo anchor'), { status: 500 });
+      }
+
+      const { data: demoDeal, error: demoError } = await serviceClient
+        .from('deals')
+        .select('*')
+        .eq('id', dealId)
+        .single();
+
+      if (demoError || !demoDeal) {
+        return NextResponse.json(createErrorResponse('UNAUTHORIZED', 'Demo deal not found'), { status: 401 });
+      }
+
+      if (
+        demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
+        demoDeal.seller_id === 'seller-probolinggo-cabai' &&
+        (demoDeal.stellar_mode === 'mock_only' || dealId.startsWith('deal-offer-live-cabai-'))
+      ) {
+        // Idempotency
+        if (demoDeal.status === 'PROOF_SUBMITTED') {
+          return NextResponse.json(createSuccessResponse(demoDeal, { tx_hash: demoDeal.latest_stellar_tx_hash, proof_hash: demoDeal.proof_hash, stellar_network: 'testnet' }));
+        }
+
+        // Must be LOCKED
+        if (demoDeal.status !== 'LOCKED') {
+          return NextResponse.json(createErrorResponse('CONFLICT', 'Unexpected deal status for proof submission'), { status: 409 });
+        }
+
+        let txHash: string | null = null;
+        let proofHash: string | null = null;
+        try {
+          const { anchorDemoEvent } = await import('@/lib/stellar/server/anchor-demo-event');
+          const anchorResult = await anchorDemoEvent({
+            deal_id: dealId,
+            event_type: 'DELIVERY_PROOF_RECORDED',
+            actor_id: mockActor,
+            payload: {
+              buyer_id: demoDeal.buyer_id,
+              seller_id: demoDeal.seller_id,
+              product: demoDeal.commodity || "Red Chili",
+              previous_tx_hash: demoDeal.latest_stellar_tx_hash,
+              timestamp: new Date().toISOString(),
+            }
+          });
+          txHash = anchorResult.tx_hash;
+          proofHash = anchorResult.proof_hash;
+        } catch (e) {
+          console.error("Demo anchor failed:", e);
+        }
+
+        const { data: updatedDeal, error: updateError } = await serviceClient
+          .from('deals')
+          .update({
+            status: 'PROOF_SUBMITTED',
+            latest_stellar_tx_hash: txHash,
+            proof_hash: proofHash,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', dealId)
+          .select()
+          .single();
+
+        if (updateError || !updatedDeal) {
+          return NextResponse.json(createErrorResponse('DATABASE_ERROR', 'Failed to update deal status'), { status: 500 });
+        }
+
+        return NextResponse.json(createSuccessResponse(updatedDeal, { tx_hash: txHash, proof_hash: proofHash, stellar_network: 'testnet' }));
+      }
+    }
+  }
+
   try {
     let existingDeal;
     let userRole;

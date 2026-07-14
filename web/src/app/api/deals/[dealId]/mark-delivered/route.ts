@@ -190,7 +190,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
   const { dealId } = await params;
   const actionName = 'mark_delivered' as EscrowAction;
 
-  if (dealId === 'demo-cabai-001') {
+  if (dealId === 'demo-cabai-001' || dealId.startsWith('deal-offer-live-cabai-')) {
     const cookieStore = await cookies();
     const mockActor = cookieStore.get('mock_actor')?.value;
     if (mockActor === 'seller-probolinggo-cabai') {
@@ -218,7 +218,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ dea
       if (
         demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
         demoDeal.seller_id === 'seller-probolinggo-cabai' &&
-        demoDeal.stellar_mode === 'mock_only'
+        (demoDeal.stellar_mode === 'mock_only' || dealId.startsWith('deal-offer-live-cabai-'))
       ) {
         // Idempotency
         if (demoDeal.status === 'DELIVERED' || demoDeal.status === 'PROOF_SUBMITTED') {

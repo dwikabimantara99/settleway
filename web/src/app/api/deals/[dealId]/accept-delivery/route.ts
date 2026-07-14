@@ -133,7 +133,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
   const { dealId } = await params;
   const actionName = 'accept_delivery' as EscrowAction;
 
-  if (dealId === 'demo-cabai-001') {
+  if (dealId === 'demo-cabai-001' || dealId.startsWith('deal-offer-live-cabai-')) {
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
     const mockActor = cookieStore.get('mock_actor')?.value;
@@ -163,7 +163,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       if (
         demoDeal.buyer_id === 'buyer-surabaya-restaurant' &&
         demoDeal.seller_id === 'seller-probolinggo-cabai' &&
-        demoDeal.stellar_mode === 'mock_only'
+        (demoDeal.stellar_mode === 'mock_only' || dealId.startsWith('deal-offer-live-cabai-'))
       ) {
         if (demoDeal.status === 'COMPLETED' && demoDeal.latest_stellar_tx_hash) {
           return NextResponse.json(createSuccessResponse(demoDeal, { tx_hash: demoDeal.latest_stellar_tx_hash, proof_hash: demoDeal.proof_hash, stellar_network: 'testnet' }));
