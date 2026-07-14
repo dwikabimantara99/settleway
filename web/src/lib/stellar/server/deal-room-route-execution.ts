@@ -259,6 +259,25 @@ export async function executeConfirmedDealRoomRouteAction(input: {
     coordinatorResult = await coordinateDealExecution(coordinatorInput);
 
     if (!coordinatorResult.ok) {
+      // When the deal CAS fails (out-of-sync or conflict), the Stellar operation may already
+      // be confirmed from a previous attempt. Re-read the operation and treat confirmed as success.
+      const isIdempotentConflict =
+        coordinatorResult.reason === 'ERR_OUT_OF_SYNC' ||
+        coordinatorResult.reason === 'ERR_DEAL_PERSISTENCE_CONFLICT' ||
+        coordinatorResult.reason === 'ERR_DEAL_PERSISTENCE_UNAVAILABLE';
+
+      if (isIdempotentConflict) {
+        persistedOperation = await repository.getStellarOperation(operationKey);
+        if (
+          persistedOperation !== null &&
+          persistedOperation.operation_status === 'confirmed' &&
+          persistedOperation.transaction_hash !== null
+        ) {
+          // Operation was already confirmed by a concurrent attempt — treat as success
+          break;
+        }
+      }
+
       return {
         ok: false,
         failure: mapCoordinatorFailure(coordinatorResult, input.action_label),
@@ -303,7 +322,8 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   }
 
   const updatedDeal =
-    (await repository.getDeal(input.deal.id)) ?? coordinatorResult!.next_deal;
+    (await repository.getDeal(input.deal.id)) ??
+    (coordinatorResult?.ok ? coordinatorResult.next_deal : input.deal);
 
   return {
     ok: true,
