@@ -47,6 +47,10 @@ async function runLegacyLocalBuyerDeposit(
   existingDeal: DbDeal,
   authUser: { id: string },
 ) {
+  if (process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent') {
+    throw new Error('Testnet custody is required in persistent mode. Legacy local mock funding is strictly disabled.');
+  }
+
   const txHash: string | null = null;
   const proofHash: string | null = null;
 
@@ -366,6 +370,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     if (custodyV2Rejection) return custodyV2Rejection;
 
     if (existingDeal.stellar_mode !== 'testnet') {
+      if (process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent') {
+        throw new Error('Testnet custody is required in persistent mode. Legacy local mock funding is strictly disabled.');
+      }
       return runLegacyLocalBuyerDeposit(dealId, existingDeal, authUser);
     }
 

@@ -386,6 +386,10 @@ export function resolveDealRoomDefaultStellarState(
   });
 
   if (!result.ok) {
+    if (process.env.NEXT_PUBLIC_RUNTIME_MODE === 'persistent') {
+      const errorDetails = result.errors.map(e => `${e.code} for ${e.field}`).join(', ');
+      throw new Error(`Testnet custody is required in persistent mode, but runtime configuration is missing or invalid: ${errorDetails}`);
+    }
     return {
       stellar_mode: "mock_only",
       stellar_contract_id: null,

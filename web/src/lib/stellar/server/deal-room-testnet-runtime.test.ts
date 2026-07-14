@@ -133,17 +133,38 @@ describe("deal room testnet runtime loader", () => {
     });
   });
 
-  it("resolves default seeded deal state to mock_only when runtime config is unavailable", () => {
-    const reader = (name: string) =>
-      makeEnv({ SETTLEWAY_SMOKE_CONTRACT_ID: undefined })[name];
+  it("resolves default seeded deal state to mock_only when runtime config is unavailable (demo mode)", () => {
+    const originalMode = process.env.NEXT_PUBLIC_RUNTIME_MODE;
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = "demo";
+    try {
+      const reader = (name: string) =>
+        makeEnv({ SETTLEWAY_SMOKE_CONTRACT_ID: undefined })[name];
 
-    const result = resolveDealRoomDefaultStellarState({
-      reader,
-    });
+      const result = resolveDealRoomDefaultStellarState({
+        reader,
+      });
 
-    expect(result).toEqual({
-      stellar_mode: "mock_only",
-      stellar_contract_id: null,
-    });
+      expect(result).toEqual({
+        stellar_mode: "mock_only",
+        stellar_contract_id: null,
+      });
+    } finally {
+      process.env.NEXT_PUBLIC_RUNTIME_MODE = originalMode;
+    }
+  });
+
+  it("throws when runtime config is unavailable in persistent mode", () => {
+    const originalMode = process.env.NEXT_PUBLIC_RUNTIME_MODE;
+    process.env.NEXT_PUBLIC_RUNTIME_MODE = "persistent";
+    try {
+      const reader = (name: string) =>
+        makeEnv({ SETTLEWAY_SMOKE_CONTRACT_ID: undefined })[name];
+
+      expect(() => {
+        resolveDealRoomDefaultStellarState({ reader });
+      }).toThrowError(/Testnet custody is required in persistent mode/);
+    } finally {
+      process.env.NEXT_PUBLIC_RUNTIME_MODE = originalMode;
+    }
   });
 });

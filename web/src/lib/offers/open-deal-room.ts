@@ -191,6 +191,14 @@ export async function performOpenDealRoomCommitment(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    
+    if (message.includes('Testnet custody is required')) {
+      return {
+        status: 503,
+        payload: createErrorResponse('STELLAR_RUNTIME_UNAVAILABLE', message),
+      };
+    }
+
     const status = message === 'Offer not found' ? 404 : message === 'Unauthorized' ? 401 : 403;
 
     return {
