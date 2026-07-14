@@ -162,8 +162,7 @@ export function mapCoordinatorFailure(
       return {
         status: 503,
         code: "STELLAR_PERSISTENCE_UNAVAILABLE",
-        message:
-          "Testnet execution state could not be persisted for this room action.",
+        message: "Testnet execution state could not be persisted for this room action. " + JSON.stringify((result as any).inner_result || (result as any).reason || result),
         diagnostic: { ...diagnostic, inner_result: (result as any).inner_result },
       };
     case "ERR_ASSEMBLY_FAILURE":
