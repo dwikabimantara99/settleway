@@ -466,7 +466,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
       action: actionNameResolved as any,
-      contract_id: userRuntimeLoaded.runtime.contract_id,
+      contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
       buyer_address: buyerWallet.public_address,
       seller_address: sellerWallet.public_address,
     });
@@ -574,7 +574,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         participant_role: 'buyer',
         deposit_total_idr: updatedDeal.buyer_total_idr,
         next_status: updatedDeal.status,
-        contract_id: userRuntimeLoaded.runtime.contract_id,
+        contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
         actor_address: fundingRuntime.context.funding_intent.actor_address,
         public_proof: fundingRuntime.context.public_proof,
       },
@@ -596,7 +596,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
           seller_total_idr: updatedDeal.seller_total_idr,
           platform_fee_total_idr: updatedDeal.buyer_fee_idr + updatedDeal.seller_fee_idr,
           next_status: updatedDeal.status,
-          contract_id: userRuntimeLoaded.runtime.contract_id,
+          contract_id: isCustody ? userRuntimeLoaded.runtime.custody_contract_id : userRuntimeLoaded.runtime.contract_id,
         },
       );
       lockEvent.tx_hash = persistedOperation.transaction_hash;
