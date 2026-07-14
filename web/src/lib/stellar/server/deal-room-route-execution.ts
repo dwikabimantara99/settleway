@@ -36,7 +36,7 @@ export type DealRoomRouteExecutionResult =
 
 // Post-lock actions should use the same bounded reconciliation posture as funding:
 // patient enough for normal Testnet lag, still finite for honest failures.
-const ROUTE_RECONCILIATION_ATTEMPTS = 5;
+const ROUTE_RECONCILIATION_ATTEMPTS = 20;
 const ROUTE_RECONCILIATION_DELAY_MS = 1500;
 
 function currentTimestamp(): string {
