@@ -14,6 +14,7 @@ import {
   type StellarTestnetAdapterConfig,
   type StellarTestnetRoleMapping,
 } from "./stellar-testnet-adapter";
+import { PlatformWalletSigner } from "./profile-wallet-signer";
 
 const TESTNET_RUNTIME_ENV = {
   rpc_url: "SETTLEWAY_SMOKE_RPC_URL",
@@ -366,10 +367,10 @@ export function loadDealRoomTestnetRuntime(
   let signerPort = dependencies.signer_port_factory?.(signerConfig);
   if (!signerPort) {
     if (isPersistent) {
-      errors.push({ code: "ERR_MISSING_CONFIG", field: "signer_port_factory_required_in_persistent_mode" });
-      return { ok: false, errors };
+      signerPort = new PlatformWalletSigner();
+    } else {
+      signerPort = new StellarCliSecureStoreSigner(signerConfig);
     }
-    signerPort = new StellarCliSecureStoreSigner(signerConfig);
   }
   const timeSource =
     dependencies.time_source ?? { nowUnixSeconds };

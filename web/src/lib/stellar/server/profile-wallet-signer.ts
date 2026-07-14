@@ -65,3 +65,46 @@ export class ProfileWalletSigner implements StellarSignerPort {
     }
   }
 }
+
+export class PlatformWalletSigner implements StellarSignerPort {
+  private readonly keypair: Keypair | null = null;
+
+  constructor() {
+    const secret = process.env.STELLAR_PLATFORM_SECRET;
+    if (secret && secret.trim()) {
+      this.keypair = Keypair.fromSecret(secret.trim());
+    }
+  }
+
+  public getPublicKey(): string {
+    return this.keypair ? this.keypair.publicKey() : '';
+  }
+
+  async signTransaction(request: StellarSignRequest): Promise<StellarSignResult> {
+    if (!this.keypair) {
+      return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
+    }
+
+    if (request.expected_signer_address !== this.getPublicKey()) {
+      return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
+    }
+
+    const transaction = parseNormalTransaction(
+      request.prepared_transaction_xdr,
+      request.expected_network_passphrase,
+    );
+    if (transaction === null) {
+      return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
+    }
+
+    try {
+      transaction.sign(this.keypair);
+      return {
+        ok: true,
+        signed_transaction_xdr: transaction.toXDR(),
+      };
+    } catch {
+      return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
+    }
+  }
+}
