@@ -13,6 +13,7 @@ describe('ProfileWalletSigner', () => {
     process.env = {
       ...originalEnv,
       WALLET_ENCRYPTION_KEY: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+      WALLET_ENCRYPTION_KEY_LEGACY: 'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210',
     };
   });
 
@@ -24,14 +25,14 @@ describe('ProfileWalletSigner', () => {
     const keypair = Keypair.random();
     const encrypted = encryptStellarSecret(keypair.secret());
     
-    const signer = new ProfileWalletSigner(encrypted);
+    const signer = new ProfileWalletSigner(encrypted, undefined, 'aes-256-gcm-v2');
     expect(signer.getPublicKey()).toBe(keypair.publicKey());
   });
 
   it('should reject signing if the expected address does not match', async () => {
     const keypair = Keypair.random();
     const encrypted = encryptStellarSecret(keypair.secret());
-    const signer = new ProfileWalletSigner(encrypted);
+    const signer = new ProfileWalletSigner(encrypted, undefined, 'aes-256-gcm-v2');
 
     const result = await signer.signTransaction({
       prepared_transaction_xdr: 'fake_xdr',
@@ -65,7 +66,7 @@ describe('ProfileWalletSigner', () => {
   it('should sign a valid transaction when the expected address matches', async () => {
     const keypair = Keypair.random();
     const encrypted = encryptStellarSecret(keypair.secret());
-    const signer = new ProfileWalletSigner(encrypted);
+    const signer = new ProfileWalletSigner(encrypted, undefined, 'aes-256-gcm-v2');
 
     // Build a synthetic unsigned transaction
     const builder = new TransactionBuilder(new Account(keypair.publicKey(), '1'), {

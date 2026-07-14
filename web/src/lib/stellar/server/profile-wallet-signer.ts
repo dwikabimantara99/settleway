@@ -22,12 +22,12 @@ export class ProfileWalletSigner implements StellarSignerPort {
   private readonly keypair: Keypair | null = null;
   private readonly demoPublicKey: string | null = null;
 
-  constructor(encryptedSecret: string, demoPublicKeyFallback?: string) {
+  constructor(encryptedSecret: string, demoPublicKeyFallback?: string, encryptionVersion?: string) {
     if (encryptedSecret === 'DEMO_PUBLIC_ONLY') {
       this.demoPublicKey = demoPublicKeyFallback || null;
       return;
     }
-    const decrypted = decryptStellarSecret(encryptedSecret);
+    const decrypted = decryptStellarSecret(encryptedSecret, encryptionVersion);
     this.keypair = Keypair.fromSecret(decrypted);
   }
 

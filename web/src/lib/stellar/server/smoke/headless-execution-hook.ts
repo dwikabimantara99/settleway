@@ -237,7 +237,7 @@ export async function executeHeadlessSmokeAction(params: HeadlessExecuteParams):
 
   const userRuntimeLoaded = loadDealRoomTestnetRuntime(
     {
-      signer_port_factory: () => new ProfileWalletSigner(actorWallet.encrypted_secret_key, actorWallet.public_address),
+      signer_port_factory: () => new ProfileWalletSigner(actorWallet.encrypted_secret_key, actorWallet.public_address, actorWallet.encryption_version),
     },
     buyerWallet.public_address,
     sellerWallet.public_address

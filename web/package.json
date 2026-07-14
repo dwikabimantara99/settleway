@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:next": "next build",
+    "preflight:production": "tsx scripts/testnet-preflight.ts",
+    "build:production": "npm run preflight:production && npm run build:next",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

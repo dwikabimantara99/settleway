@@ -22,13 +22,13 @@ describe('Wallet Provisioning', () => {
     expect(wallet.user_id).toBe(userId);
     expect(wallet.public_address.length).toBe(56);
     expect(wallet.public_address.startsWith('G')).toBe(true);
-    expect(wallet.encryption_version).toBe('aes-256-gcm-v1');
+    expect(wallet.encryption_version).toBe('aes-256-gcm-v2');
     expect(wallet.status).toBe('active');
 
     expect(wallet.encrypted_secret_key).not.toContain('S'); // should not expose plaintext seed
 
     // Verify decryptability
-    const decrypted = decryptStellarSecret(wallet.encrypted_secret_key);
+    const decrypted = decryptStellarSecret(wallet.encrypted_secret_key, 'aes-256-gcm-v2');
     expect(decrypted.length).toBe(56);
     expect(decrypted.startsWith('S')).toBe(true);
 
@@ -39,7 +39,7 @@ describe('Wallet Provisioning', () => {
 
   it('fails closed when WALLET_ENCRYPTION_KEY is missing', () => {
     delete process.env.WALLET_ENCRYPTION_KEY;
-    expect(() => generateAndEncryptProfileWallet('user-123')).toThrow('WALLET_ENCRYPTION_KEY is not defined');
+    expect(() => generateAndEncryptProfileWallet('user-123')).toThrow('WALLET_ENCRYPTION_KEY');
   });
 
   it('fails if WALLET_ENCRYPTION_KEY is the wrong length', () => {

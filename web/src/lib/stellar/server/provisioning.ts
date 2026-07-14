@@ -1,6 +1,6 @@
 import 'server-only';
 import { Keypair } from '@stellar/stellar-sdk';
-import { encryptStellarSecret } from '@/lib/auth/server-crypto';
+import { encryptStellarSecret, ENCRYPTION_VERSION_CURRENT } from '@/lib/auth/server-crypto';
 import type { DbUserWallet } from '@/lib/db/types';
 
 export function generateAndEncryptProfileWallet(userId: string): DbUserWallet {
@@ -15,7 +15,7 @@ export function generateAndEncryptProfileWallet(userId: string): DbUserWallet {
     user_id: userId,
     public_address: publicKey,
     encrypted_secret_key: encryptedSecret,
-    encryption_version: 'aes-256-gcm-v1',
+    encryption_version: ENCRYPTION_VERSION_CURRENT,
     status: 'active',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),

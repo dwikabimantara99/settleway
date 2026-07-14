@@ -331,7 +331,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
 
     const userRuntimeLoaded = loadDealRoomTestnetRuntime(
       {
-        signer_port_factory: () => new ProfileWalletSigner(buyerWallet.encrypted_secret_key),
+        signer_port_factory: () => new ProfileWalletSigner(buyerWallet.encrypted_secret_key, buyerWallet.public_address, buyerWallet.encryption_version),
       },
       buyerWallet.public_address,
       sellerWallet.public_address
