@@ -43,6 +43,7 @@ export class ProfileWalletSigner implements StellarSignerPort {
     }
 
     if (request.expected_signer_address !== this.getPublicKey()) {
+      console.error(`ProfileWalletSigner rejected: expected ${request.expected_signer_address}, got ${this.getPublicKey()}`);
       return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
     }
 
@@ -86,6 +87,7 @@ export class PlatformWalletSigner implements StellarSignerPort {
     }
 
     if (request.expected_signer_address !== this.getPublicKey()) {
+      console.error(`PlatformWalletSigner rejected: expected ${request.expected_signer_address}, got ${this.getPublicKey()}`);
       return { ok: false, error_code: 'ERR_SIGNER_REJECTED' };
     }
 

@@ -302,6 +302,10 @@ export function resolveStellarActionPlan(
   if (action === "mark_delivered_custody" && expectedLocalStatus === "PROOF_SUBMITTED") {
     return { ok: true, plan: { action: "mark_delivered_custody", expected_local_status: "PROOF_SUBMITTED", target_local_status: "DELIVERED", stellar_method: "mark_delivered_v2", signer_role: "seller_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
   }
+  if (action === "accept_delivery" && expectedLocalStatus === "DELIVERED") {
+    return { ok: true, plan: { action: "accept_delivery", expected_local_status: "DELIVERED", target_local_status: "COMPLETED", stellar_method: "settle_and_complete", signer_role: "buyer_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
+  }
+
   if (action === "accept_delivery_custody" && expectedLocalStatus === "DELIVERED") {
     return { ok: true, plan: { action: "accept_delivery_custody", expected_local_status: "DELIVERED", target_local_status: "COMPLETED", stellar_method: "settle_and_complete", signer_role: "buyer_demo", expects_transaction_hash: true, expects_result_escrow_id: false, requires_confirmation: true, local_commit_policy: "advance_status" } };
   }

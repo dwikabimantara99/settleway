@@ -36,6 +36,8 @@ function createRepository(): IRepository {
   return new MockRepositoryAdapter();
 }
 
-export const repository: IRepository = createRepository();
+import { createPrivilegedServerRepository } from './server-repository';
+
+export const repository: IRepository = createPrivilegedServerRepository();
 
 export type { IRepository };

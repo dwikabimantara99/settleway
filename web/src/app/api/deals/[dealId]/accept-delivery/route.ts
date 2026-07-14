@@ -474,6 +474,20 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       await repository.addEvent(event);
     }
 
+    try {
+      const { awardDealCompletionReputation } = await import('@/lib/reputation/reputation-engine');
+      await awardDealCompletionReputation(
+        dealId,
+        updatedDeal.buyer_id,
+        updatedDeal.seller_id,
+        updatedDeal.volume_kg,
+        updatedDeal.price_per_kg_idr,
+        settlementReference
+      );
+    } catch (e) {
+      console.error('Failed to award reputation:', e);
+    }
+
 
     return NextResponse.json(
       createSuccessResponse(updatedDeal, {

@@ -16,7 +16,7 @@ import { loadDealRoomTestnetRuntime, checkTestnetBalance } from '@/lib/stellar/s
 import type { DealRoomTestnetRuntime } from '@/lib/stellar/server/deal-room-testnet-runtime';
 import { composeDealRoomFundingRuntime } from '@/lib/stellar/server/deal-room-funding-runtime';
 import { getServerWalletRepository } from '@/lib/stellar/server/wallet-repository';
-import { ProfileWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
+import { ProfileWalletSigner, PlatformWalletSigner } from '@/lib/stellar/server/profile-wallet-signer';
 import type { StellarOperation } from '@/lib/stellar/types';
 import { rejectLegacyActionForCustodyV2 } from '@/lib/deals/rail-guards';
 import { getServiceRoleClient } from '@/lib/db/server-service-client';
@@ -357,7 +357,6 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     if (preflight.status === 'unavailable') {
       return NextResponse.json(createErrorResponse('PROFILE_WALLET_BALANCE_UNAVAILABLE', 'The Profile Wallet balance could not be verified on Testnet.'), { status: 400 });
     }
-    
     const adminRuntimeLoaded = loadDealRoomTestnetRuntime(
       {},
       buyerWallet.public_address,

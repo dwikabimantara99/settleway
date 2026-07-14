@@ -204,12 +204,14 @@ export async function POST(request: Request) {
       termsNote: trimmedTermsNote,
       now,
     });
-    await repository.createOffer(offer);
+    const privRepository = (await import('@/lib/repositories/server-repository')).createPrivilegedServerRepository();
+
+    await privRepository.createOffer(offer);
 
     if (persistedDraftMessages.length > 0) {
       const messageIdBase = Date.now();
       for (const [index, message] of persistedDraftMessages.entries()) {
-        await repository.addOfferMessage(
+        await privRepository.addOfferMessage(
           buildOpeningMessage({
             id: `msg-${messageIdBase}-${index}`,
             offerId,
@@ -220,7 +222,7 @@ export async function POST(request: Request) {
         );
       }
     } else if (trimmedOpeningMessage) {
-      await repository.addOfferMessage(
+      await privRepository.addOfferMessage(
         buildOpeningMessage({
           id: `msg-${Date.now()}`,
           offerId,
@@ -231,7 +233,7 @@ export async function POST(request: Request) {
       );
     }
 
-    await repository.addNotification(
+    await privRepository.addNotification(
       buildNotification({
         id: `notif-${Date.now()}`,
         recipientId: offer.buyer_id,
