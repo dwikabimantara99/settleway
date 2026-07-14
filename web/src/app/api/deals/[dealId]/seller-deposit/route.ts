@@ -134,14 +134,16 @@ async function ensureTestnetEscrowPrepared(input: {
   }
 
   let currentDeal = input.deal;
-  const operationKey = createStellarIdempotencyKey(input.deal.id, "WAITING_DEPOSITS", "create_deal");
+  const isCustody = input.deal.rail_version === 'managed_custody_testnet' || input.deal.rail_version === 'custody_v2_testnet';
+  const createAction = isCustody ? 'create_deal_custody' : 'create_deal';
+  const operationKey = createStellarIdempotencyKey(input.deal.id, "WAITING_DEPOSITS", createAction);
 
   for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
     const existingOperation = await repository.getStellarOperation(operationKey);
     const timestamp = currentTimestamp();
     const result = await coordinateDealExecution({
-      action: 'create_deal',
-      operation_id: `route:${input.deal.id}:create_deal:${timestamp}`,
+      action: createAction,
+      operation_id: `route:${input.deal.id}:${createAction}:${timestamp}`,
       deal: currentDeal,
       metadata: input.runtime.metadata,
       deal_hash: deriveDealHash(currentDeal),
@@ -418,9 +420,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
         );
       }
     }
+    const isCustody = preparedDeal.deal.rail_version === 'managed_custody_testnet' || preparedDeal.deal.rail_version === 'custody_v2_testnet';
+    const actionNameResolved = isCustody ? 'seller_deposit_custody' : 'seller_deposit';
+
     const fundingRuntime = composeDealRoomFundingRuntime({
       deal: preparedDeal.deal,
-      action: 'seller_deposit',
+      action: actionNameResolved as any,
       contract_id: userRuntimeLoaded.runtime.contract_id,
       buyer_address: buyerWallet.public_address,
       seller_address: sellerWallet.public_address,
@@ -435,7 +440,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
       );
     }
 
-    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, authUser.id, 'seller_deposit');
+    const operationKey = createStellarIdempotencyKey(preparedDeal.deal.id, authUser.id, actionNameResolved);
     let currentDeal = preparedDeal.deal;
     let currentOperation = existingOperation;
     let coordinatorResult: Awaited<ReturnType<typeof coordinateDealExecution>> | null = null;
@@ -444,7 +449,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ de
     for (let attempt = 0; attempt < ROUTE_RECONCILIATION_ATTEMPTS; attempt += 1) {
       const timestamp = currentTimestamp();
       coordinatorResult = await coordinateDealExecution({
-        action: 'seller_deposit',
+        action: actionNameResolved as any,
         operation_id: operationKey,
         deal: currentDeal,
         metadata: userRuntimeLoaded.runtime.metadata,

@@ -441,7 +441,9 @@ export function resolveDealRoomDefaultStellarState(
 
   return {
     stellar_mode: "testnet",
-    stellar_contract_id: result.runtime.contract_id,
+    stellar_contract_id: process.env.NEXT_PUBLIC_CUSTODY_V2_ENABLED === 'true' 
+      ? result.runtime.custody_contract_id 
+      : result.runtime.contract_id,
   };
 }
 
