@@ -7,7 +7,7 @@ import {
   RepositoryStellarOperationPersistence,
 } from "./repository-execution-persistence";
 import type { DealRoomTestnetRuntime } from "./deal-room-testnet-runtime";
-import type { StellarOperation } from "../types";
+import type { StellarOperation, StellarAction } from "../types";
 
 export type DealRoomRouteExecutionAction =
   | "expire"
@@ -15,6 +15,22 @@ export type DealRoomRouteExecutionAction =
   | "submit_proof"
   | "mark_delivered"
   | "accept_delivery";
+
+/**
+ * Explicit typed map from base route actions to their custody-rail variants.
+ * Fails closed: any action not in this map returns null and is rejected before execution.
+ */
+const CUSTODY_ACTION_MAP: Partial<Record<DealRoomRouteExecutionAction, StellarAction>> = {
+  submit_proof: "submit_proof_custody",
+  mark_delivered: "mark_delivered_custody",
+  accept_delivery: "accept_delivery_custody",
+  expire: "expire_custody",
+  refund: "refund_custody",
+} as const;
+
+function resolveCustodyAction(action: DealRoomRouteExecutionAction): StellarAction | null {
+  return CUSTODY_ACTION_MAP[action] ?? null;
+}
 
 export interface DealRoomRouteExecutionFailure {
   status: number;
@@ -36,8 +52,8 @@ export type DealRoomRouteExecutionResult =
 
 // Post-lock actions should use the same bounded reconciliation posture as funding:
 // patient enough for normal Testnet lag, still finite for honest failures.
-const ROUTE_RECONCILIATION_ATTEMPTS = 5;
-const ROUTE_RECONCILIATION_DELAY_MS = 1500;
+const ROUTE_RECONCILIATION_ATTEMPTS = 12;
+const ROUTE_RECONCILIATION_DELAY_MS = 4000;
 
 function currentTimestamp(): string {
   return new Date().toISOString();
@@ -198,52 +214,47 @@ export async function executeConfirmedDealRoomRouteAction(input: {
   ) {
     const timestamp = currentTimestamp();
     const isCustody = currentDeal.rail_version === 'managed_custody_testnet' || currentDeal.rail_version === 'custody_v2_testnet';
-    const resolvedAction = isCustody ? `${input.action}_custody` as any : input.action;
+    let resolvedAction: StellarAction;
+    if (isCustody) {
+      const custodyAction = resolveCustodyAction(input.action);
+      if (custodyAction === null) {
+        return {
+          ok: false,
+          failure: {
+            status: 400,
+            code: "STELLAR_EXECUTION_INVALID",
+            message: `Action '${input.action}' has no custody-rail variant and cannot be executed on this deal.`,
+          },
+        };
+      }
+      resolvedAction = custodyAction;
+    } else {
+      resolvedAction = input.action as Exclude<StellarAction, 'expire_proof' | 'reject_delivery'>;
+    }
     const resolvedContractId = isCustody ? input.runtime.custody_contract_id : input.runtime.contract_id;
     const resolvedMetadata = {
       ...input.runtime.metadata,
       contract_id: resolvedContractId,
     };
 
+    // TypeScript cannot narrow resolvedAction through the ternary — cast each branch explicitly
+    const commonFields = {
+      operation_id: operationKey,
+      deal: currentDeal,
+      metadata: resolvedMetadata,
+      existing_operation: currentOperation,
+      stellar_contract_id: resolvedContractId,
+      operation_timestamps: { created_at: timestamp, updated_at: timestamp },
+      local_commit_timestamp: timestamp,
+      operation_persistence: new RepositoryStellarOperationPersistence(repository),
+      deal_persistence: new RepositoryDealPersistence(repository),
+      execution_adapter: input.runtime.execution_adapter,
+    };
+
     const coordinatorInput: Parameters<typeof coordinateDealExecution>[0] =
-      input.action === "submit_proof"
-        ? {
-            action: resolvedAction,
-            operation_id: operationKey,
-            deal: currentDeal,
-            metadata: resolvedMetadata,
-            proof_hash: input.proof_hash ?? "",
-            existing_operation: currentOperation,
-            stellar_contract_id: resolvedContractId,
-            operation_timestamps: {
-              created_at: timestamp,
-              updated_at: timestamp,
-            },
-            local_commit_timestamp: timestamp,
-            operation_persistence: new RepositoryStellarOperationPersistence(
-              repository,
-            ),
-            deal_persistence: new RepositoryDealPersistence(repository),
-            execution_adapter: input.runtime.execution_adapter,
-          }
-        : {
-            action: resolvedAction,
-            operation_id: operationKey,
-            deal: currentDeal,
-            metadata: resolvedMetadata,
-            existing_operation: currentOperation,
-            stellar_contract_id: resolvedContractId,
-            operation_timestamps: {
-              created_at: timestamp,
-              updated_at: timestamp,
-            },
-            local_commit_timestamp: timestamp,
-            operation_persistence: new RepositoryStellarOperationPersistence(
-              repository,
-            ),
-            deal_persistence: new RepositoryDealPersistence(repository),
-            execution_adapter: input.runtime.execution_adapter,
-          };
+      (resolvedAction === 'submit_proof' || resolvedAction === 'submit_proof_custody')
+        ? { ...commonFields, action: resolvedAction, proof_hash: input.proof_hash ?? '' }
+        : { ...commonFields, action: resolvedAction as Exclude<typeof resolvedAction, 'submit_proof' | 'submit_proof_custody' | 'create_deal' | 'create_deal_custody' | 'expire_proof' | 'reject_delivery'> };
 
     coordinatorResult = await coordinateDealExecution(coordinatorInput);
 

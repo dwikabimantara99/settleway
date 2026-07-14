@@ -1,4 +1,8 @@
 import { NextResponse } from 'next/server';
+
+// Allow up to 60 s for Stellar Testnet confirmation polling
+export const maxDuration = 60;
+
 import crypto from 'node:crypto';
 import { repository } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';

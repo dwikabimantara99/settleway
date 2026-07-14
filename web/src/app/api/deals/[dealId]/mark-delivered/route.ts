@@ -1,4 +1,8 @@
 import { NextResponse } from 'next/server';
+
+// Allow up to 60 s for Stellar Testnet confirmation polling
+export const maxDuration = 60;
+
 import { cookies } from 'next/headers';
 import { repository, runtimeMode } from '@/lib/repositories';
 import { requireDealParticipant } from '@/lib/auth/server';

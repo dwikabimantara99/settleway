@@ -13,6 +13,9 @@ import {
 import { executeConfirmedDealRoomRouteAction } from '@/lib/stellar/server/deal-room-route-execution';
 import { executeCustodyProofReference } from '@/lib/stellar/testnet-proof';
 
+// Allow up to 60 s so Stellar confirmation polling completes within the Vercel window
+export const maxDuration = 60;
+
 async function runLegacyLocalProofSubmission(
   dealId: string,
   existingDeal: DbDeal,
