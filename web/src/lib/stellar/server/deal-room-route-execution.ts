@@ -158,12 +158,13 @@ export function mapCoordinatorFailure(
       };
     case "ERR_DEAL_PERSISTENCE_UNAVAILABLE":
     case "ERR_EXECUTION_PERSISTENCE_FAILURE":
+      console.error("EXECUTION_PERSISTENCE_FAILURE inner_result:", JSON.stringify((result as any).inner_result, null, 2));
       return {
         status: 503,
         code: "STELLAR_PERSISTENCE_UNAVAILABLE",
         message:
           "Testnet execution state could not be persisted for this room action.",
-        diagnostic,
+        diagnostic: { ...diagnostic, inner_result: (result as any).inner_result },
       };
     case "ERR_ASSEMBLY_FAILURE":
     case "ERR_LOCAL_COMMIT_PLANNING_FAILURE":
