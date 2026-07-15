@@ -35,6 +35,7 @@ Settleway combines marketplace discovery, formal Deal Rooms, bilateral commitmen
 | **Soroban Custody** | Lock and settle funded obligations |
 | **Delivery Evidence** | Connect fulfillment proof to the transaction |
 | **Reputation** | Build trust from completed transaction outcomes |
+| **Funding Opportunities** | Let eligible businesses present expansion plans backed by verified settlement history |
 
 ## How It Works
 
@@ -78,6 +79,10 @@ Reputation in Settleway is not primarily based on stars, self-declared claims, o
 - settlement reference.
 
 A stronger verified transaction history may improve confidence among future counterparties and may help credible businesses demonstrate operational reliability to financing or investment partners. 
+
+Beyond strengthening trust between buyers and sellers, verified reputation can also unlock Settleway Funding Opportunities. Businesses that meet the required verified-settlement and settled-volume eligibility thresholds can present an expansion plan for public contributors or prospective investors to evaluate. This gives businesses with proven commercial performance a path to seek growth capital when expansion is constrained by limited funding.
+
+The current Stellar Testnet version demonstrates reputation-based eligibility and funding-opportunity presentation. Real fundraising, contribution payments, and investment execution are disabled in the demo environment.
 
 *(Note: Settleway does not currently provide lending, investment matching, credit scoring, or guaranteed financing.)*
 
@@ -137,7 +142,8 @@ The public MVP demonstrates a transaction corridor from offer and negotiation th
 - Soroban custody and escrow lock;
 - delivery evidence;
 - Testnet settlement;
-- transaction-derived reputation.
+- transaction-derived reputation;
+- reputation-based Funding Opportunities eligibility and preview.
 
 ### Not Yet Claimed
 - Stellar Mainnet;
@@ -148,7 +154,12 @@ The public MVP demonstrates a transaction corridor from offer and negotiation th
 - active investor marketplace;
 - guaranteed financing;
 - production-grade unrestricted custody;
-- automated legal dispute adjudication.
+- automated legal dispute adjudication;
+- production fundraising;
+- real public contribution payments;
+- investment execution;
+- guaranteed returns;
+- regulated securities or investment services.
 
 ## Market Context
 
