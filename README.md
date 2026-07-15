@@ -1,198 +1,212 @@
 # Settleway
 
-*Human-facing RWA trade assurance for agricultural commerce.*
-
-> **A marketplace can introduce two strangers. It cannot make them keep their promises.**
-
-Settleway is an agricultural commodity marketplace with a built-in trade-assurance layer that helps Buyers and Sellers move from discovery to mutual commitment, Soroban custody, delivery evidence, verified settlement, reputation, and future Funding Opportunities.
-
-[Live Application](https://settleway.vercel.app) · [Technical Evidence](docs/active/PERSISTENT_CUSTODY_LIFECYCLE_PROOF.md) · [Source Code](https://github.com/dwikabimantara99/settleway)
-
 [![Web CI](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/web-ci.yml)
 [![Soroban Contract CI](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml/badge.svg?branch=main)](https://github.com/dwikabimantara99/settleway/actions/workflows/soroban-contract-ci.yml)
 
----
+**From agricultural discovery to accountable settlement and reputation-backed growth.**
 
-## The Problem
+[Live Application](https://settleway.vercel.app/) ·
+[Stellar Testnet Contract](https://stellar.expert/explorer/testnet/contract/CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D) ·
+[Example Settlement](https://stellar.expert/explorer/testnet/tx/0e83263d7930071ffbc5decca052bd31477e0c9142dec65bbf86329d64ffb83f)
 
-Settleway was created to solve two closely connected problems: limited market access for real producers and fragile trust between new trading partners.
+> **A marketplace can introduce two strangers. It cannot make them keep their promises.**
 
-Many small farmers, first-time producers, suppliers, and agricultural businesses may have real land, real inventory, real agricultural commodities, or a genuine upcoming harvest. However, they may not have direct access to a wider network of Buyers. A farmer may already know what will be harvested, the estimated quantity, and the expected availability date, but still have no certainty about who will purchase it. Because their alternatives are limited, producers may depend on local collectors, middlemen, brokers, or closed trading networks. 
+Settleway is an agricultural commodity marketplace with a built-in trade-assurance layer. It helps farmers, suppliers, aggregators, distributors, large Buyers, and food businesses move from initial discovery to formal agreement, mutual commitment, delivery, verifiable settlement, and long-term commercial reputation.
 
-While legitimate stock-holding aggregators may provide real operational value through supply aggregation, sorting, storage, quality control, logistics coordination, and inventory management, the structural problem is limited access and limited alternatives. 
+Settleway is designed as a familiar marketplace rather than a crypto dashboard. Users can publish supply, discover commodities, post Buyer requirements, review profiles, submit offers, negotiate terms, and open a shared Deal Room. Stellar and Soroban operate behind that experience to make critical transaction events independently verifiable.
 
-The problem does not end when a Buyer and Seller discover each other. High-value agricultural trade still frequently depends on personal relationships, informal promises, established counterparties, and trust built outside the platform. A Buyer may discover a new supplier but still cannot easily verify whether the Seller genuinely controls the goods, can provide the agreed quantity, can meet the required quality, and will deliver on time. 
+## Why Settleway Exists
 
-The Seller faces the opposite risk. The Buyer may fail to fund the transaction, cancel after inventory or harvest has already been committed, delay confirmation, or reject the goods unfairly after the Seller has performed. 
+Agricultural commerce faces two closely connected problems: **limited market access for real producers** and **fragile trust between new trading partners**.
 
-Most marketplaces solve product discovery, listings, profiles, chat, and negotiation. However, they often leave the commercial execution risk entirely to the users. Without formal shared terms, bilateral commitment, protected custody, delivery evidence, verifiable settlement, and transaction-derived reputation, both parties must rely on trust that has not yet been earned. 
+Many small farmers, first-time producers, suppliers, and agricultural businesses have real land, real inventory, or a genuine upcoming harvest, but lack direct access to a wider Buyer network. A farmer may already know what will be harvested, the estimated quantity, and when it will become available, yet still have no certainty about who will purchase it.
 
-Consequently, credible farmers and suppliers struggle to reach new Buyers because they cannot easily prove reliability. Buyers remain dependent on suppliers they already know because evaluating a new counterparty is difficult. Market access remains limited, competition is weakened, and trustworthy new business relationships are harder to establish.
+This often leaves producers dependent on local relationships, closed trading networks, or a limited number of intermediaries. Collectors and aggregators can provide genuine value through aggregation, sorting, storage, quality control, and logistics coordination. The deeper problem arises when producers have few alternatives, limited market visibility, weak bargaining power, and no practical way to build a commercial track record with broader Buyers.
+
+The problem does not end when a Buyer and Seller finally meet. High-value agricultural trades still frequently depend on personal relationships, informal promises, and counterparties that already know one another. A Buyer may discover a new supplier but still cannot easily verify whether the Seller controls the goods, can deliver the agreed quantity and quality, or will fulfill the transaction on time. The Seller faces the opposite risk: the Buyer may fail to fund the deal, cancel after inventory or harvest has been committed, delay confirmation, or reject delivery unfairly after the Seller has already performed.
+
+Most marketplaces solve discovery, listings, profiles, chat, and negotiation. The commercial risk that follows is still carried almost entirely by the users. Without formal shared terms, bilateral commitment, protected custody, delivery evidence, verifiable settlement, and transaction-derived history, both parties must rely on trust that has not yet been earned.
 
 > **Discovery creates the opportunity. Mutual commitment makes the transaction credible.**
 
-## The Solution
+Settleway was created to close this gap: not only to help agricultural Buyers and Sellers discover each other, but to give them a structured and accountable way to commit, complete transactions, and build verifiable commercial trust over time.
 
-Settleway is a full agricultural commodity marketplace connecting farmers, farmer groups, suppliers, legitimate stock-holding aggregators, distributors, commodity traders, large Buyers, food businesses, agricultural businesses seeking expansion capital, and future public contributors or prospective investors.
+## What Settleway Does
 
-The solution operates through this lifecycle:
+Settleway combines marketplace access with a formal transaction corridor. Sellers can publish ready-stock or pre-harvest listings, while Buyers can discover supply or publish their own commodity requirements. Users can review profiles, submit offers, negotiate commercial terms, and convert an agreement into a shared Deal Room.
 
-MARKETPLACE DISCOVERY → SUBMIT OFFER → NEGOTIATION → SHARED DEAL ROOM → BUYER AND SELLER FUND → SOROBAN CUSTODY LOCKED → DELIVERY EVIDENCE → BUYER ACCEPTANCE → SETTLEMENT → VERIFIED REPUTATION → FUNDING OPPORTUNITY
-
-Sellers publish ready-stock or pre-harvest supply. Buyers discover supply or publish commodity requirements. Users review profiles and submit offers. Buyer and Seller negotiate price, quantity, quality, deadlines, delivery terms, and other obligations. 
-
-Agreed terms are formalized inside one persistent shared Deal Room. The Deal Room records the Buyer, Seller, commodity, terms, funding obligations, delivery evidence, transaction status, and blockchain references. 
-
-The Buyer funds the purchase principal and a Buyer commitment bond. The Seller funds a Seller performance bond. Soroban custody becomes locked after the required funding obligations are fulfilled. 
-
-The Seller submits delivery evidence. The Buyer reviews and accepts fulfillment. Settlement is executed through Stellar Testnet. Completed outcomes become part of both parties’ verified transaction history.
-
-> **The marketplace creates the connection. The Deal Room creates the accountable transaction.**
-
-## Three Essential Functions
-
-| Function | Purpose |
+| Component | Purpose |
 |---|---|
-| **Marketplace Access** | Connect real agricultural supply with real Buyer demand. |
-| **Escrow & Bilateral Commitment** | Give both Buyer and Seller economic responsibility for the agreement. |
-| **Verified Reputation** | Build long-term commercial credibility from completed transaction outcomes and create eligibility for future Funding Opportunities. |
+| Marketplace | Connect real agricultural supply with Buyer demand |
+| Offer and negotiation | Establish price, quantity, quality, delivery, and deadlines |
+| Shared Deal Room | Create one persistent record of the agreed transaction |
+| Bilateral commitment | Give both Buyer and Seller economic responsibility |
+| Soroban custody | Lock and settle funded obligations through a verifiable contract |
+| Delivery evidence | Connect fulfillment records to the agreed transaction |
+| Verified reputation | Build credibility from completed commercial outcomes |
+| Funding Opportunities | Let eligible businesses present growth plans backed by verified history |
+
+Settleway therefore performs three essential functions:
+
+1. **Marketplace access** connects real agricultural supply with real Buyer demand.
+2. **Escrow and bilateral commitment** make new transactions safer and more accountable.
+3. **Verified reputation** builds long-term commercial credibility and creates a foundation for future Funding Opportunities.
 
 ## How It Works
 
 ```mermaid
 flowchart LR
-    A[DISCOVER] --> B[SUBMIT OFFER]
-    B --> C[NEGOTIATE]
-    C --> D[OPEN DEAL ROOM]
-    D --> E[BUYER AND SELLER FUND]
-    E --> F[ESCROW LOCKED]
-    F --> G[SUBMIT DELIVERY EVIDENCE]
-    G --> H[ACCEPT DELIVERY]
-    H --> I[SETTLE]
-    I --> J[BUILD REPUTATION]
+    A[Discover supply or demand] --> B[Submit offer]
+    B --> C[Negotiate terms]
+    C --> D[Open shared Deal Room]
+    D --> E[Buyer and Seller fund]
+    E --> F[Soroban custody locked]
+    F --> G[Submit delivery evidence]
+    G --> H[Buyer accepts delivery]
+    H --> I[Settlement]
+    I --> J[Verified reputation]
+    J --> K[Funding Opportunity]
 ```
 
-## Bilateral Commitment
+The same Deal Room is shared by the Buyer and Seller. It records the parties, commodity, price, quantity, quality requirements, deadlines, funding obligations, delivery evidence, status transitions, and relevant blockchain references.
 
-Agricultural transactions carry risk on both sides. To mitigate this, Settleway requires mutual commitment.
+> **The marketplace creates the connection. The Deal Room creates the accountable transaction.**
 
-The Buyer funds the transaction principal and a Buyer commitment bond. The Seller funds a Seller performance bond. This ensures the Buyer demonstrates purchase seriousness and the Seller demonstrates delivery seriousness. 
+## The Deal Room and Mutual Commitment
 
-Custody becomes locked only after both sides fulfill their funding obligations. Successful settlement follows the contract rules, and transaction behavior contributes to reputation.
+The Deal Room transforms an informal conversation into a structured commercial agreement.
+
+The Buyer funds the transaction principal and a Buyer commitment bond. The Seller provides a Seller performance bond. Custody becomes locked only after both parties fulfill the required funding obligations.
+
+This bilateral structure reflects the fact that agricultural trade contains risk on both sides. The Buyer needs confidence that the Seller will deliver the agreed goods. The Seller needs confidence that the Buyer is funded, serious, and accountable after supply has been reserved or prepared.
+
+The bonds are commitment mechanisms. They are not insurance, speculative staking, lending collateral, or guaranteed compensation.
 
 > **Trust is not requested. It is backed by mutual commitment.**
 
-These bonds are strict commitment mechanisms. They are not insurance, investment products, speculative staking, lending collateral, or guaranteed compensation.
+After funding is complete, the Seller submits delivery evidence. The Buyer reviews fulfillment and confirms acceptance. The Soroban contract then executes the applicable settlement outcome, while the completed result becomes part of both parties’ transaction history.
 
 ## Transaction-Derived Reputation
 
-Settleway reputation is not primarily based on stars, self-declared claims, promotional statements, or manually written testimonials. It is derived from verified commercial outcomes such as completed settlements, Buyer or Seller role, product, transaction amount or volume, counterparty, Deal Room, fulfillment outcome, completion status, and settlement reference.
+Settleway reputation is not based primarily on stars, promotional descriptions, or self-declared claims. It is derived from completed commercial activity.
 
-This verified reputation serves two purposes:
-1. Helping future Buyers and Sellers evaluate commercial reliability.
-2. Creating eligibility for Funding Opportunities.
+A reputation record can reflect:
 
-Beyond helping Buyers and Sellers evaluate one another, verified reputation can also unlock Settleway Funding Opportunities. Eligible agricultural businesses can present expansion plans to public contributors or prospective investors using completed settlements and verified trading volume as evidence of commercial performance. This gives businesses with proven trading activity—but limited capital—a pathway to seek support for expanding production, inventory, equipment, or market reach.
+- the user’s role as Buyer or Seller;
+- the product and counterparty;
+- completed transaction value or volume;
+- the associated Deal Room;
+- fulfillment and completion status;
+- and the Stellar settlement reference.
 
-Businesses that meet the required verified-settlement and settled-volume thresholds can unlock Funding Opportunities. 
+This allows a credible farmer, supplier, Buyer, or agricultural business to demonstrate reliability beyond its existing personal network. Future counterparties can evaluate evidence of actual commercial performance rather than relying only on profile claims.
 
-The current Testnet implementation demonstrates reputation-based eligibility and Funding Opportunity presentation. Real public contribution payments, fundraising execution, investment settlement, and investor returns are not yet active.
+Reputation also creates value beyond the next transaction. Businesses that meet the required verified-settlement and settled-volume eligibility thresholds can unlock Settleway Funding Opportunities. They can present expansion plans to public contributors or prospective investors using completed settlements and verified trading activity as evidence of commercial performance.
 
-## Target Users
+This creates a pathway for businesses with proven activity—but limited capital—to seek support for increasing production, purchasing inventory, improving equipment, strengthening logistics, or reaching new markets.
 
-Settleway is designed for participants across the agricultural trade lifecycle:
-- **Producers & Suppliers:** Small and emerging farmers, first-time producers, farmer groups, cooperatives, agricultural suppliers, and stock-holding aggregators that genuinely control inventory or provide operational value.
-- **Buyers & Intermediaries:** Wholesalers, distributors, commodity traders, restaurants, hotels, catering businesses, food processors, manufacturers, exporters, and large agricultural commodity Buyers.
-- **Growing Businesses:** Agricultural businesses seeking growth capital based on their proven trade history.
-- **Evaluators:** Public contributors and prospective investors evaluating verified transaction history.
+The current Testnet implementation demonstrates reputation-based eligibility and Funding Opportunity presentation. **Real public contribution payments, fundraising execution, investment settlement, and investor returns are not yet active.**
 
-Settleway initially focuses on Indonesia, Southeast Asia, and agricultural commodity trade.
+Settleway does not claim guaranteed financing, automatic investment approval, credit scoring, guaranteed returns, or regulated securities services.
+
+## Who Settleway Serves
+
+| User group | How Settleway helps |
+|---|---|
+| Farmers, producer groups, and cooperatives | Reach broader Buyers and build a verifiable commercial history |
+| Suppliers and legitimate aggregators | Present real inventory or upcoming supply and coordinate larger transactions |
+| Distributors, wholesalers, restaurants, hotels, processors, exporters, and large Buyers | Discover new supply with clearer terms, commitments, and settlement records |
+| Growing agricultural businesses | Use verified transaction performance as a foundation for Funding Opportunities |
+| Public contributors and prospective investors | Evaluate expansion proposals using commercial history rather than promotional claims alone |
+
+Settleway initially focuses on agricultural commodity trade in Indonesia and Southeast Asia, where many business relationships still depend on existing networks and personal trust.
 
 ## Why Stellar and Soroban
 
-Stellar is not added only as a payment feature. Stellar serves as the neutral and verifiable commitment layer, custody layer, settlement layer, and transaction-verification layer.
+Stellar is not added only as a payment feature. It provides a neutral execution and verification layer for the parts of the transaction where trust matters most.
 
-Soroban supports a unique custody record for a formal Deal Room, separate Buyer and Seller funding transactions, escrow lock after both obligations are fulfilled, proof-reference anchoring, delivery-state transitions, settlement, refund, expiry, cancellation, or dispute outcomes where implemented, public transaction hashes, auditable contract state, and reputation derived from confirmed settlement outcomes.
+An application database should not be the only source claiming that:
+
+- the Buyer funded;
+- the Seller provided its commitment;
+- custody became locked;
+- delivery-related state changed;
+- or settlement completed.
+
+Soroban provides a verifiable custody and state-transition corridor for the Deal Room. Buyer funding and Seller funding are represented by distinct authenticated transactions. Contract state can reflect whether required commitments have been fulfilled, while settlement produces a public transaction reference that can be independently inspected.
+
+Raw evidence files and normal marketplace data do not need to be stored entirely on-chain. Settleway keeps the user experience familiar while connecting important proof references and transaction outcomes to Stellar records.
 
 > **Blockchain remains invisible for usability, but verifiable for trust.**
 
-Users interact with a familiar marketplace experience and do not need to understand wallets, transaction envelopes, RPC mechanics, or smart-contract internals.
-
-We do not claim that all application data is stored on-chain, that raw evidence files are fully stored on-chain, that Settleway is on Stellar Mainnet, that crop ownership is legally tokenized, or that Stellar eliminates every commercial risk.
-
-## Technology
-
-| Layer | Technology |
-|---|---|
-| **Frontend** | Next.js App Router, TypeScript, Tailwind CSS |
-| **Backend** | Next.js Route Handlers |
-| **Database** | Supabase Postgres and Storage |
-| **Blockchain** | Stellar Testnet |
-| **Smart Contract** | Soroban, Rust |
-| **Wallet Model** | Server-managed participant wallets |
-| **Hosting** | Vercel |
-| **Testing** | Vitest, GitHub Actions |
-
-## Architecture
-
-```mermaid
-flowchart TD
-    UI[USER INTERFACE] --> API[OFFER, NEGOTIATION, AND DEAL ROOM APIs]
-    API --> DB[(SUPABASE PERSISTENT STATE)]
-    DB --> MW[MANAGED PARTICIPANT WALLETS]
-    MW --> SC{{SOROBAN CUSTODY CONTRACT}}
-    SC --> ST[STELLAR TESTNET VERIFICATION]
-    ST --> REP[COMPLETED HISTORY AND REPUTATION]
-```
-
-## Public Testnet Status
-
-The public MVP demonstrates a transaction corridor from offer and negotiation through bilateral funding, Soroban custody, escrow lock, delivery evidence, settlement, and transaction-derived profile history.
-
-- [Live Application](https://settleway.vercel.app)
-- [Example Settlement Transaction](https://stellar.expert/explorer/testnet/tx/4f3b499b2103491f91603e9d7aa3a4d005a8629ee99ac6b0edb94cfbcdab3769)
-- [Detailed Technical Evidence](docs/active/PERSISTENT_CUSTODY_LIFECYCLE_PROOF.md)
+Users do not need to understand transaction envelopes, RPC mechanics, or smart-contract internals. They interact with a marketplace and a Deal Room, while Stellar provides the underlying verification points for custody, funding, delivery-state transitions, settlement, and reputation-supporting history.
 
 ## Stellar Testnet Contract
 
 - **Network:** Stellar Testnet
 - **Soroban Custody Contract:** `CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D`
-- **Explorer:** [View contract on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D)
+- **Contract Explorer:** [View on Stellar Expert](https://stellar.expert/explorer/testnet/contract/CDMPVTVTZV5VTV275QPOKTKYWBTGJO7K4HLK5BFX27UBIIWYBDJ2FP3D)
+- **Example Completed Settlement:** `0e83263d7930071ffbc5decca052bd31477e0c9142dec65bbf86329d64ffb83f`
+- **Settlement Explorer:** [View transaction on Stellar Expert](https://stellar.expert/explorer/testnet/tx/0e83263d7930071ffbc5decca052bd31477e0c9142dec65bbf86329d64ffb83f)
 
 This contract powers the custody, bilateral funding, delivery-state transitions, and settlement flow demonstrated in the public Settleway MVP.
 
-## Current Scope
+Buyer and Seller wallet addresses are intentionally not presented as the project contract address. The contract above is the primary Soroban custody contract required for hackathon verification.
 
-### Working in the Public MVP
-- agricultural marketplace discovery;
+## Architecture
+
+```mermaid
+flowchart LR
+    U[Buyer and Seller] --> UI[Next.js Marketplace UI]
+    UI --> API[Offer, Negotiation and Deal Room APIs]
+    API --> DB[(Supabase Persistent State)]
+    API --> W[Managed Participant Wallets]
+    W --> C[Soroban Custody Contract]
+    C --> ST[Stellar Testnet]
+    ST --> R[Settlement History and Reputation]
+```
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js App Router, TypeScript, Tailwind CSS |
+| Backend | Next.js Route Handlers |
+| Persistence | Supabase Postgres and Storage |
+| Blockchain | Stellar Testnet |
+| Smart contract | Soroban and Rust |
+| Wallet model | Server-managed participant wallets |
+| Hosting | Vercel |
+| Validation | Vitest and repository CI workflows |
+
+## Current Public MVP Scope
+
+### Demonstrated in the current MVP
+
+- agricultural supply and Buyer-demand discovery;
 - ready-stock and pre-harvest listings;
-- Buyer requirements;
-- offers and Seller notifications;
-- negotiation;
-- shared Deal Room;
-- managed Testnet participant wallets;
-- Buyer funding;
-- Seller funding;
-- Soroban custody;
-- escrow lock;
-- delivery evidence;
-- settlement;
+- offers, notifications, and recorded negotiation;
+- a shared persistent Deal Room;
+- managed Stellar Testnet participant wallets;
+- separate Buyer and Seller funding;
+- Soroban custody and escrow lock;
+- delivery evidence and acceptance;
+- Stellar Testnet settlement;
 - transaction-derived reputation;
-- reputation-based Funding Opportunities eligibility and presentation.
+- reputation-based Funding Opportunity eligibility and presentation.
 
-### Not Yet Claimed
-- Stellar Mainnet;
-- production bank-transfer or fiat rails;
+### Not currently claimed
+
+- Stellar Mainnet deployment;
+- production bank-transfer, QRIS, or other fiat rails;
 - production KYC/KYB;
 - insurance;
 - unrestricted production custody;
 - real public contribution payments;
-- live fundraising execution;
-- investment settlement;
-- guaranteed financing;
-- guaranteed returns;
+- live fundraising or investment execution;
+- guaranteed financing or investor returns;
 - regulated securities services;
-- automatic legal dispute adjudication.
+- automated legal dispute adjudication.
+
+Settleway is currently a public Stellar Testnet MVP. Production deployment would require additional legal, security, identity, custody, compliance, and operational controls.
 
 ## Run Locally
 
@@ -203,4 +217,21 @@ npm ci
 npm run dev
 ```
 
+Use the committed example environment files as configuration references. Never commit private keys, seed phrases, service-role credentials, or managed-wallet secrets.
+
+Main validation commands:
+
+```bash
+npm run test
+npm run lint
+npm run typecheck
+npm run build
+```
+
+Verify these commands against the current scripts before publishing. Make only the minimum README adjustment if the repository requires a specific runtime-mode command for development or build.
+
+---
+
 > **Find the opportunity. Back the commitment. Verify the settlement. Build the reputation.**
+
+Settleway helps real agricultural Sellers reach broader Buyers, helps Buyers discover real supply, protects new commercial relationships through bilateral commitment and Soroban custody, converts completed settlements into verified reputation, and allows proven businesses to use that reputation as a foundation for future growth opportunities.
